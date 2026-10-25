@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-25",
+  "runtime": "WSL Ubuntu 22.04, PHP 8.4.23 CLI server, 4 workers plus parent, OPcache enabled, timestamp validation disabled, Xdebug disabled, private temporary copy on Linux filesystem",
+  "database": "MariaDB 10.11 container, dedicated zionfood_load_test database",
+  "cache": "Redis 7, isolated cache DB 6, 30-second menu cache, warmup",
+  "k6": "2.3.0, grafana/k6@sha256:3e4186aea62e11a45560bfc51e19eeafe82fc07ce069c78aff44b7ff893d9a5e",
+  "fixtures": "100 isolated organizations/restaurants/locations, one menu/category/product each",
+  "load": "100 order iterations shared by 5 VUs, each checkout replayed; 2 kitchen polling sessions for 20 seconds; 100 menu warmup requests",
+  "limits": "Checkout per-IP rate intentionally raised to 20000 for single-source benchmark. Database queues, outbound broadcasting disabled. No production server, real Reverb latency, large menus, sustained soak or 100 concurrent kitchens measured."
+}
