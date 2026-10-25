@@ -27,7 +27,7 @@ watch(visible, (open) => {
 });
 </script>
 <template>
-    <Dialog v-model:visible="visible" header="Modifier group" modal class="w-full max-w-xl"
+    <Dialog v-model:visible="visible" :header="$t('modifier_group')" modal class="w-full max-w-xl"
         ><form
             class="grid gap-5"
             @submit.prevent="
@@ -35,31 +35,32 @@ watch(visible, (open) => {
             "
         >
             <p v-for="(error, key) in form.errors" :key="key" role="alert" class="text-red-600">{{ error }}</p>
-            <label class="field">Group name<InputText v-model="form.name" required /></label>
+            <label class="field">{{ $t('group_name') }}<InputText v-model="form.name" required /></label>
             <div class="grid grid-cols-2 gap-3">
-                <label class="field">Minimum choices<InputNumber v-model="form.min_choices" :min="0" :max="20" /></label
+                <label class="field"
+                    >{{ $t('minimum_choices') }}<InputNumber v-model="form.min_choices" :min="0" :max="20" /></label
                 ><label class="field"
-                    >Maximum choices<InputNumber v-model="form.max_choices" :min="0" :max="20"
+                    >{{ $t('maximum_choices') }}<InputNumber v-model="form.max_choices" :min="0" :max="20"
                 /></label>
             </div>
             <div v-for="(option, i) in form.options" :key="i" class="flex gap-2">
                 <InputText
                     v-model="option.name"
-                    placeholder="Option name"
-                    aria-label="Option name"
+                    :placeholder="$t('option_name')"
+                    :aria-label="$t('option_name')"
                     required
-                /><InputNumber v-model="option.price" :min="0" aria-label="Option price in bani" /><Button
+                /><InputNumber v-model="option.price" :min="0" :aria-label="$t('option_price_in_bani')" /><Button
                     icon="pi pi-times"
                     text
-                    aria-label="Remove option"
+                    :aria-label="$t('remove_option')"
                     @click="form.options.splice(i, 1)"
                 />
             </div>
             <Button
-                label="Add option"
+                :label="$t('add_option')"
                 text
                 icon="pi pi-plus"
                 @click="form.options.push({ name: '', price: 0 })"
-            /><Button label="Save group" type="submit" :loading="form.processing" /></form
+            /><Button :label="$t('save_group')" type="submit" :loading="form.processing" /></form
     ></Dialog>
 </template>

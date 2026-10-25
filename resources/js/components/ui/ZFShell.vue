@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { tr as t } from '@/i18n';
+
 import { computed, ref } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
 import Toast from 'primevue/toast';
+import LanguageSelector from '@/components/ui/LanguageSelector.vue';
 import type { Location } from '@/types';
 const props = defineProps<{ location?: Location; locations?: Location[]; canManage?: boolean; mode?: string }>();
 const page = usePage();
@@ -15,51 +18,65 @@ function theme() {
 }
 const base = computed(() => `/app/locations/${props.location?.public_id}`);
 const nav = computed(() => [
-    { name: 'Overview', icon: 'pi-chart-bar', path: '' },
-    { name: 'Orders', icon: 'pi-shopping-bag', path: '/orders' },
+    { name: t('overview'), icon: 'pi-chart-bar', path: '' },
+    { name: t('orders'), icon: 'pi-shopping-bag', path: '/orders' },
     ...(props.canManage
         ? [
-              { name: 'Menu studio', icon: 'pi-book', path: '/menu' },
-              { name: 'Settings', icon: 'pi-cog', path: '/settings' },
-              { name: 'Integrations', icon: 'pi-link', path: '/integrations' },
+              { name: t('menu_studio'), icon: 'pi-book', path: '/menu' },
+              { name: t('settings'), icon: 'pi-cog', path: '/settings' },
+              { name: t('staff'), icon: 'pi-users', path: '/staff' },
+              { name: t('restaurant_branding'), icon: 'pi-palette', path: '/branding' },
+              { name: t('webhooks'), icon: 'pi-send', path: '/webhooks' },
+              { name: t('integrations'), icon: 'pi-link', path: '/integrations' },
           ]
         : []),
-    { name: 'Kitchen display', icon: 'pi-th-large', path: '/kitchen' },
+    { name: t('kitchen_display'), icon: 'pi-th-large', path: '/kitchen' },
 ]);
 </script>
 <template>
     <div class="min-h-screen">
         <Toast />
         <header
-            class="flex h-20 items-center justify-between border-b border-slate-200 bg-white px-5 dark:border-slate-700 dark:bg-slate-900 md:px-8"
+            class="flex min-h-20 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 py-4 dark:border-slate-700 dark:bg-slate-900 md:px-8"
         >
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
                 <Button
                     icon="pi pi-bars"
                     text
-                    aria-label="Open navigation"
+                    :aria-label="$t('open_navigation')"
                     class="md:!hidden"
                     @click="mobile = !mobile"
-                /><Link href="/app" class="text-2xl font-bold tracking-tight text-ink dark:text-white"
-                    ><span class="mr-2 rounded-xl bg-brand px-2.5 py-1 text-white">z</span>Zion<span class="text-brand"
-                        >Food</span
-                    ></Link
-                ><span class="ml-4 hidden rounded-full bg-violet-50 px-3 py-1 text-xs text-brand sm:inline">{{
-                    mode ?? 'Restaurant workspace'
+                />
+                <Link
+                    href="/app"
+                    class="flex items-center gap-2 text-2xl font-bold tracking-tight text-ink dark:text-white"
+                    ><span class="rounded-xl bg-brand px-2.5 py-1 text-white">z</span
+                    ><span class="hidden sm:inline">Zion<span class="text-brand">Food</span></span></Link
+                ><span class="ml-4 hidden rounded-full bg-violet-50 px-3 py-1 text-xs text-brand lg:inline">{{
+                    mode === 'Platform admin'
+                        ? $t('platform_admin')
+                        : mode === 'Kitchen operations'
+                          ? $t('kitchen_operations')
+                          : $t('restaurant_workspace')
                 }}</span>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5">
                 <Button
                     :icon="dark ? 'pi pi-sun' : 'pi pi-moon'"
                     text
-                    aria-label="Toggle color theme"
+                    :aria-label="$t('toggle_color_theme')"
                     @click="theme"
                 /><Link
                     v-if="(page.props.auth as { user?: { is_platform_admin?: boolean } })?.user?.is_platform_admin"
                     href="/admin"
-                    class="muted mr-3"
-                    >Platform</Link
-                ><Button label="Sign out" icon="pi pi-sign-out" text size="small" @click="router.post('/logout')" />
+                    class="muted mr-2 hidden md:block"
+                    >{{ $t('platform') }}</Link
+                ><Button
+                    icon="pi pi-sign-out"
+                    text
+                    :aria-label="$t('sign_out')"
+                    @click="router.post('/logout')"
+                /><LanguageSelector />
             </div>
         </header>
         <div class="flex">
@@ -70,7 +87,15 @@ const nav = computed(() => [
                     mobile ? 'fixed inset-y-20 z-30 block' : 'hidden',
                 ]"
             >
-                <p class="muted mb-3 text-xs uppercase tracking-widest">Workspace</p>
+                <p class="muted mb-3 text-xs uppercase tracking-widest">{{ $t('workspace') }}</p>
+                <div v-if="location" class="mb-5 flex items-center gap-3">
+                    <img
+                        v-if="location.restaurant.logo_path"
+                        :src="'/storage/' + location.restaurant.logo_path"
+                        :alt="location.restaurant.name"
+                        class="h-10 w-10 rounded-lg bg-white object-contain"
+                    /><strong class="text-sm">{{ location.restaurant.name }}</strong>
+                </div>
                 <Select
                     v-if="locations?.length"
                     :model-value="location?.public_id"
@@ -78,7 +103,7 @@ const nav = computed(() => [
                     option-label="name"
                     option-value="public_id"
                     class="mb-7 w-full"
-                    aria-label="Active location"
+                    :aria-label="$t('active_location')"
                     @update:model-value="router.visit('/app/locations/' + $event)"
                 />
                 <nav class="grid gap-2">
@@ -92,14 +117,16 @@ const nav = computed(() => [
                                 ? 'bg-violet-50 text-brand dark:bg-violet-950'
                                 : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800',
                         ]"
-                        ><i :class="['pi', item.icon]" />{{ item.name }}</Link
-                    ><Link v-if="mode === 'Platform admin'" href="/admin" class="p-3 text-brand">Organizations</Link>
+                        ><i aria-hidden="true" :class="['pi', item.icon]" />{{ item.name }}</Link
+                    ><Link v-if="mode === 'Platform admin'" href="/admin" class="p-3 text-brand">{{
+                        $t('organizations')
+                    }}</Link>
                 </nav>
                 <div v-if="location" class="mt-12 rounded-xl bg-surface p-4 dark:bg-slate-800">
-                    <p class="text-sm font-semibold">Your storefront</p>
-                    <p class="muted my-2">Make something delicious happen.</p>
+                    <p class="text-sm font-semibold">{{ $t('your_storefront') }}</p>
+                    <p class="muted my-2">{{ $t('make_something_delicious_happen') }}</p>
                     <a :href="'/store/' + location.public_id" target="_blank" class="text-sm font-medium text-brand"
-                        >Open menu <i class="pi pi-arrow-up-right ml-1"
+                        >{{ $t('open_menu') }} <i aria-hidden="true" class="pi pi-arrow-up-right ml-1"
                     /></a>
                 </div>
                 <p class="muted mt-8 text-xs">ZionFood v{{ page.props.version }}</p>

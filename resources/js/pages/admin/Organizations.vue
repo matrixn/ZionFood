@@ -17,32 +17,35 @@ defineProps<{
 </script>
 <template>
     <AdminLayout
-        ><Head title="Platform organizations" /><ZFPageHeader
-            title="Platform overview"
-            description="Organizations, restaurant locations and trial subscriptions."
+        ><Head :title="$t('platform_organizations')" /><ZFPageHeader
+            :title="$t('platform_overview')"
+            :description="$t('organizations_restaurant_locations_and_trial_subscriptions')"
         /><DataTable :value="organizations.data"
-            ><Column header="Organization"
+            ><Column :header="$t('organization')"
                 ><template #body="{ data }"
                     ><Link :href="'/admin/' + data.public_id" class="font-semibold text-brand">{{
                         data.name
                     }}</Link></template
                 ></Column
-            ><Column field="restaurants_count" header="Restaurants" /><Column
+            ><Column field="restaurants_count" :header="$t('restaurants')" /><Column
                 field="memberships_count"
-                header="Members"
-            /><Column header="Plan"
+                :header="$t('members')"
+            /><Column :header="$t('plan_246')"
                 ><template #body="{ data }">{{
                     subscriptions.find((s) => s.organization_id === data.id)?.plan.name ?? '—'
                 }}</template></Column
-            ><Column header="Status"
+            ><Column :header="$t('status')"
                 ><template #body="{ data }">{{
-                    subscriptions.find((s) => s.organization_id === data.id)?.status ?? '—'
+                    $t(
+                        'subscription_' +
+                            (subscriptions.find((s) => s.organization_id === data.id)?.status ?? 'unknown'),
+                    )
                 }}</template></Column
             ></DataTable
         >
         <div class="mt-5 flex gap-5">
-            <Link v-if="organizations.prev_page_url" :href="organizations.prev_page_url">Previous</Link
-            ><Link v-if="organizations.next_page_url" :href="organizations.next_page_url">Next</Link>
+            <Link v-if="organizations.prev_page_url" :href="organizations.prev_page_url">{{ $t('previous') }}</Link
+            ><Link v-if="organizations.next_page_url" :href="organizations.next_page_url">{{ $t('next') }}</Link>
         </div>
         <section v-if="selected" class="panel mt-8">
             <h2 class="mb-5 text-xl font-semibold">{{ selected.name }}</h2>
@@ -53,7 +56,8 @@ defineProps<{
                 </p>
             </div>
             <p class="muted">
-                Trial ends: {{ subscriptions.find((s) => s.organization_id === selected?.id)?.trial_ends_at ?? '—' }}
+                {{ $t('trial_ends') }}
+                {{ subscriptions.find((s) => s.organization_id === selected?.id)?.trial_ends_at ?? '—' }}
             </p>
         </section></AdminLayout
     >

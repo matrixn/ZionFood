@@ -14,6 +14,9 @@ Machine-readable contract: [openapi.json](openapi.json). API host in production:
 | PUT | /items/{item} | Owner/manager; session or Sanctum menu:write |
 | GET, POST | /locations/{location}/integration-tokens | Verified browser session, owner/manager; GET excludes token values |
 | DELETE | /locations/{location}/integration-tokens/{token} | Verified issuing user's browser session, owner/manager |
+| GET, POST | /locations/{location}/webhooks | Verified browser session, owner/manager; signing key only in create input |
+| PUT, DELETE | /locations/{location}/webhooks/{endpoint} | Same location/organization owner/manager browser session |
+| POST | /locations/{location}/webhook-deliveries/{delivery}/retry | Owner/manager browser session, enabled endpoint, retryable delivery |
 
 Locations/items/orders in URLs use public ULIDs. Category, variant, modifier-option and delivery-zone IDs in payloads are internal numeric references checked against the resolved tenant and menu. Authenticated order results use API Resources with pagination; `?active=1` excludes terminal statuses. Follow `links.next` until null to recover the complete active queue.
 
@@ -25,4 +28,6 @@ Product images: multipart POST, `_method=PUT` for updates, JSON string in `paylo
 
 Browser CRUD retains CSRF protection. Personal access tokens have the selected abilities from `menu:read`, `menu:write`, `orders:read`, `orders:manage`, are scoped to one organization, and expire in 90 days. Only the creation response reveals the plaintext token once; it must be stored by the integration backend. Existing secrets are never sent in token lists or broadcast events.
 
-Webhook tables exist, but outbound webhook delivery/configuration endpoints are not enabled. No WordPress plugin has been implemented in this release.
+Signed webhook configuration and delivery are implemented. Events are order.created, order.updated, menu.updated and item.updated. The configuration schema, signing algorithm, receiver verification and retry semantics are documented in [administration and webhooks](STAFF_BRANDING_LOCALIZATION_WEBHOOKS.md). Existing signing secrets and response bodies are never returned. Removed endpoints retain their organization-scoped delivery history. No WordPress plugin has been implemented.
+
+Browser routes under /app/locations/{location} include /staff, /branding and /webhooks. Staff invitation/member management and multipart branding use CSRF-protected session routes and reusable domain Actions. /invitations/{public_id} accepts a token from the email fragment only in its verified-email acceptance POST. /locale accepts only ro/en and changes the encrypted preference cookie plus the signed-in user preference. Integration clients may explicitly request Accept-Language: ro or en; field names/status values are stable across languages. Tracking responses additionally contain public restaurant branding.

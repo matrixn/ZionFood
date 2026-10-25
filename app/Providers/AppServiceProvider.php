@@ -28,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        RateLimiter::for('staff-invitations', fn (Request $r) => Limit::perHour(30)->by((string) $r->user()?->id));
+        RateLimiter::for('webhook-retry', fn (Request $r) => Limit::perMinute(10)->by((string) $r->user()?->id));
         foreach ([Menu::class, MenuCategory::class, MenuItem::class, ModifierGroup::class] as $model) {
             $invalidate = fn ($record) => DB::afterCommit(fn () => MenuCache::forgetOrganization($record->organization_id));
             $model::saved($invalidate);

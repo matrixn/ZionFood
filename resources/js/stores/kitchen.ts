@@ -8,6 +8,7 @@ export const useKitchen = defineStore('kitchen', () => {
     const loading = ref(false);
     const syncedAt = ref<Date | null>(null);
     let revision = 0;
+    const versions = new Map<string, number>();
     async function sync(locationId: string, active = true) {
         const current = ++revision;
         loading.value = true;
@@ -20,7 +21,8 @@ export const useKitchen = defineStore('kitchen', () => {
                 url = active ? page.links.next : null;
             }
             if (current === revision) {
-                orders.value = result;
+                orders.value = result.filter((order) => order.version >= (versions.get(order.public_id) ?? 0));
+                orders.value.forEach((order) => versions.set(order.public_id, order.version));
                 error.value = '';
                 syncedAt.value = new Date();
             }
@@ -30,12 +32,22 @@ export const useKitchen = defineStore('kitchen', () => {
             if (current === revision) loading.value = false;
         }
     }
+    function apply(order: Order) {
+        if (order.version < (versions.get(order.public_id) ?? 0)) return;
+        versions.set(order.public_id, order.version);
+        loading.value = false;
+        // A confirmed transition response is authoritative; discard older in-flight list responses.
+        revision++;
+        orders.value = orders.value.filter((current) => current.public_id !== order.public_id);
+        if (!['completed', 'rejected', 'cancelled'].includes(order.status)) orders.value.unshift(order);
+    }
     function reset() {
+        versions.clear();
         revision++;
         orders.value = [];
         error.value = '';
         syncedAt.value = null;
         loading.value = false;
     }
-    return { orders, error, loading, syncedAt, sync, reset };
+    return { orders, error, loading, syncedAt, sync, apply, reset };
 });

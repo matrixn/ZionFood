@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Menus\RecordMenuChange;
 use App\Domain\Tenancy\Actions\OnboardOrganization;
 use App\Domain\Tenancy\TenantAccess;
 use App\Http\Requests\OnboardingRequest;
@@ -13,6 +14,7 @@ use App\Models\Organization;
 use App\Models\OrganizationMembership;
 use App\Models\OrganizationSubscription;
 use App\Models\RestaurantLocation;
+use App\Models\StaffInvitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -47,10 +49,15 @@ class WorkspaceController extends Controller
     {
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
         app(TenantAccess::class)->requireOperate($request->user(), $context);
-        abort_unless(in_array($section, ['dashboard', 'orders', 'menu', 'settings', 'kitchen', 'integrations']), 404);
+        abort_unless(in_array($section, ['dashboard', 'orders', 'menu', 'settings', 'kitchen', 'integrations', 'staff', 'branding', 'webhooks']), 404);
         $manage = app(TenantAccess::class)->canManage($request->user(), $context->organization_id);
-        abort_if(in_array($section, ['menu', 'settings', 'integrations']) && ! $manage, 403);
+        abort_if(in_array($section, ['menu', 'settings', 'integrations', 'staff', 'branding', 'webhooks']) && ! $manage, 403);
         $props = ['location' => $context->load('restaurant', 'hours', 'fulfillment', 'zones'), 'locations' => $this->locations($request), 'canManage' => $manage];
+        if ($section === 'staff') {
+            $props['actorRole'] = app(TenantAccess::class)->role($request->user(), $context->organization_id);
+            $props['members'] = OrganizationMembership::where('organization_id', $context->organization_id)->with('user:id,name,email')->get()->map(fn ($m) => [...$m->only('id', 'role', 'user_id'), 'user' => $m->user, 'location_ids' => LocationStaff::where('organization_id', $context->organization_id)->where('user_id', $m->user_id)->pluck('location_id')]);
+            $props['invitations'] = StaffInvitation::where('organization_id', $context->organization_id)->whereNull('accepted_at')->latest()->get();
+        }
         if ($section === 'menu') {
             $props['menus'] = $context->menus()->with('categories.items.variants', 'categories.items.modifierGroups')->get();
             $props['groups'] = ModifierGroup::with('options')->where('organization_id', $context->organization_id)->get();
@@ -70,10 +77,14 @@ class WorkspaceController extends Controller
         app(TenantAccess::class)->requireManage($request->user(), $context->organization_id);
         $data = $request->validate(['name' => ['required', 'string', 'max:100'], 'menu_id' => ['required', 'integer'], 'id' => ['nullable', 'integer']]);
         abort_unless($context->menus()->where('menus.id', $data['menu_id'])->exists(), 422);
-        $category = isset($data['id']) ? MenuCategory::whereKey($data['id'])->where('menu_id', $data['menu_id'])->where('organization_id', $context->organization_id)->firstOrFail() : new MenuCategory(['organization_id' => $context->organization_id, 'menu_id' => $data['menu_id']]);
-        $category->fill(['name' => $data['name']])->save();
+        DB::transaction(function () use ($data, $context) {
+            $category = isset($data['id']) ? MenuCategory::whereKey($data['id'])->where('menu_id', $data['menu_id'])->where('organization_id', $context->organization_id)->firstOrFail() : new MenuCategory(['organization_id' => $context->organization_id, 'menu_id' => $data['menu_id']]);
+            $category->fill(['name' => $data['name']])->save();
 
-        return back()->with('success', 'Category saved.');
+            app(RecordMenuChange::class)->execute($context->organization_id, $data['menu_id']);
+        });
+
+        return back()->with('success', __('Category saved.'));
     }
 
     public function modifier(Request $request, string $location)
@@ -89,9 +100,10 @@ class WorkspaceController extends Controller
             foreach ($data['options'] as $option) {
                 $group->options()->create(['name' => $option['name'], 'price' => $option['price']]);
             }
+            app(RecordMenuChange::class)->execute($context->organization_id);
         });
 
-        return back()->with('success', 'Modifier group saved.');
+        return back()->with('success', __('Modifier group saved.'));
     }
 
     public function settings(Request $request, string $location)
@@ -112,7 +124,7 @@ class WorkspaceController extends Controller
             }
         });
 
-        return back()->with('success', 'Location settings saved.');
+        return back()->with('success', __('Location settings saved.'));
     }
 
     public function admin(Request $request, ?string $organization = null)

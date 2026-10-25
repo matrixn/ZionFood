@@ -1,8 +1,10 @@
 <?php
 
 use App\Jobs\DeliverOutbox;
+use App\Jobs\DeliverWebhook;
 use App\Models\OutboxMessage;
 use App\Models\User;
+use App\Models\WebhookDelivery;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
@@ -15,6 +17,21 @@ Artisan::command('zionfood:outbox', function () {
     $this->info('Undelivered events queued.');
 });
 Schedule::command('zionfood:outbox')->everyMinute()->withoutOverlapping();
+Artisan::command('zionfood:webhooks', function () {
+    WebhookDelivery::where(function ($query) {
+        $query->where(function ($q) {
+            $q->whereIn('status', ['pending', 'retrying'])->where('next_attempt_at', '<=', now());
+        })->orWhere(function ($q) {
+            $q->where('status', 'delivering')->where('locked_until', '<=', now());
+        });
+    })->chunkById(100, function ($deliveries) {
+        foreach ($deliveries as $delivery) {
+            DeliverWebhook::dispatch($delivery->id);
+        }
+    });
+    $this->info('Due webhook deliveries queued.');
+});
+Schedule::command('zionfood:webhooks')->everyMinute()->withoutOverlapping();
 Artisan::command('zionfood:admin {email}', function () {
     $user = User::where('email', $this->argument('email'))->first();
     if (! $user) {

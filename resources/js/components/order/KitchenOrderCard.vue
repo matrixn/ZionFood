@@ -5,7 +5,7 @@ import ZFStatusBadge from '@/components/ui/ZFStatusBadge.vue';
 import { api } from '@/lib/http';
 import type { Order, OrderStatus } from '@/types';
 const props = defineProps<{ order: Order; now: number }>();
-const emit = defineEmits<{ changed: []; details: [order: Order] }>();
+const emit = defineEmits<{ changed: [order?: Order]; details: [order: Order] }>();
 const busy = ref(false);
 const error = ref('');
 const reason = ref('');
@@ -14,12 +14,12 @@ async function transition(status: OrderStatus) {
     busy.value = true;
     error.value = '';
     try {
-        await api('/api/v1/orders/' + props.order.public_id + '/status', 'PATCH', {
+        const result = await api<{ data: Order }>('/api/v1/orders/' + props.order.public_id + '/status', 'PATCH', {
             status,
             version: props.order.version,
             reason: reason.value || null,
         });
-        emit('changed');
+        emit('changed', result.data);
     } catch (e) {
         error.value = (e as Error).message;
         emit('changed');
@@ -33,10 +33,10 @@ async function transition(status: OrderStatus) {
         <div class="mb-4 flex justify-between gap-2">
             <button class="font-semibold text-brand" @click="emit('details', order)">
                 #{{ order.public_id.slice(-8) }}</button
-            ><span :class="age > 20 ? 'text-red-600' : 'muted'">{{ age }} min</span>
+            ><span :class="age > 20 ? 'text-red-600' : 'muted'">{{ age }} {{ $t('min') }}</span>
         </div>
         <ZFStatusBadge :status="order.status" />
-        <p class="my-3 text-sm font-medium">{{ order.customer_name }} · {{ order.fulfillment }}</p>
+        <p class="my-3 text-sm font-medium">{{ order.customer_name }} · {{ $t('fulfillment_' + order.fulfillment) }}</p>
         <div v-for="item in order.items" :key="item.id" class="my-3 border-t border-slate-100 pt-3">
             <strong class="text-sm">{{ item.quantity }} × {{ item.name }}</strong>
             <p class="muted">{{ item.variant_name }}</p>
@@ -51,11 +51,11 @@ async function transition(status: OrderStatus) {
                 :label="
                     (
                         {
-                            accepted: 'Accept order',
-                            preparing: 'Start preparing',
-                            ready: 'Mark ready',
-                            out_for_delivery: 'Send for delivery',
-                            completed: 'Complete order',
+                            accepted: $t('accept_order'),
+                            preparing: $t('start_preparing'),
+                            ready: $t('mark_ready'),
+                            out_for_delivery: $t('send_for_delivery'),
+                            completed: $t('complete_order'),
                         } as Record<string, string>
                     )[status]
                 "
@@ -65,11 +65,11 @@ async function transition(status: OrderStatus) {
             /><template v-if="order.status === 'pending'"
                 ><input
                     v-model="reason"
-                    placeholder="Reason for rejection"
-                    aria-label="Reason for rejection"
+                    :placeholder="$t('reason_for_rejection')"
+                    :aria-label="$t('reason_for_rejection')"
                     maxlength="500"
                     class="rounded-lg border border-slate-300 bg-transparent p-3 text-sm" /><Button
-                    label="Reject order"
+                    :label="$t('reject_order')"
                     severity="danger"
                     outlined
                     :disabled="!reason.trim()"
@@ -77,7 +77,7 @@ async function transition(status: OrderStatus) {
                     @click="transition('rejected')" /></template
             ><Button
                 v-if="order.transitions.includes('cancelled')"
-                label="Cancel order"
+                :label="$t('cancel_order')"
                 severity="secondary"
                 text
                 :loading="busy"

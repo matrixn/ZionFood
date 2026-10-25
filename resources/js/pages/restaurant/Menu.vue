@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { tr as t } from '@/i18n';
+
 import { computed, ref } from 'vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
@@ -37,8 +39,8 @@ function editCategory(c?: Category) {
 }
 function remove(p: Product) {
     confirm.require({
-        message: `Remove ${p.name} from the menu? Historical orders will retain their snapshots.`,
-        header: 'Remove product',
+        message: t('remove_product_confirm', { name: p.name }),
+        header: t('remove_product'),
         accept: async () => {
             try {
                 await api('/app/items/' + p.public_id, 'DELETE');
@@ -52,12 +54,12 @@ function remove(p: Product) {
 </script>
 <template>
     <RestaurantLayout v-bind="$props"
-        ><Head title="Menu studio" /><ZFPageHeader
-            title="Made to be ordered."
-            description="Build a menu that feels like your restaurant."
+        ><Head :title="$t('menu_studio')" /><ZFPageHeader
+            :title="$t('made_to_be_ordered')"
+            :description="$t('build_a_menu_that_feels_like_your_restaurant')"
             ><div class="flex gap-2">
-                <Button label="Category" outlined icon="pi pi-plus" @click="editCategory()" /><Button
-                    label="Add product"
+                <Button :label="$t('category')" outlined icon="pi pi-plus" @click="editCategory()" /><Button
+                    :label="$t('add_product')"
                     icon="pi pi-plus"
                     :disabled="!categories.length"
                     @click="edit(null)"
@@ -66,17 +68,17 @@ function remove(p: Product) {
         <p v-if="error" role="alert">{{ error }}</p>
         <ZFEmptyState
             v-if="!categories.length"
-            title="Your menu starts here"
-            description="Create your first category, then add something delicious." />
+            :title="$t('your_menu_starts_here')"
+            :description="$t('create_your_first_category_then_add_something_delicious')" />
         <section v-for="c in categories" :key="c.id" class="mb-8">
             <div class="mb-4 flex items-center gap-3">
                 <h2 class="text-xl font-semibold">{{ c.name }}</h2>
-                <span class="muted">{{ c.items.length }} products</span
+                <span class="muted">{{ c.items.length }} {{ $t('products') }}</span
                 ><Button
                     icon="pi pi-pencil"
                     text
                     size="small"
-                    :aria-label="'Edit category ' + c.name"
+                    :aria-label="$t('edit_category_named', { name: c.name })"
                     @click="editCategory(c)"
                 />
             </div>
@@ -91,18 +93,23 @@ function remove(p: Product) {
                     <div class="flex items-start justify-between gap-2">
                         <h3 class="font-semibold">{{ p.name }}</h3>
                         <span :class="p.is_available ? 'text-success' : 'text-slate-400'" class="text-xs">{{
-                            p.is_available ? 'Available' : 'Paused'
+                            p.is_available ? $t('available') : $t('paused')
                         }}</span>
                     </div>
-                    <p class="muted my-3 line-clamp-2">{{ p.description || 'No description yet.' }}</p>
+                    <p class="muted my-3 line-clamp-2">{{ p.description || $t('no_description_yet') }}</p>
                     <div class="mt-4 flex items-center justify-between">
                         <strong>{{ money(p.price) }}</strong>
                         <div>
-                            <Button icon="pi pi-pencil" text :aria-label="'Edit ' + p.name" @click="edit(p)" /><Button
+                            <Button
+                                icon="pi pi-pencil"
+                                text
+                                :aria-label="$t('edit_named', { name: p.name })"
+                                @click="edit(p)"
+                            /><Button
                                 icon="pi pi-trash"
                                 text
                                 severity="danger"
-                                :aria-label="'Remove ' + p.name"
+                                :aria-label="$t('remove_named', { name: p.name })"
                                 @click="remove(p)"
                             />
                         </div>
@@ -112,9 +119,9 @@ function remove(p: Product) {
         </section>
         <section class="panel">
             <div class="mb-4 flex items-center justify-between">
-                <h2 class="text-xl font-semibold">Modifier groups</h2>
+                <h2 class="text-xl font-semibold">{{ $t('modifier_groups') }}</h2>
                 <Button
-                    label="Add group"
+                    :label="$t('add_group')"
                     text
                     icon="pi pi-plus"
                     @click="
@@ -130,19 +137,22 @@ function remove(p: Product) {
             >
                 <div>
                     <strong>{{ g.name }}</strong>
-                    <p class="muted">Select {{ g.min_choices }}–{{ g.max_choices }} · {{ g.options.length }} options</p>
+                    <p class="muted">
+                        {{ $t('select') }} {{ g.min_choices }}–{{ g.max_choices }} · {{ g.options.length }}
+                        {{ $t('options') }}
+                    </p>
                 </div>
                 <Button
                     icon="pi pi-pencil"
                     text
-                    :aria-label="'Edit ' + g.name"
+                    :aria-label="$t('edit_named', { name: g.name })"
                     @click="
                         group = g;
                         groupEditor = true;
                     "
                 />
             </div>
-            <p v-if="!groups.length" class="muted">Create extras, sides and customization choices.</p>
+            <p v-if="!groups.length" class="muted">{{ $t('create_extras_sides_and_customization_choices') }}</p>
         </section>
         <MenuItemEditor
             v-model:visible="editor"
@@ -153,7 +163,10 @@ function remove(p: Product) {
             @saved="router.reload()" /><ModifierGroupEditor
             v-model:visible="groupEditor"
             :group="group"
-            :location-id="location.public_id" /><Dialog v-model:visible="categoryEditor" header="Menu category" modal
+            :location-id="location.public_id" /><Dialog
+            v-model:visible="categoryEditor"
+            :header="$t('menu_category')"
+            modal
             ><form
                 class="grid gap-4"
                 @submit.prevent="
@@ -163,16 +176,17 @@ function remove(p: Product) {
                 "
             >
                 <label class="field"
-                    >Menu<Select
+                    >{{ $t('menu')
+                    }}<Select
                         v-model="category.menu_id"
                         :options="menus"
                         option-label="name"
                         option-value="id" /></label
-                ><label class="field">Category name<InputText v-model="category.name" required /></label>
+                ><label class="field">{{ $t('category_name') }}<InputText v-model="category.name" required /></label>
                 <p v-for="(message, key) in category.errors" :key="key" role="alert" class="text-red-600">
                     {{ message }}
                 </p>
-                <Button type="submit" label="Save category" :loading="category.processing" /></form></Dialog
+                <Button type="submit" :label="$t('save_category')" :loading="category.processing" /></form></Dialog
         ><ZFConfirmDialog
     /></RestaurantLayout>
 </template>

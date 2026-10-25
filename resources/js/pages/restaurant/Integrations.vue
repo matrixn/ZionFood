@@ -51,27 +51,29 @@ onMounted(load);
 </script>
 <template>
     <RestaurantLayout v-bind="$props"
-        ><Head title="Integrations" /><ZFPageHeader
-            title="Connect your tools."
-            description="Organization-scoped API access for WordPress and other integrations."
+        ><Head :title="$t('integrations')" /><ZFPageHeader
+            :title="$t('connect_your_tools')"
+            :description="$t('organization_scoped_api_access_for_wordpress_and_other_integrations')"
         />
         <p v-if="error" role="alert" class="my-5 text-red-600">{{ error }}</p>
         <section v-if="issued" class="panel mb-6">
-            <strong>Copy this token now. It is only shown once.</strong>
-            <p class="muted my-3">Store it securely in your integration’s backend. Expires in 90 days.</p>
+            <strong>{{ $t('copy_this_token_now_it_is_only_shown_once') }}</strong>
+            <p class="muted my-3">{{ $t('store_it_securely_in_your_integrations_backend_expires_in_90_days') }}</p>
             <code class="block break-all rounded-xl bg-slate-100 p-4 text-sm dark:bg-slate-800">{{ issued }}</code
-            ><Button label="Dismiss token" text class="mt-3" @click="issued = ''" />
+            ><Button :label="$t('dismiss_token')" text class="mt-3" @click="issued = ''" />
         </section>
         <form class="panel mb-6 grid max-w-xl gap-5" @submit.prevent="create">
-            <label class="field">Integration name<InputText v-model="name" required maxlength="100" /></label
+            <label class="field"
+                >{{ $t('integration_name') }}<InputText v-model="name" required maxlength="100" /></label
             ><label class="field"
-                >Permissions<MultiSelect
+                >{{ $t('permissions')
+                }}<MultiSelect
                     v-model="abilities"
                     :options="['menu:read', 'menu:write', 'orders:read', 'orders:manage']" /></label
-            ><Button label="Create token" type="submit" :loading="busy" />
+            ><Button :label="$t('create_token')" type="submit" :loading="busy" />
         </form>
         <section class="panel">
-            <h2 class="mb-4 text-lg font-semibold">Your integration tokens</h2>
+            <h2 class="mb-4 text-lg font-semibold">{{ $t('your_integration_tokens') }}</h2>
             <div
                 v-for="token in tokens"
                 :key="token.id"
@@ -80,14 +82,17 @@ onMounted(load);
                 <div>
                     <strong>{{ token.name }}</strong>
                     <p class="muted mt-2">{{ token.abilities.join(', ') }}</p>
-                    <p class="muted">Expires {{ new Date(token.expires_at).toLocaleDateString() }}</p>
+                    <p class="muted">
+                        {{ $t('expires') }}
+                        {{ new Date(token.expires_at).toLocaleDateString($i18n.locale === 'ro' ? 'ro-RO' : 'en-GB') }}
+                    </p>
                 </div>
-                <Button label="Revoke" severity="danger" outlined @click="revoke(token.id)" />
+                <Button :label="$t('revoke')" severity="danger" outlined @click="revoke(token.id)" />
             </div>
-            <p v-if="!tokens.length" class="muted">No integration tokens yet.</p>
+            <p v-if="!tokens.length" class="muted">{{ $t('no_integration_tokens_yet') }}</p>
         </section>
         <p class="muted mt-6">
-            Webhook delivery and the WordPress plugin are deferred. API contracts are documented in docs/API.md.
+            {{ $t('api_docs_wordpress') }}
         </p></RestaurantLayout
     >
 </template>

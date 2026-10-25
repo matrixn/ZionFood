@@ -74,72 +74,72 @@ async function save() {
 <template>
     <Dialog
         v-model:visible="visible"
-        :header="product ? 'Edit product' : 'Create product'"
+        :header="product ? $t('edit_product') : $t('create_product')"
         modal
         class="w-full max-w-2xl"
         ><form class="grid gap-5" @submit.prevent="save">
             <p v-if="error" role="alert" class="text-red-600">{{ error }}</p>
-            <ZFFormField label="Name" for="product-name"
+            <ZFFormField :label="$t('name')" for="product-name"
                 ><InputText id="product-name" v-model="form.name" required /></ZFFormField
-            ><ZFFormField label="Category"
+            ><ZFFormField :label="$t('category')"
                 ><Select
                     v-model="form.category_id"
                     :options="categories"
                     option-label="name"
                     option-value="id"
-                    aria-label="Product category" /></ZFFormField
-            ><ZFFormField label="Description"
-                ><Textarea v-model="form.description" rows="3" aria-label="Product description"
+                    :aria-label="$t('product_category')" /></ZFFormField
+            ><ZFFormField :label="$t('description')"
+                ><Textarea v-model="form.description" rows="3" :aria-label="$t('product_description')"
             /></ZFFormField>
             <div class="grid grid-cols-2 gap-4">
-                <ZFFormField label="Price (bani)"
+                <ZFFormField :label="$t('price_bani')"
                     ><InputNumber v-model="form.price" :min="0" :max="10000000" input-id="product-price" /></ZFFormField
-                ><ZFFormField label="Tax rate (basis points)"
+                ><ZFFormField :label="$t('tax_rate_basis_points')"
                     ><InputNumber v-model="form.tax_basis_points" :min="0" :max="10000"
                 /></ZFFormField>
             </div>
             <div class="flex items-center gap-3">
-                <ToggleSwitch v-model="form.is_available" input-id="available" /><label for="available"
-                    >Available to order</label
-                >
+                <ToggleSwitch v-model="form.is_available" input-id="available" /><label for="available">{{
+                    $t('available_to_order')
+                }}</label>
             </div>
-            <ZFFormField label="Modifier groups"
+            <ZFFormField :label="$t('modifier_groups')"
                 ><MultiSelect
                     v-model="form.modifier_group_ids"
                     :options="groups"
                     option-label="name"
                     option-value="id"
-                    aria-label="Modifier groups"
+                    :aria-label="$t('modifier_groups')"
             /></ZFFormField>
             <div>
-                <h3 class="mb-3 font-semibold">Variants</h3>
+                <h3 class="mb-3 font-semibold">{{ $t('variants') }}</h3>
                 <div v-for="(variant, i) in form.variants" :key="i" class="mb-3 flex gap-2">
                     <InputText
                         v-model="variant.name"
-                        placeholder="Variant name"
-                        aria-label="Variant name"
+                        :placeholder="$t('variant_name')"
+                        :aria-label="$t('variant_name')"
                         required
-                    /><InputNumber v-model="variant.price" :min="0" aria-label="Variant price in bani" /><Button
+                    /><InputNumber v-model="variant.price" :min="0" :aria-label="$t('variant_price_in_bani')" /><Button
                         icon="pi pi-times"
                         text
-                        aria-label="Remove variant"
+                        :aria-label="$t('remove_variant')"
                         @click="form.variants.splice(i, 1)"
                     />
                 </div>
                 <Button
-                    label="Add variant"
+                    :label="$t('add_variant')"
                     size="small"
                     text
                     icon="pi pi-plus"
                     @click="form.variants.push({ name: '', price: 0 })"
                 />
             </div>
-            <ZFFormField label="Product image (JPEG, PNG or WebP, max 4 MB)"
+            <ZFFormField :label="$t('product_image_jpeg_png_or_webp_max_4_mb')"
                 ><input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
-                    aria-label="Product image"
+                    :aria-label="$t('product_image')"
                     @change="image = ($event.target as HTMLInputElement).files?.[0]" /></ZFFormField
-            ><Button label="Save product" type="submit" :loading="busy" /></form
+            ><Button :label="$t('save_product')" type="submit" :loading="busy" /></form
     ></Dialog>
 </template>

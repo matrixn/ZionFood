@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { tr as t } from '@/i18n';
+
 import { computed } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthLayout from '@/layouts/AuthLayout.vue';
@@ -14,10 +16,10 @@ const props = defineProps<{
 const title = computed(
     () =>
         ({
-            login: 'Welcome back',
-            register: 'Start serving smarter',
-            forgot: 'Reset your password',
-            reset: 'Choose a new password',
+            login: t('welcome_back'),
+            register: t('start_serving_smarter'),
+            forgot: t('reset_your_password'),
+            reset: t('choose_a_new_password'),
         })[props.mode],
 );
 const form = useForm({
@@ -46,17 +48,17 @@ function submit() {
         <p class="muted mb-8 mt-3">
             {{
                 mode === 'register'
-                    ? 'Create your account. Your restaurant comes next.'
-                    : 'One workspace for every order.'
+                    ? $t('create_your_account_your_restaurant_comes_next')
+                    : $t('one_workspace_for_every_order')
             }}
         </p>
         <p v-if="status" role="status" class="mb-4 text-green-700">{{ status }}</p>
         <form class="grid gap-5" @submit.prevent="submit">
-            <ZFFormField v-if="mode === 'register'" label="Full name" for="name" :error="form.errors.name"
+            <ZFFormField v-if="mode === 'register'" :label="$t('full_name')" for="name" :error="form.errors.name"
                 ><InputText id="name" v-model="form.name" autocomplete="name" required /></ZFFormField
-            ><ZFFormField label="Email" for="email" :error="form.errors.email"
+            ><ZFFormField :label="$t('email')" for="email" :error="form.errors.email"
                 ><InputText id="email" v-model="form.email" type="email" autocomplete="email" required /></ZFFormField
-            ><ZFFormField v-if="mode !== 'forgot'" label="Password" for="password" :error="form.errors.password"
+            ><ZFFormField v-if="mode !== 'forgot'" :label="$t('password')" for="password" :error="form.errors.password"
                 ><InputText
                     id="password"
                     v-model="form.password"
@@ -66,7 +68,7 @@ function submit() {
                     required /></ZFFormField
             ><ZFFormField
                 v-if="mode === 'register' || mode === 'reset'"
-                label="Confirm password"
+                :label="$t('confirm_password')"
                 for="password_confirmation"
                 :error="form.errors.password_confirmation"
                 ><InputText
@@ -75,23 +77,25 @@ function submit() {
                     type="password"
                     autocomplete="new-password"
                     required /></ZFFormField
-            ><Link v-if="mode === 'login'" href="/forgot-password" class="text-sm text-brand">Forgot password?</Link
+            ><Link v-if="mode === 'login'" href="/forgot-password" class="text-sm text-brand">{{
+                $t('forgot_password')
+            }}</Link
             ><Button
                 type="submit"
                 :label="
                     mode === 'login'
-                        ? 'Sign in'
+                        ? $t('sign_in')
                         : mode === 'register'
-                          ? 'Create account'
+                          ? $t('create_account')
                           : mode === 'forgot'
-                            ? 'Send reset link'
-                            : 'Save password'
+                            ? $t('send_reset_link')
+                            : $t('save_password')
                 "
                 :loading="form.processing"
             />
             <p class="muted text-center">
                 <Link :href="mode === 'login' ? '/register' : '/login'" class="text-brand">{{
-                    mode === 'login' ? 'New here? Create an account' : 'Back to sign in'
+                    mode === 'login' ? $t('new_here_create_an_account') : $t('back_to_sign_in')
                 }}</Link>
             </p>
         </form></AuthLayout

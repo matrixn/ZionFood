@@ -13,6 +13,9 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, ['name' => ['required', 'string', 'max:150'], 'email' => ['required', 'email', 'max:255', 'unique:users'], 'password' => ['required', 'confirmed', Password::min(12)]])->validate();
 
-        return User::create(['name' => $input['name'], 'email' => strtolower($input['email']), 'password' => $input['password']]);
+        $user = User::create(['name' => $input['name'], 'email' => strtolower($input['email']), 'password' => $input['password']]);
+        $user->forceFill(['locale' => app()->getLocale()])->save();
+
+        return $user;
     }
 }

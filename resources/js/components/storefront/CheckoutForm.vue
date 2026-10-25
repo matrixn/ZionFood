@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { tr as t } from '@/i18n';
+
 import { computed, ref, watch } from 'vue';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
@@ -31,8 +33,8 @@ const payloadKey = ref('');
 const key = ref(cart.checkoutKey);
 const methods = computed(() =>
     [
-        { label: 'Pickup', value: 'pickup', enabled: props.fulfillment.pickup_enabled },
-        { label: 'Delivery', value: 'delivery', enabled: props.fulfillment.delivery_enabled },
+        { label: t('pickup'), value: 'pickup', enabled: props.fulfillment.pickup_enabled },
+        { label: t('delivery'), value: 'delivery', enabled: props.fulfillment.delivery_enabled },
     ].filter((m) => m.enabled),
 );
 const fee = computed(() =>
@@ -77,41 +79,46 @@ async function submit() {
 }
 </script>
 <template>
-    <Dialog v-model:visible="visible" header="Almost at your table." modal class="w-full max-w-xl"
+    <Dialog v-model:visible="visible" :header="$t('almost_at_your_table')" modal class="w-full max-w-xl"
         ><form class="grid gap-5" @submit.prevent="submit">
             <p v-if="error" role="alert" class="rounded-lg bg-red-50 p-3 text-red-700">{{ error }}</p>
-            <label class="field">Your name<InputText v-model="form.customer_name" autocomplete="name" required /></label
+            <label class="field"
+                >{{ $t('your_name') }}<InputText v-model="form.customer_name" autocomplete="name" required /></label
             ><label class="field"
-                >Phone number<InputText v-model="form.customer_phone" type="tel" autocomplete="tel" required /></label
+                >{{ $t('phone_number')
+                }}<InputText v-model="form.customer_phone" type="tel" autocomplete="tel" required /></label
             ><label class="field"
-                >How would you like your order?<Select
+                >{{ $t('how_would_you_like_your_order')
+                }}<Select
                     v-model="form.fulfillment"
                     :options="methods"
                     option-label="label"
                     option-value="value" /></label
             ><template v-if="form.fulfillment === 'delivery'"
                 ><label class="field"
-                    >Delivery address<InputText
-                        v-model="form.delivery_address"
-                        autocomplete="street-address"
-                        required /></label
+                    >{{ $t('delivery_address')
+                    }}<InputText v-model="form.delivery_address" autocomplete="street-address" required /></label
                 ><label class="field"
-                    >Postal code<InputText v-model="form.postal_code" autocomplete="postal-code" required /></label
+                    >{{ $t('postal_code')
+                    }}<InputText v-model="form.postal_code" autocomplete="postal-code" required /></label
                 ><label class="field"
-                    >Delivery zone<Select
+                    >{{ $t('delivery_zone')
+                    }}<Select
                         v-model="form.delivery_zone_id"
                         :options="zones"
                         option-label="name"
                         option-value="id" /></label></template
-            ><label class="field">Order notes<Textarea v-model="form.notes" rows="2" maxlength="1000" /></label>
+            ><label class="field"
+                >{{ $t('order_notes') }}<Textarea v-model="form.notes" rows="2" maxlength="1000"
+            /></label>
             <div class="flex justify-between text-lg font-semibold">
-                <span>Total{{ fee ? ' incl. delivery' : '' }}</span
+                <span>{{ fee ? $t('total_with_delivery') : $t('total') }}</span
                 ><span>{{ money(cart.total + fee) }}</span>
             </div>
-            <p class="muted">Pay at pickup or on delivery. Your order is subject to restaurant acceptance.</p>
+            <p class="muted">{{ $t('pay_at_pickup_or_on_delivery_your_order_is_subject_to_restaurant_acceptance') }}</p>
             <Button
                 type="submit"
-                label="Place order"
+                :label="$t('place_order')"
                 :loading="busy"
                 :disabled="!cart.lines.length || !methods.length"
             /></form

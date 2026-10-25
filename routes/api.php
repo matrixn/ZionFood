@@ -4,6 +4,7 @@ use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OperationsController;
 use App\Http\Controllers\PublicOrderingController;
+use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -11,6 +12,11 @@ Route::prefix('v1')->group(function () {
     Route::post('public/locations/{location}/checkout', [PublicOrderingController::class, 'checkout'])->middleware('throttle:checkout');
     Route::get('public/orders/{order}', [PublicOrderingController::class, 'tracking'])->middleware('throttle:tracking');
     Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+        Route::get('locations/{location}/webhooks', [WebhookController::class, 'index']);
+        Route::post('locations/{location}/webhooks', [WebhookController::class, 'store']);
+        Route::put('locations/{location}/webhooks/{endpoint}', [WebhookController::class, 'update']);
+        Route::delete('locations/{location}/webhooks/{endpoint}', [WebhookController::class, 'destroy']);
+        Route::post('locations/{location}/webhook-deliveries/{delivery}/retry', [WebhookController::class, 'retry'])->middleware('throttle:webhook-retry');
         Route::get('locations/{location}/integration-tokens', [IntegrationController::class, 'index']);
         Route::post('locations/{location}/integration-tokens', [IntegrationController::class, 'store']);
         Route::delete('locations/{location}/integration-tokens/{token}', [IntegrationController::class, 'destroy']);

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Menus\Actions\UpdateMenuItem;
+use App\Domain\Menus\RecordMenuChange;
 use App\Domain\Tenancy\TenantAccess;
 use App\Http\Requests\MenuItemRequest;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\RestaurantLocation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class MenuController extends Controller
@@ -65,7 +67,10 @@ class MenuController extends Controller
     {
         $model = MenuItem::where('public_id', $item)->firstOrFail();
         app(TenantAccess::class)->requireManage($request->user(), $model->organization_id);
-        $model->delete();
+        DB::transaction(function () use ($model) {
+            $model->delete();
+            app(RecordMenuChange::class)->execute($model->organization_id, $model->category->menu_id, ['item_id' => $model->public_id, 'deleted' => true]);
+        });
 
         return response()->noContent();
     }

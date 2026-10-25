@@ -20,12 +20,12 @@ class TransitionOrderStatus
 
         return DB::transaction(function () use ($actor, $context, $next, $version, $reason) {
             $order = Order::whereKey($context->id)->lockForUpdate()->firstOrFail();
-            abort_unless($order->version === $version, 409, 'Order changed. Refresh and try again.');
+            abort_unless($order->version === $version, 409, __('Order changed. Refresh and try again.'));
             if (! in_array($next, $order->status->transitions($order->fulfillment), true)) {
-                throw ValidationException::withMessages(['status' => 'This status transition is not allowed.']);
+                throw ValidationException::withMessages(['status' => __('This status transition is not allowed.')]);
             }
             if ($next === OrderStatus::Rejected && blank($reason)) {
-                throw ValidationException::withMessages(['reason' => 'A rejection reason is required.']);
+                throw ValidationException::withMessages(['reason' => __('A rejection reason is required.')]);
             }
             $old = $order->status;
             $order->update(['status' => $next, 'version' => $version + 1]);

@@ -6,6 +6,7 @@ import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
+import { i18n, primeLocale } from '@/i18n';
 import '../css/app.css';
 import 'primeicons/primeicons.css';
 const preset = definePreset(Aura, {
@@ -34,10 +35,15 @@ createInertiaApp({
         return (await loader()).default;
     },
     setup({ el, App, props, plugin }) {
+        i18n.global.locale.value = props.initialPage.props.locale === 'en' ? 'en' : 'ro';
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(i18n)
             .use(createPinia())
-            .use(PrimeVue, { theme: { preset, options: { darkModeSelector: '.dark' } } })
+            .use(PrimeVue, {
+                locale: primeLocale(i18n.global.locale.value),
+                theme: { preset, options: { darkModeSelector: '.dark' } },
+            })
             .use(ToastService)
             .use(ConfirmationService)
             .mount(el);

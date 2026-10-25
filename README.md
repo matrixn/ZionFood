@@ -4,7 +4,7 @@
 
 Laravel 12 / PHP 8.4 / MariaDB / Redis / Horizon / Reverb / Sanctum, with Vue 3, Inertia 3, strict TypeScript, PrimeVue 4 and Tailwind 4.
 
-Implemented flows include account onboarding, tenant-aware menus, public ordering, server pricing, idempotent checkout, secure tracking, realtime kitchen operations and organization-scoped integration tokens. Billing automation, outbound webhooks, the WordPress plugin and custom-domain provisioning remain outside this release.
+Implemented flows include onboarding, tenant-aware menus and staff invitations/access, full restaurant branding, public ordering, server pricing, idempotent checkout, secure tracking, realtime kitchen operations, organization-scoped tokens and signed webhooks with delivery history/retries. Romanian is the default interface language; English is available through a flag/name selector on every layout. Billing automation, the WordPress plugin and custom-domain provisioning remain outside this release.
 
 Start with [local setup and deployment](docs/DEPLOYMENT.md). In a fresh environment:
 
@@ -27,6 +27,7 @@ Use Linux/WSL for Composer and Horizon. Run Horizon, Reverb and the scheduler as
 - [Database schema](docs/DATABASE_SCHEMA.md)
 - [API contracts](docs/API.md) and [OpenAPI](docs/openapi.json)
 - [Security boundaries](docs/SECURITY.md)
+- [Staff, branding, languages and webhook operations](docs/STAFF_BRANDING_LOCALIZATION_WEBHOOKS.md)
 - [Implemented scope](docs/MVP_SCOPE.md)
 - [Verification and progress](docs/CODEX_PROGRESS.md)
 - [Measured benchmarks](docs/BENCHMARKS.md)

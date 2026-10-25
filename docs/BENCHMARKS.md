@@ -44,3 +44,7 @@ Set BASE_URL and fixture path appropriately for another staging deployment; neve
 ## What remains unmeasured
 
 Real Reverb event receipt was verified in Playwright, but WebSocket latency distributions and the proposed two-second target have not been benchmarked. The k6 kitchen scenario measures HTTP state reconciliation. There is no sustained soak, 100 simultaneous kitchen clients, large menus, multi-server Reverb, production TLS/network, resource saturation study, disk-full test or end-to-end crash/recovery benchmark. Local threshold success does not establish production capacity for 100 busy restaurants.
+
+## Subsequent implementation note — October 26
+
+These measurements describe the October 25 baseline. Staff administration, branding, localization and webhook delivery were added afterward. Functional and concurrency checks were rerun for that increment; the k6 results above were not rerun and must not be presented as new throughput measurements for the expanded code. No sustained external webhook throughput was measured.

@@ -13,10 +13,10 @@ class MenuItemRequest extends FormRequest
             try {
                 $payload = json_decode($this->input('payload'), true, 32, JSON_THROW_ON_ERROR);
             } catch (\JsonException) {
-                throw ValidationException::withMessages(['payload' => 'Invalid product payload.']);
+                throw ValidationException::withMessages(['payload' => __('Invalid product payload.')]);
             }
             if (! is_array($payload)) {
-                throw ValidationException::withMessages(['payload' => 'Invalid product payload.']);
+                throw ValidationException::withMessages(['payload' => __('Invalid product payload.')]);
             }
             $this->merge(array_intersect_key($payload, array_flip(['category_id', 'name', 'description', 'price', 'tax_basis_points', 'is_available', 'variants', 'modifier_group_ids'])));
         }

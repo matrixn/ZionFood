@@ -20,7 +20,8 @@
     "primeicons": "^7.0.0",
     "primevue": "^4.0.0",
     "pusher-js": "^8.4.0",
-    "vue": "^3.5.0"
+    "vue": "^3.5.0",
+    "vue-i18n": "^11.4.16"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

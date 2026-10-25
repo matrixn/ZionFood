@@ -7,6 +7,6 @@ defineProps<{ label: string; value: string | number; icon: string }>();
             <p class="muted mb-2">{{ label }}</p>
             <strong class="text-3xl">{{ value }}</strong>
         </div>
-        <i :class="['pi text-2xl text-brand', icon]" />
+        <i aria-hidden="true" :class="['pi text-2xl text-brand', icon]" />
     </div>
 </template>

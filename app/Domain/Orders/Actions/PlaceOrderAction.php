@@ -34,7 +34,7 @@ class PlaceOrderAction
                 }
             }
 
-return $value;
+            return $value;
         };
         $hash = hash('sha256', json_encode($canonical($data), JSON_THROW_ON_ERROR));
 
@@ -43,7 +43,7 @@ return $value;
             $location = RestaurantLocation::whereKey($context->id)->lockForUpdate()->firstOrFail();
             $existing = CheckoutIdempotencyKey::where('location_id', $location->id)->where('key', $key)->first();
             if ($existing) {
-                abort_unless(hash_equals($existing->request_hash, $hash), 409, 'Idempotency key was used with different checkout data.');
+                abort_unless(hash_equals($existing->request_hash, $hash), 409, __('Idempotency key was used with different checkout data.'));
                 $order = Order::findOrFail($existing->order_id);
 
                 return ['order' => $order, 'tracking_token' => Crypt::decryptString($order->tracking_token_encrypted), 'replayed' => true];
@@ -55,40 +55,40 @@ return $value;
             foreach ($data['items'] as $requested) {
                 $item = MenuItem::with(['variants', 'modifierGroups.options'])->where('public_id', $requested['product_id'])->where('organization_id', $location->organization_id)
                     ->whereHas('category', fn ($q) => $q->whereIn('menu_id', $menuIds))->where('is_available', true)->first();
-                $this->require((bool) $item, 'A product is unavailable at this location.');
+                $this->require((bool) $item, __('A product is unavailable at this location.'));
                 $variant = null;
                 if ($item->variants->isNotEmpty()) {
                     $variant = $item->variants->firstWhere('id', $requested['variant_id'] ?? null);
-                    $this->require($variant && $variant->is_available, 'Select an available variant.');
+                    $this->require($variant && $variant->is_available, __('Select an available variant.'));
                 } else {
-                    $this->require(empty($requested['variant_id']), 'Invalid variant.');
+                    $this->require(empty($requested['variant_id']), __('Invalid variant.'));
                 }
                 $unit = $variant?->price ?? $item->price;
                 $optionIds = $requested['modifier_ids'] ?? [];
-                $this->require(count($optionIds) === count(array_unique($optionIds)), 'Duplicate modifiers are not allowed.');
+                $this->require(count($optionIds) === count(array_unique($optionIds)), __('Duplicate modifiers are not allowed.'));
                 $modifiers = [];
                 $matched = [];
                 foreach ($item->modifierGroups as $group) {
                     $options = $group->options->whereIn('id', $optionIds);
-                    $this->require($options->count() >= $group->min_choices && $options->count() <= $group->max_choices, 'Invalid choices for '.$group->name.'.');
+                    $this->require($options->count() >= $group->min_choices && $options->count() <= $group->max_choices, __('Invalid choices for :name.', ['name' => $group->name]));
                     foreach ($options as $option) {
-                        $this->require($option->is_available, 'A modifier is unavailable.');
+                        $this->require($option->is_available, __('A modifier is unavailable.'));
                         $matched[] = $option->id;
                         $unit += $option->price;
                         $modifiers[] = ['group_name' => $group->name, 'name' => $option->name, 'price' => $option->price];
                     }
                 }
-                $this->require(count($matched) === count($optionIds), 'Invalid modifier selection.');
+                $this->require(count($matched) === count($optionIds), __('Invalid modifier selection.'));
                 $total = $unit * $requested['quantity'];
                 $subtotal += $total;
-                $this->require($subtotal <= 100000000, 'Order value exceeds the supported limit.');
+                $this->require($subtotal <= 100000000, __('Order value exceeds the supported limit.'));
                 $lines[] = ['line' => ['product_public_id' => $item->public_id, 'name' => $item->name, 'variant_name' => $variant?->name, 'quantity' => $requested['quantity'], 'unit_price' => $unit, 'tax_basis_points' => $item->tax_basis_points, 'total' => $total], 'modifiers' => $modifiers];
             }
             $fee = 0;
             if ($data['fulfillment'] === 'delivery') {
                 $zone = $location->zones()->whereKey($data['delivery_zone_id'] ?? 0)->where('is_active', true)->first();
-                $this->require($zone && str_starts_with($data['postal_code'] ?? '', $zone->postal_prefix), 'Address is outside the selected delivery zone.');
-                $this->require($subtotal >= $zone->minimum_order, 'Delivery minimum order has not been reached.');
+                $this->require($zone && str_starts_with($data['postal_code'] ?? '', $zone->postal_prefix), __('Address is outside the selected delivery zone.'));
+                $this->require($subtotal >= $zone->minimum_order, __('Delivery minimum order has not been reached.'));
                 $fee = $zone->fee;
             }
             $token = Str::random(64);
@@ -109,13 +109,13 @@ return $value;
 
     private function checkAvailability(RestaurantLocation $location, string $fulfillment): void
     {
-        $this->require($location->accepting_orders, 'This location is not accepting orders.');
+        $this->require($location->accepting_orders, __('This location is not accepting orders.'));
         $subscription = OrganizationSubscription::with('plan')->where('organization_id', $location->organization_id)->first();
-        $this->require($subscription && ($subscription->status === 'active' || ($subscription->status === 'trial' && $subscription->trial_ends_at->isFuture())) && ($subscription->plan->features['ordering'] ?? false), 'Online ordering is unavailable.');
+        $this->require($subscription && ($subscription->status === 'active' || ($subscription->status === 'trial' && $subscription->trial_ends_at->isFuture())) && ($subscription->plan->features['ordering'] ?? false), __('Online ordering is unavailable.'));
         $now = now($location->timezone);
         $hours = $location->hours()->where('weekday', $now->isoWeekday())->first();
-        $this->require($hours && $now->format('H:i:s') >= $hours->opens_at && $now->format('H:i:s') < $hours->closes_at, 'This location is closed.');
-        $this->require((bool) $location->fulfillment?->getAttribute($fulfillment.'_enabled'), 'This fulfillment method is unavailable.');
+        $this->require($hours && $now->format('H:i:s') >= $hours->opens_at && $now->format('H:i:s') < $hours->closes_at, __('This location is closed.'));
+        $this->require((bool) $location->fulfillment?->getAttribute($fulfillment.'_enabled'), __('This fulfillment method is unavailable.'));
     }
 
     private function require(bool $condition, string $message): void

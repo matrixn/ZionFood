@@ -13,4 +13,4 @@ const severity: Record<OrderStatus, 'warn' | 'info' | 'success' | 'danger' | 'se
     cancelled: 'secondary',
 };
 </script>
-<template><Tag :value="status.replaceAll('_', ' ')" :severity="severity[status]" class="capitalize" /></template>
+<template><Tag :value="$t('status_' + status)" :severity="severity[status]" class="capitalize" /></template>

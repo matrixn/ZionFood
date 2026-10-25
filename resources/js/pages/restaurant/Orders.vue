@@ -32,10 +32,10 @@ onMounted(() => load());
 </script>
 <template>
     <RestaurantLayout v-bind="$props"
-        ><Head title="Orders" /><ZFPageHeader
-            title="Every order has a story."
-            description="Browse current orders and your complete order history."
-            ><Button label="Refresh" icon="pi pi-refresh" outlined :loading="busy" @click="load()"
+        ><Head :title="$t('orders')" /><ZFPageHeader
+            :title="$t('every_order_has_a_story')"
+            :description="$t('browse_current_orders_and_your_complete_order_history')"
+            ><Button :label="$t('refresh')" icon="pi pi-refresh" outlined :loading="busy" @click="load()"
         /></ZFPageHeader>
         <p v-if="error" role="alert" class="mb-5 text-red-600">{{ error }}</p>
         <OrderTable
@@ -47,7 +47,7 @@ onMounted(() => load());
             " /><Button
             v-if="next"
             class="mt-5"
-            label="Load more orders"
+            :label="$t('load_more_orders')"
             :loading="busy"
             @click="load(next!, true)" /><OrderDetailsDrawer v-model:visible="visible" :order="selected"
     /></RestaurantLayout>

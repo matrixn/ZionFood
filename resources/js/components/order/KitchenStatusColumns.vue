@@ -1,13 +1,16 @@
 <script setup lang="ts">
+import { tr as t } from '@/i18n';
+
+import { computed } from 'vue';
 import KitchenOrderCard from './KitchenOrderCard.vue';
 import type { Order } from '@/types';
 defineProps<{ orders: Order[]; now: number }>();
-const emit = defineEmits<{ changed: []; details: [order: Order] }>();
-const columns = [
-    { title: 'Incoming', statuses: ['pending'] },
-    { title: 'In preparation', statuses: ['accepted', 'preparing'] },
-    { title: 'Ready to serve', statuses: ['ready', 'out_for_delivery'] },
-];
+const emit = defineEmits<{ changed: [order?: Order]; details: [order: Order] }>();
+const columns = computed(() => [
+    { title: t('incoming'), statuses: ['pending'] },
+    { title: t('in_preparation'), statuses: ['accepted', 'preparing'] },
+    { title: t('ready_to_serve'), statuses: ['ready', 'out_for_delivery'] },
+]);
 </script>
 <template>
     <div class="grid gap-5 xl:grid-cols-3">
@@ -24,11 +27,11 @@ const columns = [
                     :key="order.public_id"
                     :order="order"
                     :now="now"
-                    @changed="emit('changed')"
+                    @changed="emit('changed', $event)"
                     @details="emit('details', $event)"
                 />
                 <p v-if="!orders.some((o) => column.statuses.includes(o.status))" class="muted py-10 text-center">
-                    All clear. Ready for what’s next.
+                    {{ $t('all_clear_ready_for_whats_next') }}
                 </p>
             </div>
         </section>

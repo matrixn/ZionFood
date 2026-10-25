@@ -62,7 +62,7 @@ export interface Location {
     currency: string;
     timezone: string;
     accepting_orders: boolean;
-    restaurant: { name: string; slug: string };
+    restaurant: RestaurantBrand;
     hours: BusinessHour[];
     fulfillment: { pickup_enabled: boolean; delivery_enabled: boolean };
     zones: Zone[];
@@ -98,4 +98,17 @@ export interface WorkspaceProps {
     location: Location;
     locations: Location[];
     canManage: boolean;
+}
+
+export interface RestaurantBrand {
+    name: string;
+    slug: string;
+    description?: string | null;
+    tagline?: string | null;
+    primary_color?: string;
+    logo_path?: string | null;
+    cover_path?: string | null;
+    contact_email?: string | null;
+    contact_phone?: string | null;
+    website?: string | null;
 }

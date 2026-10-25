@@ -2,6 +2,7 @@
 
 namespace App\Domain\Menus\Actions;
 
+use App\Domain\Menus\RecordMenuChange;
 use App\Domain\Tenancy\TenantAccess;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
@@ -19,13 +20,15 @@ class UpdateMenuItem
         $category = MenuCategory::whereKey($data['category_id'])->where('organization_id', $organizationId)->first();
         $ids = $data['modifier_group_ids'] ?? [];
         if (! $category || ModifierGroup::where('organization_id', $organizationId)->whereIn('id', $ids)->count() !== count($ids)) {
-            throw ValidationException::withMessages(['category_id' => 'Category and modifiers must belong to this organization.']);
+            throw ValidationException::withMessages(['category_id' => __('Category and modifiers must belong to this organization.')]);
         }
         if ($item && $item->category->menu->restaurant_id !== $category->menu->restaurant_id) {
-            throw ValidationException::withMessages(['category_id' => 'Cannot move products between restaurants.']);
+            throw ValidationException::withMessages(['category_id' => __('Cannot move products between restaurants.')]);
         }
 
-        return DB::transaction(function () use ($data, $organizationId, $item, $ids) {
+        $oldMenuId = $item?->category?->menu_id;
+
+        return DB::transaction(function () use ($data, $organizationId, $item, $ids, $category, $oldMenuId) {
             $fields = array_intersect_key($data, array_flip(['category_id', 'name', 'description', 'price', 'tax_basis_points', 'is_available', 'image_path']));
             if ($item) {
                 $item->update($fields);
@@ -39,6 +42,10 @@ class UpdateMenuItem
                 }
             }
             $item->modifierGroups()->sync(collect($ids)->mapWithKeys(fn ($id) => [$id => ['organization_id' => $organizationId]])->all());
+            app(RecordMenuChange::class)->execute($organizationId, $category->menu_id, ['item_id' => $item->public_id]);
+            if ($oldMenuId && $oldMenuId !== $category->menu_id) {
+                app(RecordMenuChange::class)->execute($organizationId, $oldMenuId, ['item_id' => $item->public_id, 'removed' => true]);
+            }
 
             return $item->fresh(['variants', 'modifierGroups.options']);
         });

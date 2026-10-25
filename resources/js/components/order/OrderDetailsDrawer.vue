@@ -8,7 +8,7 @@ defineProps<{ order: Order | null }>();
 const visible = defineModel<boolean>('visible', { required: true });
 </script>
 <template>
-    <ZFDrawer v-model:visible="visible" title="Order details"
+    <ZFDrawer v-model:visible="visible" :title="$t('order_details')"
         ><div v-if="order" class="grid gap-6">
             <div class="flex justify-between">
                 <strong>#{{ order.public_id.slice(-8) }}</strong
@@ -29,7 +29,8 @@ const visible = defineModel<boolean>('visible', { required: true });
                 <p v-for="mod in item.modifiers" :key="mod.id" class="muted">+ {{ mod.name }}</p>
             </div>
             <div class="flex justify-between font-semibold">
-                <span>Total</span><span>{{ money(order.total, order.currency) }}</span>
+                <span>{{ $t('total') }}</span
+                ><span>{{ money(order.total, order.currency) }}</span>
             </div>
             <OrderTrackingTimeline :history="order.history" /></div
     ></ZFDrawer>

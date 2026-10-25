@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\BrandingController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PublicOrderingController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\WorkspaceController;
 use App\Models\RestaurantLocation;
 use Illuminate\Http\Request;
@@ -18,8 +21,16 @@ Route::get('/', function (Request $request, PublicOrderingController $controller
 Route::get('/store/{location}', function (Request $r, string $location, PublicOrderingController $c) {
     return Inertia::render('storefront/Menu', $c->data($c->resolve($r, $location)));
 });
+Route::post('/locale', [LocaleController::class, 'update']);
 Route::get('/track/{order}', fn (string $order) => Inertia::render('storefront/Tracking', ['orderId' => $order]));
+Route::get('/invitations/{invitation}', [StaffController::class, 'invitation']);
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/invitations/{invitation}', [StaffController::class, 'accept']);
+    Route::post('/app/locations/{location}/staff/invitations', [StaffController::class, 'invite'])->middleware('throttle:staff-invitations');
+    Route::delete('/app/locations/{location}/staff/invitations/{invitation}', [StaffController::class, 'revoke']);
+    Route::put('/app/locations/{location}/staff/{membership}', [StaffController::class, 'update']);
+    Route::delete('/app/locations/{location}/staff/{membership}', [StaffController::class, 'destroy']);
+    Route::post('/app/locations/{location}/branding', [BrandingController::class, 'update']);
     Route::get('/app', [WorkspaceController::class, 'home'])->name('dashboard');
     Route::get('/onboarding', fn () => Inertia::render('Onboarding'));
     Route::post('/onboarding', [WorkspaceController::class, 'onboard']);

@@ -59,7 +59,8 @@ function add() {
         ><div v-if="product" class="grid gap-5">
             <p class="muted">{{ product.description }}</p>
             <label v-if="product.variants.length" class="field"
-                >Size / variant<Select
+                >{{ $t('size_variant')
+                }}<Select
                     v-model="variant"
                     :options="product.variants.map((v) => ({ ...v, label: v.name + ' · ' + money(v.price) }))"
                     option-label="label"
@@ -74,7 +75,12 @@ function add() {
                     }}<span class="ml-auto text-sm">+ {{ money(o.price) }}</span></label
                 >
             </fieldset>
-            <label class="field">Quantity<InputNumber v-model="quantity" :min="1" :max="50" show-buttons /></label
-            ><Button :label="'Add to cart · ' + money(price * quantity)" :disabled="!valid" @click="add" /></div
+            <label class="field"
+                >{{ $t('quantity') }}<InputNumber v-model="quantity" :min="1" :max="50" show-buttons /></label
+            ><Button
+                :label="$t('add_to_cart_total', { total: money(price * quantity) })"
+                :disabled="!valid"
+                @click="add"
+            /></div
     ></Dialog>
 </template>

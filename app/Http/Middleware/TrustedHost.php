@@ -20,7 +20,7 @@ class TrustedHost
             $domain = StorefrontDomain::where('hostname', $host)->where('verification_status', 'verified')->first();
             abort_unless($domain, 404);
             $request->attributes->set('storefront_location', $domain->location_id);
-            abort_unless($request->is('/') || $request->is('track/*') || $request->is('api/v1/public/*'), 404);
+            abort_unless($request->is('/') || $request->is('locale') || $request->is('track/*') || $request->is('api/v1/public/*'), 404);
         }
         if (! $central && ($request->is('app*') || $request->is('admin*') || $request->is('kitchen*') || $request->is('login') || $request->is('register') || $request->is('onboarding') || $request->is('horizon*') || $request->is('broadcasting/*'))) {
             abort(404);

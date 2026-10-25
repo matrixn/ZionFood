@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Domain\Integrations\QueueWebhooks;
 use App\Events\OrderChanged;
 use App\Models\OutboxMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -32,8 +33,11 @@ class DeliverOutbox implements ShouldQueue
                 return null;
             }
             $message->increment('attempts');
+            app(QueueWebhooks::class)->execute($message);
             try {
-                event(new OrderChanged($message->organization_id, $message->location_id, ['event_id' => $message->event_id, 'type' => $message->type, ...$message->payload]));
+                if (str_starts_with($message->type, 'order.')) {
+                    event(new OrderChanged($message->organization_id, $message->location_id, ['event_id' => $message->event_id, 'type' => $message->type, ...$message->payload]));
+                }
                 $message->update(['delivered_at' => now(), 'last_error' => null]);
 
                 return null;

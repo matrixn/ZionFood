@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 const accounts = JSON.parse(readFileSync('storage/app/private/demo-accounts.json', 'utf8')) as { email: string; password: string; location: string }[];
+test.beforeEach(async ({ page }) => { await page.goto('/'); await page.getByTestId('language-selector').click(); await page.getByRole('option', { name: 'English', exact: true }).click(); await expect(page.locator('html')).toHaveAttribute('lang', 'en'); });
+
 test('committed checkout reaches the authorized private Reverb channel', async ({ page, request }) => {
     const frames: string[] = [];
     page.on('websocket', (socket) => socket.on('framereceived', (event) => frames.push(String(event.payload))));
@@ -27,6 +29,7 @@ test('landing, registration and responsive storefront render', async ({ page }) 
     expect(errors).toEqual([]);
 });
 test('customer checks out and kitchen recovers the order after reload', async ({ page, browser }) => {
+    test.setTimeout(90000);
     await page.goto('/store/' + accounts[0].location);
     await page.getByRole('button', { name: /Bruschetta/ }).click();
     await page.getByRole('button', { name: /Add to cart/ }).click();
@@ -34,10 +37,10 @@ test('customer checks out and kitchen recovers the order after reload', async ({
     await page.getByRole('textbox', { name: 'Your name', exact: true }).fill('Playwright Guest');
     await page.getByRole('textbox', { name: 'Phone number', exact: true }).fill('0712345678');
     await page.getByRole('button', { name: 'Place order', exact: true }).click();
-    await expect(page).toHaveURL(/\/track\//); await expect(page.getByText('pending', { exact: true }).first()).toBeVisible();
+    await expect(page).toHaveURL(/\/track\//); await expect(page.getByText('Pending', { exact: true }).first()).toBeVisible();
     const orderId = page.url().split('/').at(-1)!;
     const context = await browser.newContext(); const kitchen = await context.newPage();
-    await kitchen.goto('/login'); await kitchen.getByLabel('Email', { exact: true }).fill(accounts[0].email); await kitchen.getByLabel('Password', { exact: true }).fill(accounts[0].password); await kitchen.getByRole('button', { name: 'Sign in', exact: true }).click();
+    await kitchen.goto('/login'); await kitchen.getByTestId('language-selector').click(); await kitchen.getByRole('option', { name: 'English', exact: true }).click(); await expect(kitchen.locator('html')).toHaveAttribute('lang', 'en'); await kitchen.getByLabel('Email', { exact: true }).fill(accounts[0].email); await kitchen.getByLabel('Password', { exact: true }).fill(accounts[0].password); await kitchen.getByRole('button', { name: 'Sign in', exact: true }).click();
     await expect(kitchen).toHaveURL(/\/app\/locations\//);
     await kitchen.goto('/app/locations/' + accounts[0].location + '/kitchen');
     let card = kitchen.locator('article').filter({ hasText: '#' + orderId.slice(-8) }); await expect(card).toBeVisible();
@@ -47,7 +50,7 @@ test('customer checks out and kitchen recovers the order after reload', async ({
         if (label !== 'Complete order') await expect(card.getByRole('button', { name: ({ 'Accept order': 'Start preparing', 'Start preparing': 'Mark ready', 'Mark ready': 'Complete order' } as Record<string, string>)[label], exact: true })).toBeVisible();
     }
     await expect(card).toHaveCount(0);
-    await page.reload(); await expect(page.getByText('completed', { exact: true }).first()).toBeVisible();
+    await page.reload(); await expect(page.getByText('Completed', { exact: true }).first()).toBeVisible();
     await kitchen.goto('/app/locations/' + accounts[0].location + '/menu'); await expect(kitchen.getByRole('heading', { name: 'Made to be ordered.' })).toBeVisible();
     await kitchen.getByRole('button', { name: 'Edit Bruschetta', exact: true }).click(); await kitchen.getByLabel('Name', { exact: true }).fill('Bruschetta'); await kitchen.getByRole('button', { name: 'Save product', exact: true }).click(); await expect(kitchen.getByRole('dialog')).toHaveCount(0);
     await kitchen.screenshot({ path: 'test-results/menu-desktop.png', fullPage: true });

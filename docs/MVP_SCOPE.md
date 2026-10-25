@@ -12,17 +12,20 @@
 - Transactional outbox, after-commit dispatch, retries and scheduler reconciliation.
 - Organization/trial platform overview, admin setup command and protected Horizon access.
 - Versioned public/integration APIs; organization-scoped tokens with abilities, expiry, listing and revocation.
+- Staff administration with protected roles, location assignments, expiring/revocable invitations and verified-email acceptance.
+- Restaurant identity, managed slug, tagline, logo/cover, action colors, public contacts, preview and branded tracking.
+- Romanian-default and English interfaces with persistent flag/name selectors across all layouts.
+- Signed per-location webhooks for order/menu/item events, secure destination resolution/pinning, durable delivery history, retries and reconciliation.
 - MariaDB/Redis local Compose services, three restaurant demos, factories, automated tests, OpenAPI and configurable k6 scenarios.
 
 ## Remaining before production launch
 
 - Complete Forge deployment and external DNS/TLS/mail configuration, including verified live subdomains.
-- Expand staff/role administration and invitations; roles and location assignments currently exist in models and authorization, without a staff-management screen.
-- Complete restaurant brand editing and multi-restaurant/multi-location creation screens. Onboarding creates one of each; the schema and location switcher support multiple records.
-- Add webhook configuration/delivery and the separate WordPress plugin; provision custom domains and SSL only after critical ordering work is stable.
+- Complete multi-restaurant/multi-location creation screens. Onboarding creates one of each; the schema and location switcher support multiple records.
+- Implement the separate WordPress plugin; provision custom domains and SSL after operational verification.
 - Harden billing/subscription lifecycle beyond local trial entitlement. No payment collection.
 - Define privacy retention, idempotency cleanup, outbox archival, backup/restore and incident procedures.
-- Persist carts across full refresh if desired, add a portable tracking flow and improve regional language/content coverage.
+- Persist carts across full refresh if desired and add a portable customer tracking flow. Interface languages are Romanian/English; owner-authored menu content is not automatically translated.
 - Extend browser coverage of reset/verification emails, delivery flows, dark mode, touch sound/fullscreen and accessibility; real SMTP remains unverified.
 - Validate capacity on the intended production runtime. Local load results must be read with their precise test conditions; notification p95 and sustained outage recovery are not production guarantees.
 

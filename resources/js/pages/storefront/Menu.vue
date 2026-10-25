@@ -8,10 +8,10 @@ import CheckoutForm from '@/components/storefront/CheckoutForm.vue';
 import Button from 'primevue/button';
 import { useCart } from '@/stores/cart';
 import { money } from '@/lib/http';
-import type { Menu, Product, Zone } from '@/types';
+import type { Menu, Product, Zone, RestaurantBrand } from '@/types';
 const props = defineProps<{
     location: { public_id: string; name: string; address: string; accepting_orders: boolean };
-    restaurant: { name: string; description: string | null };
+    restaurant: RestaurantBrand;
     menus: Menu[];
     fulfillment: { pickup_enabled: boolean; delivery_enabled: boolean };
     zones: Zone[];
@@ -25,20 +25,33 @@ const drawer = ref(false);
 const checkout = ref(false);
 </script>
 <template>
-    <StorefrontLayout :name="restaurant.name"
+    <StorefrontLayout :name="restaurant.name" :brand="restaurant"
         ><Head :title="restaurant.name" /><template #actions
-            ><Button :label="'Your cart (' + cart.lines.length + ')'" icon="pi pi-shopping-bag" @click="drawer = true"
+            ><Button
+                :label="$t('cart_count', { count: cart.lines.length })"
+                icon="pi pi-shopping-bag"
+                @click="drawer = true"
         /></template>
-        <section class="mb-8 rounded-3xl bg-ink p-8 text-white md:p-12">
-            <span class="text-sm text-violet-300">FRESHLY MADE. JUST FOR YOU.</span>
-            <h1 class="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">{{ restaurant.name }}</h1>
-            <p class="mt-4 max-w-xl text-slate-300">
-                {{ restaurant.description || 'Good food brings people together. Find your favourite below.' }}
-            </p>
-            <p class="mt-6 text-sm text-slate-400"><i class="pi pi-map-marker mr-2" />{{ location.address }}</p>
+        <section class="relative mb-8 overflow-hidden rounded-3xl bg-ink p-8 text-white md:p-12">
+            <img
+                v-if="restaurant.cover_path"
+                :src="'/storage/' + restaurant.cover_path"
+                :alt="restaurant.name"
+                class="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30"
+            />
+            <div class="relative">
+                <span class="text-sm text-violet-300">{{ restaurant.tagline || $t('freshly_made_just_for_you') }}</span>
+                <h1 class="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">{{ restaurant.name }}</h1>
+                <p class="mt-4 max-w-xl text-slate-300">
+                    {{ restaurant.description || $t('good_food_brings_people_together_find_your_favourite_below') }}
+                </p>
+                <p class="mt-6 text-sm text-slate-400">
+                    <i aria-hidden="true" class="pi pi-map-marker mr-2" />{{ location.address }}
+                </p>
+            </div>
         </section>
         <p v-if="!location.accepting_orders" role="status" class="mb-5 rounded-xl bg-amber-50 p-4 text-amber-900">
-            Online orders are currently paused. You can still browse the menu.
+            {{ $t('online_orders_are_currently_paused_you_can_still_browse_the_menu') }}
         </p>
         <nav class="sticky top-0 z-10 mb-7 flex gap-2 overflow-auto rounded-xl bg-surface py-3 dark:bg-slate-950">
             <a
@@ -66,7 +79,7 @@ const checkout = ref(false);
                         <h3 class="text-lg font-semibold">{{ p.name }}</h3>
                         <p class="muted my-3 line-clamp-2">{{ p.description }}</p>
                         <strong>{{ money(p.price) }}</strong
-                        ><span v-if="p.variants.length" class="muted ml-2">base price</span>
+                        ><span v-if="p.variants.length" class="muted ml-2">{{ $t('base_price') }}</span>
                     </div>
                     <img
                         v-if="p.image_path"
@@ -74,13 +87,13 @@ const checkout = ref(false);
                         :alt="p.name"
                         class="h-28 w-28 rounded-xl object-cover"
                     /><span v-else class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 text-brand"
-                        ><i class="pi pi-plus"
+                        ><i aria-hidden="true" class="pi pi-plus"
                     /></span>
                 </button>
             </div>
         </section>
         <p v-if="!categories.length" class="muted py-16 text-center">
-            The restaurant is preparing its menu. Check back soon.
+            {{ $t('the_restaurant_is_preparing_its_menu_check_back_soon') }}
         </p>
         <ProductConfigurator v-model:visible="configure" :product="product" /><CartDrawer
             v-model:visible="drawer"

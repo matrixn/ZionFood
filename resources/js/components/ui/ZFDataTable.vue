@@ -11,6 +11,8 @@ defineProps<{ rows: object[]; loading?: boolean }>();
         paginator
         :rows="20"
         class="overflow-hidden rounded-xl"
-        ><slot /><template #empty><p class="muted p-6">No records to display.</p></template></DataTable
+        ><slot /><template #empty
+            ><p class="muted p-6">{{ $t('no_records_to_display') }}</p></template
+        ></DataTable
     >
 </template>

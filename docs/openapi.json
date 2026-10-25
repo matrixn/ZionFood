@@ -3,7 +3,7 @@
   "info": {
     "title": "ZionFood API",
     "version": "0.0.1",
-    "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units."
+    "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session."
   },
   "servers": [
     {
@@ -684,6 +684,350 @@
           }
         ]
       }
+    },
+    "/locations/{location}/webhooks": {
+      "get": {
+        "summary": "List endpoints and paginated delivery history (including removed endpoints)",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Public location ULID"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/WebhookEndpoint"
+                      }
+                    },
+                    "deliveries": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/WebhookDelivery"
+                          }
+                        },
+                        "next_page_url": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Owner/manager verified browser session required; personal access tokens cannot administer webhooks"
+          },
+          "404": {
+            "description": "Record not found in this tenant/location"
+          },
+          "422": {
+            "description": "Validation or unsafe destination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a per-location signed webhook",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Public location ULID"
+            }
+          },
+          {
+            "name": "X-XSRF-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Current browser CSRF cookie value"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpoint"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Owner/manager verified browser session required; personal access tokens cannot administer webhooks"
+          },
+          "404": {
+            "description": "Record not found in this tenant/location"
+          },
+          "422": {
+            "description": "Validation or unsafe destination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/locations/{location}/webhooks/{endpoint}": {
+      "put": {
+        "summary": "Update destination/events or replace the signing key without exposing it",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Public location ULID"
+            }
+          },
+          {
+            "name": "endpoint",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-XSRF-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Current browser CSRF cookie value"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpoint"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Owner/manager verified browser session required; personal access tokens cannot administer webhooks"
+          },
+          "404": {
+            "description": "Record not found in this tenant/location"
+          },
+          "422": {
+            "description": "Validation or unsafe destination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Soft-delete endpoint and cancel queued deliveries",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Public location ULID"
+            }
+          },
+          {
+            "name": "endpoint",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-XSRF-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Current browser CSRF cookie value"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Owner/manager verified browser session required; personal access tokens cannot administer webhooks"
+          },
+          "404": {
+            "description": "Record not found in this tenant/location"
+          },
+          "422": {
+            "description": "Validation or unsafe destination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/locations/{location}/webhook-deliveries/{delivery}/retry": {
+      "post": {
+        "summary": "Retry a failed/blocked/retrying delivery for an enabled endpoint",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Public location ULID"
+            }
+          },
+          {
+            "name": "delivery",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-XSRF-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Current browser CSRF cookie value"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Owner/manager verified browser session required; personal access tokens cannot administer webhooks"
+          },
+          "404": {
+            "description": "Record not found in this tenant/location"
+          },
+          "422": {
+            "description": "Validation or unsafe destination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Delivery state is not retryable"
+          },
+          "429": {
+            "description": "Manual retry rate limit"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -979,6 +1323,9 @@
                 }
               }
             }
+          },
+          "restaurant": {
+            "$ref": "#/components/schemas/RestaurantBrand"
           }
         }
       },
@@ -1078,7 +1425,276 @@
             }
           }
         }
+      },
+      "RestaurantBrand": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": false
+          },
+          "slug": {
+            "type": "string",
+            "nullable": false
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "tagline": {
+            "type": "string",
+            "nullable": true
+          },
+          "primary_color": {
+            "type": "string",
+            "nullable": false
+          },
+          "logo_path": {
+            "type": "string",
+            "nullable": true
+          },
+          "cover_path": {
+            "type": "string",
+            "nullable": true
+          },
+          "contact_email": {
+            "type": "string",
+            "nullable": true
+          },
+          "contact_phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "WebhookInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "url",
+          "enabled",
+          "events"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048,
+            "description": "Public DNS HTTPS port 443, no credentials/query/fragment; redirects never followed"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "events": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 4,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "order.created",
+                "order.updated",
+                "menu.updated",
+                "item.updated"
+              ]
+            }
+          },
+          "secret": {
+            "type": "string",
+            "nullable": true,
+            "format": "password",
+            "writeOnly": true,
+            "maxLength": 128,
+            "pattern": "^$|^[A-Za-z0-9_-]{32,128}$",
+            "description": "Blank/null on update preserves the existing encrypted secret"
+          }
+        }
+      },
+      "WebhookCreate": {
+        "type": "object",
+        "required": [
+          "name",
+          "url",
+          "enabled",
+          "events",
+          "secret"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048,
+            "description": "Public DNS HTTPS port 443, no credentials/query/fragment; redirects never followed"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "events": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 4,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "order.created",
+                "order.updated",
+                "menu.updated",
+                "item.updated"
+              ]
+            }
+          },
+          "secret": {
+            "type": "string",
+            "format": "password",
+            "writeOnly": true,
+            "minLength": 32,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9_-]+$"
+          }
+        }
+      },
+      "WebhookEndpoint": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "organization_id": {
+            "type": "integer"
+          },
+          "location_id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "WebhookDelivery": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "endpoint_id": {
+            "type": "integer"
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "delivering",
+              "retrying",
+              "delivered",
+              "failed",
+              "blocked",
+              "cancelled"
+            ]
+          },
+          "attempts": {
+            "type": "integer",
+            "maximum": 6
+          },
+          "http_status": {
+            "type": "integer",
+            "nullable": true
+          },
+          "failure_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "delivered_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "next_attempt_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "locked_until": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endpoint": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              }
+            }
+          }
+        }
       }
     }
+  },
+  "x-webhook-events": {
+    "types": [
+      "order.created",
+      "order.updated",
+      "menu.updated",
+      "item.updated"
+    ],
+    "headers": [
+      "X-ZionFood-Event",
+      "X-ZionFood-Delivery",
+      "X-ZionFood-Timestamp",
+      "X-ZionFood-Signature"
+    ],
+    "signature": "sha256=HMAC_SHA256(secret, timestamp + \".\" + exact_request_body)",
+    "delivery": "at least once; verify timestamp and deduplicate stable event IDs",
+    "documentation": "STAFF_BRANDING_LOCALIZATION_WEBHOOKS.md"
   }
 }

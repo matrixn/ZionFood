@@ -1,3 +1,4 @@
+import { csrfHeaders } from '@/lib/http';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 let echo: Echo<'reverb'> | null = null;
@@ -16,10 +17,7 @@ export function getEcho(): Echo<'reverb'> | null {
                 channelAuthorization: {
                     endpoint: '/broadcasting/auth',
                     transport: 'ajax',
-                    headers: {
-                        'X-CSRF-TOKEN':
-                            document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '',
-                    },
+                    headersProvider: csrfHeaders,
                 },
             }),
         });

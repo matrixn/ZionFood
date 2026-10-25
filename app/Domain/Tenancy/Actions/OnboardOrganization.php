@@ -21,7 +21,7 @@ class OnboardOrganization
     public function execute(User $user, array $data): RestaurantLocation
     {
         if (in_array($data['slug'], config('zionfood.reserved_slugs'), true)) {
-            throw ValidationException::withMessages(['slug' => 'This address is reserved.']);
+            throw ValidationException::withMessages(['slug' => __('This address is reserved.')]);
         }
 
         return DB::transaction(function () use ($user, $data) {

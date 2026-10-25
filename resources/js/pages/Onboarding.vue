@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { tr as t } from '@/i18n';
+
+import { computed } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import ZFFormField from '@/components/ui/ZFFormField.vue';
@@ -8,22 +11,27 @@ const form = useForm({
     organization_name: '',
     restaurant_name: '',
     slug: '',
-    location_name: 'Main location',
+    location_name: t('main_location'),
     address: '',
 });
-const fields = [
-    { key: 'organization_name', label: 'Organization name' },
-    { key: 'restaurant_name', label: 'Restaurant name' },
-    { key: 'slug', label: 'Storefront address (slug)' },
-    { key: 'location_name', label: 'Location name' },
-    { key: 'address', label: 'Street address' },
-] as const;
+const fields = computed(
+    () =>
+        [
+            { key: 'organization_name', label: t('organization_name') },
+            { key: 'restaurant_name', label: t('restaurant_name') },
+            { key: 'slug', label: t('storefront_address_slug') },
+            { key: 'location_name', label: t('location_name') },
+            { key: 'address', label: t('street_address') },
+        ] as const,
+);
 </script>
 <template>
     <AuthLayout
-        ><Head title="Create your restaurant" /><span class="text-sm font-medium text-brand">LET’S GET YOU OPEN</span>
-        <h1 class="mb-3 mt-4 text-3xl font-semibold">Your next chapter starts here.</h1>
-        <p class="muted mb-7">One organization, one restaurant, ready to make it yours.</p>
+        ><Head :title="$t('create_your_restaurant')" /><span class="text-sm font-medium text-brand">{{
+            $t('lets_get_you_open')
+        }}</span>
+        <h1 class="mb-3 mt-4 text-3xl font-semibold">{{ $t('your_next_chapter_starts_here') }}</h1>
+        <p class="muted mb-7">{{ $t('one_organization_one_restaurant_ready_to_make_it_yours') }}</p>
         <form class="grid gap-4" @submit.prevent="form.post('/onboarding')">
             <ZFFormField
                 v-for="field in fields"
@@ -32,6 +40,11 @@ const fields = [
                 :for="field.key"
                 :error="form.errors[field.key]"
                 ><InputText :id="field.key" v-model="form[field.key]" required /></ZFFormField
-            ><Button type="submit" label="Create workspace" icon="pi pi-arrow-right" :loading="form.processing" /></form
+            ><Button
+                type="submit"
+                :label="$t('create_workspace')"
+                icon="pi pi-arrow-right"
+                :loading="form.processing"
+            /></form
     ></AuthLayout>
 </template>

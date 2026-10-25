@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { tr as t } from '@/i18n';
+
+import { computed } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import ZFPageHeader from '@/components/ui/ZFPageHeader.vue';
@@ -9,7 +12,15 @@ import Select from 'primevue/select';
 import Button from 'primevue/button';
 import type { WorkspaceProps } from '@/types';
 const props = defineProps<WorkspaceProps>();
-const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const days = computed(() => [
+    t('monday'),
+    t('tuesday'),
+    t('wednesday'),
+    t('thursday'),
+    t('friday'),
+    t('saturday'),
+    t('sunday'),
+]);
 const form = useForm({
     name: props.location.name,
     address: props.location.address,
@@ -31,31 +42,32 @@ const form = useForm({
 </script>
 <template>
     <RestaurantLayout v-bind="$props"
-        ><Head title="Location settings" /><ZFPageHeader
-            title="Set the pace."
-            description="Opening hours, fulfillment and your location details." />
+        ><Head :title="$t('location_settings')" /><ZFPageHeader
+            :title="$t('set_the_pace')"
+            :description="$t('opening_hours_fulfillment_and_your_location_details')" />
         <form class="grid gap-6" @submit.prevent="form.put('/app/locations/' + location.public_id + '/settings')">
             <div v-if="Object.keys(form.errors).length" role="alert" class="panel text-red-600">
                 <p v-for="(message, key) in form.errors" :key="key">{{ message }}</p>
             </div>
             <section class="panel grid gap-5">
-                <h2 class="text-xl font-semibold">Location</h2>
-                <label class="field">Name<InputText v-model="form.name" required /></label
-                ><label class="field">Address<InputText v-model="form.address" required /></label
+                <h2 class="text-xl font-semibold">{{ $t('location') }}</h2>
+                <label class="field">{{ $t('name') }}<InputText v-model="form.name" required /></label
+                ><label class="field">{{ $t('address') }}<InputText v-model="form.address" required /></label
                 ><label class="flex items-center gap-3"
-                    ><ToggleSwitch v-model="form.accepting_orders" />Accepting online orders</label
+                    ><ToggleSwitch v-model="form.accepting_orders" />{{ $t('accepting_online_orders') }}</label
                 >
                 <div class="flex flex-wrap gap-8">
-                    <label class="flex items-center gap-3"><ToggleSwitch v-model="form.pickup_enabled" />Pickup</label
+                    <label class="flex items-center gap-3"
+                        ><ToggleSwitch v-model="form.pickup_enabled" />{{ $t('pickup') }}</label
                     ><label class="flex items-center gap-3"
-                        ><ToggleSwitch v-model="form.delivery_enabled" />Delivery</label
+                        ><ToggleSwitch v-model="form.delivery_enabled" />{{ $t('delivery') }}</label
                     >
                 </div>
             </section>
             <section class="panel">
-                <h2 class="mb-5 text-xl font-semibold">Opening hours</h2>
+                <h2 class="mb-5 text-xl font-semibold">{{ $t('opening_hours') }}</h2>
                 <p class="muted mb-4">
-                    {{ location.timezone }} · Omit closed days. Overnight opening is not supported.
+                    {{ location.timezone }} {{ $t('omit_closed_days_overnight_opening_is_not_supported') }}
                 </p>
                 <div v-for="(h, i) in form.hours" :key="i" class="mb-3 flex flex-wrap items-center gap-3">
                     <Select
@@ -63,18 +75,20 @@ const form = useForm({
                         :options="days.map((name, n) => ({ name, id: n + 1 }))"
                         option-label="name"
                         option-value="id"
-                        aria-label="Weekday"
+                        :aria-label="$t('weekday')"
                         class="w-44"
-                    /><input v-model="h.opens_at" type="time" aria-label="Opening time" required /><span>to</span
-                    ><input v-model="h.closes_at" type="time" aria-label="Closing time" required /><Button
+                    /><input v-model="h.opens_at" type="time" :aria-label="$t('opening_time')" required /><span>{{
+                        $t('to')
+                    }}</span
+                    ><input v-model="h.closes_at" type="time" :aria-label="$t('closing_time')" required /><Button
                         icon="pi pi-times"
                         text
-                        aria-label="Remove opening day"
+                        :aria-label="$t('remove_opening_day')"
                         @click="form.hours.splice(i, 1)"
                     />
                 </div>
                 <Button
-                    label="Add day"
+                    :label="$t('add_day')"
                     icon="pi pi-plus"
                     text
                     :disabled="form.hours.length >= 7"
@@ -88,22 +102,29 @@ const form = useForm({
                 />
             </section>
             <section class="panel">
-                <h2 class="mb-2 text-xl font-semibold">Delivery zones</h2>
-                <p class="muted mb-4">Basic postal code matching. Amounts are in bani (100 bani = 1 RON).</p>
+                <h2 class="mb-2 text-xl font-semibold">{{ $t('delivery_zones') }}</h2>
+                <p class="muted mb-4">{{ $t('basic_postal_code_matching_amounts_are_in_bani_100_bani_1_ron') }}</p>
                 <div v-for="(z, i) in form.zones" :key="i" class="mb-5 grid items-end gap-3 lg:grid-cols-5">
-                    <label class="field">Name<InputText v-model="z.name" required /></label
-                    ><label class="field">Postal prefix<InputText v-model="z.postal_prefix" required /></label
-                    ><label class="field">Fee (bani)<InputNumber v-model="z.fee" :min="0" /></label
-                    ><label class="field">Minimum (bani)<InputNumber v-model="z.minimum_order" :min="0" /></label
-                    ><Button label="Remove" text severity="danger" @click="form.zones.splice(i, 1)" />
+                    <label class="field">{{ $t('name') }}<InputText v-model="z.name" required /></label
+                    ><label class="field"
+                        >{{ $t('postal_prefix') }}<InputText v-model="z.postal_prefix" required /></label
+                    ><label class="field">{{ $t('fee_bani') }}<InputNumber v-model="z.fee" :min="0" /></label
+                    ><label class="field"
+                        >{{ $t('minimum_bani') }}<InputNumber v-model="z.minimum_order" :min="0" /></label
+                    ><Button :label="$t('remove')" text severity="danger" @click="form.zones.splice(i, 1)" />
                 </div>
                 <Button
-                    label="Add zone"
+                    :label="$t('add_zone')"
                     icon="pi pi-plus"
                     text
                     @click="form.zones.push({ name: '', postal_prefix: '', fee: 0, minimum_order: 0 })"
                 />
             </section>
-            <Button type="submit" label="Save settings" :loading="form.processing" class="justify-self-start" /></form
+            <Button
+                type="submit"
+                :label="$t('save_settings')"
+                :loading="form.processing"
+                class="justify-self-start"
+            /></form
     ></RestaurantLayout>
 </template>

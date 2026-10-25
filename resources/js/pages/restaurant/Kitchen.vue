@@ -23,6 +23,10 @@ let ageTimer: ReturnType<typeof setInterval>;
 const channel = `organization.${props.location.organization_id}.location.${props.location.id}.orders`;
 const shown = computed(() => kitchen.orders.filter((o) => filter.value === 'all' || o.fulfillment === filter.value));
 const sync = () => kitchen.sync(props.location.public_id);
+function changed(order?: Order) {
+    if (order) kitchen.apply(order);
+    void sync();
+}
 function beep() {
     if (!sound.value || !audio) return;
     const oscillator = audio.createOscillator();
@@ -79,46 +83,52 @@ onUnmounted(() => {
 </script>
 <template>
     <KitchenLayout v-bind="$props"
-        ><Head title="Kitchen display" /><ZFPageHeader
-            title="Keep the good food moving."
-            :description="location.name + ' · Authoritative order queue'"
+        ><Head :title="$t('kitchen_display')" /><ZFPageHeader
+            :title="$t('keep_the_good_food_moving')"
+            :description="location.name + ' · ' + $t('authoritative_order_queue')"
             ><div class="flex flex-wrap gap-2">
                 <Button
                     :icon="sound ? 'pi pi-volume-up' : 'pi pi-volume-off'"
-                    :label="sound ? 'Sound on' : 'Enable sound'"
+                    :label="sound ? $t('sound_on') : $t('enable_sound')"
                     outlined
                     @click="toggleSound"
-                /><Button icon="pi pi-refresh" label="Sync" :loading="kitchen.loading" @click="sync" /><Button
+                /><Button icon="pi pi-refresh" :label="$t('sync')" :loading="kitchen.loading" @click="sync" /><Button
                     icon="pi pi-window-maximize"
-                    aria-label="Fullscreen kitchen"
+                    :aria-label="$t('fullscreen_kitchen')"
                     outlined
                     @click="fullscreen"
                 /></div
         ></ZFPageHeader>
         <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
             <p class="muted" role="status">
-                {{ kitchen.syncedAt ? 'Last synced ' + kitchen.syncedAt.toLocaleTimeString() : 'Connecting…' }} ·
-                Automatic recovery every 15 seconds
+                {{
+                    kitchen.syncedAt
+                        ? $t('last_synced', {
+                              time: kitchen.syncedAt.toLocaleTimeString($i18n.locale === 'ro' ? 'ro-RO' : 'en-GB'),
+                          })
+                        : $t('connecting')
+                }}
+                {{ $t('automatic_recovery_every_15_seconds') }}
             </p>
             <Select
                 v-model="filter"
                 :options="[
-                    { label: 'All orders', value: 'all' },
-                    { label: 'Pickup', value: 'pickup' },
-                    { label: 'Delivery', value: 'delivery' },
+                    { label: $t('all_orders'), value: 'all' },
+                    { label: $t('pickup'), value: 'pickup' },
+                    { label: $t('delivery'), value: 'delivery' },
                 ]"
                 option-label="label"
                 option-value="value"
-                aria-label="Fulfillment filter"
+                :aria-label="$t('fulfillment_filter')"
             />
         </div>
         <p v-if="kitchen.error" role="alert" class="mb-5 rounded-xl bg-red-50 p-4 text-red-700">
-            Connection interrupted: {{ kitchen.error }}. Retrying automatically.
+            {{ $t('connection_interrupted') }} {{ kitchen.error }}{{ $t('retrying_automatically') }}
         </p>
         <KitchenStatusColumns
             :orders="shown"
             :now="now"
-            @changed="sync"
+            @changed="changed"
             @details="
                 selected = $event;
                 drawer = true;

@@ -6,7 +6,7 @@ Implementation specification: [original ZionFood SaaS MVP master prompt](MASTER_
 
 One Laravel 12 modular monolith on PHP 8.4. MariaDB 10.11 shared schema, Redis cache/queues, Horizon workers, Reverb private broadcasts and Sanctum integration tokens. Fortify provides authentication; the UI is Vue 3 Composition API, Inertia 3, strict TypeScript, PrimeVue 4 styled mode, Tailwind 4 and Vite. Dependency lockfiles are authoritative; newer major versions are deliberately excluded. Fortify was integrated directly into the official Laravel application skeleton to avoid importing unused starter-kit shadcn dependencies.
 
-`app/Domain/Tenancy`, `Menus` and `Orders` hold access rules and reusable Actions. `PlaceOrderAction`, `TransitionOrderStatus` and `UpdateMenuItem` are shared by dashboard interactions and API calls. Other domains are represented by their models and schema; separate empty domain layers are deliberately absent. No repository abstraction, microservices, React, Filament, Nova or MoonShine.
+`app/Domain/Tenancy`, `Menus`, `Orders`, `Restaurants` and `Integrations` hold access rules and reusable Actions. `PlaceOrderAction`, `TransitionOrderStatus` and `UpdateMenuItem` are shared by dashboard interactions and API calls. Other domains are represented by their models and schema; separate empty domain layers are deliberately absent. No repository abstraction, microservices, React, Filament, Nova or MoonShine.
 
 ## Tenant resolution
 
@@ -32,8 +32,12 @@ Failures retain the outbox row, increment attempts, and record only the exceptio
 
 ## Hostnames and future work
 
-Trusted central hosts, API hosts and verified storefront mappings are separate. `app.zionfood.ro`, `api.zionfood.ro` and verified restaurant subdomains are supported logically. Storefront hosts expose only the storefront, tracking shell and public API. Reserved subdomains cannot be registered. Custom-domain DNS/SSL provisioning, outbound webhook delivery, the WordPress plugin and a Tauri wrapper are deferred.
+Trusted central hosts, API hosts and verified storefront mappings are separate. `app.zionfood.ro`, `api.zionfood.ro` and verified restaurant subdomains are supported logically. Storefront hosts expose the storefront, tracking shell, public API and CSRF-protected locale preference endpoint. Reserved subdomains cannot be registered. Custom-domain DNS/SSL provisioning, the WordPress plugin and a Tauri wrapper are deferred. Signed webhook delivery is implemented with durable fanout, per-attempt DNS validation, cURL address pinning, response bounds, leases, retries and retained delivery history.
 
 Design tokens and the `ZF*` wrappers provide a shared appearance across Auth, Admin, Restaurant, Storefront and Kitchen layouts. Pinia is limited to cart and kitchen state. The cart is currently held in memory and resets on a full browser refresh; tracking tokens survive refresh within the same browser tab.
 
 References: [Laravel 12 installation](https://laravel.com/docs/12.x/installation), [official starter kits](https://laravel.com/starter-kits), [k6 executors](https://grafana.com/docs/k6/latest/using-k6/scenarios/executors/).
+
+## Administration and language increment
+
+The October 26 increment adds protected owner/manager/staff administration, expiring accepted-email invitations, restaurant identity/assets/contacts, Romanian-first Vue I18n and Laravel messages, and signed per-location webhooks. See [operational details and limits](STAFF_BRANDING_LOCALIZATION_WEBHOOKS.md). Kitchen transitions apply the confirmed API response immediately and reconcile the authoritative queue in the background; older in-flight list responses cannot overwrite a newer confirmed version. Locale changes retain API keys/status enums unchanged. The API/Echo clients read the latest XSRF cookie after session rotation.
