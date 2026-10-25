@@ -1,0 +1,61 @@
+@import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+    --color-brand: #635bff;
+    --color-ink: #171c2c;
+    --color-success: #0ea87a;
+    --color-warning: #f3a642;
+    --color-surface: #f6f7fb;
+}
+:root {
+    font-family: Inter, 'Segoe UI', sans-serif;
+    color: var(--color-ink);
+    background: var(--color-surface);
+    font-synthesis: none;
+}
+body {
+    margin: 0;
+}
+* {
+    box-sizing: border-box;
+}
+button,
+a,
+input,
+select {
+    -webkit-tap-highlight-color: transparent;
+}
+.dark {
+    color-scheme: dark;
+    background: #101420;
+    color: #eceef5;
+}
+.panel {
+    @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900;
+}
+.muted {
+    @apply text-sm text-slate-500 dark:text-slate-400;
+}
+.field {
+    @apply grid gap-2;
+}
+.field label {
+    @apply text-sm font-medium;
+}
+.p-inputtext,
+.p-password,
+.p-password-input,
+.p-select,
+.p-inputnumber {
+    max-width: 100%;
+}
+input[type='time'] {
+    @apply rounded-lg border border-slate-300 bg-transparent p-2;
+}
+a {
+    text-decoration: none;
+}
+:focus-visible {
+    outline: 3px solid #a59dff;
+    outline-offset: 3px;
+}

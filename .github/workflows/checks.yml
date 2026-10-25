@@ -1,0 +1,39 @@
+name: Checks
+on: [push, pull_request]
+jobs:
+  application:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_DATABASE: zionfood_test
+          MARIADB_USER: zionfood
+          MARIADB_PASSWORD: ci-test-only
+          MARIADB_ROOT_PASSWORD: ci-root-test-only
+        ports: ["13316:3306"]
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=5s --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, pdo_sqlite, mbstring, intl, bcmath, pcntl, posix, fileinfo
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: php scripts/configure-local.php
+      - run: composer install --no-interaction --prefer-dist
+      - run: npm ci
+      - run: npm run lint && npm test -- --config vitest.config.ts && npm run build
+      - run: php vendor/bin/pint --test
+      - run: composer test
+      - run: composer test
+        env:
+          DB_CONNECTION: mysql
+          DB_DATABASE: zionfood_test
+          DB_USERNAME: zionfood
+          DB_PASSWORD: ci-test-only
+          DB_PORT: 13316

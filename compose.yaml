@@ -1,0 +1,23 @@
+name: zionfood-local
+services:
+  mariadb:
+    image: mariadb:10.11
+    ports: ["127.0.0.1:13316:3306"]
+    environment:
+      MARIADB_DATABASE: zionfood
+      MARIADB_USER: zionfood
+      MARIADB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD in .env}
+    volumes: ["zionfood-db:/var/lib/mysql"]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      retries: 20
+  redis:
+    image: redis:7-alpine
+    ports: ["127.0.0.1:16379:6379"]
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes: ["zionfood-redis:/data"]
+volumes:
+  zionfood-db:
+  zionfood-redis:
