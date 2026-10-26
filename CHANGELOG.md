@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.8 — 2026-10-26
+
+- Added a Romanian README usage guide for address-from-pin, saving the location, delivery-map zoom/recentering, ambiguous addresses and polygon saving.
+- Linked the 0.0.7 implementation commit and synchronized current version metadata without changing runtime behavior or dependencies.
+
 ## 0.0.7 — 2026-10-26
 
 - Added address-from-pin lookup with structured address filling, partial-address feedback, stale-response protection and preservation of the chosen pin.

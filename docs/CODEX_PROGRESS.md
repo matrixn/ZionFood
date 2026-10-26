@@ -1,4 +1,10 @@
-# ZionFood progress — 0.0.7
+# ZionFood progress — 0.0.8
+
+## Version 0.0.8 - README usage guide and publication (October 26)
+
+Added a Romanian step-by-step README guide for placing a pin, filling the address, checking missing fields, saving address/pin, opening delivery zones at the restaurant, recentering, ambiguous address-only lookup and saving a polygon. The checked version history links implementation commit 95a0843. Synchronized current metadata to 0.0.8 for this documentation commit, preserving historical notes and dependency versions. The user explicitly authorized push of the implementation and this README update; no tag or manual deployment was requested.
+
+Validation passed: synchronized 0.0.8 metadata, unchanged locked dependency versions, 31 local README links, Composer validation and exact Linux Pint across 185 PHP files. Application results below remain the previously executed 0.0.7 checks; no full application rerun is claimed for this documentation change.
 
 ## Version 0.0.7 - pin address and delivery centering (October 26)
 

@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.7** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.8** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -50,7 +50,8 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 
 - [x] `0.0.5`: localizarea restaurantului după adresa din formular, mesaje pentru date lipsă și pin ajustabil, fără câmpuri latitudine/longitudine — `81ed958`.
 - [x] `0.0.6`: documentarea detaliată, cu bife, a localizării restaurantului și a comportamentului hărții.
-- [x] `0.0.7`: preluarea adresei din pin și centrarea cu zoom a zonelor de livrare pe restaurant.
+- [x] `0.0.7`: preluarea adresei din pin și centrarea cu zoom a zonelor de livrare pe restaurant — `95a0843`.
+- [x] `0.0.8`: ghid de utilizare pentru adresa din pin și harta zonelor de livrare, cu istoricul actualizat.
 
 ## Implementat
 
@@ -179,6 +180,17 @@ Etapa catalogului culinar a trecut **138 de teste backend / 698 de aserțiuni pe
 Etapele anterioare includ concurență pentru checkout și rezervări, fluxuri QR/livrare în browser și [benchmark-uri locale cu condiții documentate](docs/BENCHMARKS.md). Incidentul Horizon și confirmările Resend observate atunci sunt descrise în [documentația de operare](docs/DEPLOYMENT.md#mail-delivery-diagnostics-and-worker-recovery).
 
 Aceste rezultate sunt istorice, pentru etapele indicate. Modificarea README-ului și a imaginii nu reprezintă o rerulare a tuturor testelor sau o verificare live a producției.
+
+## Adresa din pin și harta de livrare
+
+1. În **Pregătește restaurantul → Nume și adresă**, apasă pe hartă sau mută pinul la intrarea restaurantului.
+2. Apasă **Preia adresa de la pin**. Strada și numărul, localitatea, țara și codul poștal disponibile completează formularul, fără să mute pinul. Interfața indică datele care mai trebuie verificate sau completate.
+3. Verifică adresa și apasă **Salvează pasul** pentru a păstra adresa și poziția împreună.
+4. În **Setări → Stabilește ritmul → Zone de livrare**, adaugă zona: harta pornește cu zoom pe pinul salvat. Folosește **Centrează pe restaurant** pentru a reveni după deplasarea hărții.
+5. Dacă există doar o adresă completă salvată, aceasta este căutată o singură dată la deschiderea setărilor. Dacă sunt mai multe rezultate, alege adresa corectă. Această căutare centrează harta; nu salvează automat un pin în setup.
+6. Desenează poligonul și apasă **Salvează setările**. Zonele deja desenate rămân vizibile integral la redeschidere; butonul de centrare revine la restaurant.
+
+Interfața este disponibilă în română și engleză. Detalii despre furnizor, configurare și limite: [RESTAURANT_LOCATION.md](docs/RESTAURANT_LOCATION.md).
 
 ## Stack și pornire locală
 

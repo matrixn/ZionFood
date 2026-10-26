@@ -20,7 +20,7 @@ Migration `2026_10_26_000600_add_cuisine_catalog` creates `cuisines` and `locati
 
 The pivot has a unique location/cuisine pair, timestamps, and a composite organization/location foreign key. Setup saves lock the location, require its current setup revision and lock requested catalogue rows while verifying available choices. Unknown/duplicate/new inactive IDs and foreign tenant writes are rejected. The selection is relational, independent of the private Basics profile, and is not automatically exposed in public storefront responses. Platform admins remain separate from tenant management authority.
 
-Apply the additive migration, build assets and retain the existing `storage:link` for uploaded photos. Current version is 0.0.7. No subscription/payment behavior changes. Test fixtures create isolated local accounts, with no live restaurant or real email changes.
+Apply the additive migration, build assets and retain the existing `storage:link` for uploaded photos. Current version is 0.0.8. No subscription/payment behavior changes. Test fixtures create isolated local accounts, with no live restaurant or real email changes.
 
 ## Photo sources
 
