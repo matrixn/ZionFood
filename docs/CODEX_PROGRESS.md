@@ -70,3 +70,11 @@ Use staging to verify actual mail delivery/acceptance across browsers, external 
 ## Git and release boundaries
 
 The baseline commits 91ba816 and ee24976 were pushed in the preceding user-authorized turn. This increment is local only: no push, tag, GitHub release or deployment is authorized. Version remains 0.0.1. Local application services remain available for review.
+
+## Resend email increment — October 26, 2026
+
+Added the official Resend PHP SDK for Laravel's existing native mail transport. `RESEND_API_KEY` is now the primary credential (`RESEND_KEY` fallback retained), with an empty example variable and explicit production setup in DEPLOYMENT.md. Existing verification/reset/invitation notifications use the default mailer. Local development remains on log; no real environment key was changed.
+
+Added `zionfood:mail-test {email}` for synchronous provider submission checks with input/configuration validation and redacted failure output. Automated coverage verifies native transport resolution, configuration/input rejection, actual SDK request payload/authentication through an in-memory HTTP handler, and provider failure handling. No live Resend request, DNS verification, real recipient, push, tag or deployment is included.
+
+Verification for this email increment: 80 backend tests passed (275 assertions, SQLite in-memory); Linux `php vendor/bin/pint --test` passed for 137 files; six Vitest tests, ESLint, TypeScript/Vite build and Composer validation passed. Composer reported no vulnerability advisories and only added resend/resend-php v1.17.0 without updating existing packages. Composer's existing explicit-version advisory remains. Initial SDK autoload checks were run before Composer finished and the payload assertion needed Symfony's quoted sender format; both were resolved before the final full pass. Browser/concurrency/MariaDB suites were not rerun for this mail-only change; prior results above belong to the preceding increment. Version remains 0.0.1.

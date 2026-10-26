@@ -2,6 +2,7 @@
 
 ## Unreleased — 2026-10-26 (version remains 0.0.1)
 
+- Native Resend email transport SDK, RESEND_API_KEY configuration, Forge instructions and a validated Artisan mail test command.
 - Staff invitations/acceptance/revocation, protected owner/manager roles, location assignments and scoped token removal.
 - Restaurant branding, asset uploads/removal, managed slug, contacts, live preview and public menu/tracking theme.
 - Romanian-default and English interfaces with persistent flag/name selectors, localized PrimeVue/validation/status labels and stable API field names.

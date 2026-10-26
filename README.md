@@ -6,6 +6,8 @@ Laravel 12 / PHP 8.4 / MariaDB / Redis / Horizon / Reverb / Sanctum, with Vue 3,
 
 Implemented flows include onboarding, tenant-aware menus and staff invitations/access, full restaurant branding, public ordering, server pricing, idempotent checkout, secure tracking, realtime kitchen operations, organization-scoped tokens and signed webhooks with delivery history/retries. Romanian is the default interface language; English is available through a flag/name selector on every layout. Billing automation, the WordPress plugin and custom-domain provisioning remain outside this release.
 
+Transactional email supports Resend through Laravel's native driver. Configure `MAIL_MAILER=resend`, `RESEND_API_KEY` and a verified `MAIL_FROM_ADDRESS` in Forge; see [Resend setup and test command](docs/DEPLOYMENT.md#resend-transactional-email-forge). Local development uses the log mailer.
+
 Start with [local setup and deployment](docs/DEPLOYMENT.md). In a fresh environment:
 
 ```sh

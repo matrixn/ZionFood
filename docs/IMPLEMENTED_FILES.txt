@@ -254,3 +254,5 @@ tests/load/ordering.js
 tsconfig.json
 vite.config.ts
 vitest.config.ts
+app/Console/Commands/SendTestEmail.php
+tests/Feature/ResendMailTest.php

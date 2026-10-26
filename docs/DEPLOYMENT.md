@@ -47,10 +47,41 @@ See [BENCHMARKS.md](BENCHMARKS.md). Prepare fixtures with `DB_DATABASE=zionfood_
 
 ## Forge checklist
 
-Create a PHP 8.4 site, root `public`, MariaDB 10.11+ database and Redis. Set APP_ENV=production, APP_DEBUG=false, strong APP_KEY, DB credentials and isolated Redis prefix. Configure `ZF_APP_HOSTS=app.zionfood.ro`, `ZF_API_HOSTS=api.zionfood.ro`, `ZF_STOREFRONT_DOMAIN=zionfood.ro`, APP_URL, SESSION_SECURE_COOKIE=true, SANCTUM_STATEFUL_DOMAINS and SMTP. Limit Reverb allowed origins to the app host, use WSS on 443 and configure its private server credentials. Only VITE_REVERB_APP_KEY/host/port/scheme are public build values; never expose REVERB_APP_SECRET in VITE variables.
+Create a PHP 8.4 site, root `public`, MariaDB 10.11+ database and Redis. Set APP_ENV=production, APP_DEBUG=false, strong APP_KEY, DB credentials and isolated Redis prefix. Configure `ZF_APP_HOSTS=app.zionfood.ro`, `ZF_API_HOSTS=api.zionfood.ro`, `ZF_STOREFRONT_DOMAIN=zionfood.ro`, APP_URL, SESSION_SECURE_COOKIE=true, SANCTUM_STATEFUL_DOMAINS and Resend email (see below). Limit Reverb allowed origins to the app host, use WSS on 443 and configure its private server credentials. Only VITE_REVERB_APP_KEY/host/port/scheme are public build values; never expose REVERB_APP_SECRET in VITE variables.
 
 Use separate Nginx server blocks for central/API hosts and storefront wildcard domains, with a rejecting default host. Obtain TLS for the central/API/wildcard names, proxy Reverb's WebSocket endpoint, and preserve Origin/Upgrade headers. Set trusted proxies explicitly for the actual load balancer. Restrict MariaDB/Redis to private networking and do not execute files beneath storage.
 
-Deploy script: `composer install --no-dev --optimize-autoloader`, `npm ci`, `npm run build`, `php artisan migrate --force`, `php artisan storage:link`, `php artisan optimize`, `php artisan horizon:terminate`, and restart the supervised Reverb process. Horizon must be managed by a Forge daemon/Supervisor so termination restarts it. Add Laravel's scheduler to cron every minute. It reconciles both outbox publication and due/stale webhook deliveries. Workers need the cURL extension for HTTPS destination pinning; preserve outbound firewall restrictions. Signing keys and encrypted invitation jobs require the application encryption key during recovery. Set APP_LOCALE=ro and APP_FALLBACK_LOCALE=en for the default interface. Configure SMTP for staff invitations and account verification; never use the development log mailer in production. Monitor queue failures, undelivered outbox rows, DB latency and disk/Redis capacity.
+Deploy script: `composer install --no-dev --optimize-autoloader`, `npm ci`, `npm run build`, `php artisan migrate --force`, `php artisan storage:link`, `php artisan optimize`, `php artisan horizon:terminate`, and restart the supervised Reverb process. Horizon must be managed by a Forge daemon/Supervisor so termination restarts it. Add Laravel's scheduler to cron every minute. It reconciles both outbox publication and due/stale webhook deliveries. Workers need the cURL extension for HTTPS destination pinning; preserve outbound firewall restrictions. Signing keys and encrypted invitation jobs require the application encryption key during recovery. Set APP_LOCALE=ro and APP_FALLBACK_LOCALE=en for the default interface. Configure Resend or SMTP for staff invitations and account verification; never use the development log mailer in production. Monitor queue failures, undelivered outbox rows, DB latency and disk/Redis capacity.
 
 Create an administrator only after registering the real account: `php artisan zionfood:admin owner@example.com`. Do not seed demos in production. Test registration mail, tenant isolation, checkout/replay, private broadcasts/reconnect, trial expiry and backup restoration against staging before launch. No live Forge deployment has been performed by this implementation task.
+
+## Resend transactional email (Forge)
+
+The native Laravel Resend transport is installed through `resend/resend-php`. Account verification, password resets and staff invitations use the configured default mailer; no separate SMTP credentials or Resend Laravel plugin are needed.
+
+1. In Resend, verify your sending domain using the DNS records shown in its Domains screen. For example, verify `zion3d.ro` before using `noreply@zion3d.ro`. The sending domain can differ from the application's web hostname.
+2. Create a sending-only API key, restricted to that domain where possible. Store it in the Forge environment, never in Git or a VITE variable.
+3. Configure:
+
+```dotenv
+MAIL_MAILER=resend
+RESEND_API_KEY=re_replace_in_forge_only
+MAIL_FROM_ADDRESS=noreply@zion3d.ro
+MAIL_FROM_NAME="ZionFood"
+```
+
+`RESEND_API_KEY` is the primary variable. The previous `RESEND_KEY` is accepted as a fallback when the primary variable is absent. Local development stays on `MAIL_MAILER=log` by default to avoid accidental delivery. Production must select `resend` explicitly. Keep `APP_URL` set to the public HTTPS application address so verification, reset and invitation links are correct.
+
+After deployment/environment changes, run `php artisan config:cache` and `php artisan horizon:terminate`; the Forge supervisor must restart Horizon. Verification/password reset messages are sent by Laravel during the request; staff invitations are queued and need Horizon running. Existing Romanian/English notification localization continues to apply.
+
+Submit a real smoke test only to an address you control:
+
+```sh
+php artisan zionfood:mail-test your-address@example.com
+```
+
+The command sends synchronously through the configured default mailer, rejects invalid recipients, log/array mailers and a missing Resend key, and returns a failing exit code on provider errors. A successful exit confirms submission, not inbox delivery. Check Resend's email dashboard and the inbox/spam folder. No HTTP route or public form is exposed for test sends. Provider error details and API keys are not printed by this command.
+
+No live Resend account, DNS verification or real email delivery was exercised during implementation. Automated tests use an in-memory HTTP transport and no external recipient. Resend delivery-event webhooks are not included; the existing restaurant webhooks remain a separate feature.
+
+References: [Laravel mail / Resend driver](https://laravel.com/docs/12.x/mail), [Resend Laravel](https://resend.com/laravel).
