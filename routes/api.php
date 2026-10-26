@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CheckoutAddressController;
 use App\Http\Controllers\DiningController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\MenuController;
@@ -15,6 +16,7 @@ Route::prefix('v1')->group(function () {
     Route::get('public/reservations/{reservation}', [ReservationController::class, 'track'])->middleware('throttle:tracking');
     Route::post('public/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->middleware('throttle:reservations');
     Route::post('public/tables/{table}/connect', [DiningController::class, 'connect'])->middleware('throttle:table-connect');
+    Route::post('public/locations/{location}/address-from-pin', CheckoutAddressController::class)->middleware('throttle:checkout-address');
     Route::get('public/locations/{location}/menu', [PublicOrderingController::class, 'menu']);
     Route::post('public/locations/{location}/checkout', [PublicOrderingController::class, 'checkout'])->middleware('throttle:checkout');
     Route::get('public/orders/{order}', [PublicOrderingController::class, 'tracking'])->middleware('throttle:tracking');

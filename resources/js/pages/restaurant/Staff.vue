@@ -2,7 +2,7 @@
 import { useSetupEditorGuard } from '@/lib/useSetupEditorGuard';
 import { tr as t } from '@/i18n';
 
-import { ref, computed } from 'vue';
+import { useId, ref, computed } from 'vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import ZFPageHeader from '@/components/ui/ZFPageHeader.vue';
@@ -28,6 +28,7 @@ interface Invitation {
     expires_at: string;
     revoked_at: string | null;
 }
+const staffFormId = useId();
 const props = defineProps<WorkspaceProps & { actorRole: string; members: Member[]; invitations: Invitation[] }>();
 const confirm = useConfirm();
 const editing = ref<Member | null>(null);
@@ -181,6 +182,7 @@ useSetupEditorGuard(
         </section>
         <Dialog v-model:visible="visible" :header="$t('edit_staff_access')" modal class="w-full max-w-lg"
             ><form
+                :id="staffFormId"
                 class="grid gap-5"
                 @submit.prevent="
                     edit.put(`${base}/${editing?.id}`, { onSuccess: () => (visible = false), preserveScroll: true })
@@ -200,7 +202,15 @@ useSetupEditorGuard(
                         :disabled="edit.role === 'manager'"
                 /></label>
                 <p v-for="(message, key) in edit.errors" :key="key" role="alert" class="text-red-600">{{ message }}</p>
-                <Button :label="$t('save_access')" type="submit" :loading="edit.processing" /></form></Dialog
+            </form>
+            <template #footer
+                ><Button
+                    :form="staffFormId"
+                    :disabled="!editing || edit.processing"
+                    :label="$t('save_access')"
+                    type="submit"
+                    :loading="edit.processing"
+            /></template> </Dialog
         ><ZFConfirmDialog
     /></RestaurantLayout>
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { tr as t } from '@/i18n';
 
-import { ref, onMounted, onUnmounted } from 'vue';
+import { useId, ref, onMounted, onUnmounted } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import ZFPageHeader from '@/components/ui/ZFPageHeader.vue';
@@ -34,6 +34,7 @@ interface Delivery {
     created_at: string;
     next_attempt_at: string | null;
 }
+const webhookFormId = useId();
 const props = defineProps<WorkspaceProps>();
 const confirm = useConfirm();
 const endpoints = ref<Endpoint[]>([]);
@@ -225,7 +226,7 @@ onUnmounted(() => clearInterval(timer));
                 form.secret = '';
                 error = '';
             "
-            ><form class="grid gap-5" @submit.prevent="save">
+            ><form :id="webhookFormId" class="grid gap-5" @submit.prevent="save">
                 <p v-if="error" role="alert" class="text-red-600">{{ error }}</p>
                 <label class="field">{{ $t('name') }}<InputText v-model="form.name" required maxlength="100" /></label
                 ><label class="field"
@@ -259,7 +260,22 @@ onUnmounted(() => clearInterval(timer));
                 </p>
                 <label class="flex items-center gap-3"
                     ><ToggleSwitch v-model="form.enabled" />{{ $t('enable_webhook_delivery') }}</label
-                ><Button type="submit" :label="$t('save_webhook')" :loading="busy" /></form></Dialog
+                >
+            </form>
+            <template #footer
+                ><Button
+                    :form="webhookFormId"
+                    :disabled="
+                        !form.name.trim() ||
+                        !form.url.startsWith('https://') ||
+                        !form.events.length ||
+                        (!editing && form.secret.length < 32) ||
+                        busy
+                    "
+                    type="submit"
+                    :label="$t('save_webhook')"
+                    :loading="busy"
+            /></template> </Dialog
         ><ZFConfirmDialog
     /></RestaurantLayout>
 </template>

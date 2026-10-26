@@ -1,4 +1,4 @@
-# Scope at 0.0.11
+# Scope at 0.0.12
 
 ## Implemented
 
@@ -45,3 +45,8 @@ No inert P0 buttons are intentionally exposed. Future integrations are described
 Restaurant navigation groups Operations, Restaurant management and Connections, with Setup first below the location selector. Real hours, delivery, menu, branding and staff editors stay within the wizard; existing accessible locations can be selected/configured there. Location creation/deletion and organization transfer are not part of this change. See ADMIN_NAVIGATION.md.
 
 Products support ordered catalogue ingredients, optional portion labels and explicit allergen/frozen metadata, with RON entry and integer minor-unit persistence. Shared and restaurant-owned ingredient management is implemented, with source-count evidence and automatic idempotent seeding. Nutrition computation, ingredient quantities, supplier traceability, complete PDF-product import and legal compliance certification are outside this increment. See INGREDIENTS.md.
+
+
+## Storefront experience (0.0.12)
+
+Implemented storefront polish: restaurant-specific share metadata, product/serving/ingredient redesign, compact image cart, persistent modal action footers, and editable delivery-pin reverse lookup. The allergen notice now references Regulation 1169/2011 with an expandable fourteen-group summary. Actual messaging-platform preview/cache behavior and provider geographic coverage remain operational checks.

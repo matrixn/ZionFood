@@ -1,11 +1,10 @@
 <script setup lang="ts">
+import ProductPhoto from './ProductPhoto.vue';
 import ProductIngredients from '@/components/storefront/ProductIngredients.vue';
-import { productMarks } from '@/lib/ingredients';
 import { computed, ref, watch } from 'vue';
 import Dialog from 'primevue/dialog';
 import Select from 'primevue/select';
 import Checkbox from 'primevue/checkbox';
-import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
 import { useCart } from '@/stores/cart';
 import { money } from '@/lib/http';
@@ -34,6 +33,10 @@ const price = computed(
 const valid = computed(
     () =>
         !!props.product &&
+        Number.isInteger(quantity.value) &&
+        quantity.value >= 1 &&
+        quantity.value <= 50 &&
+        (!props.product.variants.length || props.product.variants.some((v) => v.id === variant.value)) &&
         props.product.modifier_groups.every((g) => {
             const count = g.options.filter((o) => choices.value.includes(o.id)).length;
             return count >= g.min_choices && count <= g.max_choices;
@@ -46,6 +49,7 @@ function add() {
         key: crypto.randomUUID(),
         product_id: p.public_id,
         name: p.name,
+        image_path: p.image_path,
         quantity: quantity.value,
         variant_id: variant.value,
         variant_name: p.variants.find((v) => v.id === variant.value)?.name ?? null,
@@ -59,9 +63,28 @@ function add() {
 <template>
     <Dialog v-model:visible="visible" :header="product?.name" modal class="w-full max-w-lg"
         ><div v-if="product" class="grid gap-5">
-            <p class="muted">{{ product.description }}</p>
-            <p v-if="productMarks(product)" class="text-sm font-semibold">
-                {{ product.name }}{{ productMarks(product) }}
+            <div class="h-48 overflow-hidden rounded-2xl sm:h-60">
+                <ProductPhoto :path="product.image_path" :name="product.name" />
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <span
+                    v-if="product.portion_size"
+                    class="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600"
+                    >{{ $t('product_serving') }} · {{ product.portion_size }}</span
+                >
+                <span
+                    v-if="product.contains_allergens || product.ingredients?.some((i) => i.contains_allergens)"
+                    class="rounded-full bg-amber-50 px-3 py-1 text-xs text-amber-800"
+                    >{{ $t('product_allergen_badge') }}</span
+                >
+                <span
+                    v-if="product.from_frozen || product.ingredients?.some((i) => i.from_frozen)"
+                    class="rounded-full bg-sky-50 px-3 py-1 text-xs text-sky-800"
+                    >{{ $t('product_frozen_badge') }}</span
+                >
+            </div>
+            <p v-if="product.description" class="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                {{ product.description }}
             </p>
             <ProductIngredients :product="product" />
             <label v-if="product.variants.length" class="field"
@@ -81,12 +104,44 @@ function add() {
                     }}<span class="ml-auto text-sm">+ {{ money(o.price) }}</span></label
                 >
             </fieldset>
-            <label class="field"
-                >{{ $t('quantity') }}<InputNumber v-model="quantity" :min="1" :max="50" show-buttons /></label
-            ><Button
-                :label="$t('add_to_cart_total', { total: money(price * quantity) })"
-                :disabled="!valid"
-                @click="add"
-            /></div
-    ></Dialog>
+        </div>
+        <template #footer>
+            <div class="grid w-full gap-3">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-2" :aria-label="$t('quantity')">
+                        <Button
+                            icon="pi pi-minus"
+                            outlined
+                            rounded
+                            size="small"
+                            :aria-label="$t('decrease_quantity')"
+                            :disabled="quantity <= 1"
+                            @click="quantity--"
+                        />
+                        <span class="min-w-6 text-center font-semibold" aria-live="polite">{{ quantity }}</span>
+                        <Button
+                            icon="pi pi-plus"
+                            outlined
+                            rounded
+                            size="small"
+                            :aria-label="$t('increase_quantity')"
+                            :disabled="quantity >= 50"
+                            @click="quantity++"
+                        />
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-slate-500">{{ $t('total') }}</p>
+                        <strong class="text-xl">{{ money(price * quantity) }}</strong>
+                    </div>
+                </div>
+                <Button
+                    class="w-full"
+                    :label="$t('add_to_cart_total', { total: money(price * quantity) })"
+                    icon="pi pi-shopping-bag"
+                    :disabled="!valid"
+                    @click="add"
+                />
+            </div>
+        </template>
+    </Dialog>
 </template>

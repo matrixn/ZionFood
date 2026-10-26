@@ -19,13 +19,13 @@ use Inertia\Inertia;
 
 Route::get('/', function (Request $request, PublicOrderingController $controller) {
     if ($id = $request->attributes->get('storefront_location')) {
-        return Inertia::render('storefront/Menu', $controller->data(RestaurantLocation::findOrFail($id)));
+        return $controller->page($request, RestaurantLocation::findOrFail($id));
     }
 
     return Inertia::render('Welcome');
 });
 Route::get('/store/{location}', function (Request $r, string $location, PublicOrderingController $c) {
-    return Inertia::render('storefront/Menu', $c->data($c->resolve($r, $location)));
+    return $c->page($r, $c->resolve($r, $location));
 });
 Route::post('/locale', [LocaleController::class, 'update']);
 Route::get('/reserve/{location}', [ReservationController::class, 'form']);

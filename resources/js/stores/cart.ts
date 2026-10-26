@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 export interface CartLine {
     key: string;
     product_id: string;
+    image_path?: string | null;
     name: string;
     quantity: number;
     variant_id: number | null;

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { watch } from 'vue';
+import { useId, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
 import type { ModifierGroup } from '@/types';
+const modifierFormId = useId();
 const props = defineProps<{ locationId: string; group: ModifierGroup | null }>();
 const visible = defineModel<boolean>('visible', { required: true });
 const form = useForm({
@@ -29,6 +30,7 @@ watch(visible, (open) => {
 <template>
     <Dialog v-model:visible="visible" :header="$t('modifier_group')" modal class="w-full max-w-xl"
         ><form
+            :id="modifierFormId"
             class="grid gap-5"
             @submit.prevent="
                 form.post('/app/locations/' + locationId + '/modifiers', { onSuccess: () => (visible = false) })
@@ -43,13 +45,21 @@ watch(visible, (open) => {
                     >{{ $t('maximum_choices') }}<InputNumber v-model="form.max_choices" :min="0" :max="20"
                 /></label>
             </div>
-            <div v-for="(option, i) in form.options" :key="i" class="flex gap-2">
+            <div v-for="(option, i) in form.options" :key="i" class="flex min-w-0 gap-2">
                 <InputText
                     v-model="option.name"
+                    class="min-w-0 flex-1"
                     :placeholder="$t('option_name')"
                     :aria-label="$t('option_name')"
                     required
-                /><InputNumber v-model="option.price" :min="0" :aria-label="$t('option_price_in_bani')" /><Button
+                /><InputNumber
+                    v-model="option.price"
+                    class="!w-24 shrink-0"
+                    input-class="w-full"
+                    :min="0"
+                    :aria-label="$t('option_price_in_bani')"
+                /><Button
+                    class="shrink-0"
                     icon="pi pi-times"
                     text
                     :aria-label="$t('remove_option')"
@@ -61,6 +71,20 @@ watch(visible, (open) => {
                 text
                 icon="pi pi-plus"
                 @click="form.options.push({ name: '', price: 0 })"
-            /><Button :label="$t('save_group')" type="submit" :loading="form.processing" /></form
-    ></Dialog>
+            />
+        </form>
+        <template #footer
+            ><Button
+                :form="modifierFormId"
+                :disabled="
+                    !form.name.trim() ||
+                    !form.options.length ||
+                    form.options.some((o) => !o.name.trim()) ||
+                    form.processing
+                "
+                :label="$t('save_group')"
+                type="submit"
+                :loading="form.processing"
+        /></template>
+    </Dialog>
 </template>

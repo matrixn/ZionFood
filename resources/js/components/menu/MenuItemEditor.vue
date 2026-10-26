@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { useId, computed, ref, watch } from 'vue';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -14,6 +14,7 @@ import { localeTag } from '@/i18n';
 import { ingredientName } from '@/lib/ingredients';
 import { api } from '@/lib/http';
 import type { Product, Category, ModifierGroup, Ingredient } from '@/types';
+const productFormId = useId();
 const props = defineProps<{
     locationId: string;
     product: Product | null;
@@ -111,7 +112,7 @@ async function save() {
         :header="product ? $t('edit_product') : $t('create_product')"
         modal
         class="w-full max-w-2xl"
-        ><form class="grid gap-5" @submit.prevent="save">
+        ><form :id="productFormId" class="grid gap-5" @submit.prevent="save">
             <p v-if="error" role="alert" class="text-red-600">{{ error }}</p>
             <ZFFormField :label="$t('name')" for="product-name"
                 ><InputText id="product-name" v-model="form.name" required /></ZFFormField
@@ -273,9 +274,24 @@ async function save() {
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
                     :aria-label="$t('product_image')"
-                    @change="image = ($event.target as HTMLInputElement).files?.[0]" /></ZFFormField
-            ><Button :label="$t('save_product')" type="submit" :loading="busy" /></form
-    ></Dialog>
+                    @change="image = ($event.target as HTMLInputElement).files?.[0]"
+            /></ZFFormField>
+        </form>
+        <template #footer
+            ><Button
+                :form="productFormId"
+                :disabled="
+                    !form.name.trim() ||
+                    !form.category_id ||
+                    !Number.isInteger(form.price) ||
+                    form.variants.some((v) => !v.name.trim()) ||
+                    busy
+                "
+                :label="$t('save_product')"
+                type="submit"
+                :loading="busy"
+        /></template>
+    </Dialog>
 </template>
 
 <style scoped>

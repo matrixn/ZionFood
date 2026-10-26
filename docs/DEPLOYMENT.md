@@ -156,3 +156,8 @@ The 0.0.9 restaurant navigation/inline editor change requires the usual code/fro
 ## Ingredient catalogue deployment
 
 Run the normal php artisan migrate --force for migration 000700, then build frontend assets. The migration seeds database/data/ingredients.json automatically in every environment; DatabaseSeeder also invokes IngredientSeeder. An explicit php artisan db:seed --class=IngredientSeeder --force may be repeated without overwriting admin edits, hiding state or removal tombstones. No PDF, Python extraction package or external lookup service is required on Forge. Ensure the bundled JSON is deployed. Review source-conflict entries (including hidden Mai) through /admin/ingredients. See INGREDIENTS.md for ownership, majority/tie rules and the distinction between source flags and verified recipe information.
+
+
+## Storefront experience (0.0.12)
+
+Storefront experience 0.0.12 requires an asset build and normal code/config refresh, with no new migration or dependencies. Public pin lookup reuses ZF_REVERSE_GEOCODER_URL and the shared production cache; assess provider capacity for anonymous use. Social metadata is in initial HTML and uses an absolute public logo URL. Serve public storage over the correct HTTPS origin and ensure crawlers can fetch the logo. Actual WhatsApp cached previews are not verified locally.

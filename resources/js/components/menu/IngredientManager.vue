@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { useId, computed, ref } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { useConfirm } from 'primevue/useconfirm';
 import Button from 'primevue/button';
@@ -11,6 +11,7 @@ import { useSetupEditorGuard } from '@/lib/useSetupEditorGuard';
 import { tr } from '@/i18n';
 import { ingredientName } from '@/lib/ingredients';
 import type { Ingredient } from '@/types';
+const ingredientFormId = useId();
 const props = defineProps<{ ingredients: Ingredient[]; base: string; restaurantId?: number | null }>();
 const search = ref('');
 const reviewOnly = ref(false);
@@ -115,7 +116,7 @@ useSetupEditorGuard(
             </article>
         </div>
         <Dialog v-model:visible="visible" modal :header="$t('ingredients_edit')" class="w-full max-w-lg">
-            <form class="grid min-w-0 gap-4" @submit.prevent="save">
+            <form :id="ingredientFormId" class="grid min-w-0 gap-4" @submit.prevent="save">
                 <label class="field"
                     >{{ $t('ingredients_name') }}<InputText v-model="form.name" required maxlength="150"
                 /></label>
@@ -137,8 +138,15 @@ useSetupEditorGuard(
                 <p v-for="(message, key) in form.errors" :key="key" role="alert" class="text-sm text-red-700">
                     {{ message }}
                 </p>
-                <Button type="submit" :label="$t('ingredients_save')" :loading="form.processing" />
             </form>
+            <template #footer
+                ><Button
+                    :form="ingredientFormId"
+                    :disabled="!form.name.trim() || form.processing"
+                    type="submit"
+                    :label="$t('ingredients_save')"
+                    :loading="form.processing"
+            /></template>
         </Dialog>
         <ConfirmDialog :group="base" />
     </div>

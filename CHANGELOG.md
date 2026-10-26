@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.12 — 2026-10-26
+
+- Restaurant-specific server-rendered Open Graph metadata with its logo and localized Digital Menu title.
+- Redesigned public product cards/details: large modal photo, labelled serving, no duplicate title or title stars, compact parenthesized ingredients and persistent quantity/total/add controls.
+- Compact cart rows with photographs; scrollable dialog bodies and persistent action footers across checkout and restaurant editors.
+- Delivery-pin address autofill in street, number, locality format with manual edits, stale-response protection and bounded public lookup.
+- Subtle bilingual allergen panel with expandable fourteen groups and current Regulation (EU) 1169/2011 reference.
+
 ## 0.0.11 — 2026-10-26
 
 - Added the deduplicated 183-ingredient PDF catalogue, source-count audit, independent allergen/frozen flags and review markers, with positive ties kept enabled by user choice.

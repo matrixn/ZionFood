@@ -61,6 +61,8 @@ class LocateRestaurant
             $number = $this->text($p, 'housenumber');
             $country = strtoupper($this->text($p, 'countrycode'));
             $nearest = [
+                'street' => mb_substr($street, 0, 200),
+                'house_number' => mb_substr($number, 0, 40),
                 'address' => mb_substr(trim($street.' '.($street ? $number : '')), 0, 255),
                 'city' => mb_substr($city, 0, 100),
                 'country' => preg_match('/^[A-Z]{2}$/', $country) ? $country : '',

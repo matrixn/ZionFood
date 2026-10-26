@@ -61,6 +61,7 @@ test('staff opens a table and its QR submits a real order with the table identit
     expect(qrUrl).toMatch(/\/table\/.*#token=/);
     const guest = await browser.newContext();
     const tab = await guest.newPage();
+    await tab.route('**/address-from-pin', route => route.fulfill({ json: { address: null, incomplete: true } }));
     await tab.goto(qrUrl!);
     await expect(tab.getByText('Masa este conectată. Poți trimite comanda.', { exact: true })).toBeVisible();
     await tab.getByRole('button').filter({ hasText: 'Preparat de test' }).click();
@@ -129,6 +130,7 @@ test('manager draws a delivery zone and a guest checks out using its map pin', a
     await page.screenshot({ path: 'test-results/delivery-zone-mobile.png', fullPage: true });
     const guest = await browser.newContext();
     const tab = await guest.newPage();
+    await tab.route('**/address-from-pin', route => route.fulfill({ json: { address: null, incomplete: true } }));
     await tab.goto(`/store/${account.location}`);
     await tab.getByRole('button').filter({ hasText: 'Preparat de test' }).click();
     await tab.getByRole('button', { name: /Adaugă în coș/ }).click();

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CartProductImage from './CartProductImage.vue';
 import { useCart } from '@/stores/cart';
 import ZFDrawer from '@/components/ui/ZFDrawer.vue';
 import Button from 'primevue/button';
@@ -10,27 +11,49 @@ const cart = useCart();
 <template>
     <ZFDrawer v-model:visible="visible" :title="$t('your_cart')"
         ><p v-if="!cart.lines.length" class="muted py-8">{{ $t('your_next_favourite_meal_is_waiting') }}</p>
-        <div v-for="line in cart.lines" :key="line.key" class="border-b border-slate-200 py-5">
-            <div class="flex justify-between gap-3">
-                <strong>{{ line.quantity }} × {{ line.name }}</strong
-                ><span>{{ money(line.quantity * line.unit_price) }}</span>
+        <article
+            v-for="line in cart.lines"
+            :key="line.key"
+            class="flex items-center gap-3 border-b border-slate-100 py-3 dark:border-slate-800"
+            data-testid="cart-line"
+        >
+            <CartProductImage :path="line.image_path" :name="line.name" />
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold leading-snug">{{ line.quantity }} × {{ line.name }}</p>
+                <p
+                    v-if="line.variant_name || line.modifier_names.length"
+                    class="mt-1 text-xs leading-snug text-slate-500"
+                >
+                    {{ [line.variant_name, ...line.modifier_names].filter(Boolean).join(', ') }}
+                </p>
             </div>
-            <p class="muted mt-2">{{ [line.variant_name, ...line.modifier_names].filter(Boolean).join(', ') }}</p>
-            <Button :label="$t('remove')" text size="small" @click="cart.remove(line.key)" />
-        </div>
-        <div v-if="cart.lines.length" class="mt-6 grid gap-5">
-            <div class="flex justify-between text-lg font-semibold">
-                <span>{{ $t('subtotal') }}</span
-                ><span>{{ money(cart.total) }}</span>
+            <div class="flex shrink-0 items-center gap-1">
+                <strong class="text-sm">{{ money(line.quantity * line.unit_price) }}</strong>
+                <Button
+                    icon="pi pi-trash"
+                    text
+                    size="small"
+                    :aria-label="$t('cart_remove_named', { name: line.name })"
+                    @click="cart.remove(line.key)"
+                />
             </div>
-            <p class="muted">{{ $t('final_availability_and_totals_are_confirmed_at_checkout') }}</p>
-            <Button
-                :label="$t('continue_to_checkout')"
-                icon="pi pi-arrow-right"
-                @click="
-                    visible = false;
-                    emit('checkout');
-                "
-            /></div
-    ></ZFDrawer>
+        </article>
+        <template #footer>
+            <div v-if="cart.lines.length" class="grid w-full gap-3">
+                <div class="flex justify-between text-lg font-semibold">
+                    <span>{{ $t('subtotal') }}</span
+                    ><span>{{ money(cart.total) }}</span>
+                </div>
+                <p class="muted">{{ $t('final_availability_and_totals_are_confirmed_at_checkout') }}</p>
+                <Button
+                    :label="$t('continue_to_checkout')"
+                    icon="pi pi-arrow-right"
+                    @click="
+                        visible = false;
+                        emit('checkout');
+                    "
+                />
+            </div>
+        </template>
+    </ZFDrawer>
 </template>

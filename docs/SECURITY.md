@@ -31,3 +31,8 @@ Reverse lookup uses the same authorization and bounded transport, forwarding onl
 Inline setup editors reuse the same authorized WorkspaceController data builder as standalone pages. Foreign/staff access to wizard administration remains denied. Locations are restricted to the existing accessible collection, and configure links require management rights; destination routes recheck authorization. No role grants or tenant transfers are introduced.
 
 Ingredient scopes are derived server-side from the authenticated location/category, never from payload IDs. Platform admin manages global records; owners/managers manage their own restaurant entries. Staff, foreign tenants and another restaurant within the same organization cannot inject custom ingredients. Hidden/deleted ingredients are rejected on new assignments but existing recipe associations may be retained or removed. Product writes, pivots and validation share a transaction. Public payloads omit owner/source/review metadata; text is Vue-escaped. The PDF is build-time source material only, not runtime executable input.
+
+
+## Storefront experience (0.0.12)
+
+Anonymous checkout reverse lookup accepts only valid coordinates inside an active polygon for an accepting delivery location. Verified custom hosts cannot lookup another location. IP/minute, IP/hour and location/minute limits supplement the shared provider cooldown/cache. No customer names, phone numbers or typed addresses reach the reverse provider. The UI discloses coordinate forwarding. Client-side validation and cart image paths do not influence authoritative checkout pricing, zone or authorization.

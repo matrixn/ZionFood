@@ -31,3 +31,8 @@ After placing or dragging a pin, **Preia adresa de la pin / Use address from pin
 Delivery Settings receives the saved pin or null plus saved address components. New/empty polygon editors start at zoom 16 around the pin, with a fixed restaurant marker and **Centrează pe restaurant / Center on restaurant**. Existing polygons retain their fitted bounds until recentering is requested. With only a complete saved address, one forward lookup centers the viewport; multiple matches require a choice. Missing/failed results show guidance. This fallback never silently writes a setup pin. A late response does not recenter an actively drawn polygon. Checkout behavior is unchanged.
 
 A real local reverse lookup at a public museum pin returned Calea Victoriei 49-53, București, RO, 010063. This checks one location, not complete geographic coverage. Automated backend/browser checks fake provider responses; completed counts and limits are recorded in CODEX_PROGRESS.md.
+
+
+## Storefront experience (0.0.12)
+
+Customer checkout now also uses reverse lookup automatically after an in-zone delivery pin is selected. This separate public endpoint returns only a formatted editable address, never restaurant setup fields, and cannot save location data. Its IP/location limits are separate from authenticated management limits. Only coordinates reach the provider; checkout independently verifies zone and fee.

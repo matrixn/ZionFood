@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ZionFood API",
-    "version": "0.0.11",
+    "version": "0.0.12",
     "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session."
   },
   "servers": [
@@ -1363,6 +1363,82 @@
           }
         },
         "description": "Permanent QR proof; staff menu pause persists across scans. Enabled service, hours and per-location closing cutoff apply. Optional staff-activation policy is retained."
+      }
+    },
+    "/public/locations/{location}/address-from-pin": {
+      "post": {
+        "summary": "Resolve an editable delivery address from a pin inside an active delivery polygon",
+        "description": "Public same-origin lookup for an accepting location with delivery enabled. Verified storefront hosts are scoped to their location. Throttled to 10/minute/IP, 100/hour/IP and 60/minute/location. Only coordinates reach the configured reverse provider; no data is saved. Failure/partial results require manual entry.",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "latitude",
+                  "longitude"
+                ],
+                "properties": {
+                  "latitude": {
+                    "type": "number",
+                    "minimum": -85,
+                    "maximum": 85
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "minimum": -180,
+                    "maximum": 180
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "No-store editable street, number, locality or null",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "address",
+                    "incomplete"
+                  ],
+                  "properties": {
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "incomplete": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown, unavailable or wrong-host location; delivery disabled"
+          },
+          "422": {
+            "description": "Invalid coordinates, outside active polygons, or provider busy/unavailable"
+          },
+          "429": {
+            "description": "Request limit exceeded"
+          }
+        }
       }
     }
   },

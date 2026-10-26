@@ -2,7 +2,7 @@
 import { useSetupEditorGuard } from '@/lib/useSetupEditorGuard';
 import { tr as t } from '@/i18n';
 
-import { computed, ref } from 'vue';
+import { useId, computed, ref } from 'vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import ZFPageHeader from '@/components/ui/ZFPageHeader.vue';
@@ -18,6 +18,7 @@ import { api, money } from '@/lib/http';
 import { useConfirm } from 'primevue/useconfirm';
 import ZFConfirmDialog from '@/components/ui/ZFConfirmDialog.vue';
 import type { WorkspaceProps, Menu, Product, ModifierGroup, Category, Ingredient } from '@/types';
+const categoryFormId = useId();
 const props = defineProps<WorkspaceProps & { menus: Menu[]; groups: ModifierGroup[]; ingredients: Ingredient[] }>();
 const categories = computed(() => props.menus.flatMap((m) => m.categories));
 const editor = ref(false);
@@ -168,6 +169,7 @@ useSetupEditorGuard(
                 :restaurant-id="location.restaurant_id"
                 :base="`/app/locations/${location.public_id}/ingredients`"
             />
+            <template #footer><Button :label="$t('modal_close')" outlined @click="ingredientsOpen = false" /></template>
         </Dialog>
         <MenuItemEditor
             v-model:visible="editor"
@@ -184,6 +186,7 @@ useSetupEditorGuard(
             :header="$t('menu_category')"
             modal
             ><form
+                :id="categoryFormId"
                 class="grid gap-4"
                 @submit.prevent="
                     category.post('/app/locations/' + location.public_id + '/categories', {
@@ -202,7 +205,15 @@ useSetupEditorGuard(
                 <p v-for="(message, key) in category.errors" :key="key" role="alert" class="text-red-600">
                     {{ message }}
                 </p>
-                <Button type="submit" :label="$t('save_category')" :loading="category.processing" /></form></Dialog
+            </form>
+            <template #footer
+                ><Button
+                    :form="categoryFormId"
+                    :disabled="!category.name.trim() || !category.menu_id || category.processing"
+                    type="submit"
+                    :label="$t('save_category')"
+                    :loading="category.processing"
+            /></template> </Dialog
         ><ZFConfirmDialog
     /></RestaurantLayout>
 </template>

@@ -2,6 +2,8 @@
 import { computed, onMounted, ref } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import StorefrontLayout from '@/layouts/StorefrontLayout.vue';
+import AllergenNotice from '@/components/storefront/AllergenNotice.vue';
+import ProductPhoto from '@/components/storefront/ProductPhoto.vue';
 import ProductIngredients from '@/components/storefront/ProductIngredients.vue';
 import { productMarks } from '@/lib/ingredients';
 import ProductConfigurator from '@/components/storefront/ProductConfigurator.vue';
@@ -20,8 +22,10 @@ const props = defineProps<{
     zones: Zone[];
     mapConfig: MapConfig;
     mapCenter: number[];
+    shareMeta?: { title: string; name: string; description: string; image: string | null; url: string; locale: string };
     tableContext?: { public_id: string; code: string; area: string; ordering_paused: boolean };
 }>();
+onMounted(() => document.querySelectorAll('[data-storefront-meta]').forEach((node) => node.remove()));
 const cart = useCart();
 cart.scope(props.location.public_id + (props.tableContext ? `:${props.tableContext.public_id}` : ''));
 const sessionToken = ref<string | null>(null);
@@ -66,7 +70,35 @@ const checkout = ref(false);
 </script>
 <template>
     <StorefrontLayout :name="restaurant.name" :brand="restaurant"
-        ><Head :title="restaurant.name" /><template #actions
+        ><Head :title="restaurant.name + ' ' + $t('digital_menu')">
+            <meta
+                head-key="store-description"
+                name="description"
+                :content="shareMeta?.description || restaurant.description || restaurant.name"
+            />
+            <meta head-key="og-title" property="og:title" :content="restaurant.name + ' ' + $t('digital_menu')" />
+            <meta head-key="og-name" property="og:site_name" :content="restaurant.name" />
+            <meta head-key="og-type" property="og:type" content="website" />
+            <link v-if="shareMeta" head-key="canonical" rel="canonical" :href="shareMeta.url" />
+            <meta head-key="twitter-card" name="twitter:card" content="summary" />
+            <meta head-key="twitter-title" name="twitter:title" :content="restaurant.name + ' ' + $t('digital_menu')" />
+            <meta v-if="shareMeta?.image" head-key="twitter-image" name="twitter:image" :content="shareMeta.image" />
+            <meta v-if="shareMeta" head-key="og-locale" property="og:locale" :content="shareMeta.locale" />
+            <meta v-if="shareMeta" head-key="og-url" property="og:url" :content="shareMeta.url" />
+            <meta
+                v-if="shareMeta"
+                head-key="og-description"
+                property="og:description"
+                :content="shareMeta.description"
+            />
+            <meta v-if="shareMeta?.image" head-key="og-image" property="og:image" :content="shareMeta.image" />
+            <meta
+                v-if="shareMeta?.image"
+                head-key="og-image-alt"
+                property="og:image:alt"
+                :content="restaurant.name"
+            /> </Head
+        ><template #actions
             ><Button
                 :label="$t('cart_count', { count: cart.lines.length })"
                 icon="pi pi-shopping-bag"
@@ -122,58 +154,56 @@ const checkout = ref(false);
         </nav>
         <section v-for="c in categories" :id="'category-' + c.id" :key="c.id" class="mb-10 scroll-mt-20">
             <h2 class="mb-5 text-2xl font-semibold">{{ c.name }}</h2>
-            <div class="grid gap-4 md:grid-cols-2">
+            <div class="grid gap-4 lg:grid-cols-2">
                 <button
                     v-for="p in c.items"
                     :key="p.public_id"
-                    class="panel flex gap-5 text-left transition-shadow hover:shadow-md"
+                    class="group flex w-full gap-4 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-violet-200 hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
                     :disabled="!location.accepting_orders"
+                    data-testid="menu-product-card"
                     @click="
                         product = p;
                         configure = true;
                     "
                 >
-                    <div class="min-w-0 flex-1">
-                        <h3 class="text-lg font-semibold">{{ p.name }}{{ productMarks(p) }}</h3>
-                        <p class="muted my-3 line-clamp-2">{{ p.description }}</p>
-                        <ProductIngredients :product="p" />
-                        <strong>{{ money(p.price) }}</strong
-                        ><span v-if="p.variants.length" class="muted ml-2">{{ $t('base_price') }}</span>
+                    <div class="h-24 w-24 shrink-0 overflow-hidden rounded-xl sm:h-32 sm:w-32">
+                        <ProductPhoto :path="p.image_path" :name="p.name" />
                     </div>
-                    <img
-                        v-if="p.image_path"
-                        :src="'/storage/' + p.image_path"
-                        :alt="p.name"
-                        class="h-28 w-28 rounded-xl object-cover"
-                    /><span v-else class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 text-brand"
-                        ><i aria-hidden="true" class="pi pi-plus"
-                    /></span>
+                    <div class="flex min-w-0 flex-1 flex-col gap-2">
+                        <h3
+                            class="text-base font-semibold leading-snug tracking-tight text-ink dark:text-white sm:text-lg"
+                        >
+                            {{ p.name }}
+                        </h3>
+                        <span
+                            v-if="p.portion_size"
+                            class="w-fit rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500 dark:bg-slate-800"
+                            >{{ $t('product_serving') }} · {{ p.portion_size }}</span
+                        >
+                        <p v-if="p.description" class="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                            {{ p.description }}
+                        </p>
+                        <ProductIngredients :product="p" />
+                        <div class="mt-auto flex items-end justify-between gap-2 pt-2">
+                            <div>
+                                <strong class="text-lg font-semibold">{{ money(p.price) }}</strong
+                                ><span v-if="p.variants.length" class="ml-1 text-xs text-slate-400">{{
+                                    $t('base_price')
+                                }}</span>
+                            </div>
+                            <span
+                                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-white transition-transform motion-safe:group-hover:rotate-90"
+                                ><i class="pi pi-plus text-xs" aria-hidden="true"
+                            /></span>
+                        </div>
+                    </div>
                 </button>
             </div>
         </section>
         <p v-if="!categories.length && !menuPaused" class="muted py-16 text-center">
             {{ $t('the_restaurant_is_preparing_its_menu_check_back_soon') }}
         </p>
-        <section
-            v-if="categories.some((c) => c.items.some((p) => productMarks(p)))"
-            class="panel my-8 space-y-4"
-            data-testid="allergen-notice"
-        >
-            <h2 class="text-xl font-semibold">{{ $t('ingredients_notice_title') }}</h2>
-            <p class="whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                {{ $t('ingredients_notice') }}
-            </p>
-            <p class="text-xs leading-relaxed text-slate-500">
-                {{ $t('ingredients_legal_note') }}
-                <a
-                    href="https://eur-lex.europa.eu/eli/reg/2011/1169/oj"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="underline"
-                    >{{ $t('ingredients_legal_reference') }}</a
-                >
-            </p>
-        </section>
+        <AllergenNotice v-if="categories.some((c) => c.items.some((p) => productMarks(p)))" />
         <ProductConfigurator v-model:visible="configure" :product="product" /><CartDrawer
             v-model:visible="drawer"
             @checkout="checkout = true" /><CheckoutForm

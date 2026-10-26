@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { tr as t } from '@/i18n';
 
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, useId, watch } from 'vue';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
@@ -21,6 +21,7 @@ const props = defineProps<{
     mapConfig: MapConfig;
     mapCenter: number[];
 }>();
+const formId = useId();
 const visible = defineModel<boolean>('visible', { required: true });
 const cart = useCart();
 const point = ref<DeliveryPoint | null>(null);
@@ -55,6 +56,75 @@ const fee = computed(() =>
             : (props.zones.find((z) => z.id === form.value.delivery_zone_id)?.fee ?? 0)
         : 0,
 );
+const addressLoading = ref(false);
+const addressHint = ref('');
+let lookup = 0;
+let addressVersion = 0;
+let timer: ReturnType<typeof setTimeout> | undefined;
+function cancelLookup() {
+    lookup++;
+    clearTimeout(timer);
+    addressLoading.value = false;
+}
+function editedAddress() {
+    addressVersion++;
+    cancelLookup();
+    addressHint.value = '';
+}
+watch(
+    () => [visible.value, form.value.fulfillment, point.value?.latitude, point.value?.longitude, polygonZone.value?.id],
+    () => {
+        cancelLookup();
+        addressHint.value = '';
+        if (!visible.value || form.value.fulfillment !== 'delivery' || !point.value || !polygonZone.value) return;
+        const selected = { ...point.value };
+        const generation = lookup;
+        const version = addressVersion;
+        timer = setTimeout(async () => {
+            if (generation !== lookup || version !== addressVersion) return;
+            addressLoading.value = true;
+            try {
+                const response = await api<{ address: string | null; incomplete: boolean }>(
+                    `/api/v1/public/locations/${props.locationId}/address-from-pin`,
+                    'POST',
+                    selected,
+                );
+                if (generation !== lookup || version !== addressVersion) return;
+                if (response.address) form.value.delivery_address = response.address;
+                addressHint.value = response.address
+                    ? response.incomplete
+                        ? 'checkout_address_partial'
+                        : 'checkout_address_filled'
+                    : 'checkout_address_manual';
+            } catch {
+                if (generation === lookup && version === addressVersion) addressHint.value = 'checkout_address_manual';
+            } finally {
+                if (generation === lookup) addressLoading.value = false;
+            }
+        }, 650);
+    },
+);
+onBeforeUnmount(cancelLookup);
+const deliveryZone = computed(() =>
+    hasPolygons.value ? polygonZone.value : props.zones.find((z) => z.id === form.value.delivery_zone_id),
+);
+const valid = computed(() => {
+    if (
+        !cart.lines.length ||
+        busy.value ||
+        addressLoading.value ||
+        !form.value.customer_name.trim() ||
+        !form.value.customer_phone.trim() ||
+        !methods.value.some((m) => m.value === form.value.fulfillment)
+    )
+        return false;
+    if (form.value.fulfillment !== 'delivery') return true;
+    if (!form.value.delivery_address.trim() || !deliveryZone.value || cart.total < deliveryZone.value.minimum_order)
+        return false;
+    return hasPolygons.value
+        ? !!polygonZone.value
+        : !!form.value.postal_code.trim() && form.value.postal_code.startsWith(deliveryZone.value.postal_prefix);
+});
 watch(visible, (open) => {
     if (open) error.value = '';
 });
@@ -65,6 +135,8 @@ watch(
     },
 );
 async function submit() {
+    if (!valid.value) return;
+    cancelLookup();
     busy.value = true;
     error.value = '';
     const payload = {
@@ -107,13 +179,19 @@ async function submit() {
 </script>
 <template>
     <Dialog v-model:visible="visible" :header="$t('almost_at_your_table')" modal class="w-full max-w-xl"
-        ><form class="grid gap-5" @submit.prevent="submit">
+        ><form :id="formId" class="grid gap-5" @submit.prevent="submit">
             <p v-if="error" role="alert" class="rounded-lg bg-red-50 p-3 text-red-700">{{ error }}</p>
             <label class="field"
-                >{{ $t('your_name') }}<InputText v-model="form.customer_name" autocomplete="name" required /></label
+                >{{ $t('your_name')
+                }}<InputText v-model="form.customer_name" autocomplete="name" maxlength="150" required /></label
             ><label class="field"
                 >{{ $t('phone_number')
-                }}<InputText v-model="form.customer_phone" type="tel" autocomplete="tel" required /></label
+                }}<InputText
+                    v-model="form.customer_phone"
+                    type="tel"
+                    autocomplete="tel"
+                    maxlength="30"
+                    required /></label
             ><label class="field"
                 >{{ $t('how_would_you_like_your_order')
                 }}<Select
@@ -124,7 +202,12 @@ async function submit() {
             ><template v-if="form.fulfillment === 'delivery'"
                 ><label class="field"
                     >{{ $t('delivery_address')
-                    }}<InputText v-model="form.delivery_address" autocomplete="street-address" required /></label
+                    }}<InputText
+                        v-model="form.delivery_address"
+                        autocomplete="street-address"
+                        maxlength="500"
+                        required
+                        @update:model-value="editedAddress" /></label
                 ><template v-if="hasPolygons"
                     ><DeliveryMap
                         v-model:point="point"
@@ -133,6 +216,10 @@ async function submit() {
                         :map-config="mapConfig"
                         :center="mapCenter"
                     />
+                    <p v-if="addressLoading" role="status" class="text-sm text-slate-500">
+                        {{ $t('checkout_address_loading') }}
+                    </p>
+                    <p v-if="addressHint" role="status" class="text-sm text-slate-500">{{ $t(addressHint) }}</p>
                     <p v-if="point && !polygonZone" role="alert" class="text-red-700">{{ $t('map_outside') }}</p>
                     <p v-if="polygonZone" class="font-medium text-brand">
                         {{ polygonZone.name }} · {{ money(polygonZone.fee) }}
@@ -151,26 +238,29 @@ async function submit() {
             ><label class="field"
                 >{{ $t('order_notes') }}<Textarea v-model="form.notes" rows="2" maxlength="1000"
             /></label>
-            <div class="flex justify-between text-lg font-semibold">
-                <span>{{ fee ? $t('total_with_delivery') : $t('total') }}</span
-                ><span>{{ money(cart.total + fee) }}</span>
+        </form>
+        <template #footer>
+            <div class="grid w-full gap-3" data-testid="checkout-footer">
+                <div class="flex items-center justify-between gap-4 text-lg font-semibold">
+                    <span>{{ fee ? $t('total_with_delivery') : $t('total') }}</span
+                    ><span>{{ money(cart.total + fee) }}</span>
+                </div>
+                <p
+                    v-if="form.fulfillment === 'delivery' && deliveryZone && cart.total < deliveryZone.minimum_order"
+                    role="status"
+                    class="text-sm text-amber-800"
+                >
+                    {{ $t('checkout_minimum', { total: money(deliveryZone.minimum_order) }) }}
+                </p>
+                <p class="text-xs leading-relaxed text-slate-500">
+                    {{
+                        tableSessionToken
+                            ? $t('dining_payment_hint')
+                            : $t('pay_at_pickup_or_on_delivery_your_order_is_subject_to_restaurant_acceptance')
+                    }}
+                </p>
+                <Button type="submit" :form="formId" :label="$t('place_order')" :loading="busy" :disabled="!valid" />
             </div>
-            <p class="muted">
-                {{
-                    tableSessionToken
-                        ? $t('dining_payment_hint')
-                        : $t('pay_at_pickup_or_on_delivery_your_order_is_subject_to_restaurant_acceptance')
-                }}
-            </p>
-            <Button
-                type="submit"
-                :label="$t('place_order')"
-                :loading="busy"
-                :disabled="
-                    !cart.lines.length ||
-                    !methods.length ||
-                    (form.fulfillment === 'delivery' && hasPolygons && !polygonZone)
-                "
-            /></form
-    ></Dialog>
+        </template>
+    </Dialog>
 </template>

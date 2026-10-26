@@ -6,6 +6,7 @@ Machine-readable contract: [openapi.json](openapi.json). API host in production:
 | --- | --- | --- |
 | GET | /public/locations/{location}/menu | Public location ULID; verified storefront host cannot access another location |
 | POST | /public/locations/{location}/checkout | Public; Idempotency-Key required, 16–100 letters/digits/hyphens/underscores |
+| POST | /public/locations/{location}/address-from-pin | Public, delivery enabled, point inside active polygon; scoped by storefront host and throttled |
 | GET | /public/orders/{order} | Bearer tracking token; public order ULID; returns no customer contact details |
 | GET | /locations/{location}/orders | Session or Sanctum orders:read; organization and location authorization |
 | PATCH | /orders/{order}/status | Session or Sanctum orders:manage; status, expected version, optional reason |
@@ -65,3 +66,7 @@ POST /app/locations/{public_id}/setup/reverse-geocode accepts numeric latitude (
 Restaurant administration now includes GET /app/locations/{public_id}/locations and setup/locations plus setup/delivery. Setup hours/delivery/menu/branding/staff load the selected existing editor props under the same owner/manager authorization. Writes reuse existing endpoints and return to the current wizard URL. These supporting steps do not accept arbitrary setup PUT payloads. See ADMIN_NAVIGATION.md.
 
 Product JSON and multipart payloads now accept optional portion_size (50 characters), ingredient_ids (distinct ordered IDs, maximum 100), contains_allergens and from_frozen. Prices remain integer bani. Omitted ingredient_ids preserve an existing recipe. Ingredient selection is restricted to common or same-restaurant entries, with hidden/deleted IDs allowed only when already assigned. Public menu products include portion_size, ordered ingredient metadata and effective combined flags. Web ingredient administration uses verified management sessions and CSRF; global /admin/ingredients requires platform admin and tenant /app/locations/{id}/ingredients manages only restaurant-owned rows. See INGREDIENTS.md.
+
+## Customer delivery address from a pin
+
+POST `/api/v1/public/locations/{location}/address-from-pin` accepts numeric latitude (-85..85) and longitude (-180..180). The location must accept orders and have delivery enabled; the point must lie inside an active delivery polygon. Response: `{address: "street, number, locality" | null, incomplete: boolean}`, no-store. Missing number/locality may produce a partial address for manual completion. Public limits are 10/min/IP, 100/hour/IP and 60/min/location, in addition to the shared provider cache/lock/cooldown. The route stores no customer data and forwards only coordinates. Map-only lookup does not replace authoritative checkout polygon/fee validation.
