@@ -25,6 +25,11 @@ class RestaurantLocation extends Model
 
     protected $hidden = ['setup_profile'];
 
+    public function cuisines()
+    {
+        return $this->belongsToMany(Cuisine::class, 'location_cuisines', 'location_id', 'cuisine_id')->withPivot('organization_id')->withTimestamps();
+    }
+
     public function restaurant()
     {
         return $this->belongsTo(Restaurant::class);

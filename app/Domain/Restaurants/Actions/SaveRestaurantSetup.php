@@ -5,6 +5,7 @@ namespace App\Domain\Restaurants\Actions;
 use App\Domain\Restaurants\SetupProgress;
 use App\Domain\Restaurants\SyncDiningTables;
 use App\Domain\Tenancy\TenantAccess;
+use App\Models\Cuisine;
 use App\Models\RestaurantLocation;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,19 @@ class SaveRestaurantSetup
             }
             $profile = $location->setup_profile ?? [];
             unset($data['revision']);
+            if ($step === 'cuisines') {
+                $ids = array_map('intval', $data['cuisine_ids']);
+                $previous = $location->cuisines()->pluck('cuisines.id');
+                $available = Cuisine::whereIn('id', $ids)->lockForUpdate()->get();
+                if ($available->count() !== count($ids) || $available->contains(fn ($c) => ! $c->is_active && ! $previous->contains($c->id))) {
+                    throw ValidationException::withMessages(['cuisine_ids' => __('Choose available cuisines from the catalogue.')]);
+                }
+                $location->cuisines()->syncWithPivotValues($ids, ['organization_id' => $location->organization_id]);
+            }
             if ($step === 'basics') {
+                if (isset($profile['basics']['cuisine'])) {
+                    $data['cuisine'] = $profile['basics']['cuisine'];
+                }
                 $location->restaurant()->update(['name' => $data['restaurant_name']]);
                 $location->fill(array_intersect_key($data, array_flip(['name', 'address', 'timezone'])));
             }
@@ -65,7 +78,7 @@ class SaveRestaurantSetup
                     throw ValidationException::withMessages(['accepting_orders' => __('Complete the required setup steps before accepting orders.')]);
                 }
                 $location->accepting_orders = $data['accepting_orders'];
-            } else {
+            } elseif ($step !== 'cuisines') {
                 $profile[$step] = $data;
             }
             if ($step === 'reservations' && ! $data['planned']) {

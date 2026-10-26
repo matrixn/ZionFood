@@ -1,6 +1,20 @@
 # ZionFood progress — 0.0.1
 
-## Current increment - reservations, table QR and delivery polygons (October 26)
+## Current increment - cuisine catalogue and selection (October 26)
+
+Removed the editable free-text cuisine field from Basics and added a separate Cuisine step immediately after Name and address. Owners/managers select multiple illustrated cards, search bilingual names, see a separate selected list, a sticky count/save bar, unsaved feedback and saved activation dates. Selection timestamps survive unchanged saves. Legacy private free-text values remain for continuity, without automatic mapping. Cuisine is descriptive and optional; it does not activate products, payments or operational services.
+
+Added the shared platform-admin catalogue with bilingual names/descriptions, safe photo upload/replacement, attribution links, display order and availability. Tenant roles cannot edit it. Inactive entries cannot be newly selected; existing selections remain visible with warnings and may be retained/removed. The revision-checked location pivot enforces organization/location ownership. Migration 000600 creates the schema and imports all 27 requested options from bundled JSON, without deployment-time network calls.
+
+All 27 real Wikimedia Commons photos are bundled locally (about 5.7 MB), with author/source/license metadata in the cards and CUISINE_PHOTO_CREDITS.md. Images were checked in a contact sheet and loaded successfully in browser tests. Public storefront data and online payment behavior are unchanged. Deployment needs the additive migration and frontend build; uploaded photos retain the existing public storage link.
+
+Validation: 138 backend tests / 698 assertions passed on isolated SQLite and the dedicated MariaDB database through WSL (174.31 seconds). Six new catalogue tests cover the default assets, platform/tenant boundaries, upload validation/replacement, selection dates, deactivation, invalid IDs, duplicates and revision conflicts. Eight Vitest checks, TypeScript/Vite build, ESLint and exact Linux Pint (182 PHP files) passed. Three Chromium flows passed: cuisine selection/search/save/reload/RO-EN/mobile/all 27 images; platform photo create/edit/deactivation; existing setup regression. The two cuisine flows passed again after the sticky-save and translated-hint improvements, including successful decoding of an uploaded photo. Desktop/mobile/admin screenshots were inspected. Two catalogue entries and uploaded files created solely for browser tests were removed from the local application; local tenant test accounts remain isolated fixtures.
+
+Initial browser fixture-path and shared-account locale assumptions were corrected. Visual inspection found a missing dynamic hint key; both translations were added. No production/live Forge test, manual deploy or CI result is claimed. The existing approximately 507 kB app bundle warning remains; the photos use native lazy loading. Version stays 0.0.1. The user explicitly authorized commit and push for this increment, including the preceding local reservation/QR/map commit.
+
+
+
+## Previous increment - reservations, table QR and delivery polygons (October 26)
 
 Implemented location-scoped reservations, local arrival slots, peak concurrent capacity/single-table allocation, automatic/manual confirmation with expiring holds, private guest receipts/cancellation and versioned staff operations. Optional encrypted/localized guest emails reuse the shared queue/quota. Stable table QR identities support permanent direct QR sessions by default, with optional staff activation; dine-in checkout snapshots table identity into existing KDS/orders/outbox. Seating restructuring is blocked while future bookings or live sessions exist. All new services default off and are independently selected per location.
 

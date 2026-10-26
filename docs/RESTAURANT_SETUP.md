@@ -22,7 +22,8 @@ Inspection limits: disabled/gated services were not enabled merely to reveal dee
 
 | Group | Step | What saving does |
 | --- | --- | --- |
-| Your restaurant | Name and address | Saves restaurant name, location name/address/time zone, city/country/postal code, phone/email/website/cuisine and optional coordinate pair |
+| Your restaurant | Name and address | Saves restaurant name, location name/address/time zone, city/country/postal code, phone/email/website and optional coordinate pair |
+| Your restaurant | Cuisine | Selects multiple catalogue photo cards with search, selected list and saved activation dates; see CUISINES.md |
 | Your restaurant | Areas, tables and seats | Saves either total capacity or a table plan with unique table codes, area/terrace labels and seat counts; computes the total server-side |
 | How you operate | Services | Updates pickup, delivery, QR ordering and reservation flags independently; retains scheduled/catering preparation |
 | How you operate | Hours and delivery | Opens the existing location editor for business hours and drawn polygon or postal-prefix delivery zones/fees/minimums |
@@ -42,7 +43,7 @@ All pages have RO/EN copy and the existing persistent language selector. The des
 - Public storefront responses continue to expose only their existing explicit public fields. `setup_profile` is hidden from automatic model serialization and returned only by the owner/manager setup controller; legal/private notes do not become public website policies automatically.
 - Both Form Request and domain Action enforce tenant management access. Ordinary staff and foreign tenants cannot inspect or edit setup data. Public IDs are resolved before authorization.
 - Each setup write locks the location and checks its revision, rejecting stale writes without overwriting newer setup changes. This protects concurrent wizard edits; older standalone editors retain their own existing behavior and do not increment the wizard revision.
-- Basics writes keep authoritative location name/address/time zone and restaurant name synchronized; contact/cuisine/legal preferences remain location setup fields. Public restaurant contacts still use the Branding editor, allowing multi-location preparation without silently overwriting shared contact details.
+- Basics writes keep authoritative location name/address/time zone and restaurant name synchronized; contact/legal preferences remain location setup fields; cuisine selections now use the relational catalogue. Public restaurant contacts still use the Branding editor, allowing multi-location preparation without silently overwriting shared contact details.
 - Table plans synchronize stable relational table identities and QR credentials; the reservation engine uses them as allocation inventory. Codes are unique ignoring case; unknown per-table attributes are rejected; seat counts are positive and total capacity is bounded. Capacity-only mode supports delivery-only venues with zero seats.
 - Planned reservation party sizes cannot exceed capacity, and capacity cannot be reduced below an already planned maximum party size. Time ranges, coordinates, party sizes, URLs and time zones are validated server-side.
 - Setup publication requires contact/address details, operating hours, an active menu with an available product, at least one viable pickup/delivery/QR service, and delivery zones when delivery is enabled. Pausing remains allowed. Existing checkout remains authoritative for subscriptions, actual opening times and request validation. Existing Settings remains an operational control; this checklist is not a replacement for checkout validation or a legal compliance certification.

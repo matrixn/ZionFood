@@ -23,9 +23,10 @@ class RestaurantSetupRequest extends FormRequest
                 'restaurant_name' => ['required', 'string', 'max:150'], 'name' => ['required', 'string', 'max:150'],
                 'address' => ['required', 'string', 'max:255'], 'city' => ['required', 'string', 'max:100'], 'postal_code' => ['nullable', 'string', 'max:20'],
                 'country' => ['required', 'string', 'regex:/^[A-Z]{2}$/'], 'phone' => ['required', 'string', 'max:35', 'regex:/^\+?[0-9][0-9 ().-]{5,33}[0-9]$/'], 'email' => ['nullable', 'email', 'max:254'],
-                'website' => ['nullable', 'url:http,https', 'max:255'], 'cuisine' => ['nullable', 'string', 'max:150'],
+                'website' => ['nullable', 'url:http,https', 'max:255'],
                 'timezone' => ['required', 'timezone'], 'latitude' => ['nullable', 'numeric', 'between:-90,90', 'required_with:longitude'], 'longitude' => ['nullable', 'numeric', 'between:-180,180', 'required_with:latitude'],
             ],
+            'cuisines' => ['cuisine_ids' => ['present', 'array', 'max:100'], 'cuisine_ids.*' => ['required', 'integer', 'distinct']],
             'seating' => [
                 'mode' => ['required', Rule::in(['capacity', 'tables'])], 'capacity' => ['required', 'integer', 'between:0,10000'],
                 'tables' => ['present', 'array', 'max:300', 'min:'.($this->input('mode') === 'tables' ? 1 : 0)],

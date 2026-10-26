@@ -20,7 +20,11 @@ defineProps<{
         ><Head :title="$t('platform_organizations')" /><ZFPageHeader
             :title="$t('platform_overview')"
             :description="$t('organizations_restaurant_locations_and_trial_subscriptions')"
-        /><Link href="/test-email" class="mb-5 inline-block font-semibold text-brand">{{ $t('email_test_title') }}</Link><DataTable :value="organizations.data"
+        /><Link href="/admin/cuisines" class="mb-5 mr-6 inline-block font-semibold text-brand">{{
+            $t('cuisine_admin_title')
+        }}</Link
+        ><Link href="/test-email" class="mb-5 inline-block font-semibold text-brand">{{ $t('email_test_title') }}</Link
+        ><DataTable :value="organizations.data"
             ><Column :header="$t('organization')"
                 ><template #body="{ data }"
                     ><Link :href="'/admin/' + data.public_id" class="font-semibold text-brand">{{

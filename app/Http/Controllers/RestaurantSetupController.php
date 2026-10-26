@@ -6,6 +6,7 @@ use App\Domain\Restaurants\Actions\SaveRestaurantSetup;
 use App\Domain\Restaurants\SetupProgress;
 use App\Domain\Tenancy\TenantAccess;
 use App\Http\Requests\RestaurantSetupRequest;
+use App\Models\Cuisine;
 use App\Models\RestaurantLocation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -23,6 +24,8 @@ class RestaurantSetupController extends Controller
             'locations' => app(WorkspaceController::class)->locations($request), 'canManage' => true,
             'step' => $step, 'profile' => $context->setup_profile ?? [], 'revision' => $context->setup_revision,
             'progress' => app(SetupProgress::class)->for($context),
+            'cuisines' => $step === 'cuisines' ? Cuisine::where('is_active', true)->orWhereIn('id', $context->cuisines()->select('cuisines.id'))->orderBy('sort_order')->orderBy('id')->get() : [],
+            'selectedCuisines' => $step === 'cuisines' ? $context->cuisines()->get()->map(fn ($c) => ['id' => $c->id, 'selected_at' => $c->pivot->created_at?->toIso8601String()]) : [],
         ]);
     }
 

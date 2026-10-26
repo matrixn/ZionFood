@@ -10,6 +10,8 @@ import InputNumber from 'primevue/inputnumber';
 import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
 import ToggleSwitch from 'primevue/toggleswitch';
+import CuisinePicker from '@/components/restaurant/CuisinePicker.vue';
+import type { Cuisine, CuisineSelection } from '@/types/cuisine';
 import type { WorkspaceProps } from '@/types';
 
 interface Table {
@@ -28,7 +30,6 @@ interface Profile {
         phone: string;
         email: string;
         website: string;
-        cuisine: string;
         timezone: string;
         latitude: number | null;
         longitude: number | null;
@@ -74,11 +75,14 @@ const props = defineProps<
             completed: number;
             total: number;
         };
+        cuisines: Cuisine[];
+        selectedCuisines: CuisineSelection[];
     }
 >();
 const base = computed(() => `/app/locations/${props.location.public_id}`);
 const steps = [
     'basics',
+    'cuisines',
     'seating',
     'services',
     'hours',
@@ -91,7 +95,7 @@ const steps = [
     'payments',
 ];
 const groups = [
-    { title: 'setup_group_place', steps: ['basics', 'seating'] },
+    { title: 'setup_group_place', steps: ['basics', 'cuisines', 'seating'] },
     { title: 'setup_group_operations', steps: ['services', 'hours', 'menu', 'branding'] },
     { title: 'setup_group_guests', steps: ['reservations', 'staff', 'legal'] },
     { title: 'setup_group_launch', steps: ['publish', 'payments'] },
@@ -107,7 +111,6 @@ const basics = useForm({
     phone: '',
     email: '',
     website: '',
-    cuisine: '',
     timezone: props.location.timezone,
     latitude: null as number | null,
     longitude: null as number | null,
@@ -120,6 +123,7 @@ Object.assign(basics, {
     timezone: props.location.timezone,
 });
 basics.defaults();
+const cuisinesForm = useForm({ revision: props.revision, cuisine_ids: props.selectedCuisines.map((c) => c.id) });
 const seating = useForm({
     revision: props.revision,
     mode: 'capacity',
@@ -174,7 +178,15 @@ interface WizardForm {
     defaults: () => unknown;
     put: (url: string, options: { preserveScroll: boolean; onSuccess: () => void }) => void;
 }
-const forms: Record<string, WizardForm> = { basics, seating, services, reservations, legal, publish };
+const forms: Record<string, WizardForm> = {
+    basics,
+    cuisines: cuisinesForm,
+    seating,
+    services,
+    reservations,
+    legal,
+    publish,
+};
 const currentForm = computed(() => forms[props.step as keyof typeof forms]);
 const countries = [
     { label: 'România', value: 'RO' },
@@ -343,9 +355,6 @@ onBeforeUnmount(
                         <label class="field"
                             >{{ $t('setup_website') }}<InputText v-model="basics.website" type="url" maxlength="255"
                         /></label>
-                        <label class="field"
-                            >{{ $t('setup_cuisine') }}<InputText v-model="basics.cuisine" maxlength="150"
-                        /></label>
                         <details class="md:col-span-2">
                             <summary class="cursor-pointer text-sm font-medium">{{ $t('setup_map_optional') }}</summary>
                             <div class="mt-4 grid gap-5 md:grid-cols-2">
@@ -426,6 +435,14 @@ onBeforeUnmount(
                             {{ $t('setup_total_seats') }}: {{ totalSeats }}
                         </p>
                     </div>
+                    <CuisinePicker
+                        v-else-if="step === 'cuisines'"
+                        v-model="cuisinesForm.cuisine_ids"
+                        :cuisines="cuisines"
+                        :saved="selectedCuisines"
+                        :saving="cuisinesForm.processing"
+                        @save="save"
+                    />
                     <div v-else-if="step === 'services'" class="space-y-5">
                         <label class="flex items-center justify-between gap-4"
                             ><span>{{ $t('setup_pickup_live') }}</span
@@ -592,6 +609,7 @@ onBeforeUnmount(
                     <div class="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 pt-5">
                         <span class="text-sm text-slate-500">{{ $t('setup_save_hint') }}</span>
                         <Button
+                            v-if="step !== 'cuisines'"
                             type="submit"
                             :label="$t('setup_save')"
                             icon="pi pi-check"

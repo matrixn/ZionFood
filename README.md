@@ -33,6 +33,7 @@ Use Linux/WSL for Composer and Horizon. Run Horizon, Reverb and the scheduler as
 - [Security boundaries](docs/SECURITY.md)
 - [Staff, branding, languages and webhook operations](docs/STAFF_BRANDING_LOCALIZATION_WEBHOOKS.md)
 - [Guided restaurant setup and reference analysis](docs/RESTAURANT_SETUP.md)
+- [Cuisine catalogue, photos and selection](docs/CUISINES.md)
 - [Reservations, table QR orders and mapped delivery](docs/RESERVATIONS_DINING_DELIVERY.md)
 - [Implemented scope](docs/MVP_SCOPE.md)
 - [Verification and progress](docs/CODEX_PROGRESS.md)

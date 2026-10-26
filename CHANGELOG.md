@@ -2,6 +2,8 @@
 
 ## Unreleased — 2026-10-26 (version remains 0.0.1)
 
+- Dedicated cuisine selection step after name/address, with 27 illustrated bilingual categories, multiple selections, saved activation dates and platform catalogue/photo/availability management.
+
 - Actual per-location reservations with capacity/table allocation, expiring holds, private guest receipts/cancellation and versioned staff management.
 - Permanent table QR with persistent staff menu pause/reopen, optional activation policy and configurable closing cutoff; authoritative dine-in checkout and table snapshots in the kitchen.
 - Leaflet/Geoman delivery polygon editor, customer delivery pins and server-selected zones/fees/minimums; configurable tile provider. Payments remain placeholder.

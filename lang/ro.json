@@ -418,5 +418,7 @@
   "reservation_status_cancelled": "Anulată",
   "reservation_status_rejected": "Refuzată",
   "reservation_status_no_show": "Neprezentare",
-  "reservation_status_expired": "Cerere expirată"
+  "reservation_status_expired": "Cerere expirată",
+  "Cuisine saved.": "Specificul culinar a fost salvat.",
+  "Choose available cuisines from the catalogue.": "Alege opțiuni disponibile din catalogul de specific culinar."
 }

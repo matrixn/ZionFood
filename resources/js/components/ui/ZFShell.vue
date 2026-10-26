@@ -124,6 +124,9 @@ const nav = computed(() => [
                     ><Link v-if="mode === 'Platform admin'" href="/admin" class="p-3 text-brand">{{
                         $t('organizations')
                     }}</Link>
+                    <Link v-if="mode === 'Platform admin'" href="/admin/cuisines" class="p-3 text-brand">{{
+                        $t('cuisine_admin_title')
+                    }}</Link>
                 </nav>
                 <div v-if="location" class="mt-12 rounded-xl bg-surface p-4 dark:bg-slate-800">
                     <p class="text-sm font-semibold">{{ $t('your_storefront') }}</p>

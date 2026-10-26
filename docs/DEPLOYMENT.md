@@ -140,3 +140,7 @@ Apply additive migrations 2026_10_26_000300, 000400 and 000500, rebuild frontend
 ZF_MAP_TILE_URL and ZF_MAP_ATTRIBUTION configure the browser raster tile provider. Default standard OpenStreetMap tiles are for light best-effort use under their usage policy; choose a suitable production service and preserve attribution. Only public browser tile credentials belong here. No geocoder or paid provider account is provisioned. See RESERVATIONS_DINING_DELIVERY.md for provider alternatives, pin/address semantics and operational limits.
 
 New QR menus use permanent codes with persistent staff pause/reopen. Set the dine-in ordering cutoff in each location Settings page (default 30 minutes). Both new connections and orders from existing sessions stop at closing minus that interval. No payment settings are enabled.
+
+## Cuisine catalogue
+
+Run additive migration 000600 with database/data/cuisines.json and public/images/cuisines deployed from Git. It creates the initial 27 catalogue options without external requests. Build assets; retain storage:link for platform-admin photo uploads. Existing live catalogue edits are not reset by ordinary seeding. No payment or service activation is implied by cuisine selection. See CUISINES.md and CUISINE_PHOTO_CREDITS.md.

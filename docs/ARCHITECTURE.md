@@ -53,3 +53,7 @@ Availability validates local-time rules and allocates either pooled peak concurr
 QR links prove possession through a fragment token exchanged under the rotation lock for an expiring session. Dine-in checkout snapshots the table while preserving server pricing, idempotency, history and outbox. Service flags default off and are location-scoped. Delivery polygons are portable GeoJSON; the browser map previews the PHP zone priority/containment check. See RESERVATIONS_DINING_DELIVERY.md for operational boundaries.
 
 Permanent QR credentials outlive eight-hour sessions. A separate persisted table pause blocks all guest reconnects until staff reopen the menu. OrderingWindow checks same-day venue hours and a configurable per-location closing cutoff on both connection and checkout; staff menu controls do not override time eligibility.
+
+## Cuisine catalogue
+
+The platform owns the shared bilingual cuisine/photo catalogue. Owners/managers choose location-scoped entries through the separate revision-checked setup step. Composite location/organization pivot ownership and locked catalogue availability checks preserve tenant boundaries and activation dates. Uploads are platform-admin-only and local/public-disk managed; attribution links are never server download targets. See CUISINES.md.

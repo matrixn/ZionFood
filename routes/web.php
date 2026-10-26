@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BrandingController;
+use App\Http\Controllers\CuisineController;
 use App\Http\Controllers\DiningController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MenuController;
@@ -35,6 +36,9 @@ Route::get('/invitations/{invitation}', [StaffController::class, 'invitation']);
 Route::get('/test-email', [TestEmailController::class, 'show']);
 Route::post('/test-email', [TestEmailController::class, 'send'])->middleware('throttle:admin-mail-test');
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/cuisines', [CuisineController::class, 'index']);
+    Route::post('/admin/cuisines', [CuisineController::class, 'save']);
+    Route::post('/admin/cuisines/{cuisine}', [CuisineController::class, 'save']);
     Route::get('/app/locations/{location}/reservations', [ReservationController::class, 'manage']);
     Route::get('/app/locations/{location}/tables', [DiningController::class, 'manage']);
     Route::post('/app/reservations/{reservation}/status', [ReservationController::class, 'transition']);

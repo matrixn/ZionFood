@@ -6,7 +6,7 @@ use App\Models\RestaurantLocation;
 
 class SetupProgress
 {
-    public const STEPS = ['basics', 'seating', 'services', 'hours', 'menu', 'branding', 'reservations', 'staff', 'legal', 'publish', 'payments'];
+    public const STEPS = ['basics', 'cuisines', 'seating', 'services', 'hours', 'menu', 'branding', 'reservations', 'staff', 'legal', 'publish', 'payments'];
 
     public function for(RestaurantLocation $location): array
     {
@@ -17,6 +17,7 @@ class SetupProgress
         $ready = [
             'basics' => filled($location->name) && filled($location->address) && filled($basics['city'] ?? null) && filled($basics['phone'] ?? null),
             'seating' => isset($profile['seating']),
+            'cuisines' => $location->cuisines()->where('is_active', true)->exists(),
             'services' => $servicesReady,
             'hours' => $location->hours()->exists(),
             'menu' => $menuReady,
@@ -32,6 +33,6 @@ class SetupProgress
             $blockers[] = 'delivery_zones';
         }
 
-        return ['steps' => $ready, 'blockers' => array_unique($blockers), 'ready_to_publish' => empty($blockers), 'completed' => count(array_filter(array_intersect_key($ready, array_flip(['basics', 'seating', 'services', 'hours', 'menu', 'branding', 'reservations', 'staff', 'legal'])))), 'total' => 9];
+        return ['steps' => $ready, 'blockers' => array_unique($blockers), 'ready_to_publish' => empty($blockers), 'completed' => count(array_filter(array_intersect_key($ready, array_flip(['basics', 'cuisines', 'seating', 'services', 'hours', 'menu', 'branding', 'reservations', 'staff', 'legal'])))), 'total' => 10];
     }
 }

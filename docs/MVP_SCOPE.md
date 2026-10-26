@@ -21,6 +21,8 @@
 
 - Transactional capacity/table reservations, expiring holds, private guest receipts/cancellation, staff booking management, QR sessions/dine-in orders and drawn delivery areas. See RESERVATIONS_DINING_DELIVERY.md.
 
+- Global bilingual cuisine/photo catalogue and separate restaurant selection step, with availability management, activation-date feedback and bundled image attribution.
+
 ## Remaining before production launch
 
 - Implement catering/event fulfillment, scheduled fulfillment, split/overnight/per-service/holiday schedules and payment processing. Reservations and QR ordering are implemented and independently enabled per location.
