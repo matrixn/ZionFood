@@ -56,3 +56,7 @@ All pages have RO/EN copy and the existing persistent language selector. The des
 **Payments are postponed:** the user explicitly selected a placeholder for now. Future payment policy must be selectable per restaurant among fixed deposit per reservation, deposit per guest, and full payment for a selected menu/package. Exact refund/cancellation/no-show policy, applying a deposit to the final bill, provider/onboarding and multi-merchant settlement must be decided before collecting money. No speculative merchant defaults or live charges are introduced in this increment.
 
 Next runtime phases are the booking/capacity allocation engine (including concurrency-safe holds), customer reservation and cancellation pages, table-bound on-site orders, scheduled-order fulfillment and finally the payment integration. Keep the stack, organization/location boundaries, immutable order totals, outbox and existing queue/email safeguards.
+
+### Optional off-site catering decision
+
+The user explicitly included catering/events at a different address, controlled by each restaurant rather than globally enabled. Services now includes `catering_planned`, false by default and independently saved per location alongside on-site/scheduled preferences. It may be turned on or off without enabling delivery or changing any other tenant. This is preparation only; event dates, guest quantities, event address, quotations and eventual fulfillment remain part of the future catering flow, with payments still postponed.

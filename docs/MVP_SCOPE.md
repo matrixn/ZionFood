@@ -21,7 +21,7 @@
 
 ## Remaining before production launch
 
-- Implement the customer reservation/capacity-allocation engine, on-site/QR ordering, scheduled fulfillment, split/overnight/per-service/holiday schedules and payment processing. Setup preferences do not activate these future services.
+- Implement the customer reservation/capacity-allocation engine, on-site/QR ordering, catering/event fulfillment, scheduled fulfillment, split/overnight/per-service/holiday schedules and payment processing. Setup preferences do not activate these future services.
 
 - Complete Forge deployment and external DNS/TLS/mail configuration, including verified live subdomains.
 - Complete multi-restaurant/multi-location creation screens. Onboarding creates one of each; the schema and location switcher support multiple records.

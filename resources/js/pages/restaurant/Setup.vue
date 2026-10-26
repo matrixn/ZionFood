@@ -34,7 +34,7 @@ interface Profile {
         longitude: number | null;
     };
     seating?: { mode: string; capacity: number; tables: Table[] };
-    services?: { dine_in_planned: boolean; scheduled_orders_planned: boolean };
+    services?: { dine_in_planned: boolean; scheduled_orders_planned: boolean; catering_planned?: boolean };
     reservations?: {
         planned: boolean;
         confirmation: string;
@@ -128,6 +128,7 @@ const services = useForm({
     delivery_enabled: props.location.fulfillment.delivery_enabled,
     dine_in_planned: props.profile.services?.dine_in_planned ?? false,
     scheduled_orders_planned: props.profile.services?.scheduled_orders_planned ?? false,
+    catering_planned: props.profile.services?.catering_planned ?? false,
 });
 const reservations = useForm({
     revision: props.revision,
@@ -441,6 +442,10 @@ onBeforeUnmount(
                         <label class="flex items-center justify-between gap-4"
                             ><span>{{ $t('setup_scheduled_plan') }}</span
                             ><ToggleSwitch v-model="services.scheduled_orders_planned"
+                        /></label>
+                        <label class="flex items-center justify-between gap-4"
+                            ><span>{{ $t('setup_catering_plan') }}</span
+                            ><ToggleSwitch v-model="services.catering_planned" :aria-label="$t('setup_catering_plan')"
                         /></label>
                     </div>
                     <div v-else-if="step === 'reservations'" class="space-y-5">

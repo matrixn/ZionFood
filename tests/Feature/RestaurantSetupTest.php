@@ -68,6 +68,19 @@ it('validates coordinates and does not accept unsupported timezones or unsafe UR
     $this->actingAs($owner)->put('/app/locations/'.$location->public_id.'/setup/basics', [...setupBasics(), 'latitude' => 200, 'timezone' => 'Invalid/Zone', 'website' => 'javascript:alert(1)'])->assertSessionHasErrors(['latitude', 'timezone', 'website']);
 });
 
+it('keeps catering optional and independently configurable for each restaurant location', function () {
+    [$owner, $location] = tenantFixture('setup-catering');
+    [, $other] = tenantFixture('setup-catering-other');
+    $data = ['revision' => 0, 'pickup_enabled' => true, 'delivery_enabled' => false, 'dine_in_planned' => false, 'scheduled_orders_planned' => false];
+    $url = '/app/locations/'.$location->public_id.'/setup/services';
+    $this->actingAs($owner)->put($url, $data)->assertSessionHasNoErrors();
+    expect($location->fresh()->setup_profile['services']['catering_planned'])->toBeFalse();
+    $this->put($url, [...$data, 'revision' => 1, 'catering_planned' => true])->assertSessionHasNoErrors();
+    expect($location->fresh()->setup_profile['services']['catering_planned'])->toBeTrue()->and($other->fresh()->setup_profile)->toBeNull();
+    $this->put($url, [...$data, 'revision' => 2, 'catering_planned' => false])->assertSessionHasNoErrors();
+    expect($location->fresh()->setup_profile['services']['catering_planned'])->toBeFalse();
+});
+
 it('gates publication on actual menu hours contact and enabled delivery zones', function () {
     [$owner, $location] = tenantFixture('setup-launch');
     $location->update(['accepting_orders' => false]);

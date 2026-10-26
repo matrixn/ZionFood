@@ -513,5 +513,6 @@
     "setup_return_hint": "Return through Restaurant setup; progress is recalculated from saved data.",
     "setup_payments_later": "Payments — coming soon",
     "setup_payments_notice": "This section is a placeholder for now. Later, each restaurant can choose a fixed deposit, a per-guest deposit or full payment for a menu/package. No keys, providers or charges are active.",
-    "setup_unsaved": "You have unsaved changes. Leave this step?"
+    "setup_unsaved": "You have unsaved changes. Leave this step?",
+    "setup_catering_plan": "Plan catering / events at another address"
 }

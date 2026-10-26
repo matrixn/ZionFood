@@ -24,6 +24,15 @@ test('owner completes guided restaurant setup with tables, reservation preferenc
     await page.getByRole('textbox', { name: 'Telefonul locației', exact: true }).fill('0712345678');
     await page.getByRole('button', { name: 'Salvează pasul', exact: true }).click();
     await expect(page.getByRole('status')).toContainText('Configurarea restaurantului a fost salvată.');
+    await page.goto(`${base}/services`);
+    const catering = page.getByRole('switch', { name: 'Vreau catering / evenimente la altă adresă', exact: true });
+    await expect(catering).not.toBeChecked();
+    await catering.click();
+    await page.getByRole('button', { name: 'Salvează pasul', exact: true }).click();
+    await expect(page.getByRole('status')).toContainText('Configurarea restaurantului a fost salvată.');
+    await page.reload();
+    await expect(catering).toBeChecked();
+    await page.screenshot({ path: 'test-results/setup-services.png', fullPage: true });
     await page.goto(`${base}/seating`);
     await page.getByRole('combobox', { name: 'Cum organizezi locurile?', exact: true }).click();
     await page.getByRole('option', { name: 'Mese pe săli', exact: true }).click();

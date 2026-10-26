@@ -513,5 +513,6 @@
     "setup_return_hint": "Revino din meniul „Pregătește restaurantul”; progresul se recalculează din datele salvate.",
     "setup_payments_later": "Plăți — în curând",
     "setup_payments_notice": "Pentru moment, această secțiune este doar un placeholder. Ulterior, fiecare restaurant va putea alege avans fix, avans per persoană sau plata integrală a unui meniu/pachet. Nu există chei, procesatori sau încasări active.",
-    "setup_unsaved": "Ai modificări nesalvate. Vrei să părăsești acest pas?"
+    "setup_unsaved": "Ai modificări nesalvate. Vrei să părăsești acest pas?",
+    "setup_catering_plan": "Vreau catering / evenimente la altă adresă"
 }

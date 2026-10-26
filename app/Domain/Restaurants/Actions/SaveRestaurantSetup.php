@@ -32,6 +32,7 @@ class SaveRestaurantSetup
                 throw ValidationException::withMessages(['capacity' => __('Check the seating capacity and the maximum reservation party size.')]);
             }
             if ($step === 'services') {
+                $data['catering_planned'] ??= $profile['services']['catering_planned'] ?? false;
                 $location->fulfillment()->updateOrCreate([], array_intersect_key($data, array_flip(['pickup_enabled', 'delivery_enabled'])));
             }
             if ($step === 'reservations' && $data['planned']) {

@@ -33,7 +33,7 @@ class RestaurantSetupRequest extends FormRequest
                 'tables.*.code' => ['required', 'string', 'max:30', 'distinct:ignore_case'],
                 'tables.*.area' => ['required', 'string', 'max:80'], 'tables.*.seats' => ['required', 'integer', 'between:1,100'],
             ],
-            'services' => ['pickup_enabled' => ['required', 'boolean'], 'delivery_enabled' => ['required', 'boolean'], 'dine_in_planned' => ['required', 'boolean'], 'scheduled_orders_planned' => ['required', 'boolean']],
+            'services' => ['pickup_enabled' => ['required', 'boolean'], 'delivery_enabled' => ['required', 'boolean'], 'dine_in_planned' => ['required', 'boolean'], 'scheduled_orders_planned' => ['required', 'boolean'], 'catering_planned' => ['sometimes', 'boolean']],
             'reservations' => [
                 'planned' => ['required', 'boolean'], 'confirmation' => ['required', Rule::in(['manual', 'automatic'])],
                 'duration_minutes' => ['required', 'integer', 'between:15,480'], 'interval_minutes' => ['required', 'integer', Rule::in([15, 30, 60])],

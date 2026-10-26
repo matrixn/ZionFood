@@ -2,7 +2,7 @@
 
 ## Unreleased — 2026-10-26 (version remains 0.0.1)
 
-- Guided RO/EN restaurant setup with private location profiles, table/capacity planning, draft reservation rules, live service controls, readiness checks and a payments placeholder.
+- Guided RO/EN restaurant setup with private location profiles, table/capacity planning, draft reservation rules, optional catering preparation, live service controls, readiness checks and a payments placeholder.
 - Fixed Horizon worker provisioning for custom Forge environments; added mail-status diagnostics and safe PHP/file lifecycle logs with Resend acceptance confirmation.
 - Temporary public RO/EN /test-email page targeting ADMIN_EMAIL with CSRF protection and three-per-hour test throttling; authentication/admin restrictions removed at the user's explicit request.
 - Global encrypted mail queue, atomic rolling 140-recipient/24h Redis quota with deferred overflow, and deduplicated error/exception email alerts via ADMIN_EMAIL.
