@@ -1,4 +1,15 @@
-# ZionFood progress — 0.0.3
+# ZionFood progress — 0.0.4
+
+## Version 0.0.4 - public presentation page (October 26)
+
+Rebuilt the central-host Welcome page in RO/EN with editorial food imagery, clear registration/dashboard calls to action, persistent language selection, mobile navigation, feature tabs, an interactive local kitchen-order sequence, an illustrated delivery-zone preview, FAQ and closing CTA. The mapped storefront root still serves its actual menu. Demo controls do not call order, reservation or notification APIs. Copy describes available services and explicitly keeps online payments unavailable. No new service, billing or backend mutation was introduced.
+
+Two AI images were generated with the built-in image_gen tool and imagegen skill, inspected and copied unchanged to public/images/marketing. Prompts/provenance are in docs/assets/landing-images.prompt.md; the footer and alternate text disclose AI imagery. Graphic previews are native SVG/CSS/Vue, not substituted application screenshots.
+
+Animations include hover/float/path effects, viewport reveals, tab transitions and scroll progress, with reduced-motion handling and lifecycle cleanup. Tested browser flows cover localized content/persistence, actual CTA destinations, feature keyboard navigation, demo state changes without ordering mutations, decoded images, native FAQ, mobile menu, 320px/390px overflow and reduced motion. Desktop/mobile/feature/kitchen screenshots were inspected; a mobile heading wrap and screenshot timing during a tab transition were corrected. Vite initially tried to import the public PNG as a module; runtime-bound public asset URLs resolved the production build.
+
+Frontend TypeScript/Vite build, ESLint, eight Vitest tests and both dedicated Chromium flows passed before the version-only metadata update. Final checks passed: full SQLite suite 138 tests / 712 assertions (including central Welcome vs mapped storefront Menu contracts), Composer validation, version/image/link/catalogue consistency and exact Linux Pint across 182 PHP files. The prior MariaDB results belong to earlier increments; no new MariaDB/production run is claimed for this frontend-focused change. The app bundle remains above Vite's 500 kB warning (approximately 523 kB); images retain generated PNG encoding and the secondary image is lazy-loaded. No production performance claim or live deployment is made. Local commit is allowed; this request does not authorize an additional push or manual deployment.
+
 
 ## Version 0.0.3 - README history and AI banner (October 26)
 

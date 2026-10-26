@@ -176,12 +176,14 @@ docs/CUISINE_PHOTO_CREDITS.md
 docs/DATABASE_SCHEMA.md
 docs/DEPLOYMENT.md
 docs/IMPLEMENTED_FILES.txt
+docs/LANDING_PAGE.md
 docs/MASTER_PROMPT.md
 docs/MVP_SCOPE.md
 docs/RESERVATIONS_DINING_DELIVERY.md
 docs/RESTAURANT_SETUP.md
 docs/SECURITY.md
 docs/STAFF_BRANDING_LOCALIZATION_WEBHOOKS.md
+docs/assets/landing-images.prompt.md
 docs/assets/zionfood-hero-ai.png
 docs/assets/zionfood-hero-ai.prompt.md
 docs/benchmarks/conditions.json
@@ -230,6 +232,8 @@ public/images/cuisines/sushi.jpg
 public/images/cuisines/thai.jpg
 public/images/cuisines/turkish.jpg
 public/images/cuisines/vietnamese.jpg
+public/images/marketing/kitchen-service-ai.png
+public/images/marketing/restaurant-table-ai.png
 public/index.php
 public/robots.txt
 resources/css/app.css
@@ -340,6 +344,7 @@ tests/Unit/ExampleTest.php
 tests/e2e/administration.spec.ts
 tests/e2e/cuisines.spec.ts
 tests/e2e/email-test.spec.ts
+tests/e2e/landing.spec.ts
 tests/e2e/ordering.spec.ts
 tests/e2e/setup.spec.ts
 tests/e2e/venue-services.spec.ts

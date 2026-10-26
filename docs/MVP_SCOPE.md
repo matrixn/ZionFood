@@ -1,4 +1,4 @@
-# Scope at 0.0.3
+# Scope at 0.0.4
 
 ## Implemented
 
@@ -22,6 +22,8 @@
 - Transactional capacity/table reservations, expiring holds, private guest receipts/cancellation, staff booking management, QR sessions/dine-in orders and drawn delivery areas. See RESERVATIONS_DINING_DELIVERY.md.
 
 - Global bilingual cuisine/photo catalogue and separate restaurant selection step, with availability management, activation-date feedback and bundled image attribution.
+
+- Bilingual central-host presentation page with AI visuals, responsive CTAs, keyboard feature previews, local order demo and reduced-motion animation support.
 
 ## Remaining before production launch
 

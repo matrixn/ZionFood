@@ -1,4 +1,4 @@
-# ZionFood 0.0.3
+# ZionFood 0.0.4
 
 Implementation specification: [original ZionFood SaaS MVP master prompt](MASTER_PROMPT.md), consolidated with **Techstack ZionFood MVP**, conversation `6ade5f72-3784-83ed-b9bf-0f23844f3826`. The substantive Vue/PrimeVue architecture discussion was retrieved; some older answers were available only as content-reference markers. Target MVP date: November 1, 2026.
 
@@ -57,3 +57,7 @@ Permanent QR credentials outlive eight-hour sessions. A separate persisted table
 ## Cuisine catalogue
 
 The platform owns the shared bilingual cuisine/photo catalogue. Owners/managers choose location-scoped entries through the separate revision-checked setup step. Composite location/organization pivot ownership and locked catalogue availability checks preserve tenant boundaries and activation dates. Uploads are platform-admin-only and local/public-disk managed; attribution links are never server download targets. See CUISINES.md.
+
+## Public presentation
+
+Welcome.vue provides the bilingual central-host marketing surface; mapped storefront roots retain PublicOrderingController menu rendering. Illustrative feature/order previews hold only local Vue state and have no domain mutation or notification side effects. Responsive CSS/IntersectionObserver effects respect reduced-motion preferences. Image generation provenance is bundled in docs/assets/landing-images.prompt.md. See LANDING_PAGE.md.

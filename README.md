@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.3** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.4** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -46,7 +46,15 @@ Bifele nu certifică automat un deployment în producție. Rezultatele și limit
 
 Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul verificărilor](docs/CODEX_PROGRESS.md). Commiturile deja publicate își păstrează istoricul original.
 
+- [x] `0.0.4`: pagină publică de prezentare RO/EN, imagini generate, animații, previzualizări interactive și CTA-uri către cont/panou.
+
 ## Implementat
+
+### Prima pagină de prezentare
+
+- [x] Landing page RO/EN, fotografie de prezentare generată cu AI, navigare mobilă și CTA-uri funcționale.
+- [x] Previzualizări pentru meniu/rezervări/QR/livrare, demonstrație interactivă de comandă, FAQ și animații care respectă preferința de mișcare redusă.
+- [x] Ilustrație de bucătărie, metadate și texte alternative localizate; meniurile restaurantelor rămân pe hosturile lor.
 
 ### Conturi, organizații și acces
 
@@ -148,7 +156,9 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 
 ## Verificări executate
 
-Ultima etapă funcțională, catalogul culinar, a trecut **138 de teste backend / 698 de aserțiuni pe SQLite și MariaDB**, 8 teste frontend, TypeScript, ESLint, build și Pint. Playwright a verificat selecția/salvarea catalogului, imaginile, RO/EN, layout-ul mobil, administrarea cu upload și regresia setup-ului.
+Pagina de prezentare a fost verificată prin două scenarii Playwright pentru RO/EN, CTA-uri, taburi și tastatură, demo fără operațiuni reale, imagini, mobil și mișcare redusă. Regresia backend SQLite a trecut 138 de teste / 712 aserțiuni; TypeScript/build, ESLint, 8 teste frontend și Pint au trecut. Detalii în [LANDING_PAGE.md](docs/LANDING_PAGE.md).
+
+Etapa catalogului culinar a trecut **138 de teste backend / 698 de aserțiuni pe SQLite și MariaDB**, 8 teste frontend, TypeScript, ESLint, build și Pint. Playwright a verificat selecția/salvarea catalogului, imaginile, RO/EN, layout-ul mobil, administrarea cu upload și regresia setup-ului.
 
 Etapele anterioare includ concurență pentru checkout și rezervări, fluxuri QR/livrare în browser și [benchmark-uri locale cu condiții documentate](docs/BENCHMARKS.md). Incidentul Horizon și confirmările Resend observate atunci sunt descrise în [documentația de operare](docs/DEPLOYMENT.md#mail-delivery-diagnostics-and-worker-recovery).
 
@@ -188,6 +198,7 @@ Pentru Resend, configurează `MAIL_MAILER=resend`, `RESEND_API_KEY`, un `MAIL_FR
 - [Funcționalități și limite](docs/MVP_SCOPE.md)
 - [Istoricul verificărilor și progresului](docs/CODEX_PROGRESS.md)
 - [Instalare locală și Forge](docs/DEPLOYMENT.md)
+- [Pagina de prezentare](docs/LANDING_PAGE.md) și [prompturile imaginilor](docs/assets/landing-images.prompt.md)
 - [Changelog](CHANGELOG.md)
 - [Inventarul fișierelor implementate](docs/IMPLEMENTED_FILES.txt)
 

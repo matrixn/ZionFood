@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.4 — 2026-10-26
+
+- Replaced the public central-host welcome page with a responsive Romanian/English marketing presentation, generated food/kitchen visuals, clear CTAs, feature previews and an interactive kitchen demo.
+- Added motion-aware scroll/hover effects, keyboard tabs, mobile navigation, FAQ and generated-asset provenance; restaurant storefront routing remains unchanged.
+
 ## 0.0.3 — 2026-10-26
 
 - Rebuilt the Romanian README with a checked implementation history, feature inventory, outstanding work and explicit verification boundaries.

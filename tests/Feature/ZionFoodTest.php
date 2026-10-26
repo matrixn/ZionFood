@@ -190,7 +190,7 @@ it('rejects unknown hosts and central routes on storefront hosts', function () {
     [, $location] = tenantFixture();
     $this->get('http://attacker.test/login')->assertNotFound();
     $this->get('http://bistro.zionfood.ro/login')->assertNotFound();
-    $this->get('http://bistro.zionfood.ro/')->assertOk();
+    $this->get('http://bistro.zionfood.ro/')->assertOk()->assertInertia(fn ($page) => $page->component('storefront/Menu'));
 });
 it('requires token abilities without bypassing tenant authorization', function () {
     [$owner, $location] = tenantFixture('first');
