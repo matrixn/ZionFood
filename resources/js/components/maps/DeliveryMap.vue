@@ -14,6 +14,7 @@ const props = defineProps<{
     zones?: Zone[];
     center?: number[];
     mapConfig: MapConfig;
+    purpose?: 'delivery' | 'restaurant';
 }>();
 const emit = defineEmits<{
     'update:geometry': [value: DeliveryPolygon | null];
@@ -95,7 +96,7 @@ function setPoint(point: DeliveryPoint) {
 onMounted(async () => {
     try {
         L = await import('leaflet');
-        await import('@geoman-io/leaflet-geoman-free');
+        if (props.mode === 'draw') await import('@geoman-io/leaflet-geoman-free');
         await nextTick();
         if (disposed || !container.value) return;
         const center = props.center ?? [44.4268, 26.1025];
@@ -148,7 +149,10 @@ onMounted(async () => {
                     bounds.extend(layer.getBounds());
                 }
             if (bounds.isValid()) map.fitBounds(bounds, { padding: [20, 20], maxZoom: 15 });
-            if (props.point) setPoint(props.point);
+            if (props.point) {
+                setPoint(props.point);
+                if (props.purpose === 'restaurant') map.setView([props.point.latitude, props.point.longitude], 17);
+            }
             map.on('click', (event: Leaflet.LeafletMouseEvent) => {
                 const point = { latitude: event.latlng.lat, longitude: event.latlng.lng };
                 setPoint(point);
@@ -170,7 +174,14 @@ watch(
 watch(
     () => props.point,
     (point) => {
-        if (point) setPoint(point);
+        if (point) {
+            setPoint(point);
+            if (props.purpose === 'restaurant')
+                map?.setView([point.latitude, point.longitude], Math.max(map.getZoom(), 17));
+        } else if (marker) {
+            marker.remove();
+            marker = null;
+        }
     },
     { deep: true },
 );
@@ -183,15 +194,31 @@ onBeforeUnmount(() => {
 </script>
 <template>
     <div class="space-y-3">
-        <p class="text-sm text-slate-500">{{ mode === 'draw' ? $t('map_draw_hint') : $t('map_pick_hint') }}</p>
+        <p class="text-sm text-slate-500">
+            {{
+                purpose === 'restaurant'
+                    ? $t('restaurant_map_hint')
+                    : mode === 'draw'
+                      ? $t('map_draw_hint')
+                      : $t('map_pick_hint')
+            }}
+        </p>
         <p v-if="failed" role="alert" class="rounded-lg bg-red-50 p-3 text-red-700">{{ $t('map_load_error') }}</p>
         <p v-if="tileFailed" role="status" class="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
             {{ $t('map_tiles_error') }}
         </p>
         <div
             ref="container"
-            :aria-label="$t(mode === 'draw' ? 'map_zone_editor' : 'map_delivery_location')"
-            :data-testid="mode === 'draw' ? 'zone-map' : 'delivery-map'"
+            :aria-label="
+                $t(
+                    purpose === 'restaurant'
+                        ? 'restaurant_map_title'
+                        : mode === 'draw'
+                          ? 'map_zone_editor'
+                          : 'map_delivery_location',
+                )
+            "
+            :data-testid="purpose === 'restaurant' ? 'restaurant-map' : mode === 'draw' ? 'zone-map' : 'delivery-map'"
             class="zf-delivery-map relative z-0 h-96 w-full rounded-xl border border-slate-200 bg-slate-100"
         />
     </div>

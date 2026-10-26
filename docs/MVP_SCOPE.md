@@ -1,4 +1,4 @@
-# Scope at 0.0.4
+# Scope at 0.0.5
 
 ## Implemented
 
@@ -24,6 +24,8 @@
 - Global bilingual cuisine/photo catalogue and separate restaurant selection step, with availability management, activation-date feedback and bundled image attribution.
 
 - Bilingual central-host presentation page with AI visuals, responsive CTAs, keyboard feature previews, local order demo and reduced-motion animation support.
+
+- Restaurant setup address lookup with missing-field feedback, candidate selection and adjustable saved pin; no numeric coordinate inputs.
 
 ## Remaining before production launch
 

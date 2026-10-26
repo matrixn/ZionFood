@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.4** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.5** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -48,6 +48,8 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 
 - [x] `0.0.4`: pagină publică de prezentare RO/EN, imagini generate, animații, previzualizări interactive și CTA-uri către cont/panou.
 
+- [x] `0.0.5`: localizarea restaurantului după adresa din formular, mesaje pentru date lipsă și pin ajustabil, fără câmpuri latitudine/longitudine.
+
 ## Implementat
 
 ### Prima pagină de prezentare
@@ -68,7 +70,7 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 ### Setup, branding și specific culinar
 
 - [x] Setup cu submeniuri, progres calculat pe server, protecție pentru salvări concurente și avertizare pentru modificări nesalvate.
-- [x] Nume, adresă, localitate, contacte, website, fus orar și coordonate opționale.
+- [x] Nume, adresă, localitate, contacte, website și fus orar; buton de localizare după adresă, feedback pentru date lipsă și hartă cu pin ajustabil.
 - [x] Capacitate totală sau plan de mese cu coduri unice, săli/terase și număr de locuri.
 - [x] Activare independentă per locație pentru ridicare, livrare, rezervări și comenzi QR.
 - [x] Date private pentru companie/politici și verificări pentru publicarea comenzilor.
@@ -140,7 +142,7 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [ ] Ecrane complete pentru crearea mai multor restaurante/locații; structura și selectorul de locație există deja.
 - [ ] Plugin WordPress separat și provisionarea automatizată a domeniilor personalizate/DNS/TLS.
 - [ ] Ciclu complet de billing și abonamente după trial.
-- [ ] Geocodare/căutare de adrese și extinderi pentru poligoane cu goluri sau MultiPolygon. Momentan pinul este autoritar, iar adresa textuală nu este verificată automat.
+- [ ] Geocodare/căutare de adrese pentru client la checkout și extinderi pentru poligoane cu goluri sau MultiPolygon. Momentan pinul este autoritar, iar adresa textuală nu este verificată automat.
 - [ ] Persistența coșului la reîncărcare completă și urmărirea portabilă a comenzii între dispozitive.
 - [ ] Traducerea conținutului introdus de restaurant; RO/EN se aplică interfeței, nu traduce automat produsele.
 
@@ -155,6 +157,8 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [ ] Eliminarea rutei publice temporare `/test-email` după încheierea diagnosticării.
 
 ## Verificări executate
+
+Localizarea restaurantului (`0.0.5`) a trecut **144 de teste backend / 738 de aserțiuni pe SQLite**, 8 teste frontend, TypeScript/build, ESLint și Pint pe Linux. Trei scenarii Playwright au verificat datele lipsă, harta și salvarea pinului, alegerea adreselor, erorile, RO/EN, mobil și regresia setup-ului. A trecut și regresia de browser pentru desenarea unei zone de livrare și checkout cu pin pe hartă. A fost verificată și o căutare reală pentru o adresă publică din București. Detalii în [RESTAURANT_LOCATION.md](docs/RESTAURANT_LOCATION.md).
 
 Pagina de prezentare a fost verificată prin două scenarii Playwright pentru RO/EN, CTA-uri, taburi și tastatură, demo fără operațiuni reale, imagini, mobil și mișcare redusă. Regresia backend SQLite a trecut 138 de teste / 712 aserțiuni; TypeScript/build, ESLint, 8 teste frontend și Pint au trecut. Detalii în [LANDING_PAGE.md](docs/LANDING_PAGE.md).
 
@@ -198,6 +202,7 @@ Pentru Resend, configurează `MAIL_MAILER=resend`, `RESEND_API_KEY`, un `MAIL_FR
 - [Funcționalități și limite](docs/MVP_SCOPE.md)
 - [Istoricul verificărilor și progresului](docs/CODEX_PROGRESS.md)
 - [Instalare locală și Forge](docs/DEPLOYMENT.md)
+- [Localizarea restaurantului după adresă](docs/RESTAURANT_LOCATION.md)
 - [Pagina de prezentare](docs/LANDING_PAGE.md) și [prompturile imaginilor](docs/assets/landing-images.prompt.md)
 - [Changelog](CHANGELOG.md)
 - [Inventarul fișierelor implementate](docs/IMPLEMENTED_FILES.txt)

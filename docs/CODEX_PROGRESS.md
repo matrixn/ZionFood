@@ -1,4 +1,15 @@
-# ZionFood progress — 0.0.4
+# ZionFood progress — 0.0.5
+
+## Version 0.0.5 - restaurant address map (October 26)
+
+Replaced the optional latitude/longitude editor in Basics with a Localizeaza restaurantul / Locate restaurant button reading current unsaved street/city/country/postcode fields, localized missing-field guidance, candidate selection and a map pin that can be clicked/dragged and saved through the existing setup revision. Editing address components invalidates older results/pins; no automatic or autocomplete searches occur. Coordinates remain internal data. Existing saved pins and delivery-map centers continue to work.
+
+Added a tenant-manager-only CSRF-protected JSON lookup endpoint, Photon-compatible HTTPS configuration, shared cached results/global serialization and cooldown, per-user throttling, response/time bounds and safe warnings. Only address components are sent; provider settings are not exposed in map props. No schema, payment or checkout-address behavior changes. Public provider policy/limits are documented in RESTAURANT_LOCATION.md.
+
+Six new feature tests passed (26 assertions), covering access, missing inputs, unsaved-address lookup, privacy, caching/throttle, approximate/foreign/invalid results, provider failure/oversize and saved pins. A separate local real-provider query for public Calea Victoriei 49, Bucuresti returned three candidates; no private restaurant data was used or changed. Browser tests stub provider results, validate missing fields/no numeric inputs, locate/adjust/save/reload, ambiguity, empty/error responses, address-change invalidation, RO/EN and mobile layout. Shared-map clearing now removes the marker when the model becomes null. Initial browser fixture locale assumptions were corrected. Final validation passed: 144 SQLite backend tests / 738 assertions, eight Vitest checks, ESLint, TypeScript/Vite build, Composer validation and the exact Linux Pint CI command across 185 PHP files. Three Chromium flows passed for localizing/adjusting/saving/reloading, ambiguity/error/empty states, RO/EN/mobile and the existing guided setup. A fourth Chromium regression passed for drawing/saving a delivery polygon and guest checkout with inside/outside map pins, verifying the shared map component. The restaurant map screenshot was inspected. The existing app-bundle warning remains (about 526 kB). No new MariaDB run, Forge/production verification or performance claim is made.
+
+Version raised to 0.0.5 for the local commit. This request does not authorize an additional push or manual deployment.
+
 
 ## Version 0.0.4 - public presentation page (October 26)
 

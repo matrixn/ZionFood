@@ -36,3 +36,5 @@ The 000400 migration adds nullable GeoJSON geometry and deterministic numeric pr
 Migration 000500 adds dining_tables.ordering_paused (default false) and location_fulfillment_settings.dine_in_cutoff_minutes (default 30). Pause is persistent across guest scans; session expiry does not erase staff closure. The cutoff is a location-specific integer, validated 0-240.
 
 Migration 000600 adds cuisines (unique slug, bilingual names/descriptions, managed photo/attribution, active flag and sort order) and location_cuisines (unique location/cuisine, tenant composite FK and activation timestamps). The initial 27 entries are inserted from bundled JSON without network requests. Subsequent catalogue edits are not overwritten by ordinary seeding. Legacy basics.cuisine text remains private history.
+
+Restaurant address lookup adds no tables: the selected/manual map pin uses the existing private setup_profile.basics latitude/longitude pair. Coordinates are internal data, while the setup UI offers an address button and map. Search itself does not update records or setup_revision.

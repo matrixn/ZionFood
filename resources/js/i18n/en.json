@@ -749,5 +749,18 @@
     "landing_closing_accent": "a fresh rhythm.",
     "landing_closing_description": "Bring your menu, guests and team onto the same page. Start with what you need today.",
     "landing_footer_tagline": "One place for your menu, guests and team.",
-    "landing_ai_note": "Presentation images generated with AI."
+    "landing_ai_note": "Presentation images generated with AI.",
+    "restaurant_locate": "Locate restaurant",
+    "restaurant_map_title": "Restaurant location on the map",
+    "restaurant_map_hint": "Click the map or drag the pin to adjust the restaurant entrance.",
+    "restaurant_location_intro": "Uses the address, city and country entered above.",
+    "restaurant_location_missing": "Complete these fields before locating: {fields}.",
+    "restaurant_location_not_found": "We could not find this address. Check the street, number and city, add the postcode or place the pin directly on the map.",
+    "restaurant_location_found": "Address located. Check the pin and save this step.",
+    "restaurant_location_approximate": "We found an approximate position. Add the street number for a more precise search or move the pin to the restaurant entrance.",
+    "restaurant_location_choose": "We found several matches. Choose the correct address below.",
+    "restaurant_location_adjusted": "Pin adjusted. Save this step to keep the location.",
+    "restaurant_location_save_hint": "The location is stored when you save this step. If you change the address, locate the restaurant again.",
+    "restaurant_location_remove": "Remove pin",
+    "restaurant_location_provider": "Clicking the button sends the address to the search service. Geographic data:"
 }

@@ -22,7 +22,7 @@ Inspection limits: disabled/gated services were not enabled merely to reveal dee
 
 | Group | Step | What saving does |
 | --- | --- | --- |
-| Your restaurant | Name and address | Saves restaurant name, location name/address/time zone, city/country/postal code, phone/email/website and optional coordinate pair |
+| Your restaurant | Name and address | Saves restaurant name, location name/address/time zone, city/country/postal code, phone/email/website and an optional map pin found from address search or adjusted on the map |
 | Your restaurant | Cuisine | Selects multiple catalogue photo cards with search, selected list and saved activation dates; see CUISINES.md |
 | Your restaurant | Areas, tables and seats | Saves either total capacity or a table plan with unique table codes, area/terrace labels and seat counts; computes the total server-side |
 | How you operate | Services | Updates pickup, delivery, QR ordering and reservation flags independently; retains scheduled/catering preparation |
@@ -61,3 +61,5 @@ Remaining runtime phases include catering/events, scheduled-order fulfillment an
 ### Optional off-site catering decision
 
 The user explicitly included catering/events at a different address, controlled by each restaurant rather than globally enabled. Services now includes `catering_planned`, false by default and independently saved per location alongside on-site/scheduled preferences. It may be turned on or off without enabling delivery or changing any other tenant. This is preparation only; event dates, guest quantities, event address, quotations and eventual fulfillment remain part of the future catering flow, with payments still postponed.
+
+Address lookup now uses a button and map rather than numeric coordinate inputs. Street/city/country completeness is explained before search, candidates can be selected, and changing address components clears a stale pin. Coordinates remain internal setup data saved through the revision-checked Basics step. See RESTAURANT_LOCATION.md.

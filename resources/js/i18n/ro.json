@@ -749,5 +749,18 @@
     "landing_closing_accent": "un ritm nou.",
     "landing_closing_description": "Pune meniul, oaspeții și echipa pe aceeași pagină. Începe cu ceea ce ai nevoie astăzi.",
     "landing_footer_tagline": "Un loc pentru meniul, oaspeții și echipa ta.",
-    "landing_ai_note": "Imagini de prezentare generate cu AI."
+    "landing_ai_note": "Imagini de prezentare generate cu AI.",
+    "restaurant_locate": "Localizează restaurantul",
+    "restaurant_map_title": "Locația restaurantului pe hartă",
+    "restaurant_map_hint": "Apasă pe hartă sau mută pinul pentru a ajusta intrarea în restaurant.",
+    "restaurant_location_intro": "Folosim adresa, localitatea și țara completate mai sus.",
+    "restaurant_location_missing": "Completează înainte de localizare: {fields}.",
+    "restaurant_location_not_found": "Nu am găsit adresa. Verifică strada, numărul și localitatea, adaugă codul poștal sau așază pinul direct pe hartă.",
+    "restaurant_location_found": "Adresa a fost localizată. Verifică pinul și salvează pasul.",
+    "restaurant_location_approximate": "Am găsit o poziție aproximativă. Adaugă numărul străzii pentru o căutare mai precisă sau mută pinul la intrarea restaurantului.",
+    "restaurant_location_choose": "Am găsit mai multe variante. Alege adresa potrivită de mai jos.",
+    "restaurant_location_adjusted": "Pinul a fost ajustat. Salvează pasul pentru a păstra locația.",
+    "restaurant_location_save_hint": "Locația se păstrează când salvezi pasul. Dacă schimbi adresa, localizează din nou restaurantul.",
+    "restaurant_location_remove": "Elimină pinul",
+    "restaurant_location_provider": "La apăsarea butonului, adresa este trimisă serviciului de căutare. Date geografice:"
 }

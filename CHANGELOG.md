@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.5 — 2026-10-26
+
+- Replaced numeric coordinate fields in restaurant setup with a Locate restaurant button, required-address feedback, address candidates and an adjustable saved map pin.
+- Added tenant-protected, cached and rate-limited Photon address lookup with bounded transport and localized provider-error/approximate-match feedback.
+
 ## 0.0.4 — 2026-10-26
 
 - Replaced the public central-host welcome page with a responsive Romanian/English marketing presentation, generated food/kitchen visuals, clear CTAs, feature previews and an interactive kitchen demo.

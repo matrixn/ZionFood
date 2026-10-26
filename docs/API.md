@@ -55,3 +55,7 @@ Permanent QR menu pause is enforced independently of session expiry; a connect r
 ## Cuisine catalogue browser routes
 
 GET /admin/cuisines and POST /admin/cuisines[/{numeric cuisine ID}] require a verified platform-admin session; POST accepts multipart bilingual fields, active flag, sort order, safe photo upload and optional attribution links. Tenant setup GET/PUT /app/locations/{public_id}/setup/cuisines uses a verified owner/manager session, revision and cuisine_ids array (distinct numeric IDs, maximum 100). Inactive previously-selected entries may be kept/removed but cannot be newly selected. Existing activation dates survive unchanged saves. All writes use CSRF. No public/integration cuisine write API is added.
+
+## Restaurant address lookup
+
+POST /app/locations/{public_id}/setup/geocode requires a verified owner/manager session, CSRF and ten requests/minute/user. Body: address (5-255 characters), city (2-100), country (two uppercase letters), optional postal_code (20 maximum). Response: results array containing latitude, longitude, label and approximate, with no-store. Lookup uses unsaved form data and does not modify setup or revision. Existing Basics PUT stores the pin. Private geocoder configuration is not returned.

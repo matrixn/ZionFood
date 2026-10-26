@@ -1,4 +1,4 @@
-# Reservations, table QR orders and mapped delivery — 0.0.4
+# Reservations, table QR orders and mapped delivery — 0.0.5
 
 ## Activation
 

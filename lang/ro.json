@@ -420,5 +420,7 @@
   "reservation_status_no_show": "Neprezentare",
   "reservation_status_expired": "Cerere expirată",
   "Cuisine saved.": "Specificul culinar a fost salvat.",
-  "Choose available cuisines from the catalogue.": "Alege opțiuni disponibile din catalogul de specific culinar."
+  "Choose available cuisines from the catalogue.": "Alege opțiuni disponibile din catalogul de specific culinar.",
+  "Address search is temporarily unavailable. Try again or place the pin on the map.": "Căutarea adresei este temporar indisponibilă. Încearcă din nou sau așază pinul pe hartă.",
+  "Address search is busy. Wait a few seconds and try again.": "Căutarea adresei este ocupată. Așteaptă câteva secunde și încearcă din nou."
 }

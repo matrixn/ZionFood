@@ -11,6 +11,8 @@ import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
 import ToggleSwitch from 'primevue/toggleswitch';
 import CuisinePicker from '@/components/restaurant/CuisinePicker.vue';
+import RestaurantLocationPicker from '@/components/restaurant/RestaurantLocationPicker.vue';
+import type { DeliveryPoint, MapConfig } from '@/lib/deliveryGeometry';
 import type { Cuisine, CuisineSelection } from '@/types/cuisine';
 import type { WorkspaceProps } from '@/types';
 
@@ -77,6 +79,7 @@ const props = defineProps<
         };
         cuisines: Cuisine[];
         selectedCuisines: CuisineSelection[];
+        mapConfig: MapConfig;
     }
 >();
 const base = computed(() => `/app/locations/${props.location.public_id}`);
@@ -123,6 +126,16 @@ Object.assign(basics, {
     timezone: props.location.timezone,
 });
 basics.defaults();
+const restaurantPoint = computed<DeliveryPoint | null>({
+    get: () =>
+        basics.latitude !== null && basics.longitude !== null
+            ? { latitude: Number(basics.latitude), longitude: Number(basics.longitude) }
+            : null,
+    set: (value) => {
+        basics.latitude = value?.latitude ?? null;
+        basics.longitude = value?.longitude ?? null;
+    },
+});
 const cuisinesForm = useForm({ revision: props.revision, cuisine_ids: props.selectedCuisines.map((c) => c.id) });
 const seating = useForm({
     revision: props.revision,
@@ -355,26 +368,15 @@ onBeforeUnmount(
                         <label class="field"
                             >{{ $t('setup_website') }}<InputText v-model="basics.website" type="url" maxlength="255"
                         /></label>
-                        <details class="md:col-span-2">
-                            <summary class="cursor-pointer text-sm font-medium">{{ $t('setup_map_optional') }}</summary>
-                            <div class="mt-4 grid gap-5 md:grid-cols-2">
-                                <label class="field"
-                                    >{{ $t('setup_latitude')
-                                    }}<InputNumber
-                                        v-model="basics.latitude"
-                                        :min="-90"
-                                        :max="90"
-                                        :max-fraction-digits="7" /></label
-                                ><label class="field"
-                                    >{{ $t('setup_longitude')
-                                    }}<InputNumber
-                                        v-model="basics.longitude"
-                                        :min="-180"
-                                        :max="180"
-                                        :max-fraction-digits="7"
-                                /></label>
-                            </div>
-                        </details>
+                        <RestaurantLocationPicker
+                            v-model="restaurantPoint"
+                            :location-id="location.public_id"
+                            :address="basics.address"
+                            :city="basics.city"
+                            :country="basics.country"
+                            :postal-code="basics.postal_code"
+                            :map-config="mapConfig"
+                        />
                     </div>
                     <div v-else-if="step === 'seating'" class="space-y-5">
                         <label class="field"

@@ -144,3 +144,7 @@ New QR menus use permanent codes with persistent staff pause/reopen. Set the din
 ## Cuisine catalogue
 
 Run additive migration 000600 with database/data/cuisines.json and public/images/cuisines deployed from Git. It creates the initial 27 catalogue options without external requests. Build assets; retain storage:link for platform-admin photo uploads. Existing live catalogue edits are not reset by ordinary seeding. No payment or service activation is implied by cuisine selection. See CUISINES.md and CUISINE_PHOTO_CREDITS.md.
+
+## Restaurant address search
+
+ZF_GEOCODER_URL configures a Photon-compatible HTTPS search endpoint, default https://photon.komoot.io/api/. No key is needed for the default public demo; its reasonable-use and availability limits make a suitable hosted/private service preferable for larger deployments. Configure shared cache storage across workers/instances: lookups cache results for 24 hours, serialize upstream requests and use a global two-second cooldown. No database migration is needed. Rebuild frontend/config after rollout. See RESTAURANT_LOCATION.md for attribution, privacy and failure handling.
