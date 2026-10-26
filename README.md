@@ -8,6 +8,8 @@ Implemented flows include onboarding, tenant-aware menus and staff invitations/a
 
 Transactional email supports Resend through Laravel's native driver. Configure `MAIL_MAILER=resend`, `RESEND_API_KEY` and a verified `MAIL_FROM_ADDRESS` in Forge; see [Resend setup and test command](docs/DEPLOYMENT.md#resend-transactional-email-forge). Local development uses the log mailer.
 
+All external email is queued and shares a Redis-backed rolling limit of 140 recipients per 24 hours. Configure `ADMIN_EMAIL` for deduplicated error/exception alerts; see [quota and diagnostic setup](docs/DEPLOYMENT.md#global-email-quota-and-error-alerts).
+
 Start with [local setup and deployment](docs/DEPLOYMENT.md). In a fresh environment:
 
 ```sh

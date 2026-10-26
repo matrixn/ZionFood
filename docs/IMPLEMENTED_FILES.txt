@@ -256,3 +256,13 @@ vite.config.ts
 vitest.config.ts
 app/Console/Commands/SendTestEmail.php
 tests/Feature/ResendMailTest.php
+app/Domain/Mail/EmailQuota.php
+app/Domain/Mail/QueueOutgoingEmail.php
+app/Domain/Mail/EmailErrorAlert.php
+app/Jobs/DeliverEmail.php
+config/email_delivery.php
+tests/Feature/EmailDeliveryTest.php
+app/Http/Controllers/TestEmailController.php
+resources/js/pages/admin/TestEmail.vue
+tests/Feature/TestEmailPageTest.php
+tests/e2e/email-test.spec.ts

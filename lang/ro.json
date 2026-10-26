@@ -367,5 +367,10 @@
   "Invalid product payload.": "Datele produsului nu sunt valide.",
   "This action is unauthorized.": "Nu ai permisiunea de a efectua această acțiune.",
   "Server Error": "Eroare de server",
-  "Too Many Attempts.": "Prea multe încercări. Încearcă din nou mai târziu."
+  "Too Many Attempts.": "Prea multe încercări. Încearcă din nou mai târziu.",
+    "Configure a valid ADMIN_EMAIL in the environment.": "Configurează o adresă ADMIN_EMAIL validă în mediul aplicației.",
+    "Configure a delivery mailer and its credentials first.": "Configurează mai întâi serviciul de email și datele de acces.",
+    "ZionFood test email. The configured mail service is working.": "Email de test ZionFood. Serviciul de email configurat funcționează.",
+    "Email could not be queued. Check delivery configuration and queue health.": "Emailul nu a putut fi pus în coadă. Verifică serviciul de email și coada de procesare.",
+    "Test email queued for the administrator. Check the recipient inbox after processing.": "Emailul de test a fost pus în coadă pentru administrator. Verifică primirea după procesare."
 }

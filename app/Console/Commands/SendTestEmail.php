@@ -40,12 +40,12 @@ class SendTestEmail extends Command
                 $message->to($email)->subject('ZionFood — Email de test / Test email');
             });
         } catch (Throwable) {
-            $this->error('Email submission failed. Check the mailer configuration, verified sender domain and provider dashboard.');
+            $this->error('Email could not be queued. Check mailer configuration and queue health.');
 
             return self::FAILURE;
         }
 
-        $this->info('Email submitted to the configured mailer. Confirm delivery in the provider dashboard and recipient inbox.');
+        $this->info('Email queued for quota-controlled delivery. Ensure the mail queue worker is running; confirm delivery in the provider dashboard and recipient inbox.');
 
         return self::SUCCESS;
     }

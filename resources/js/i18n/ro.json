@@ -415,5 +415,10 @@
     "delivery_status_cancelled": "Anulat",
     "fulfillment_pickup": "Ridicare",
     "fulfillment_delivery": "Livrare",
-    "subscription_unknown": "—"
+    "subscription_unknown": "—",
+    "email_test_title": "Testare email",
+    "email_test_description": "Trimite un email de test către administratorul platformei.",
+    "email_test_recipient": "Destinatar",
+    "email_test_quota": "Maximum 3 teste pe oră. Se aplică și limita comună de 140 de destinatari în 24 de ore.",
+    "email_test_send": "Trimite email de test"
 }

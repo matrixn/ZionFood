@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 class MakeBrowserFixtures extends Command
 {
-    protected $signature = 'zionfood:browser-fixtures';
+    protected $signature = 'zionfood:browser-fixtures {--admin : Create a separate local platform-admin browser fixture}';
 
     protected $description = 'Create a private local-only browser test account without changing existing users';
 
@@ -28,7 +28,7 @@ class MakeBrowserFixtures extends Command
             $suffix = strtolower(Str::random(10));
             $password = Str::password(32);
             $user = User::create(['name' => 'Browser Test Owner', 'email' => 'browser-'.$suffix.'@example.test', 'password' => $password]);
-            $user->forceFill(['email_verified_at' => now(), 'locale' => 'ro'])->save();
+            $user->forceFill(['email_verified_at' => now(), 'locale' => 'ro', 'is_platform_admin' => (bool) $this->option('admin')])->save();
             $location = app(OnboardOrganization::class)->execute($user, ['organization_name' => 'Browser Test '.$suffix, 'restaurant_name' => 'Restaurant Test', 'slug' => 'browser-'.$suffix, 'location_name' => 'Locație test', 'address' => 'Adresă de test']);
             $location->update(['accepting_orders' => true]);
             $location->hours()->update(['opens_at' => '00:00', 'closes_at' => '23:59']);
@@ -37,7 +37,7 @@ class MakeBrowserFixtures extends Command
 
             return ['email' => $user->email, 'password' => $password, 'location' => $location->public_id];
         });
-        Storage::disk('local')->put('browser-account.json', json_encode($account, JSON_THROW_ON_ERROR));
+        Storage::disk('local')->put($this->option('admin') ? 'browser-email-admin.json' : 'browser-account.json', json_encode($account, JSON_THROW_ON_ERROR));
         $this->info('Private browser fixture saved. Existing accounts are unchanged.');
 
         return self::SUCCESS;

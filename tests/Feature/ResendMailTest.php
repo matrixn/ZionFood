@@ -1,5 +1,7 @@
 <?php
 
+use App\Domain\Mail\EmailQuota;
+use App\Jobs\DeliverEmail;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -7,6 +9,7 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Mail\Transport\ResendTransport;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use Resend\Transporters\HttpTransporter;
 use Resend\ValueObjects\ApiKey;
 use Resend\ValueObjects\Transporter\BaseUri;
@@ -26,6 +29,8 @@ it('refuses mail tests with invalid recipients, non-delivery mailers or missing 
 });
 
 it('submits the configured sender and recipient through the Resend SDK without network requests', function () {
+    Queue::fake();
+    config(['email_delivery.cache_store' => 'array']);
     $history = [];
     $handler = HandlerStack::create(new MockHandler([new Response(200, ['Content-Type' => 'application/json'], '{"id":"email-test-id"}')]));
     $handler->push(Middleware::history($history));
@@ -38,6 +43,13 @@ it('submits the configured sender and recipient through the Resend SDK without n
     config(['mail.default' => 'resend-test', 'mail.mailers.resend-test' => ['transport' => 'resend-test'], 'mail.from' => ['address' => 'noreply@example.test', 'name' => 'ZionFood']]);
 
     $this->artisan('zionfood:mail-test recipient@example.test')->assertSuccessful();
+
+    expect($history)->toHaveCount(0);
+    Queue::assertPushed(DeliverEmail::class, function ($job) {
+        $job->handle(app(EmailQuota::class));
+
+        return true;
+    });
 
     expect($history)->toHaveCount(1);
     $request = $history[0]['request'];
@@ -54,6 +66,6 @@ it('does not expose provider errors or secrets when submission fails', function 
     Mail::shouldReceive('raw')->once()->andThrow(new RuntimeException('secret-provider-details'));
 
     $this->artisan('zionfood:mail-test recipient@example.test')
-        ->expectsOutput('Email submission failed. Check the mailer configuration, verified sender domain and provider dashboard.')
+        ->expectsOutput('Email could not be queued. Check mailer configuration and queue health.')
         ->assertFailed();
 });

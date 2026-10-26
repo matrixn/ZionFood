@@ -5,6 +5,7 @@ use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PublicOrderingController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\TestEmailController;
 use App\Http\Controllers\WorkspaceController;
 use App\Models\RestaurantLocation;
 use Illuminate\Http\Request;
@@ -24,6 +25,10 @@ Route::get('/store/{location}', function (Request $r, string $location, PublicOr
 Route::post('/locale', [LocaleController::class, 'update']);
 Route::get('/track/{order}', fn (string $order) => Inertia::render('storefront/Tracking', ['orderId' => $order]));
 Route::get('/invitations/{invitation}', [StaffController::class, 'invitation']);
+Route::middleware(['auth', 'verified', 'can:platform-admin'])->group(function () {
+    Route::get('/test-email', [TestEmailController::class, 'show']);
+    Route::post('/test-email', [TestEmailController::class, 'send'])->middleware('throttle:admin-mail-test');
+});
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/invitations/{invitation}', [StaffController::class, 'accept']);
     Route::post('/app/locations/{location}/staff/invitations', [StaffController::class, 'invite'])->middleware('throttle:staff-invitations');

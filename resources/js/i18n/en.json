@@ -415,5 +415,10 @@
     "delivery_status_cancelled": "Cancelled",
     "fulfillment_pickup": "Pickup",
     "fulfillment_delivery": "Delivery",
-    "subscription_unknown": "—"
+    "subscription_unknown": "—",
+    "email_test_title": "Test email",
+    "email_test_description": "Send a test email to the platform administrator.",
+    "email_test_recipient": "Recipient",
+    "email_test_quota": "Maximum 3 tests per hour. The shared limit of 140 recipients per 24 hours also applies.",
+    "email_test_send": "Send test email"
 }
