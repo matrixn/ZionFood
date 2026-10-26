@@ -1,8 +1,10 @@
 <?php
 
 use App\Models\StorefrontDomain;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 function checkoutMapFixture(string $slug): array
 {
@@ -19,6 +21,9 @@ function checkoutGeoFeature(): array
 }
 
 it('renders restaurant sharing metadata in raw html without requiring javascript', function () {
+    Storage::fake('public');
+    $logo = UploadedFile::fake()->image('logo.png', 120, 53);
+    Storage::disk('public')->put('branding/logo-test.png', file_get_contents($logo->getPathname()));
     [, $location] = tenantFixture('share-raw');
     $location->restaurant->update(['name' => 'Queen & Friends', 'description' => 'Mâncare <b>bună</b>', 'logo_path' => 'branding/logo-test.png']);
     $html = $this->get('/store/'.$location->public_id.'?utm_source=test')->assertOk()->getContent();
@@ -28,7 +33,9 @@ it('renders restaurant sharing metadata in raw html without requiring javascript
     expect($xpath->evaluate('string(//meta[@property="og:title"]/@content)'))->toBe('Queen & Friends Meniu Digital')
         ->and($xpath->evaluate('string(//meta[@property="og:site_name"]/@content)'))->toBe('Queen & Friends')
         ->and($xpath->evaluate('string(//meta[@property="og:image"]/@content)'))->toStartWith('http://')
-        ->and($xpath->evaluate('string(//meta[@property="og:image"]/@content)'))->toEndWith('/storage/branding/logo-test.png')
+        ->and($xpath->evaluate('string(//meta[@property="og:image"]/@content)'))->toContain('/shares/')
+        ->and($xpath->evaluate('string(//meta[@property="og:image:width"]/@content)'))->toBe('600')
+        ->and($xpath->evaluate('string(//meta[@property="og:image:height"]/@content)'))->toBe('600')
         ->and($xpath->evaluate('string(//meta[@property="og:url"]/@content)'))->toBe(url('/store/'.$location->public_id))
         ->and($xpath->evaluate('string(//meta[@property="og:description"]/@content)'))->toBe('Mâncare bună');
 });

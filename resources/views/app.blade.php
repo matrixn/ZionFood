@@ -13,6 +13,9 @@
 <meta name="twitter:title" content="{{ $storefrontMeta['title'] }}" data-storefront-meta>
 @if($storefrontMeta['image'])
 <meta property="og:image" content="{{ $storefrontMeta['image'] }}" data-storefront-meta>
+<meta property="og:image:width" content="600" data-storefront-meta>
+<meta property="og:image:height" content="600" data-storefront-meta>
+<meta property="og:image:type" content="image/png" data-storefront-meta>
 <meta property="og:image:alt" content="{{ $storefrontMeta['name'] }}" data-storefront-meta>
 <meta name="twitter:image" content="{{ $storefrontMeta['image'] }}" data-storefront-meta>
 @endif

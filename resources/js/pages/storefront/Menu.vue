@@ -92,6 +92,9 @@ const checkout = ref(false);
                 :content="shareMeta.description"
             />
             <meta v-if="shareMeta?.image" head-key="og-image" property="og:image" :content="shareMeta.image" />
+            <meta v-if="shareMeta?.image" head-key="og-image-width" property="og:image:width" content="600" />
+            <meta v-if="shareMeta?.image" head-key="og-image-height" property="og:image:height" content="600" />
+            <meta v-if="shareMeta?.image" head-key="og-image-type" property="og:image:type" content="image/png" />
             <meta
                 v-if="shareMeta?.image"
                 head-key="og-image-alt"

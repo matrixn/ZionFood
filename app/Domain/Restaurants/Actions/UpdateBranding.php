@@ -2,6 +2,7 @@
 
 namespace App\Domain\Restaurants\Actions;
 
+use App\Domain\Restaurants\StorefrontShareImage;
 use App\Domain\Tenancy\TenantAccess;
 use App\Models\Restaurant;
 use App\Models\StorefrontDomain;
@@ -46,6 +47,7 @@ class UpdateBranding
                 StorefrontDomain::whereIn('location_id', $locationIds)->where('type', 'subdomain')->where('hostname', $oldHostname)->update(['hostname' => $newHostname]);
                 DB::afterCommit(function () use ($old, $record) {
                     foreach (array_unique(array_filter($old)) as $path) {
+                        Storage::disk('public')->delete(app(StorefrontShareImage::class)->path($record, $path));
                         if (str_starts_with($path, 'branding/'.$record->organization_id.'/'.$record->public_id.'/')) {
                             Storage::disk('public')->delete($path);
                         }

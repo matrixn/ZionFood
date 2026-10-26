@@ -161,3 +161,12 @@ Run the normal php artisan migrate --force for migration 000700, then build fron
 ## Storefront experience (0.0.12)
 
 Storefront experience 0.0.12 requires an asset build and normal code/config refresh, with no new migration or dependencies. Public pin lookup reuses ZF_REVERSE_GEOCODER_URL and the shared production cache; assess provider capacity for anonymous use. Social metadata is in initial HTML and uses an absolute public logo URL. Serve public storage over the correct HTTPS origin and ensure crawlers can fetch the logo. Actual WhatsApp cached previews are not verified locally.
+
+
+## Share-logo images (0.0.13)
+
+PHP GD (`ext-gd`) with PNG, JPEG and WebP support is required by Composer; enable it for the site's CLI and FPM PHP version on Forge before deployment. CI installs GD explicitly. No new database migration or JavaScript dependency is required. Public storage must be writable and publicly served via the existing storage link.
+
+A menu view generates a missing 600 × 600 PNG once under `branding/{organization}/{restaurant}/shares/`, then reuses it. The whole logo fits proportionally inside a 480 × 480 area on opaque white, protecting horizontal lettering in square thumbnails and flattening transparent backgrounds. No trimming of logo content or stretching is used. The source file and in-app header logo stay unchanged. Source path/layout version define the immutable derivative filename; normal replacement uploads have unique source paths and therefore fresh URLs. Old derivatives are removed after successful branding replacement/removal. Missing, oversized or corrupt inputs omit the image gracefully and log safe generation failures rather than breaking menus.
+
+This also supports existing valid logo uploads without re-upload. Very small sources cannot gain detail through resizing. A real messaging-platform preview refresh is not verified locally; existing shared messages may retain their previous preview.

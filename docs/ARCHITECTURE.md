@@ -1,4 +1,4 @@
-# ZionFood 0.0.12
+# ZionFood 0.0.13
 
 The restaurant shell groups operations, administration and connection links, with Setup below the location selector. Setup embeds existing editors and loads selected editor props through WorkspaceController's shared authorization/data builder. Standalone routes and save endpoints remain; saves return to the wizard referer. See ADMIN_NAVIGATION.md for scope, unsaved guards and location selection.
 
@@ -76,3 +76,6 @@ Ingredients are a shared platform catalogue plus restaurant-owned records. Produ
 ## Storefront experience (0.0.12)
 
 Public-menu HTML supplies restaurant-specific sharing metadata before JavaScript runs; Vue Head maintains the matching hydrated values without duplicate tags. Product images in cart state are presentation metadata only and are never submitted as checkout authority. Dialogs use a bounded flex shell with separate header/body/footer; native form IDs retain submission/validation for footer buttons. Customer reverse lookup reuses LocateRestaurant bounded transport and rejects disabled locations, foreign storefront scope and points outside active polygons before calling the provider.
+
+
+Share metadata uses a dedicated StorefrontShareImage derivative rather than the original logo. The server bounds input bytes/dimensions before GD decoding, flattens transparency on white, contains the entire image in a 600px square and caches by immutable upload path plus layout version. Metadata declares PNG type and exact dimensions in both initial HTML and Vue Head. Branding cleanup runs after commit; image-generation failure cannot prevent menu rendering.

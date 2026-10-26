@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Orders\Actions\PlaceOrderAction;
+use App\Domain\Restaurants\StorefrontShareImage;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
 use App\Models\RestaurantLocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class PublicOrderingController extends Controller
@@ -17,7 +17,7 @@ class PublicOrderingController extends Controller
     {
         $restaurant = $location->restaurant;
         $title = $restaurant->name.' '.(app()->getLocale() === 'en' ? 'Digital Menu' : 'Meniu Digital');
-        $image = $restaurant->logo_path ? url(Storage::disk('public')->url($restaurant->logo_path)) : null;
+        $image = app(StorefrontShareImage::class)->url($restaurant);
         $meta = ['title' => $title, 'name' => $restaurant->name, 'description' => mb_substr(strip_tags($restaurant->description ?: $restaurant->tagline ?: $title), 0, 250), 'image' => $image, 'url' => $request->url(), 'locale' => app()->getLocale() === 'en' ? 'en_GB' : 'ro_RO'];
 
         return Inertia::render('storefront/Menu', [...$this->data($location), 'shareMeta' => $meta])->withViewData(['storefrontMeta' => $meta]);

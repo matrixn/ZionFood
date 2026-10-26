@@ -1,4 +1,13 @@
-# ZionFood progress — 0.0.12
+# ZionFood progress — 0.0.13
+
+## Version 0.0.13 - uncropped restaurant share logos (October 26)
+
+The supplied 120 × 53 WebP was being used directly as social imagery. Added a dedicated 600 × 600 opaque white PNG containing the whole logo proportionally within a centered 480 × 480 area. This is padding/containment rather than cropping away brand letters. Existing valid uploads generate lazily on the first menu view; generated files are reused, while the original and application logo remain unchanged. Layout/source-path hashing changes the URL for replacement uploads. Successful branding changes delete old derivatives after commit. Missing/corrupt/oversized sources gracefully omit image metadata. Added initial/hydrated Open Graph width, height and PNG MIME fields, following the official Open Graph structured-image properties.
+
+Declared ext-gd in Composer and GD in CI; enabled the installed native PHP GD module locally and restarted only the identified ZionFood development server to load it. Deployment instructions specify CLI/FPM GD with PNG/JPEG/WebP support and writable public storage. No migration or extra PHP package is needed.
+
+Validation: 167 SQLite backend tests / 1434 assertions passed, including pixel checks for white transparency flattening, left/right lettering preservation, aspect ratio, source immutability, cached reuse, replacement/removal and missing/corrupt input. Eleven frontend tests, ESLint, TypeScript/Vite build, Composer validation and exact Linux Pint across 195 PHP files passed. The real supplied WebP was processed locally and its final PNG visually inspected; the branded asset is not committed. The updated Playwright sharing flow passed, verifying initial/hydrated metadata, absence of duplicates and an actually served PNG whose header dimensions are 600 × 600. The three new service tests passed on dedicated MariaDB with 23 assertions. No real WhatsApp preview/cache refresh or production deployment was performed. The low-resolution original remains the limit on sharpness; the existing build chunk-size warning remains.
+
 
 ## Version 0.0.12 - storefront products, sharing and persistent actions (October 26)
 

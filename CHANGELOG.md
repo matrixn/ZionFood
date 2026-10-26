@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.13 — 2026-10-26
+
+- Generate a separate cached 600px square PNG for restaurant sharing, containing the full proportionally scaled logo on white with 60px minimum padding. Existing uploads work without re-upload.
+- Set Open Graph image dimensions/type, version derivative paths by layout/source upload and remove obsolete derivatives after branding changes.
+- Require PHP GD for PNG/JPEG/WebP processing and enable it in CI.
+
 ## 0.0.12 — 2026-10-26
 
 - Restaurant-specific server-rendered Open Graph metadata with its logo and localized Digital Menu title.

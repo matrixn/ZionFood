@@ -39,6 +39,7 @@ app/Domain/Restaurants/Actions/SaveRestaurantSetup.php
 app/Domain/Restaurants/Actions/UpdateBranding.php
 app/Domain/Restaurants/LocateRestaurant.php
 app/Domain/Restaurants/SetupProgress.php
+app/Domain/Restaurants/StorefrontShareImage.php
 app/Domain/Restaurants/SyncDiningTables.php
 app/Domain/Tenancy/Actions/AcceptStaffInvitation.php
 app/Domain/Tenancy/Actions/InviteStaff.php
@@ -361,6 +362,7 @@ tests/Feature/RestaurantSetupTest.php
 tests/Feature/SetupWorkspaceTest.php
 tests/Feature/StaffBrandingLocaleTest.php
 tests/Feature/StorefrontExperienceTest.php
+tests/Feature/StorefrontShareImageTest.php
 tests/Feature/TestEmailPageTest.php
 tests/Feature/WebhooksTest.php
 tests/Feature/ZionFoodTest.php
