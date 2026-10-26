@@ -45,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/app/tables/{table}/{operation}', [DiningController::class, 'operation'])->middleware('throttle:table-operations');
     Route::get('/app/locations/{location}/setup/{step?}', [RestaurantSetupController::class, 'show']);
     Route::post('/app/locations/{location}/setup/geocode', [RestaurantSetupController::class, 'locate'])->middleware('throttle:geocoding');
+    Route::post('/app/locations/{location}/setup/reverse-geocode', [RestaurantSetupController::class, 'reverse'])->middleware('throttle:geocoding');
     Route::put('/app/locations/{location}/setup/{step}', [RestaurantSetupController::class, 'update']);
     Route::post('/invitations/{invitation}', [StaffController::class, 'accept']);
     Route::post('/app/locations/{location}/staff/invitations', [StaffController::class, 'invite'])->middleware('throttle:staff-invitations');

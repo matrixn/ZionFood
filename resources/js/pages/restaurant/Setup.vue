@@ -376,6 +376,14 @@ onBeforeUnmount(
                             :country="basics.country"
                             :postal-code="basics.postal_code"
                             :map-config="mapConfig"
+                            @address="
+                                (value) => {
+                                    basics.address = value.address;
+                                    basics.city = value.city;
+                                    basics.country = value.country;
+                                    basics.postal_code = value.postal_code;
+                                }
+                            "
                         />
                     </div>
                     <div v-else-if="step === 'seating'" class="space-y-5">

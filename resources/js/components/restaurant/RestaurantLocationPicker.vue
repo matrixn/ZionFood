@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import Button from 'primevue/button';
 import DeliveryMap from '@/components/maps/DeliveryMap.vue';
 import { api } from '@/lib/http';
@@ -13,6 +13,14 @@ const props = defineProps<{
     postalCode: string;
     mapConfig: MapConfig;
 }>();
+interface PinAddress {
+    address: string;
+    city: string;
+    country: string;
+    postal_code: string;
+    missing: string[];
+}
+const emit = defineEmits<{ address: [value: PinAddress] }>();
 const point = defineModel<DeliveryPoint | null>({ required: true });
 interface Result extends DeliveryPoint {
     label: string;
@@ -20,6 +28,9 @@ interface Result extends DeliveryPoint {
 }
 const results = ref<Result[]>([]);
 const busy = ref(false);
+const reversing = ref(false);
+const incomplete = ref('');
+let appliedAddress: string | null = null;
 const error = ref('');
 const notice = ref('');
 const selected = ref<number | null>(null);
@@ -33,9 +44,15 @@ const missing = computed(() =>
 );
 watch(
     () => [props.address, props.city, props.country, props.postalCode],
-    () => {
+    (values) => {
+        if (JSON.stringify(values) === appliedAddress) {
+            appliedAddress = null;
+            return;
+        }
         request++;
         busy.value = false;
+        reversing.value = false;
+        incomplete.value = '';
         results.value = [];
         selected.value = null;
         notice.value = '';
@@ -44,6 +61,9 @@ watch(
     },
 );
 function choose(index: number) {
+    request++;
+    busy.value = false;
+    reversing.value = false;
     const result = results.value[index];
     selected.value = index;
     point.value = { latitude: result.latitude, longitude: result.longitude };
@@ -55,6 +75,9 @@ async function locate() {
         return;
     }
     const current = ++request;
+    incomplete.value = '';
+    reversing.value = false;
+    selected.value = null;
     busy.value = true;
     error.value = '';
     notice.value = '';
@@ -77,7 +100,67 @@ async function locate() {
         if (current === request) busy.value = false;
     }
 }
+async function fromPin() {
+    if (!point.value) return;
+    const source = { ...point.value };
+    const current = ++request;
+    reversing.value = true;
+    busy.value = false;
+    results.value = [];
+    selected.value = null;
+    error.value = '';
+    notice.value = '';
+    incomplete.value = '';
+    try {
+        const response = await api<{ address: PinAddress | null }>(
+            `/app/locations/${props.locationId}/setup/reverse-geocode`,
+            'POST',
+            source,
+        );
+        if (current !== request || JSON.stringify(source) !== JSON.stringify(point.value)) return;
+        if (!response.address) {
+            error.value = tr('restaurant_pin_not_found');
+            return;
+        }
+        const address = response.address;
+        appliedAddress = JSON.stringify([address.address, address.city, address.country, address.postal_code]);
+        emit('address', address);
+        await nextTick();
+        appliedAddress = null;
+        notice.value = 'restaurant_pin_applied';
+        const fields: Record<string, string> = {
+            address: 'street_address',
+            house_number: 'restaurant_house_number',
+            city: 'setup_city',
+            country: 'setup_country',
+            postal_code: 'setup_postal',
+        };
+        if (address.missing.length)
+            incomplete.value = tr('restaurant_pin_incomplete', {
+                fields: address.missing.map((key) => tr(fields[key] ?? key)).join(', '),
+            });
+    } catch (e) {
+        if (current === request) error.value = (e as Error).message;
+    } finally {
+        if (current === request) reversing.value = false;
+    }
+}
+function remove() {
+    request++;
+    busy.value = false;
+    reversing.value = false;
+    point.value = null;
+    notice.value = '';
+    incomplete.value = '';
+    selected.value = null;
+}
+onBeforeUnmount(() => request++);
 function move(value: DeliveryPoint) {
+    request++;
+    busy.value = false;
+    reversing.value = false;
+    error.value = '';
+    incomplete.value = '';
     point.value = value;
     selected.value = null;
     notice.value = 'restaurant_location_adjusted';
@@ -102,6 +185,9 @@ function move(value: DeliveryPoint) {
             />
         </div>
         <p v-if="error" role="alert" class="rounded-lg bg-red-50 p-3 text-sm text-red-700">{{ error }}</p>
+        <p v-if="incomplete" role="status" class="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+            {{ incomplete }}
+        </p>
         <p v-if="notice" role="status" class="rounded-lg bg-violet-50 p-3 text-sm text-brand">{{ $t(notice) }}</p>
         <div v-if="results.length > 1" class="grid gap-2">
             <button
@@ -117,6 +203,15 @@ function move(value: DeliveryPoint) {
             </button>
         </div>
         <DeliveryMap mode="pick" purpose="restaurant" :point="point" :map-config="mapConfig" @update:point="move" />
+        <Button
+            type="button"
+            :label="$t('restaurant_pin_address')"
+            icon="pi pi-map-marker"
+            :disabled="!point || busy"
+            :loading="reversing"
+            outlined
+            @click="fromPin"
+        />
         <div class="flex flex-wrap items-center justify-between gap-3">
             <p class="max-w-xl text-xs leading-relaxed text-slate-500">{{ $t('restaurant_location_save_hint') }}</p>
             <Button
@@ -125,16 +220,12 @@ function move(value: DeliveryPoint) {
                 :label="$t('restaurant_location_remove')"
                 text
                 size="small"
-                @click="
-                    point = null;
-                    notice = '';
-                    selected = null;
-                "
+                @click="remove"
             />
         </div>
         <p class="text-xs leading-relaxed text-slate-400">
             {{ $t('restaurant_location_provider') }}
-            <a href="https://photon.komoot.io/" target="_blank" rel="noreferrer" class="underline">Photon</a> ·
+            <a href="https://photon.komoot.io/" target="_blank" rel="noreferrer" class="underline">Photon</a> Â·
             <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" class="underline"
                 >© OpenStreetMap contributors</a
             >

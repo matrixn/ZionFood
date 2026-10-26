@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { api } from '@/lib/http';
 import { tr as t } from '@/i18n';
 
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import DeliveryMap from '@/components/maps/DeliveryMap.vue';
 import type { MapConfig, DeliveryPolygon } from '@/lib/deliveryGeometry';
 import { Head, useForm } from '@inertiajs/vue3';
@@ -13,8 +14,54 @@ import ToggleSwitch from 'primevue/toggleswitch';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
 import type { WorkspaceProps } from '@/types';
-const props = defineProps<WorkspaceProps & { mapCenter: number[]; mapConfig: MapConfig }>();
+const props = defineProps<
+    WorkspaceProps & {
+        mapCenter: number[] | null;
+        mapConfig: MapConfig;
+        mapAddress: { address: string; city: string; country: string; postal_code: string };
+    }
+>();
 const selectedZone = ref(0);
+const restaurantCenter = ref(props.mapCenter);
+const locating = ref(false);
+const mapMessage = ref('');
+const mapError = ref('');
+const addressMatches = ref<{ latitude: number; longitude: number; label: string }[]>([]);
+let disposed = false;
+onBeforeUnmount(() => {
+    disposed = true;
+});
+onMounted(async () => {
+    if (restaurantCenter.value) return;
+    if (
+        props.mapAddress.address.trim().length < 5 ||
+        props.mapAddress.city.trim().length < 2 ||
+        !/^[A-Z]{2}$/.test(props.mapAddress.country)
+    ) {
+        mapMessage.value = 'delivery_address_missing';
+        return;
+    }
+    locating.value = true;
+    try {
+        const response = await api<{ results: typeof addressMatches.value }>(
+            `/app/locations/${props.location.public_id}/setup/geocode`,
+            'POST',
+            props.mapAddress,
+        );
+        if (disposed) return;
+        if (response.results.length === 1) {
+            restaurantCenter.value = [response.results[0].latitude, response.results[0].longitude];
+            mapMessage.value = 'delivery_address_centered';
+        } else if (response.results.length > 1) {
+            addressMatches.value = response.results;
+            mapMessage.value = 'delivery_address_choose';
+        } else mapMessage.value = 'restaurant_location_not_found';
+    } catch (error) {
+        if (!disposed) mapError.value = (error as Error).message;
+    } finally {
+        if (!disposed) locating.value = false;
+    }
+});
 const days = computed(() => [
     t('monday'),
     t('tuesday'),
@@ -128,14 +175,34 @@ const form = useForm({
                             "
                             option-label="name"
                             option-value="id"
-                            :aria-label="$t('map_selected_zone')" /></label
-                    ><DeliveryMap
+                            :aria-label="$t('map_selected_zone')"
+                    /></label>
+                    <p v-if="locating" role="status" class="my-3 text-sm text-slate-500">
+                        {{ $t('delivery_address_locating') }}
+                    </p>
+                    <p v-if="mapMessage" role="status" class="my-3 text-sm text-slate-500">{{ $t(mapMessage) }}</p>
+                    <p v-if="mapError" role="alert" class="my-3 text-sm text-red-700">{{ mapError }}</p>
+                    <div v-if="addressMatches.length" class="my-3 grid gap-2">
+                        <Button
+                            v-for="match in addressMatches"
+                            :key="match.label"
+                            type="button"
+                            outlined
+                            :label="match.label"
+                            @click="
+                                restaurantCenter = [match.latitude, match.longitude];
+                                addressMatches = [];
+                                mapMessage = 'delivery_address_centered';
+                            "
+                        />
+                    </div>
+                    <DeliveryMap
                         v-if="form.zones[selectedZone]"
                         :key="selectedZone"
                         v-model:geometry="form.zones[selectedZone].geometry"
                         mode="draw"
                         :map-config="mapConfig"
-                        :center="mapCenter"
+                        :center="restaurantCenter ?? undefined"
                     />
                 </div>
                 <div v-for="(z, i) in form.zones" :key="i" class="mb-5 grid items-end gap-3 lg:grid-cols-5">

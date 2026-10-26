@@ -1,4 +1,4 @@
-# ZionFood 0.0.6
+# ZionFood 0.0.7
 
 Implementation specification: [original ZionFood SaaS MVP master prompt](MASTER_PROMPT.md), consolidated with **Techstack ZionFood MVP**, conversation `6ade5f72-3784-83ed-b9bf-0f23844f3826`. The substantive Vue/PrimeVue architecture discussion was retrieved; some older answers were available only as content-reference markers. Target MVP date: November 1, 2026.
 
@@ -65,3 +65,5 @@ Welcome.vue provides the bilingual central-host marketing surface; mapped storef
 ## Restaurant address location
 
 LocateRestaurant resolves current unsaved address inputs through a configured Photon-compatible service after tenant management authorization. Cached results and a global provider lock/cooldown bound upstream traffic; results are read-only until the existing setup save persists the chosen pin. Private provider configuration is separate from public map tile settings. No checkout address geocoding or new database schema is introduced. See RESTAURANT_LOCATION.md.
+
+The same transport resolves a pin to structured address fields without moving it; setup saves address and pin together. Delivery Settings prefers a saved pin and zooms new polygon editors to it, with a reference marker/recenter action. A complete saved address without a pin is resolved once for viewport use only, requiring an explicit choice when ambiguous. Both directions share transport throttles and per-user rate limits.

@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.6** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.7** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -50,6 +50,7 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 
 - [x] `0.0.5`: localizarea restaurantului după adresa din formular, mesaje pentru date lipsă și pin ajustabil, fără câmpuri latitudine/longitudine — `81ed958`.
 - [x] `0.0.6`: documentarea detaliată, cu bife, a localizării restaurantului și a comportamentului hărții.
+- [x] `0.0.7`: preluarea adresei din pin și centrarea cu zoom a zonelor de livrare pe restaurant.
 
 ## Implementat
 
@@ -77,6 +78,8 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [x] Alegere explicită între mai multe adrese găsite; fără selectarea automată a primului rezultat.
 - [x] Poziționare și ajustare a pinului prin apăsare pe hartă sau mutare, cu păstrare prin „Salvează pasul”.
 - [x] Ștergerea pinului vechi când se modifică adresa și ignorarea răspunsurilor de căutare depășite.
+- [x] „Preia adresa de la pin” completează strada/numărul, localitatea, țara și codul poștal disponibile, păstrând poziția aleasă; datele lipsă sunt semnalate.
+- [x] Editorul zonelor de livrare pornește cu zoom pe pinul salvat, marchează restaurantul și oferă „Centrează pe restaurant”; când există doar adresa, o localizează o singură dată, cu alegere explicită pentru rezultate multiple.
 - [x] Căutare Photon protejată pentru owner/manager, cache și limitarea cererilor; furnizor configurabil, fără câmpuri numerice de coordonate.
 - [x] Capacitate totală sau plan de mese cu coduri unice, săli/terase și număr de locuri.
 - [x] Activare independentă per locație pentru ridicare, livrare, rezervări și comenzi QR.
@@ -164,6 +167,8 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [ ] Eliminarea rutei publice temporare `/test-email` după încheierea diagnosticării.
 
 ## Verificări executate
+
+Preluarea adresei din pin și centrarea zonelor de livrare (`0.0.7`) au trecut **148 de teste backend / 784 de aserțiuni pe SQLite**, 8 teste frontend, TypeScript/build, ESLint și Pint pe Linux. Șase scenarii de browser au verificat localizarea, completarea și salvarea adresei/pinului, adresele incomplete și răspunsurile întârziate, zoom-ul și selecția adresei, RO/EN/mobil, setup-ul și desenarea/salvarea unei zone cu checkout pe hartă. A fost verificată și preluarea reală a adresei unui pin public din București.
 
 Localizarea restaurantului (`0.0.5`) a trecut **144 de teste backend / 738 de aserțiuni pe SQLite**, 8 teste frontend, TypeScript/build, ESLint și Pint pe Linux. Trei scenarii Playwright au verificat datele lipsă, harta și salvarea pinului, alegerea adreselor, erorile, RO/EN, mobil și regresia setup-ului. A trecut și regresia de browser pentru desenarea unei zone de livrare și checkout cu pin pe hartă. A fost verificată și o căutare reală pentru o adresă publică din București. Detalii în [RESTAURANT_LOCATION.md](docs/RESTAURANT_LOCATION.md).
 

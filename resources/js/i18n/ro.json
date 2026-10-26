@@ -762,5 +762,15 @@
     "restaurant_location_adjusted": "Pinul a fost ajustat. Salvează pasul pentru a păstra locația.",
     "restaurant_location_save_hint": "Locația se păstrează când salvezi pasul. Dacă schimbi adresa, localizează din nou restaurantul.",
     "restaurant_location_remove": "Elimină pinul",
-    "restaurant_location_provider": "La apăsarea butonului, adresa este trimisă serviciului de căutare. Date geografice:"
+    "restaurant_location_provider": "Căutarea trimite adresa, iar preluarea adresei trimite poziția pinului către serviciul de căutare. Date geografice:",
+    "restaurant_pin_address": "Preia adresa de la pin",
+    "restaurant_pin_applied": "Adresa a fost preluată de la pin. Verifică datele și salvează pasul.",
+    "restaurant_pin_not_found": "Nu am găsit o adresă în apropierea pinului. Mută pinul sau completează adresa manual.",
+    "restaurant_pin_incomplete": "Completează sau verifică manual datele indisponibile: {fields}.",
+    "restaurant_house_number": "Număr stradal",
+    "delivery_restaurant_center": "Centrează pe restaurant",
+    "delivery_address_locating": "Localizăm adresa salvată pentru harta zonelor de livrare…",
+    "delivery_address_missing": "Salvează adresa completă sau un pin în Pregătește restaurantul → Nume și adresă pentru a centra harta pe restaurant.",
+    "delivery_address_choose": "Alege adresa restaurantului pentru a centra harta. Poziția se păstrează în setup doar dacă o salvezi acolo.",
+    "delivery_address_centered": "Harta este centrată pe restaurant. Poți desena zona de livrare."
 }

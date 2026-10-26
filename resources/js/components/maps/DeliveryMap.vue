@@ -3,6 +3,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type * as Leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
+import Button from 'primevue/button';
 import { i18n } from '@/i18n';
 import type { DeliveryPoint, DeliveryPolygon, MapConfig } from '@/lib/deliveryGeometry';
 import type { Zone } from '@/types';
@@ -26,6 +27,7 @@ const tileFailed = ref(false);
 let map: Leaflet.Map | null = null;
 let group: Leaflet.FeatureGroup | null = null;
 let marker: Leaflet.Marker | null = null;
+let restaurantMarker: Leaflet.CircleMarker | null = null;
 let L: typeof Leaflet;
 let last = '';
 let disposed = false;
@@ -74,6 +76,25 @@ function renderGeometry(fit = false) {
         if (fit && geo.getBounds().isValid()) map.fitBounds(geo.getBounds(), { padding: [30, 30], maxZoom: 16 });
     }
 }
+function centerOnRestaurant() {
+    if (props.center) map?.setView([props.center[0], props.center[1]], 16);
+}
+function showRestaurant() {
+    if (!map || props.mode !== 'draw' || !props.center) return;
+    if (restaurantMarker) restaurantMarker.setLatLng([props.center[0], props.center[1]]);
+    else
+        restaurantMarker = L.circleMarker([props.center[0], props.center[1]], {
+            className: 'zf-restaurant-reference',
+            radius: 8,
+            color: '#fff',
+            weight: 3,
+            fillColor: '#6952ff',
+            fillOpacity: 1,
+            pmIgnore: true,
+        })
+            .bindTooltip(i18n.global.t('restaurant_map_title'))
+            .addTo(map);
+}
 function setPoint(point: DeliveryPoint) {
     if (!map) return;
     if (marker) marker.setLatLng([point.latitude, point.longitude]);
@@ -100,7 +121,7 @@ onMounted(async () => {
         await nextTick();
         if (disposed || !container.value) return;
         const center = props.center ?? [44.4268, 26.1025];
-        map = L.map(container.value).setView([center[0], center[1]], 13);
+        map = L.map(container.value).setView([center[0], center[1]], props.mode === 'draw' && props.center ? 16 : 13);
         L.tileLayer(props.mapConfig.tile_url, { attribution: props.mapConfig.attribution, maxZoom: 19 })
             .on('tileerror', () => {
                 tileFailed.value = true;
@@ -126,6 +147,7 @@ onMounted(async () => {
             map.pm.setGlobalOptions({ allowSelfIntersection: false });
             language();
             renderGeometry(true);
+            showRestaurant();
             map.on('pm:create', (event) => {
                 const layer = event.layer;
                 group!.clearLayers();
@@ -185,7 +207,21 @@ watch(
     },
     { deep: true },
 );
-watch(() => i18n.global.locale.value, language);
+watch(
+    () => props.center,
+    () => {
+        showRestaurant();
+        if (props.mode === 'draw' && !props.geometry && !map?.pm.globalDrawModeEnabled()) centerOnRestaurant();
+    },
+    { deep: true },
+);
+watch(
+    () => i18n.global.locale.value,
+    () => {
+        language();
+        restaurantMarker?.setTooltipContent(i18n.global.t('restaurant_map_title'));
+    },
+);
 onBeforeUnmount(() => {
     disposed = true;
     map?.remove();
@@ -203,6 +239,15 @@ onBeforeUnmount(() => {
                       : $t('map_pick_hint')
             }}
         </p>
+        <Button
+            v-if="mode === 'draw' && center"
+            type="button"
+            outlined
+            size="small"
+            icon="pi pi-map-marker"
+            :label="$t('delivery_restaurant_center')"
+            @click="centerOnRestaurant"
+        />
         <p v-if="failed" role="alert" class="rounded-lg bg-red-50 p-3 text-red-700">{{ $t('map_load_error') }}</p>
         <p v-if="tileFailed" role="status" class="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
             {{ $t('map_tiles_error') }}

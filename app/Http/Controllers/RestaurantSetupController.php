@@ -46,4 +46,13 @@ class RestaurantSetupController extends Controller
 
         return response()->json(['results' => $locator->execute($data)])->header('Cache-Control', 'no-store');
     }
+
+    public function reverse(Request $request, string $location, LocateRestaurant $locator)
+    {
+        $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
+        app(TenantAccess::class)->requireManage($request->user(), $context->organization_id);
+        $data = $request->validate(['latitude' => ['required', 'numeric', 'between:-85,85'], 'longitude' => ['required', 'numeric', 'between:-180,180']]);
+
+        return response()->json(['address' => $locator->reverse($data)])->header('Cache-Control', 'no-store');
+    }
 }

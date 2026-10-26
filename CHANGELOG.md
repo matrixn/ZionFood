@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.7 — 2026-10-26
+
+- Added address-from-pin lookup with structured address filling, partial-address feedback, stale-response protection and preservation of the chosen pin.
+- Delivery zones now zoom to the saved restaurant pin, show a restaurant reference marker and a recenter button, and resolve saved addresses without a pin once per settings visit.
+- Shared bounded Photon transport, cache/cooldown and tenant authorization cover both lookup directions; no schema or dependencies changed.
+
 ## 0.0.6 — 2026-10-26
 
 - Expanded the README checked inventory for restaurant address lookup, required-field feedback, result selection, map adjustment/saving and stale-pin invalidation.

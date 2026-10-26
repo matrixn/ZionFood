@@ -762,5 +762,15 @@
     "restaurant_location_adjusted": "Pin adjusted. Save this step to keep the location.",
     "restaurant_location_save_hint": "The location is stored when you save this step. If you change the address, locate the restaurant again.",
     "restaurant_location_remove": "Remove pin",
-    "restaurant_location_provider": "Clicking the button sends the address to the search service. Geographic data:"
+    "restaurant_location_provider": "Address search sends the address; using the pin sends its position to the search service. Geographic data:",
+    "restaurant_pin_address": "Use address from pin",
+    "restaurant_pin_applied": "Address filled from the pin. Check the details and save this step.",
+    "restaurant_pin_not_found": "No address was found near the pin. Move it or enter the address manually.",
+    "restaurant_pin_incomplete": "Complete or check the unavailable details manually: {fields}.",
+    "restaurant_house_number": "Street number",
+    "delivery_restaurant_center": "Center on restaurant",
+    "delivery_address_locating": "Locating the saved address for the delivery-zone map…",
+    "delivery_address_missing": "Save a complete address or a pin in Prepare restaurant → Name and address to center the map on the restaurant.",
+    "delivery_address_choose": "Choose the restaurant address to center the map. To keep this position in setup, save it there.",
+    "delivery_address_centered": "Map centered on the restaurant. You can draw the delivery zone."
 }

@@ -61,8 +61,9 @@ class WorkspaceController extends Controller
         }
         if ($section === 'settings') {
             $basics = $context->setup_profile['basics'] ?? [];
-            $props['mapCenter'] = isset($basics['latitude'], $basics['longitude']) ? [(float) $basics['latitude'], (float) $basics['longitude']] : [44.4268, 26.1025];
+            $props['mapCenter'] = isset($basics['latitude'], $basics['longitude']) ? [(float) $basics['latitude'], (float) $basics['longitude']] : null;
             $props['mapConfig'] = config('maps');
+            $props['mapAddress'] = ['address' => $context->address, 'city' => $basics['city'] ?? '', 'country' => $basics['country'] ?? 'RO', 'postal_code' => $basics['postal_code'] ?? ''];
         }
         if ($section === 'menu') {
             $props['menus'] = $context->menus()->with('categories.items.variants', 'categories.items.modifierGroups')->get();

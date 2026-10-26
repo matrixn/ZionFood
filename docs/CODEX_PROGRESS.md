@@ -1,4 +1,12 @@
-# ZionFood progress — 0.0.6
+# ZionFood progress — 0.0.7
+
+## Version 0.0.7 - pin address and delivery centering (October 26)
+
+Added reverse lookup for the map pin, filling unsaved street/number, city, country and postcode while keeping its coordinates. Partial/absent addresses and errors have RO/EN guidance; stale responses after moving/removing a pin or editing fields are ignored. Setup save persists address and pin together. Both directions share cached/serialized bounded Photon transport, tenant management authorization and per-user throttling. Reverse results are independently restricted to 200 metres. An incompatible old cache format is isolated by a new namespace; private reverse URL configuration is documented.
+
+Delivery zone editors zoom to the saved pin, show a restaurant reference marker and offer recentering. Existing polygons retain fitted bounds. With only a complete saved address, Settings makes one lookup for viewport use, with explicit choice if ambiguous and no automatic pin write. Missing/failed results have guidance. Checkout, schema and dependencies are unchanged.
+
+Validation passed: 148 SQLite backend tests / 784 assertions (including ten geocoding tests / 72 assertions), eight Vitest checks, ESLint, TypeScript/Vite build, Composer validation and exact Linux Pint across 185 PHP files. Six distinct Chromium flows passed: the four address/pin scenarios, existing setup, and delivery polygon drawing/save/reload plus guest inside/outside-pin checkout. The two new pin scenarios were rerun after final map changes, including ambiguous address-only centering, mobile and English labels. The restaurant marker required the old polygon regression selector to distinguish the reference point from the editable zone; the corrected full flow passed. The delivery-center screenshot was inspected. Version metadata, unchanged dependency locks, bilingual catalogue keys and README links match. The existing approximately 528 kB app-chunk warning remains. A real local reverse lookup for a public museum pin returned Calea Victoriei 49-53, Bucuresti, RO, 010063 with no missing fields, without changing restaurant data. No MariaDB/production performance or deployment claim is made. Version 0.0.7 is for a local commit; this feature request does not authorize a new push, tag or deployment.
 
 ## Version 0.0.6 - checked README and publication (October 26)
 

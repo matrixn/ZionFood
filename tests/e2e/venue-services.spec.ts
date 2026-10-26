@@ -123,7 +123,7 @@ test('manager draws a delivery zone and a guest checks out using its map pin', a
     await page.reload();
     await expect(page.getByText('Poligon definit', { exact: true })).toBeVisible();
     await expect(page.getByRole('spinbutton', { name: 'Oprește comenzile QR înainte de închidere (minute)', exact: true })).toHaveValue('60');
-    await expect(map.locator('path.leaflet-interactive')).toBeVisible();
+    await expect(map.locator('path.leaflet-interactive:not(.zf-restaurant-reference)')).toBeVisible();
     await page.setViewportSize({ width: 390, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.screenshot({ path: 'test-results/delivery-zone-mobile.png', fullPage: true });
