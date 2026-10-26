@@ -7,6 +7,7 @@ import { Head, router, useForm } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import ZFPageHeader from '@/components/ui/ZFPageHeader.vue';
 import ZFEmptyState from '@/components/ui/ZFEmptyState.vue';
+import IngredientManager from '@/components/menu/IngredientManager.vue';
 import MenuItemEditor from '@/components/menu/MenuItemEditor.vue';
 import ModifierGroupEditor from '@/components/menu/ModifierGroupEditor.vue';
 import Button from 'primevue/button';
@@ -16,10 +17,11 @@ import Dialog from 'primevue/dialog';
 import { api, money } from '@/lib/http';
 import { useConfirm } from 'primevue/useconfirm';
 import ZFConfirmDialog from '@/components/ui/ZFConfirmDialog.vue';
-import type { WorkspaceProps, Menu, Product, ModifierGroup, Category } from '@/types';
-const props = defineProps<WorkspaceProps & { menus: Menu[]; groups: ModifierGroup[] }>();
+import type { WorkspaceProps, Menu, Product, ModifierGroup, Category, Ingredient } from '@/types';
+const props = defineProps<WorkspaceProps & { menus: Menu[]; groups: ModifierGroup[]; ingredients: Ingredient[] }>();
 const categories = computed(() => props.menus.flatMap((m) => m.categories));
 const editor = ref(false);
+const ingredientsOpen = ref(false);
 const product = ref<Product | null>(null);
 const groupEditor = ref(false);
 const group = ref<ModifierGroup | null>(null);
@@ -62,7 +64,8 @@ useSetupEditorGuard(
         ><Head v-if="!embedded" :title="$t('menu_studio')" /><ZFPageHeader
             :title="$t('made_to_be_ordered')"
             :description="$t('build_a_menu_that_feels_like_your_restaurant')"
-            ><div class="flex gap-2">
+            ><div class="flex flex-wrap gap-2">
+                <Button :label="$t('ingredients_manage')" outlined icon="pi pi-list" @click="ingredientsOpen = true" />
                 <Button :label="$t('category')" outlined icon="pi pi-plus" @click="editCategory()" /><Button
                     :label="$t('add_product')"
                     icon="pi pi-plus"
@@ -159,12 +162,20 @@ useSetupEditorGuard(
             </div>
             <p v-if="!groups.length" class="muted">{{ $t('create_extras_sides_and_customization_choices') }}</p>
         </section>
+        <Dialog v-model:visible="ingredientsOpen" modal :header="$t('ingredients_title')" class="w-full max-w-3xl">
+            <IngredientManager
+                :ingredients="ingredients"
+                :restaurant-id="location.restaurant_id"
+                :base="`/app/locations/${location.public_id}/ingredients`"
+            />
+        </Dialog>
         <MenuItemEditor
             v-model:visible="editor"
             :product="product"
             :location-id="location.public_id"
             :categories="categories"
             :groups="groups"
+            :ingredients="ingredients"
             @saved="router.reload()" /><ModifierGroupEditor
             v-model:visible="groupEditor"
             :group="group"

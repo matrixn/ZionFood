@@ -23,7 +23,7 @@ class MenuController extends Controller
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
         app(TenantAccess::class)->requireOperate($request->user(), $context);
 
-        return response()->json(['menus' => $context->menus()->with('categories.items.variants', 'categories.items.modifierGroups.options')->get()]);
+        return response()->json(['menus' => $context->menus()->with('categories.items.ingredients', 'categories.items.variants', 'categories.items.modifierGroups.options')->get()]);
     }
 
     public function store(MenuItemRequest $request, string $location, UpdateMenuItem $action)

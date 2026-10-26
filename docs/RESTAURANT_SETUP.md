@@ -67,3 +67,5 @@ The user explicitly included catering/events at a different address, controlled 
 Address lookup now uses a button and map rather than numeric coordinate inputs. Street/city/country completeness is explained before search, candidates can be selected, and changing address components clears a stale pin. Coordinates remain internal setup data saved through the revision-checked Basics step. See RESTAURANT_LOCATION.md.
 
 Preia adresa de la pin fills structured address fields from the chosen pin without moving it and explains missing details. Save the step to retain address and pin. Delivery Settings uses the saved pin with zoom/recenter, or resolves a complete saved address once if no pin exists. See RESTAURANT_LOCATION.md.
+
+The inline Menu editor supports ordered ingredients, portion labels and RON price entry. Its ingredient-manager dialog can add/edit/hide/remove restaurant-owned entries without leaving setup/menu; common rows are read-only for tenant users. See INGREDIENTS.md.

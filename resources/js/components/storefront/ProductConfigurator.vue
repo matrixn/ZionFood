@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ProductIngredients from '@/components/storefront/ProductIngredients.vue';
+import { productMarks } from '@/lib/ingredients';
 import { computed, ref, watch } from 'vue';
 import Dialog from 'primevue/dialog';
 import Select from 'primevue/select';
@@ -58,6 +60,10 @@ function add() {
     <Dialog v-model:visible="visible" :header="product?.name" modal class="w-full max-w-lg"
         ><div v-if="product" class="grid gap-5">
             <p class="muted">{{ product.description }}</p>
+            <p v-if="productMarks(product)" class="text-sm font-semibold">
+                {{ product.name }}{{ productMarks(product) }}
+            </p>
+            <ProductIngredients :product="product" />
             <label v-if="product.variants.length" class="field"
                 >{{ $t('size_variant')
                 }}<Select

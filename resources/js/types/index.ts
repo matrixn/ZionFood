@@ -1,3 +1,14 @@
+export interface Ingredient {
+    id: number;
+    name: string;
+    name_en?: string | null;
+    restaurant_id?: number | null;
+    contains_allergens: boolean;
+    from_frozen: boolean;
+    is_active?: boolean;
+    needs_review?: boolean;
+    deleted_at?: string | null;
+}
 export interface Variant {
     id: number;
     name: string;
@@ -18,6 +29,10 @@ export interface ModifierGroup {
     options: ModifierOption[];
 }
 export interface Product {
+    portion_size?: string | null;
+    contains_allergens?: boolean;
+    from_frozen?: boolean;
+    ingredients?: Ingredient[];
     id: number;
     public_id: string;
     category_id: number;
@@ -56,6 +71,7 @@ export interface BusinessHour {
     closes_at: string;
 }
 export interface Location {
+    restaurant_id: number;
     id: number;
     public_id: string;
     organization_id: number;

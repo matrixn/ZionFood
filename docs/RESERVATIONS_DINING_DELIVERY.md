@@ -1,4 +1,4 @@
-# Reservations, table QR orders and mapped delivery — 0.0.10
+# Reservations, table QR orders and mapped delivery — 0.0.11
 
 New/empty zone editors start at zoom 16 around the saved restaurant pin, with a reference marker and Center on restaurant button. Existing polygon bounds remain fitted. With only a complete saved street/city/country, Settings makes one forward lookup for its viewport, requiring explicit selection for ambiguous results. A fallback pin is never persisted automatically. See RESTAURANT_LOCATION.md.
 

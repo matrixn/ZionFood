@@ -1,4 +1,4 @@
-# ZionFood 0.0.10
+# ZionFood 0.0.11
 
 The restaurant shell groups operations, administration and connection links, with Setup below the location selector. Setup embeds existing editors and loads selected editor props through WorkspaceController's shared authorization/data builder. Standalone routes and save endpoints remain; saves return to the wizard referer. See ADMIN_NAVIGATION.md for scope, unsaved guards and location selection.
 
@@ -69,3 +69,5 @@ Welcome.vue provides the bilingual central-host marketing surface; mapped storef
 LocateRestaurant resolves current unsaved address inputs through a configured Photon-compatible service after tenant management authorization. Cached results and a global provider lock/cooldown bound upstream traffic; results are read-only until the existing setup save persists the chosen pin. Private provider configuration is separate from public map tile settings. No checkout address geocoding or new database schema is introduced. See RESTAURANT_LOCATION.md.
 
 The same transport resolves a pin to structured address fields without moving it; setup saves address and pin together. Delivery Settings prefers a saved pin and zooms new polygon editors to it, with a reference marker/recenter action. A complete saved address without a pin is resolved once for viewport use only, requiring an explicit choice when ambiguous. Both directions share transport throttles and per-user rate limits.
+
+Ingredients are a shared platform catalogue plus restaurant-owned records. Product recipes use an ordered pivot and transactional scope/availability validation in UpdateMenuItem. Portion labels and explicit flags are additive metadata; public flags combine recipe and product information. Integer money and checkout behavior remain unchanged. The automatically seeded catalogue is bundled with import-count evidence and preserves administrator changes on reseeding. See INGREDIENTS.md.

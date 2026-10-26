@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.11 — 2026-10-26
+
+- Added the deduplicated 183-ingredient PDF catalogue, source-count audit, independent allergen/frozen flags and review markers, with positive ties kept enabled by user choice.
+- Added protected global and restaurant-owned ingredient management, hidden/deleted selection rules and preservation of existing recipe information.
+- Products now support ordered ingredients, portion labels and explicit flags; the editor accepts RON prices while APIs and checkout retain integer minor units.
+- Public menus and product details display portions, ingredients and combined flags, with the requested notice and an updated legal-reference note.
+- Added an additive, automatically seeded migration and an idempotent seeder preserving administrator changes.
+
 ## 0.0.10 — 2026-10-26
 
 - Expanded the Romanian README with the inline-editor table, wizard save/navigation behavior and the 0.0.9 implementation commit.

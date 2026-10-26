@@ -2,6 +2,8 @@
 import { computed, onMounted, ref } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import StorefrontLayout from '@/layouts/StorefrontLayout.vue';
+import ProductIngredients from '@/components/storefront/ProductIngredients.vue';
+import { productMarks } from '@/lib/ingredients';
 import ProductConfigurator from '@/components/storefront/ProductConfigurator.vue';
 import CartDrawer from '@/components/storefront/CartDrawer.vue';
 import CheckoutForm from '@/components/storefront/CheckoutForm.vue';
@@ -131,9 +133,10 @@ const checkout = ref(false);
                         configure = true;
                     "
                 >
-                    <div class="flex-1">
-                        <h3 class="text-lg font-semibold">{{ p.name }}</h3>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="text-lg font-semibold">{{ p.name }}{{ productMarks(p) }}</h3>
                         <p class="muted my-3 line-clamp-2">{{ p.description }}</p>
+                        <ProductIngredients :product="p" />
                         <strong>{{ money(p.price) }}</strong
                         ><span v-if="p.variants.length" class="muted ml-2">{{ $t('base_price') }}</span>
                     </div>
@@ -151,6 +154,26 @@ const checkout = ref(false);
         <p v-if="!categories.length && !menuPaused" class="muted py-16 text-center">
             {{ $t('the_restaurant_is_preparing_its_menu_check_back_soon') }}
         </p>
+        <section
+            v-if="categories.some((c) => c.items.some((p) => productMarks(p)))"
+            class="panel my-8 space-y-4"
+            data-testid="allergen-notice"
+        >
+            <h2 class="text-xl font-semibold">{{ $t('ingredients_notice_title') }}</h2>
+            <p class="whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                {{ $t('ingredients_notice') }}
+            </p>
+            <p class="text-xs leading-relaxed text-slate-500">
+                {{ $t('ingredients_legal_note') }}
+                <a
+                    href="https://eur-lex.europa.eu/eli/reg/2011/1169/oj"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="underline"
+                    >{{ $t('ingredients_legal_reference') }}</a
+                >
+            </p>
+        </section>
         <ProductConfigurator v-model:visible="configure" :product="product" /><CartDrawer
             v-model:visible="drawer"
             @checkout="checkout = true" /><CheckoutForm

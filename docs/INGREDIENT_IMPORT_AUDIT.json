@@ -1,0 +1,5242 @@
+{
+  "source": "meniu-restaurant-queen.pdf",
+  "sha256": "0a7b5c2f9ede45e24d95c5f105ac0c139ee43681cf902a2c41cee815963f2f14",
+  "aliases": {
+    "feta": "branza feta",
+    "ulei masline": "ulei de masline",
+    "morcovi": "morcov",
+    "oua": "ou",
+    "mere": "mar",
+    "dovlecel": "dovlecei",
+    "antricot vita": "antricot de vita",
+    "piept pui": "piept de pui",
+    "piept curcan": "piept de curcan",
+    "pulpa de pui": "pulpe de pui",
+    "ceafa porc": "ceafa de porc",
+    "carne de la garnita": "carne la garnita",
+    "sos de rosii": "sos rosii",
+    "besamel": "sos bechamel",
+    "casstraveti": "castraveti",
+    "castravee": "castraveti",
+    "rosi cherry": "rosii cherry",
+    "arei": "ardei",
+    "salata mozazic": "salata mozaic",
+    "piure": "piure de cartofi",
+    "aripioara purcel": "aripioare de purcel",
+    "cartof copti": "cartofi copti",
+    "salata rucola": "rucola",
+    "black tiger": "creveti black tiger",
+    "mamaliga": "mamaliguta",
+    "miere plic": "miere"
+  },
+  "ingredients": [
+    {
+      "source_key": "global-antricot-de-vita",
+      "name": "Antricot de vita",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 5
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "antricot de vita"
+        },
+        {
+          "page": 5,
+          "text": "antricot de vita"
+        },
+        {
+          "page": 5,
+          "text": "antricot de vita"
+        },
+        {
+          "page": 5,
+          "text": "antricot vita"
+        },
+        {
+          "page": 7,
+          "text": "antricot vita"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ardei",
+      "name": "Ardei",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 22
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "ardei"
+        },
+        {
+          "page": 2,
+          "text": "ardei"
+        },
+        {
+          "page": 2,
+          "text": "ardei"
+        },
+        {
+          "page": 2,
+          "text": "ardei"
+        },
+        {
+          "page": 2,
+          "text": "ardei"
+        },
+        {
+          "page": 3,
+          "text": "ardei"
+        },
+        {
+          "page": 3,
+          "text": "ardei"
+        },
+        {
+          "page": 4,
+          "text": "ardei"
+        },
+        {
+          "page": 4,
+          "text": "ardei"
+        },
+        {
+          "page": 4,
+          "text": "ardei"
+        },
+        {
+          "page": 4,
+          "text": "ardei"
+        },
+        {
+          "page": 4,
+          "text": "ardei"
+        },
+        {
+          "page": 4,
+          "text": "ardei"
+        },
+        {
+          "page": 5,
+          "text": "ardei"
+        },
+        {
+          "page": 5,
+          "text": "ardei"
+        },
+        {
+          "page": 6,
+          "text": "ardei"
+        },
+        {
+          "page": 7,
+          "text": "ardei"
+        },
+        {
+          "page": 7,
+          "text": "ardei"
+        },
+        {
+          "page": 7,
+          "text": "ardei"
+        },
+        {
+          "page": 8,
+          "text": "ardei"
+        },
+        {
+          "page": 8,
+          "text": "ardei"
+        },
+        {
+          "page": 5,
+          "text": "arei"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ardei-copt",
+      "name": "Ardei copt",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 6
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "ardei copt"
+        },
+        {
+          "page": 5,
+          "text": "ardei copt"
+        },
+        {
+          "page": 6,
+          "text": "ardei copt"
+        },
+        {
+          "page": 6,
+          "text": "ardei copt"
+        },
+        {
+          "page": 6,
+          "text": "ardei copt"
+        },
+        {
+          "page": 7,
+          "text": "ardei copt"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ardei-gras",
+      "name": "Ardei gras",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "ardei gras"
+        },
+        {
+          "page": 7,
+          "text": "ardei gras"
+        },
+        {
+          "page": 7,
+          "text": "ardei gras"
+        },
+        {
+          "page": 7,
+          "text": "ardei gras"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ardei-gras-rosu",
+      "name": "Ardei gras rosu",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "ardei gras rosu"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ardei-iute",
+      "name": "Ardei iute",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "ardei iute"
+        },
+        {
+          "page": 2,
+          "text": "Ardei iute"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ardei-kapia",
+      "name": "Ardei kapia",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 8,
+          "text": "ardei kapia"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ardei-verde-si-rosu",
+      "name": "Ardei verde si rosu",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "ardei verde si rosu"
+        }
+      ]
+    },
+    {
+      "source_key": "global-aripioare-de-purcel",
+      "name": "Aripioare de purcel",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "aripioare de purcel"
+        },
+        {
+          "page": 7,
+          "text": "aripioara purcel"
+        }
+      ]
+    },
+    {
+      "source_key": "global-aripioare-picante",
+      "name": "Aripioare picante",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "aripioare picante"
+        }
+      ]
+    },
+    {
+      "source_key": "global-baby-caracatita",
+      "name": "Baby caracatita",
+      "contains_allergens": false,
+      "from_frozen": true,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "frozen": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "baby caracatita**"
+        }
+      ]
+    },
+    {
+      "source_key": "global-baby-spanac",
+      "name": "Baby spanac",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "baby spanac"
+        },
+        {
+          "page": 3,
+          "text": "baby spanac"
+        }
+      ]
+    },
+    {
+      "source_key": "global-bacon",
+      "name": "Bacon",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 7
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "bacon"
+        },
+        {
+          "page": 3,
+          "text": "bacon"
+        },
+        {
+          "page": 3,
+          "text": "bacon"
+        },
+        {
+          "page": 3,
+          "text": "bacon"
+        },
+        {
+          "page": 4,
+          "text": "bacon"
+        },
+        {
+          "page": 5,
+          "text": "bacon"
+        },
+        {
+          "page": 5,
+          "text": "bacon"
+        }
+      ]
+    },
+    {
+      "source_key": "global-bagheta",
+      "name": "Bagheta",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3,
+        "allergen": 8
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "bagheta"
+        },
+        {
+          "page": 3,
+          "text": "bagheta*"
+        },
+        {
+          "page": 3,
+          "text": "bagheta*"
+        },
+        {
+          "page": 3,
+          "text": "bagheta*"
+        },
+        {
+          "page": 3,
+          "text": "bagheta*"
+        },
+        {
+          "page": 3,
+          "text": "bagheta*"
+        },
+        {
+          "page": 3,
+          "text": "bagheta*"
+        },
+        {
+          "page": 3,
+          "text": "bagheta*"
+        },
+        {
+          "page": 3,
+          "text": "bagheta*"
+        },
+        {
+          "page": 5,
+          "text": "bagheta"
+        },
+        {
+          "page": 6,
+          "text": "bagheta"
+        }
+      ]
+    },
+    {
+      "source_key": "global-biban-de-mare",
+      "name": "Biban de mare",
+      "contains_allergens": false,
+      "from_frozen": true,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "frozen": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "biban de mare**"
+        }
+      ]
+    },
+    {
+      "source_key": "global-branza",
+      "name": "Branza",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 2,
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "branza*"
+        },
+        {
+          "page": 3,
+          "text": "branza*"
+        },
+        {
+          "page": 4,
+          "text": "branza"
+        }
+      ]
+    },
+    {
+      "source_key": "global-branza-feta",
+      "name": "Branza feta",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4,
+        "allergen": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "branza feta"
+        },
+        {
+          "page": 3,
+          "text": "branza Feta*"
+        },
+        {
+          "page": 3,
+          "text": "branza feta"
+        },
+        {
+          "page": 6,
+          "text": "branza feta"
+        },
+        {
+          "page": 2,
+          "text": "Feta"
+        }
+      ]
+    },
+    {
+      "source_key": "global-brie",
+      "name": "Brie",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "brie"
+        },
+        {
+          "page": 2,
+          "text": "Brie"
+        }
+      ]
+    },
+    {
+      "source_key": "global-brocoli",
+      "name": "Brocoli",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "unmarked": 5,
+        "frozen": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "brocoli"
+        },
+        {
+          "page": 3,
+          "text": "brocoli**"
+        },
+        {
+          "page": 7,
+          "text": "brocoli"
+        },
+        {
+          "page": 7,
+          "text": "brocoli"
+        },
+        {
+          "page": 7,
+          "text": "brocoli"
+        },
+        {
+          "page": 7,
+          "text": "brocoli"
+        }
+      ]
+    },
+    {
+      "source_key": "global-brocoli-sote",
+      "name": "Brocoli sote",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "brocoli sote"
+        }
+      ]
+    },
+    {
+      "source_key": "global-bulion",
+      "name": "Bulion",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "bulion"
+        }
+      ]
+    },
+    {
+      "source_key": "global-burta",
+      "name": "Burta",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "burta"
+        }
+      ]
+    },
+    {
+      "source_key": "global-busuioc",
+      "name": "Busuioc",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "busuioc"
+        },
+        {
+          "page": 3,
+          "text": "busuioc"
+        },
+        {
+          "page": 3,
+          "text": "busuioc"
+        },
+        {
+          "page": 5,
+          "text": "busuioc"
+        }
+      ]
+    },
+    {
+      "source_key": "global-calamari",
+      "name": "Calamari",
+      "contains_allergens": true,
+      "from_frozen": true,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "both": 3
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "calamari**/*"
+        },
+        {
+          "page": 6,
+          "text": "calamari**/*"
+        },
+        {
+          "page": 6,
+          "text": "calamari**/*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-capere",
+      "name": "Capere",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "capere"
+        }
+      ]
+    },
+    {
+      "source_key": "global-caracatita",
+      "name": "Caracatita",
+      "contains_allergens": true,
+      "from_frozen": true,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "both": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "caracatita**/*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-carnati",
+      "name": "Carnati",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "carnati"
+        }
+      ]
+    },
+    {
+      "source_key": "global-carnati-porc",
+      "name": "Carnati porc",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "carnati porc"
+        },
+        {
+          "page": 5,
+          "text": "carnati porc"
+        }
+      ]
+    },
+    {
+      "source_key": "global-carne-curcan",
+      "name": "Carne curcan",
+      "contains_allergens": false,
+      "from_frozen": true,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "frozen": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "carne curcan**"
+        }
+      ]
+    },
+    {
+      "source_key": "global-carne-la-garnita",
+      "name": "Carne la garnita",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "carne la garnita"
+        },
+        {
+          "page": 7,
+          "text": "carne de la garnita"
+        }
+      ]
+    },
+    {
+      "source_key": "global-carne-midii",
+      "name": "Carne midii",
+      "contains_allergens": true,
+      "from_frozen": true,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "both": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "carne midii**/*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-carne-porc",
+      "name": "Carne porc",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "carne porc"
+        }
+      ]
+    },
+    {
+      "source_key": "global-carne-vita",
+      "name": "Carne vita",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "carne vita"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cartofi",
+      "name": "Cartofi",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 5
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "cartofi"
+        },
+        {
+          "page": 5,
+          "text": "cartofi"
+        },
+        {
+          "page": 6,
+          "text": "cartofi"
+        },
+        {
+          "page": 7,
+          "text": "cartofi"
+        },
+        {
+          "page": 7,
+          "text": "cartofi"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cartofi-barcuta",
+      "name": "Cartofi barcuta",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "cartofi barcuta"
+        },
+        {
+          "page": 5,
+          "text": "cartofi barcuta"
+        },
+        {
+          "page": 5,
+          "text": "cartofi barcuta"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cartofi-copti",
+      "name": "Cartofi copti",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "cartofi copti"
+        },
+        {
+          "page": 7,
+          "text": "cartof copti"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cartofi-cu-rozmarin",
+      "name": "Cartofi cu rozmarin",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "cartofi cu rozmarin"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cartofi-natur",
+      "name": "Cartofi natur",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "cartofi natur"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cartofi-prajiti",
+      "name": "Cartofi prajiti",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 5
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "cartofi prajiti"
+        },
+        {
+          "page": 5,
+          "text": "cartofi prajiti"
+        },
+        {
+          "page": 5,
+          "text": "cartofi prajiti"
+        },
+        {
+          "page": 5,
+          "text": "cartofi prajiti"
+        },
+        {
+          "page": 6,
+          "text": "cartofi prajiti"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cartofi-prajiti-cu-cascaval",
+      "name": "Cartofi prajiti cu cascaval",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "cartofi prajiti cu cascaval"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cartofi-taranesti",
+      "name": "Cartofi taranesti",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "cartofi taranesti"
+        },
+        {
+          "page": 7,
+          "text": "cartofi taranesti"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cascaval",
+      "name": "Cascaval",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 2,
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "cascaval*"
+        },
+        {
+          "page": 2,
+          "text": "cascaval*"
+        },
+        {
+          "page": 3,
+          "text": "cascaval"
+        },
+        {
+          "page": 4,
+          "text": "cascaval"
+        },
+        {
+          "page": 5,
+          "text": "cascaval"
+        },
+        {
+          "page": 2,
+          "text": "Cascaval"
+        }
+      ]
+    },
+    {
+      "source_key": "global-castraveciori",
+      "name": "Castraveciori",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "castraveciori"
+        }
+      ]
+    },
+    {
+      "source_key": "global-castraveciori-murati",
+      "name": "Castraveciori murati",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "castraveciori murati"
+        }
+      ]
+    },
+    {
+      "source_key": "global-castraveti",
+      "name": "Castraveti",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 6
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "castraveti"
+        },
+        {
+          "page": 3,
+          "text": "castraveti"
+        },
+        {
+          "page": 3,
+          "text": "castraveti"
+        },
+        {
+          "page": 8,
+          "text": "castraveti"
+        },
+        {
+          "page": 3,
+          "text": "castravee"
+        },
+        {
+          "page": 8,
+          "text": "casstraveti"
+        }
+      ]
+    },
+    {
+      "source_key": "global-castraveti-otet",
+      "name": "Castraveti otet",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "castraveti otet"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ceafa-de-porc",
+      "name": "Ceafa de porc",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "ceafa porc"
+        },
+        {
+          "page": 4,
+          "text": "ceafa porc"
+        },
+        {
+          "page": 7,
+          "text": "ceafa porc"
+        },
+        {
+          "page": 7,
+          "text": "ceafa de porc"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ceafa-de-porc-afumata",
+      "name": "Ceafa de porc afumata",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "ceafa de porc afumata"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ceapa",
+      "name": "Ceapa",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 37
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "ceapa"
+        },
+        {
+          "page": 2,
+          "text": "ceapa"
+        },
+        {
+          "page": 2,
+          "text": "ceapa"
+        },
+        {
+          "page": 2,
+          "text": "ceapa"
+        },
+        {
+          "page": 2,
+          "text": "ceapa"
+        },
+        {
+          "page": 2,
+          "text": "ceapa"
+        },
+        {
+          "page": 2,
+          "text": "ceapa"
+        },
+        {
+          "page": 3,
+          "text": "ceapa"
+        },
+        {
+          "page": 3,
+          "text": "ceapa"
+        },
+        {
+          "page": 3,
+          "text": "ceapa"
+        },
+        {
+          "page": 4,
+          "text": "ceapa"
+        },
+        {
+          "page": 4,
+          "text": "ceapa"
+        },
+        {
+          "page": 4,
+          "text": "ceapa"
+        },
+        {
+          "page": 4,
+          "text": "ceapa"
+        },
+        {
+          "page": 4,
+          "text": "ceapa"
+        },
+        {
+          "page": 4,
+          "text": "ceapa"
+        },
+        {
+          "page": 4,
+          "text": "ceapa"
+        },
+        {
+          "page": 5,
+          "text": "ceapa"
+        },
+        {
+          "page": 5,
+          "text": "ceapa"
+        },
+        {
+          "page": 5,
+          "text": "ceapa"
+        },
+        {
+          "page": 5,
+          "text": "ceapa"
+        },
+        {
+          "page": 5,
+          "text": "ceapa"
+        },
+        {
+          "page": 5,
+          "text": "ceapa"
+        },
+        {
+          "page": 6,
+          "text": "ceapa"
+        },
+        {
+          "page": 6,
+          "text": "ceapa"
+        },
+        {
+          "page": 6,
+          "text": "ceapa"
+        },
+        {
+          "page": 6,
+          "text": "ceapa"
+        },
+        {
+          "page": 7,
+          "text": "ceapa"
+        },
+        {
+          "page": 7,
+          "text": "ceapa"
+        },
+        {
+          "page": 7,
+          "text": "ceapa"
+        },
+        {
+          "page": 7,
+          "text": "ceapa"
+        },
+        {
+          "page": 7,
+          "text": "ceapa"
+        },
+        {
+          "page": 7,
+          "text": "ceapa"
+        },
+        {
+          "page": 7,
+          "text": "ceapa"
+        },
+        {
+          "page": 8,
+          "text": "ceapa"
+        },
+        {
+          "page": 8,
+          "text": "ceapa"
+        },
+        {
+          "page": 8,
+          "text": "ceapa"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ceapa-rosie",
+      "name": "Ceapa rosie",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "ceapa rosie"
+        },
+        {
+          "page": 6,
+          "text": "ceapa rosie"
+        },
+        {
+          "page": 6,
+          "text": "ceapa rosie"
+        }
+      ]
+    },
+    {
+      "source_key": "global-chifle",
+      "name": "Chifle",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "Chifle"
+        }
+      ]
+    },
+    {
+      "source_key": "global-chilli",
+      "name": "Chilli",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "chilli"
+        },
+        {
+          "page": 6,
+          "text": "chilli"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cimbru",
+      "name": "Cimbru",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "cimbru"
+        },
+        {
+          "page": 6,
+          "text": "cimbru"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ciolan-de-miel",
+      "name": "Ciolan de miel",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "ciolan de miel"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ciolan-de-porc",
+      "name": "Ciolan de porc",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "ciolan de porc"
+        },
+        {
+          "page": 5,
+          "text": "ciolan de porc"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ciuperci",
+      "name": "Ciuperci",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 21
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "ciuperci"
+        },
+        {
+          "page": 3,
+          "text": "ciuperci"
+        },
+        {
+          "page": 3,
+          "text": "ciuperci"
+        },
+        {
+          "page": 4,
+          "text": "ciuperci"
+        },
+        {
+          "page": 4,
+          "text": "ciuperci"
+        },
+        {
+          "page": 4,
+          "text": "ciuperci"
+        },
+        {
+          "page": 4,
+          "text": "ciuperci"
+        },
+        {
+          "page": 5,
+          "text": "ciuperci"
+        },
+        {
+          "page": 5,
+          "text": "ciuperci"
+        },
+        {
+          "page": 6,
+          "text": "ciuperci"
+        },
+        {
+          "page": 6,
+          "text": "ciuperci"
+        },
+        {
+          "page": 6,
+          "text": "ciuperci"
+        },
+        {
+          "page": 7,
+          "text": "ciuperci"
+        },
+        {
+          "page": 7,
+          "text": "ciuperci"
+        },
+        {
+          "page": 7,
+          "text": "ciuperci"
+        },
+        {
+          "page": 7,
+          "text": "ciuperci"
+        },
+        {
+          "page": 7,
+          "text": "ciuperci"
+        },
+        {
+          "page": 7,
+          "text": "ciuperci"
+        },
+        {
+          "page": 7,
+          "text": "ciuperci"
+        },
+        {
+          "page": 7,
+          "text": "ciuperci"
+        },
+        {
+          "page": 7,
+          "text": "ciuperci"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ciuperci-gratar",
+      "name": "Ciuperci gratar",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "ciuperci gratar"
+        }
+      ]
+    },
+    {
+      "source_key": "global-coasta-porc-afumata",
+      "name": "Coasta porc afumata",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "coasta porc afumata"
+        }
+      ]
+    },
+    {
+      "source_key": "global-coaste-afumate",
+      "name": "Coaste afumate",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "coaste afumate"
+        }
+      ]
+    },
+    {
+      "source_key": "global-coaste-marinate",
+      "name": "Coaste marinate",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "allergen": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "coaste marinate*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-coaste-porc",
+      "name": "Coaste porc",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "coaste porc"
+        }
+      ]
+    },
+    {
+      "source_key": "global-coaste-porc-la-garnita",
+      "name": "Coaste porc la garnita",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "coaste porc la garnita"
+        }
+      ]
+    },
+    {
+      "source_key": "global-coniac",
+      "name": "Coniac",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "coniac"
+        },
+        {
+          "page": 4,
+          "text": "coniac"
+        },
+        {
+          "page": 6,
+          "text": "coniac"
+        }
+      ]
+    },
+    {
+      "source_key": "global-conopida",
+      "name": "Conopida",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "conopida"
+        },
+        {
+          "page": 7,
+          "text": "conopida"
+        }
+      ]
+    },
+    {
+      "source_key": "global-coquellet",
+      "name": "Coquellet",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "coquellet"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cordon-bleu-pui",
+      "name": "Cordon bleu pui",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "cordon bleu pui"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cotlet-berbecut",
+      "name": "Cotlet berbecut",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "cotlet berbecut"
+        }
+      ]
+    },
+    {
+      "source_key": "global-cotlet-de-porc",
+      "name": "Cotlet de porc",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 9
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "cotlet de porc"
+        },
+        {
+          "page": 5,
+          "text": "cotlet de porc"
+        },
+        {
+          "page": 5,
+          "text": "cotlet de porc"
+        },
+        {
+          "page": 5,
+          "text": "cotlet de porc"
+        },
+        {
+          "page": 5,
+          "text": "cotlet de porc"
+        },
+        {
+          "page": 5,
+          "text": "cotlet de porc"
+        },
+        {
+          "page": 5,
+          "text": "cotlet de porc"
+        },
+        {
+          "page": 5,
+          "text": "cotlet de porc"
+        },
+        {
+          "page": 5,
+          "text": "cotlet de porc"
+        }
+      ]
+    },
+    {
+      "source_key": "global-crap",
+      "name": "Crap",
+      "contains_allergens": false,
+      "from_frozen": true,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "frozen": 1,
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "crap**"
+        },
+        {
+          "page": 7,
+          "text": "crap"
+        }
+      ]
+    },
+    {
+      "source_key": "global-creier",
+      "name": "Creier",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "creier"
+        },
+        {
+          "page": 2,
+          "text": "creier"
+        }
+      ]
+    },
+    {
+      "source_key": "global-creveti",
+      "name": "Creveti",
+      "contains_allergens": true,
+      "from_frozen": true,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "frozen": 1,
+        "both": 2,
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "creveti**"
+        },
+        {
+          "page": 6,
+          "text": "creveti**/*"
+        },
+        {
+          "page": 6,
+          "text": "creveti**/*"
+        },
+        {
+          "page": 6,
+          "text": "creveti"
+        }
+      ]
+    },
+    {
+      "source_key": "global-creveti-black-tiger",
+      "name": "Creveti black tiger",
+      "contains_allergens": false,
+      "from_frozen": true,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "frozen": 2
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "black tiger**"
+        },
+        {
+          "page": 6,
+          "text": "creveti black tiger**"
+        }
+      ]
+    },
+    {
+      "source_key": "global-dorada",
+      "name": "Dorada",
+      "contains_allergens": false,
+      "from_frozen": true,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "frozen": 2,
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "dorada**"
+        },
+        {
+          "page": 6,
+          "text": "dorada**"
+        },
+        {
+          "page": 7,
+          "text": "dorada"
+        }
+      ]
+    },
+    {
+      "source_key": "global-dovlecei",
+      "name": "Dovlecei",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 10
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "dovlecei"
+        },
+        {
+          "page": 4,
+          "text": "dovlecei"
+        },
+        {
+          "page": 6,
+          "text": "dovlecei"
+        },
+        {
+          "page": 6,
+          "text": "dovlecei"
+        },
+        {
+          "page": 6,
+          "text": "dovlecei"
+        },
+        {
+          "page": 7,
+          "text": "dovlecei"
+        },
+        {
+          "page": 7,
+          "text": "dovlecei"
+        },
+        {
+          "page": 7,
+          "text": "dovlecei"
+        },
+        {
+          "page": 6,
+          "text": "dovlecel"
+        },
+        {
+          "page": 7,
+          "text": "dovlecel"
+        }
+      ]
+    },
+    {
+      "source_key": "global-dressing",
+      "name": "Dressing",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4,
+        "allergen": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "dressing"
+        },
+        {
+          "page": 3,
+          "text": "dressing"
+        },
+        {
+          "page": 3,
+          "text": "dressing"
+        },
+        {
+          "page": 3,
+          "text": "dressing*"
+        },
+        {
+          "page": 6,
+          "text": "dressing"
+        }
+      ]
+    },
+    {
+      "source_key": "global-dressing-otet-balsamic",
+      "name": "Dressing otet balsamic",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "dressing otet balsamic"
+        }
+      ]
+    },
+    {
+      "source_key": "global-edamame",
+      "name": "Edamame",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "edamame"
+        },
+        {
+          "page": 7,
+          "text": "edamame"
+        },
+        {
+          "page": 7,
+          "text": "edamame"
+        }
+      ]
+    },
+    {
+      "source_key": "global-faina",
+      "name": "Faina",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 3,
+        "unmarked": 5
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "faina*"
+        },
+        {
+          "page": 2,
+          "text": "faina*"
+        },
+        {
+          "page": 2,
+          "text": "faina*"
+        },
+        {
+          "page": 4,
+          "text": "faina"
+        },
+        {
+          "page": 4,
+          "text": "faina"
+        },
+        {
+          "page": 4,
+          "text": "faina"
+        },
+        {
+          "page": 5,
+          "text": "faina"
+        },
+        {
+          "page": 5,
+          "text": "faina"
+        }
+      ]
+    },
+    {
+      "source_key": "global-fasole",
+      "name": "Fasole",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "fasole"
+        },
+        {
+          "page": 2,
+          "text": "fasole"
+        },
+        {
+          "page": 2,
+          "text": "fasole"
+        },
+        {
+          "page": 5,
+          "text": "fasole"
+        }
+      ]
+    },
+    {
+      "source_key": "global-fasole-boabe",
+      "name": "Fasole boabe",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "fasole boabe"
+        }
+      ]
+    },
+    {
+      "source_key": "global-fasole-verde",
+      "name": "Fasole verde",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "fasole verde"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ficatei",
+      "name": "Ficatei",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "ficatei"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ficatei-pui",
+      "name": "Ficatei pui",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "ficatei pui"
+        },
+        {
+          "page": 7,
+          "text": "ficatei pui"
+        }
+      ]
+    },
+    {
+      "source_key": "global-frigarui-porc",
+      "name": "Frigarui porc",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "frigarui porc"
+        }
+      ]
+    },
+    {
+      "source_key": "global-frigarui-pulpe-pui",
+      "name": "Frigarui pulpe pui",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "frigarui pulpe pui"
+        }
+      ]
+    },
+    {
+      "source_key": "global-gogosari",
+      "name": "Gogosari",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "gogosari"
+        },
+        {
+          "page": 5,
+          "text": "gogosari"
+        }
+      ]
+    },
+    {
+      "source_key": "global-gogosari-murati",
+      "name": "Gogosari murati",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "gogosari murati"
+        },
+        {
+          "page": 6,
+          "text": "gogosari murati"
+        }
+      ]
+    },
+    {
+      "source_key": "global-gorgonzola",
+      "name": "Gorgonzola",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 3,
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "gorgonzola*"
+        },
+        {
+          "page": 3,
+          "text": "gorgonzola"
+        },
+        {
+          "page": 4,
+          "text": "gorgonzola"
+        },
+        {
+          "page": 4,
+          "text": "gorgonzola"
+        },
+        {
+          "page": 6,
+          "text": "gorgonzola*"
+        },
+        {
+          "page": 7,
+          "text": "gorgonzola*"
+        },
+        {
+          "page": 2,
+          "text": "Gorgonzola"
+        }
+      ]
+    },
+    {
+      "source_key": "global-hrean",
+      "name": "Hrean",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "Hrean"
+        }
+      ]
+    },
+    {
+      "source_key": "global-jambon",
+      "name": "Jambon",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "jambon"
+        },
+        {
+          "page": 5,
+          "text": "jambon"
+        },
+        {
+          "page": 5,
+          "text": "jambon"
+        }
+      ]
+    },
+    {
+      "source_key": "global-kaizer",
+      "name": "Kaizer",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "kaizer"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ketchup",
+      "name": "Ketchup",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "ketchup"
+        },
+        {
+          "page": 4,
+          "text": "ketchup"
+        },
+        {
+          "page": 5,
+          "text": "ketchup"
+        }
+      ]
+    },
+    {
+      "source_key": "global-lamaie",
+      "name": "Lamaie",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "lamaie"
+        },
+        {
+          "page": 6,
+          "text": "lamaie"
+        },
+        {
+          "page": 6,
+          "text": "lamaie"
+        }
+      ]
+    },
+    {
+      "source_key": "global-legume",
+      "name": "Legume",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "legume"
+        },
+        {
+          "page": 2,
+          "text": "legume"
+        },
+        {
+          "page": 2,
+          "text": "legume"
+        }
+      ]
+    },
+    {
+      "source_key": "global-mai",
+      "name": "Mai",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": false,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "mai"
+        }
+      ]
+    },
+    {
+      "source_key": "global-maioneza",
+      "name": "Maioneza",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 1,
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "maioneza*"
+        },
+        {
+          "page": 8,
+          "text": "maioneza"
+        }
+      ]
+    },
+    {
+      "source_key": "global-malai",
+      "name": "Malai",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "malai"
+        },
+        {
+          "page": 4,
+          "text": "malai"
+        },
+        {
+          "page": 4,
+          "text": "malai"
+        },
+        {
+          "page": 4,
+          "text": "malai"
+        }
+      ]
+    },
+    {
+      "source_key": "global-mamaliguta",
+      "name": "Mamaliguta",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "unmarked": 6,
+        "allergen": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "mamaliguta"
+        },
+        {
+          "page": 5,
+          "text": "mamaliguta"
+        },
+        {
+          "page": 6,
+          "text": "mamaliguta"
+        },
+        {
+          "page": 6,
+          "text": "mamaliguta"
+        },
+        {
+          "page": 6,
+          "text": "mamaliguta"
+        },
+        {
+          "page": 7,
+          "text": "mamaliguta*"
+        },
+        {
+          "page": 4,
+          "text": "mamaliga"
+        }
+      ]
+    },
+    {
+      "source_key": "global-mar",
+      "name": "Mar",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "mar"
+        },
+        {
+          "page": 4,
+          "text": "mere"
+        }
+      ]
+    },
+    {
+      "source_key": "global-masline",
+      "name": "Masline",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "masline"
+        },
+        {
+          "page": 3,
+          "text": "masline"
+        },
+        {
+          "page": 3,
+          "text": "masline"
+        },
+        {
+          "page": 6,
+          "text": "masline"
+        }
+      ]
+    },
+    {
+      "source_key": "global-mici",
+      "name": "Mici",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "mici"
+        }
+      ]
+    },
+    {
+      "source_key": "global-midii",
+      "name": "Midii",
+      "contains_allergens": true,
+      "from_frozen": true,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "frozen": 1,
+        "both": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "midii**"
+        },
+        {
+          "page": 6,
+          "text": "midii**/*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-miere",
+      "name": "Miere",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "miere"
+        },
+        {
+          "page": 11,
+          "text": "Miere Plic"
+        }
+      ]
+    },
+    {
+      "source_key": "global-morcov",
+      "name": "Morcov",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 12
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "morcov"
+        },
+        {
+          "page": 2,
+          "text": "morcov"
+        },
+        {
+          "page": 2,
+          "text": "morcov"
+        },
+        {
+          "page": 2,
+          "text": "morcov"
+        },
+        {
+          "page": 2,
+          "text": "morcov"
+        },
+        {
+          "page": 2,
+          "text": "morcov"
+        },
+        {
+          "page": 3,
+          "text": "morcov"
+        },
+        {
+          "page": 5,
+          "text": "morcov"
+        },
+        {
+          "page": 8,
+          "text": "morcov"
+        },
+        {
+          "page": 3,
+          "text": "morcovi"
+        },
+        {
+          "page": 6,
+          "text": "morcovi"
+        },
+        {
+          "page": 7,
+          "text": "morcovi"
+        }
+      ]
+    },
+    {
+      "source_key": "global-mozzarella",
+      "name": "Mozzarella",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 5,
+        "unmarked": 5
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "mozzarella*"
+        },
+        {
+          "page": 2,
+          "text": "mozzarella*"
+        },
+        {
+          "page": 3,
+          "text": "mozzarella"
+        },
+        {
+          "page": 3,
+          "text": "mozzarella"
+        },
+        {
+          "page": 3,
+          "text": "mozzarella*"
+        },
+        {
+          "page": 5,
+          "text": "mozzarella"
+        },
+        {
+          "page": 5,
+          "text": "mozzarella*"
+        },
+        {
+          "page": 5,
+          "text": "mozzarella"
+        },
+        {
+          "page": 5,
+          "text": "mozzarella"
+        },
+        {
+          "page": 7,
+          "text": "mozzarella*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-mujdei-de-usturoi",
+      "name": "Mujdei de usturoi",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "Mujdei de usturoi"
+        }
+      ]
+    },
+    {
+      "source_key": "global-muraturi-asortate",
+      "name": "Muraturi asortate",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "muraturi asortate"
+        }
+      ]
+    },
+    {
+      "source_key": "global-muschi-vita",
+      "name": "Muschi vita",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "muschi vita"
+        }
+      ]
+    },
+    {
+      "source_key": "global-mustar",
+      "name": "Mustar",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "mustar"
+        },
+        {
+          "page": 4,
+          "text": "mustar"
+        },
+        {
+          "page": 5,
+          "text": "mustar"
+        }
+      ]
+    },
+    {
+      "source_key": "global-mustar-dijon",
+      "name": "Mustar dijon",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "mustar Dijon"
+        }
+      ]
+    },
+    {
+      "source_key": "global-nuca",
+      "name": "Nuca",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "allergen": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "nuca*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-nucsoara",
+      "name": "Nucsoara",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "nucsoara"
+        }
+      ]
+    },
+    {
+      "source_key": "global-oltenesti",
+      "name": "Oltenesti",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "oltenesti"
+        }
+      ]
+    },
+    {
+      "source_key": "global-oregano",
+      "name": "Oregano",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "oregano"
+        },
+        {
+          "page": 3,
+          "text": "oregano"
+        },
+        {
+          "page": 6,
+          "text": "oregano"
+        },
+        {
+          "page": 6,
+          "text": "oregano"
+        }
+      ]
+    },
+    {
+      "source_key": "global-orez",
+      "name": "Orez",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "allergen": 5
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "orez*"
+        },
+        {
+          "page": 7,
+          "text": "orez*"
+        },
+        {
+          "page": 7,
+          "text": "orez*"
+        },
+        {
+          "page": 7,
+          "text": "orez*"
+        },
+        {
+          "page": 7,
+          "text": "orez*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-orez-salbatic",
+      "name": "Orez salbatic",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 2,
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "orez salbatic*"
+        },
+        {
+          "page": 6,
+          "text": "orez salbatic*"
+        },
+        {
+          "page": 7,
+          "text": "orez salbatic"
+        },
+        {
+          "page": 7,
+          "text": "orez salbatic"
+        }
+      ]
+    },
+    {
+      "source_key": "global-orez-salbatic-cu-parmezan",
+      "name": "Orez salbatic cu parmezan",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "orez salbatic cu parmezan"
+        }
+      ]
+    },
+    {
+      "source_key": "global-otet-balsamic",
+      "name": "Otet balsamic",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 5
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "otet balsamic"
+        },
+        {
+          "page": 6,
+          "text": "otet balsamic"
+        },
+        {
+          "page": 6,
+          "text": "otet balsamic"
+        },
+        {
+          "page": 7,
+          "text": "otet balsamic"
+        },
+        {
+          "page": 8,
+          "text": "otet balsamic"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ou",
+      "name": "Ou",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 4,
+        "unmarked": 17
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "ou*"
+        },
+        {
+          "page": 2,
+          "text": "ou*"
+        },
+        {
+          "page": 2,
+          "text": "ou*"
+        },
+        {
+          "page": 2,
+          "text": "ou"
+        },
+        {
+          "page": 2,
+          "text": "ou"
+        },
+        {
+          "page": 3,
+          "text": "ou*"
+        },
+        {
+          "page": 3,
+          "text": "ou"
+        },
+        {
+          "page": 4,
+          "text": "ou"
+        },
+        {
+          "page": 4,
+          "text": "ou"
+        },
+        {
+          "page": 4,
+          "text": "ou"
+        },
+        {
+          "page": 4,
+          "text": "ou"
+        },
+        {
+          "page": 4,
+          "text": "ou"
+        },
+        {
+          "page": 4,
+          "text": "ou"
+        },
+        {
+          "page": 5,
+          "text": "ou"
+        },
+        {
+          "page": 5,
+          "text": "ou"
+        },
+        {
+          "page": 5,
+          "text": "ou"
+        },
+        {
+          "page": 5,
+          "text": "ou"
+        },
+        {
+          "page": 3,
+          "text": "oua"
+        },
+        {
+          "page": 3,
+          "text": "oua"
+        },
+        {
+          "page": 3,
+          "text": "oua"
+        },
+        {
+          "page": 3,
+          "text": "oua"
+        }
+      ]
+    },
+    {
+      "source_key": "global-oua-ochi",
+      "name": "Oua ochi",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "oua ochi"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ouzo",
+      "name": "Ouzo",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "ouzo"
+        }
+      ]
+    },
+    {
+      "source_key": "global-paine",
+      "name": "Paine",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "allergen": 3
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "paine*"
+        },
+        {
+          "page": 2,
+          "text": "paine*"
+        },
+        {
+          "page": 2,
+          "text": "paine*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-panko",
+      "name": "Panko",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4,
+        "allergen": 1
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "panko"
+        },
+        {
+          "page": 5,
+          "text": "panko"
+        },
+        {
+          "page": 5,
+          "text": "panko"
+        },
+        {
+          "page": 5,
+          "text": "panko"
+        },
+        {
+          "page": 6,
+          "text": "panko*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-parmezan",
+      "name": "Parmezan",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "unmarked": 10,
+        "allergen": 5
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "parmezan"
+        },
+        {
+          "page": 3,
+          "text": "parmezan*"
+        },
+        {
+          "page": 3,
+          "text": "parmezan"
+        },
+        {
+          "page": 3,
+          "text": "parmezan"
+        },
+        {
+          "page": 3,
+          "text": "parmezan"
+        },
+        {
+          "page": 3,
+          "text": "parmezan*"
+        },
+        {
+          "page": 3,
+          "text": "parmezan*"
+        },
+        {
+          "page": 4,
+          "text": "parmezan"
+        },
+        {
+          "page": 5,
+          "text": "parmezan"
+        },
+        {
+          "page": 5,
+          "text": "parmezan*"
+        },
+        {
+          "page": 5,
+          "text": "parmezan"
+        },
+        {
+          "page": 5,
+          "text": "parmezan*"
+        },
+        {
+          "page": 5,
+          "text": "parmezan"
+        },
+        {
+          "page": 7,
+          "text": "parmezan"
+        },
+        {
+          "page": 2,
+          "text": "Parmezan"
+        }
+      ]
+    },
+    {
+      "source_key": "global-pastarnac",
+      "name": "Pastarnac",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "pastarnac"
+        },
+        {
+          "page": 5,
+          "text": "pastarnac"
+        }
+      ]
+    },
+    {
+      "source_key": "global-paste",
+      "name": "Paste",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 7,
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "paste*"
+        },
+        {
+          "page": 3,
+          "text": "paste*"
+        },
+        {
+          "page": 3,
+          "text": "paste*"
+        },
+        {
+          "page": 3,
+          "text": "paste"
+        },
+        {
+          "page": 3,
+          "text": "paste"
+        },
+        {
+          "page": 3,
+          "text": "paste"
+        },
+        {
+          "page": 3,
+          "text": "paste*"
+        },
+        {
+          "page": 3,
+          "text": "paste*"
+        },
+        {
+          "page": 3,
+          "text": "paste*"
+        },
+        {
+          "page": 3,
+          "text": "paste*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-pastrama-marinata",
+      "name": "Pastrama marinata",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "pastrama marinata"
+        },
+        {
+          "page": 6,
+          "text": "pastrama marinata"
+        }
+      ]
+    },
+    {
+      "source_key": "global-pastrama-oaie",
+      "name": "Pastrama oaie",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "pastrama oaie"
+        }
+      ]
+    },
+    {
+      "source_key": "global-patrunjel",
+      "name": "Patrunjel",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 7
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "patrunjel"
+        },
+        {
+          "page": 3,
+          "text": "patrunjel"
+        },
+        {
+          "page": 3,
+          "text": "patrunjel"
+        },
+        {
+          "page": 6,
+          "text": "patrunjel"
+        },
+        {
+          "page": 6,
+          "text": "patrunjel"
+        },
+        {
+          "page": 6,
+          "text": "patrunjel"
+        },
+        {
+          "page": 6,
+          "text": "patrunjel"
+        }
+      ]
+    },
+    {
+      "source_key": "global-pepperoncino",
+      "name": "Pepperoncino",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 2,
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "pepperoncino*"
+        },
+        {
+          "page": 3,
+          "text": "pepperoncino"
+        },
+        {
+          "page": 3,
+          "text": "pepperoncino*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-pesmet",
+      "name": "Pesmet",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "pesmet"
+        }
+      ]
+    },
+    {
+      "source_key": "global-piept-de-curcan",
+      "name": "Piept de curcan",
+      "contains_allergens": false,
+      "from_frozen": true,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "frozen": 3,
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "piept de curcan**"
+        },
+        {
+          "page": 7,
+          "text": "piept de curcan**"
+        },
+        {
+          "page": 7,
+          "text": "piept de curcan**"
+        },
+        {
+          "page": 4,
+          "text": "piept curcan"
+        }
+      ]
+    },
+    {
+      "source_key": "global-piept-de-pui",
+      "name": "Piept de pui",
+      "contains_allergens": false,
+      "from_frozen": true,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "frozen": 6,
+        "unmarked": 5,
+        "allergen": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "piept de pui**"
+        },
+        {
+          "page": 3,
+          "text": "piept de pui**"
+        },
+        {
+          "page": 3,
+          "text": "piept de pui"
+        },
+        {
+          "page": 4,
+          "text": "piept de pui**"
+        },
+        {
+          "page": 4,
+          "text": "piept de pui**"
+        },
+        {
+          "page": 4,
+          "text": "piept de pui**"
+        },
+        {
+          "page": 4,
+          "text": "piept de pui"
+        },
+        {
+          "page": 4,
+          "text": "piept de pui*"
+        },
+        {
+          "page": 4,
+          "text": "piept de pui"
+        },
+        {
+          "page": 4,
+          "text": "piept de pui"
+        },
+        {
+          "page": 4,
+          "text": "piept pui"
+        },
+        {
+          "page": 7,
+          "text": "piept pui**"
+        }
+      ]
+    },
+    {
+      "source_key": "global-piept-de-rata",
+      "name": "Piept de rata",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "piept de rata"
+        }
+      ]
+    },
+    {
+      "source_key": "global-piper-verde",
+      "name": "Piper verde",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "piper verde"
+        }
+      ]
+    },
+    {
+      "source_key": "global-piure-de-cartofi",
+      "name": "Piure de cartofi",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "piure de cartofi"
+        },
+        {
+          "page": 5,
+          "text": "piure de cartofi"
+        },
+        {
+          "page": 6,
+          "text": "piure de cartofi"
+        },
+        {
+          "page": 4,
+          "text": "piure"
+        }
+      ]
+    },
+    {
+      "source_key": "global-portocala",
+      "name": "Portocala",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "portocala"
+        }
+      ]
+    },
+    {
+      "source_key": "global-praz",
+      "name": "Praz",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "praz"
+        }
+      ]
+    },
+    {
+      "source_key": "global-prosciutto-crudo",
+      "name": "Prosciutto crudo",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "prosciutto crudo"
+        },
+        {
+          "page": 5,
+          "text": "prosciutto crudo"
+        },
+        {
+          "page": 2,
+          "text": "Prosciutto Crudo"
+        }
+      ]
+    },
+    {
+      "source_key": "global-pui-shanghai",
+      "name": "Pui shanghai",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "pui shanghai"
+        }
+      ]
+    },
+    {
+      "source_key": "global-pulpa-berbecut",
+      "name": "Pulpa berbecut",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "pulpa berbecut"
+        }
+      ]
+    },
+    {
+      "source_key": "global-pulpe-de-pui",
+      "name": "Pulpe de pui",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "pulpe de pui"
+        },
+        {
+          "page": 4,
+          "text": "pulpa de pui"
+        }
+      ]
+    },
+    {
+      "source_key": "global-rosii",
+      "name": "Rosii",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 15
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "rosii"
+        },
+        {
+          "page": 2,
+          "text": "rosii"
+        },
+        {
+          "page": 2,
+          "text": "rosii"
+        },
+        {
+          "page": 3,
+          "text": "rosii"
+        },
+        {
+          "page": 3,
+          "text": "rosii"
+        },
+        {
+          "page": 3,
+          "text": "rosii"
+        },
+        {
+          "page": 3,
+          "text": "rosii"
+        },
+        {
+          "page": 4,
+          "text": "rosii"
+        },
+        {
+          "page": 4,
+          "text": "rosii"
+        },
+        {
+          "page": 4,
+          "text": "rosii"
+        },
+        {
+          "page": 5,
+          "text": "rosii"
+        },
+        {
+          "page": 6,
+          "text": "rosii"
+        },
+        {
+          "page": 7,
+          "text": "rosii"
+        },
+        {
+          "page": 8,
+          "text": "rosii"
+        },
+        {
+          "page": 8,
+          "text": "rosii"
+        }
+      ]
+    },
+    {
+      "source_key": "global-rosii-cherry",
+      "name": "Rosii cherry",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 13
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 3,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 3,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 3,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 3,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 3,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 3,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 3,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 4,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 4,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 5,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 6,
+          "text": "rosii cherry"
+        },
+        {
+          "page": 3,
+          "text": "rosi cherry"
+        }
+      ]
+    },
+    {
+      "source_key": "global-rozmarin",
+      "name": "Rozmarin",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "rozmarin"
+        },
+        {
+          "page": 6,
+          "text": "rozmarin"
+        }
+      ]
+    },
+    {
+      "source_key": "global-rucola",
+      "name": "Rucola",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 9
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "salata rucola"
+        },
+        {
+          "page": 3,
+          "text": "rucola"
+        },
+        {
+          "page": 4,
+          "text": "rucola"
+        },
+        {
+          "page": 5,
+          "text": "rucola"
+        },
+        {
+          "page": 5,
+          "text": "rucola"
+        },
+        {
+          "page": 6,
+          "text": "rucola"
+        },
+        {
+          "page": 6,
+          "text": "rucola"
+        },
+        {
+          "page": 6,
+          "text": "rucola"
+        },
+        {
+          "page": 7,
+          "text": "rucola"
+        }
+      ]
+    },
+    {
+      "source_key": "global-salam-sibiu",
+      "name": "Salam sibiu",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "Salam Sibiu"
+        }
+      ]
+    },
+    {
+      "source_key": "global-salata-coleslaw",
+      "name": "Salata coleslaw",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "salata coleslaw"
+        }
+      ]
+    },
+    {
+      "source_key": "global-salata-iceberg",
+      "name": "Salata iceberg",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "salata iceberg"
+        },
+        {
+          "page": 3,
+          "text": "salata iceberg"
+        },
+        {
+          "page": 3,
+          "text": "salata iceberg"
+        }
+      ]
+    },
+    {
+      "source_key": "global-salata-mozaic",
+      "name": "Salata mozaic",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 7,
+          "text": "salata mozazic"
+        }
+      ]
+    },
+    {
+      "source_key": "global-salata-verde",
+      "name": "Salata verde",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "salata verde"
+        },
+        {
+          "page": 3,
+          "text": "salata verde"
+        },
+        {
+          "page": 3,
+          "text": "salata verde"
+        },
+        {
+          "page": 8,
+          "text": "salata verde"
+        }
+      ]
+    },
+    {
+      "source_key": "global-salau",
+      "name": "Salau",
+      "contains_allergens": false,
+      "from_frozen": true,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "frozen": 1,
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "salau**"
+        },
+        {
+          "page": 7,
+          "text": "salau"
+        }
+      ]
+    },
+    {
+      "source_key": "global-salvie",
+      "name": "Salvie",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "salvie"
+        }
+      ]
+    },
+    {
+      "source_key": "global-smantana",
+      "name": "Smantana",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3,
+        "allergen": 2
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "smantana"
+        },
+        {
+          "page": 2,
+          "text": "smantana"
+        },
+        {
+          "page": 3,
+          "text": "smantana"
+        },
+        {
+          "page": 7,
+          "text": "smantana*"
+        },
+        {
+          "page": 2,
+          "text": "Smantana*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-smantana-gatit",
+      "name": "Smantana gatit",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "smantana gatit"
+        }
+      ]
+    },
+    {
+      "source_key": "global-smantana-vegetala",
+      "name": "Smantana vegetala",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 13
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 2,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 2,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 3,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 3,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 3,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 3,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 4,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 5,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 5,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 6,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 6,
+          "text": "smantana vegetala"
+        },
+        {
+          "page": 6,
+          "text": "smantana vegetala"
+        }
+      ]
+    },
+    {
+      "source_key": "global-snitel-de-pui",
+      "name": "Snitel de pui",
+      "contains_allergens": false,
+      "from_frozen": true,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "frozen": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "snitel de pui**"
+        }
+      ]
+    },
+    {
+      "source_key": "global-somon",
+      "name": "Somon",
+      "contains_allergens": false,
+      "from_frozen": true,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "frozen": 3,
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "somon**"
+        },
+        {
+          "page": 6,
+          "text": "somon**"
+        },
+        {
+          "page": 6,
+          "text": "somon**"
+        },
+        {
+          "page": 7,
+          "text": "somon"
+        }
+      ]
+    },
+    {
+      "source_key": "global-somon-fume",
+      "name": "Somon fume",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "somon fume"
+        },
+        {
+          "page": 3,
+          "text": "somon fume"
+        }
+      ]
+    },
+    {
+      "source_key": "global-sos",
+      "name": "Sos",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "sos"
+        },
+        {
+          "page": 6,
+          "text": "sos"
+        }
+      ]
+    },
+    {
+      "source_key": "global-sos-bbq",
+      "name": "Sos bbq",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "sos BBQ"
+        }
+      ]
+    },
+    {
+      "source_key": "global-sos-bechamel",
+      "name": "Sos bechamel",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 1,
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "sos bechamel*"
+        },
+        {
+          "page": 5,
+          "text": "besamel"
+        },
+        {
+          "page": 5,
+          "text": "besamel"
+        }
+      ]
+    },
+    {
+      "source_key": "global-sos-bolognez",
+      "name": "Sos bolognez",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "sos bolognez"
+        },
+        {
+          "page": 3,
+          "text": "sos bolognez"
+        },
+        {
+          "page": 5,
+          "text": "sos Bolognez"
+        }
+      ]
+    },
+    {
+      "source_key": "global-sos-caesar",
+      "name": "Sos caesar",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "allergen": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "sos Caesar*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-sos-maioneza",
+      "name": "Sos maioneza",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 1,
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "sos maioneza*"
+        },
+        {
+          "page": 5,
+          "text": "sos maioneza"
+        }
+      ]
+    },
+    {
+      "source_key": "global-sos-rosii",
+      "name": "Sos rosii",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 15
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "sos rosii"
+        },
+        {
+          "page": 2,
+          "text": "sos rosii"
+        },
+        {
+          "page": 3,
+          "text": "sos rosii"
+        },
+        {
+          "page": 3,
+          "text": "sos rosii"
+        },
+        {
+          "page": 4,
+          "text": "sos rosii"
+        },
+        {
+          "page": 4,
+          "text": "sos rosii"
+        },
+        {
+          "page": 5,
+          "text": "sos rosii"
+        },
+        {
+          "page": 5,
+          "text": "sos rosii"
+        },
+        {
+          "page": 5,
+          "text": "sos rosii"
+        },
+        {
+          "page": 5,
+          "text": "sos rosii"
+        },
+        {
+          "page": 5,
+          "text": "sos rosii"
+        },
+        {
+          "page": 5,
+          "text": "sos rosii"
+        },
+        {
+          "page": 6,
+          "text": "sos rosii"
+        },
+        {
+          "page": 7,
+          "text": "sos rosii"
+        },
+        {
+          "page": 3,
+          "text": "sos de rosii"
+        }
+      ]
+    },
+    {
+      "source_key": "global-spanac",
+      "name": "Spanac",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 5
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "spanac"
+        },
+        {
+          "page": 3,
+          "text": "spanac"
+        },
+        {
+          "page": 5,
+          "text": "spanac"
+        },
+        {
+          "page": 7,
+          "text": "spanac"
+        },
+        {
+          "page": 7,
+          "text": "spanac"
+        }
+      ]
+    },
+    {
+      "source_key": "global-sparanghel",
+      "name": "Sparanghel",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "sparanghel"
+        },
+        {
+          "page": 7,
+          "text": "sparanghel"
+        },
+        {
+          "page": 7,
+          "text": "sparanghel"
+        },
+        {
+          "page": 7,
+          "text": "sparanghel"
+        }
+      ]
+    },
+    {
+      "source_key": "global-strugure",
+      "name": "Strugure",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "strugure"
+        }
+      ]
+    },
+    {
+      "source_key": "global-sunculita",
+      "name": "Sunculita",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "sunculita"
+        }
+      ]
+    },
+    {
+      "source_key": "global-telemea",
+      "name": "Telemea",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "telemea"
+        },
+        {
+          "page": 2,
+          "text": "Telemea"
+        }
+      ]
+    },
+    {
+      "source_key": "global-telina",
+      "name": "Telina",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "unmarked": 8,
+        "allergen": 2
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "telina"
+        },
+        {
+          "page": 2,
+          "text": "telina"
+        },
+        {
+          "page": 2,
+          "text": "telina"
+        },
+        {
+          "page": 2,
+          "text": "telina"
+        },
+        {
+          "page": 2,
+          "text": "telina"
+        },
+        {
+          "page": 2,
+          "text": "telina"
+        },
+        {
+          "page": 3,
+          "text": "telina*"
+        },
+        {
+          "page": 5,
+          "text": "telina"
+        },
+        {
+          "page": 5,
+          "text": "telina"
+        },
+        {
+          "page": 6,
+          "text": "telina*"
+        }
+      ]
+    },
+    {
+      "source_key": "global-toast",
+      "name": "Toast",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 5
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "toast"
+        },
+        {
+          "page": 3,
+          "text": "toast"
+        },
+        {
+          "page": 3,
+          "text": "toast"
+        },
+        {
+          "page": 3,
+          "text": "toast"
+        },
+        {
+          "page": 3,
+          "text": "toast"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ulei",
+      "name": "Ulei",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 2
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "ulei"
+        },
+        {
+          "page": 2,
+          "text": "ulei"
+        }
+      ]
+    },
+    {
+      "source_key": "global-ulei-de-masline",
+      "name": "Ulei de masline",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 8
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "ulei de masline"
+        },
+        {
+          "page": 6,
+          "text": "ulei de masline"
+        },
+        {
+          "page": 6,
+          "text": "ulei de masline"
+        },
+        {
+          "page": 2,
+          "text": "ulei masline"
+        },
+        {
+          "page": 3,
+          "text": "ulei masline"
+        },
+        {
+          "page": 3,
+          "text": "ulei masline"
+        },
+        {
+          "page": 6,
+          "text": "ulei masline"
+        },
+        {
+          "page": 8,
+          "text": "ulei masline"
+        }
+      ]
+    },
+    {
+      "source_key": "global-unt",
+      "name": "Unt",
+      "contains_allergens": true,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "allergen": 10,
+        "unmarked": 7
+      },
+      "occurrences": [
+        {
+          "page": 4,
+          "text": "unt*"
+        },
+        {
+          "page": 4,
+          "text": "unt*"
+        },
+        {
+          "page": 4,
+          "text": "unt"
+        },
+        {
+          "page": 5,
+          "text": "unt*"
+        },
+        {
+          "page": 6,
+          "text": "unt*"
+        },
+        {
+          "page": 6,
+          "text": "unt"
+        },
+        {
+          "page": 6,
+          "text": "unt*"
+        },
+        {
+          "page": 6,
+          "text": "unt*"
+        },
+        {
+          "page": 7,
+          "text": "unt*"
+        },
+        {
+          "page": 7,
+          "text": "unt*"
+        },
+        {
+          "page": 7,
+          "text": "unt*"
+        },
+        {
+          "page": 7,
+          "text": "unt*"
+        },
+        {
+          "page": 7,
+          "text": "unt"
+        },
+        {
+          "page": 7,
+          "text": "unt"
+        },
+        {
+          "page": 7,
+          "text": "unt"
+        },
+        {
+          "page": 7,
+          "text": "unt"
+        },
+        {
+          "page": 7,
+          "text": "unt"
+        }
+      ]
+    },
+    {
+      "source_key": "global-usturoi",
+      "name": "Usturoi",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": true,
+      "is_active": true,
+      "counts": {
+        "unmarked": 24,
+        "allergen": 1
+      },
+      "occurrences": [
+        {
+          "page": 2,
+          "text": "usturoi"
+        },
+        {
+          "page": 2,
+          "text": "usturoi"
+        },
+        {
+          "page": 3,
+          "text": "usturoi"
+        },
+        {
+          "page": 3,
+          "text": "usturoi"
+        },
+        {
+          "page": 3,
+          "text": "usturoi*"
+        },
+        {
+          "page": 4,
+          "text": "usturoi"
+        },
+        {
+          "page": 4,
+          "text": "usturoi"
+        },
+        {
+          "page": 4,
+          "text": "usturoi"
+        },
+        {
+          "page": 4,
+          "text": "usturoi"
+        },
+        {
+          "page": 5,
+          "text": "usturoi"
+        },
+        {
+          "page": 5,
+          "text": "usturoi"
+        },
+        {
+          "page": 6,
+          "text": "usturoi"
+        },
+        {
+          "page": 6,
+          "text": "usturoi"
+        },
+        {
+          "page": 6,
+          "text": "usturoi"
+        },
+        {
+          "page": 6,
+          "text": "usturoi"
+        },
+        {
+          "page": 6,
+          "text": "usturoi"
+        },
+        {
+          "page": 6,
+          "text": "usturoi"
+        },
+        {
+          "page": 6,
+          "text": "usturoi"
+        },
+        {
+          "page": 7,
+          "text": "usturoi"
+        },
+        {
+          "page": 7,
+          "text": "usturoi"
+        },
+        {
+          "page": 7,
+          "text": "usturoi"
+        },
+        {
+          "page": 7,
+          "text": "usturoi"
+        },
+        {
+          "page": 7,
+          "text": "usturoi"
+        },
+        {
+          "page": 7,
+          "text": "usturoi"
+        },
+        {
+          "page": 8,
+          "text": "usturoi"
+        }
+      ]
+    },
+    {
+      "source_key": "global-varza",
+      "name": "Varza",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 3
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "varza"
+        },
+        {
+          "page": 5,
+          "text": "varza"
+        },
+        {
+          "page": 5,
+          "text": "varza"
+        }
+      ]
+    },
+    {
+      "source_key": "global-varza-alba",
+      "name": "Varza alba",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 8,
+          "text": "varza alba"
+        }
+      ]
+    },
+    {
+      "source_key": "global-vin",
+      "name": "Vin",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 4
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "vin"
+        },
+        {
+          "page": 4,
+          "text": "vin"
+        },
+        {
+          "page": 6,
+          "text": "vin"
+        },
+        {
+          "page": 6,
+          "text": "vin"
+        }
+      ]
+    },
+    {
+      "source_key": "global-vin-alb",
+      "name": "Vin alb",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 8
+      },
+      "occurrences": [
+        {
+          "page": 3,
+          "text": "vin alb"
+        },
+        {
+          "page": 4,
+          "text": "vin alb"
+        },
+        {
+          "page": 5,
+          "text": "vin alb"
+        },
+        {
+          "page": 6,
+          "text": "vin alb"
+        },
+        {
+          "page": 6,
+          "text": "vin alb"
+        },
+        {
+          "page": 6,
+          "text": "vin alb"
+        },
+        {
+          "page": 7,
+          "text": "vin alb"
+        },
+        {
+          "page": 7,
+          "text": "vin alb"
+        }
+      ]
+    },
+    {
+      "source_key": "global-vin-rosu",
+      "name": "Vin rosu",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 1
+      },
+      "occurrences": [
+        {
+          "page": 5,
+          "text": "vin rosu"
+        }
+      ]
+    },
+    {
+      "source_key": "global-vinete",
+      "name": "Vinete",
+      "contains_allergens": false,
+      "from_frozen": false,
+      "needs_review": false,
+      "is_active": true,
+      "counts": {
+        "unmarked": 6
+      },
+      "occurrences": [
+        {
+          "page": 6,
+          "text": "vinete"
+        },
+        {
+          "page": 6,
+          "text": "vinete"
+        },
+        {
+          "page": 6,
+          "text": "vinete"
+        },
+        {
+          "page": 7,
+          "text": "vinete"
+        },
+        {
+          "page": 7,
+          "text": "vinete"
+        },
+        {
+          "page": 7,
+          "text": "vinete"
+        }
+      ]
+    }
+  ]
+}

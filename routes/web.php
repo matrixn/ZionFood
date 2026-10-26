@@ -3,6 +3,7 @@
 use App\Http\Controllers\BrandingController;
 use App\Http\Controllers\CuisineController;
 use App\Http\Controllers\DiningController;
+use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PublicOrderingController;
@@ -56,6 +57,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/app', [WorkspaceController::class, 'home'])->name('dashboard');
     Route::get('/onboarding', fn () => Inertia::render('Onboarding'));
     Route::post('/onboarding', [WorkspaceController::class, 'onboard']);
+    Route::get('/admin/ingredients', [IngredientController::class, 'adminIndex']);
+    Route::post('/admin/ingredients/{ingredient?}', [IngredientController::class, 'adminSave']);
+    Route::delete('/admin/ingredients/{ingredient}', [IngredientController::class, 'adminDestroy']);
+    Route::get('/app/locations/{location}/ingredients', [IngredientController::class, 'index']);
+    Route::post('/app/locations/{location}/ingredients/{ingredient?}', [IngredientController::class, 'save']);
+    Route::delete('/app/locations/{location}/ingredients/{ingredient}', [IngredientController::class, 'destroy']);
     Route::get('/app/locations/{location}/{section?}', [WorkspaceController::class, 'show']);
     Route::post('/app/locations/{location}/categories', [WorkspaceController::class, 'category']);
     Route::post('/app/locations/{location}/modifiers', [WorkspaceController::class, 'modifier']);

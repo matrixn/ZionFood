@@ -7,6 +7,7 @@ use App\Domain\Tenancy\Actions\OnboardOrganization;
 use App\Domain\Tenancy\TenantAccess;
 use App\Http\Requests\LocationSettingsRequest;
 use App\Http\Requests\OnboardingRequest;
+use App\Models\Ingredient;
 use App\Models\LocationStaff;
 use App\Models\MenuCategory;
 use App\Models\ModifierGroup;
@@ -74,7 +75,8 @@ class WorkspaceController extends Controller
             $props['mapAddress'] = ['address' => $context->address, 'city' => $basics['city'] ?? '', 'country' => $basics['country'] ?? 'RO', 'postal_code' => $basics['postal_code'] ?? ''];
         }
         if ($section === 'menu') {
-            $props['menus'] = $context->menus()->with('categories.items.variants', 'categories.items.modifierGroups')->get();
+            $props['menus'] = $context->menus()->with('categories.items.variants', 'categories.items.ingredients', 'categories.items.modifierGroups')->get();
+            $props['ingredients'] = Ingredient::availableFor($context->restaurant_id)->withTrashed()->orderBy('name')->get();
             $props['groups'] = ModifierGroup::with('options')->where('organization_id', $context->organization_id)->get();
         }
         if ($section === 'dashboard') {

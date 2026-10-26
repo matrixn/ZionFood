@@ -1,0 +1,1466 @@
+[
+  {
+    "source_key": "global-antricot-de-vita",
+    "name": "Antricot de vita",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ardei",
+    "name": "Ardei",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ardei-copt",
+    "name": "Ardei copt",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ardei-gras",
+    "name": "Ardei gras",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ardei-gras-rosu",
+    "name": "Ardei gras rosu",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ardei-iute",
+    "name": "Ardei iute",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ardei-kapia",
+    "name": "Ardei kapia",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ardei-verde-si-rosu",
+    "name": "Ardei verde si rosu",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-aripioare-de-purcel",
+    "name": "Aripioare de purcel",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-aripioare-picante",
+    "name": "Aripioare picante",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-baby-caracatita",
+    "name": "Baby caracatita",
+    "contains_allergens": false,
+    "from_frozen": true,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-baby-spanac",
+    "name": "Baby spanac",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-bacon",
+    "name": "Bacon",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-bagheta",
+    "name": "Bagheta",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-biban-de-mare",
+    "name": "Biban de mare",
+    "contains_allergens": false,
+    "from_frozen": true,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-branza",
+    "name": "Branza",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-branza-feta",
+    "name": "Branza feta",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-brie",
+    "name": "Brie",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-brocoli",
+    "name": "Brocoli",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-brocoli-sote",
+    "name": "Brocoli sote",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-bulion",
+    "name": "Bulion",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-burta",
+    "name": "Burta",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-busuioc",
+    "name": "Busuioc",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-calamari",
+    "name": "Calamari",
+    "contains_allergens": true,
+    "from_frozen": true,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-capere",
+    "name": "Capere",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-caracatita",
+    "name": "Caracatita",
+    "contains_allergens": true,
+    "from_frozen": true,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-carnati",
+    "name": "Carnati",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-carnati-porc",
+    "name": "Carnati porc",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-carne-curcan",
+    "name": "Carne curcan",
+    "contains_allergens": false,
+    "from_frozen": true,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-carne-la-garnita",
+    "name": "Carne la garnita",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-carne-midii",
+    "name": "Carne midii",
+    "contains_allergens": true,
+    "from_frozen": true,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-carne-porc",
+    "name": "Carne porc",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-carne-vita",
+    "name": "Carne vita",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cartofi",
+    "name": "Cartofi",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cartofi-barcuta",
+    "name": "Cartofi barcuta",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cartofi-copti",
+    "name": "Cartofi copti",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cartofi-cu-rozmarin",
+    "name": "Cartofi cu rozmarin",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cartofi-natur",
+    "name": "Cartofi natur",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cartofi-prajiti",
+    "name": "Cartofi prajiti",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cartofi-prajiti-cu-cascaval",
+    "name": "Cartofi prajiti cu cascaval",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cartofi-taranesti",
+    "name": "Cartofi taranesti",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cascaval",
+    "name": "Cascaval",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-castraveciori",
+    "name": "Castraveciori",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-castraveciori-murati",
+    "name": "Castraveciori murati",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-castraveti",
+    "name": "Castraveti",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-castraveti-otet",
+    "name": "Castraveti otet",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ceafa-de-porc",
+    "name": "Ceafa de porc",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ceafa-de-porc-afumata",
+    "name": "Ceafa de porc afumata",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ceapa",
+    "name": "Ceapa",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ceapa-rosie",
+    "name": "Ceapa rosie",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-chifle",
+    "name": "Chifle",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-chilli",
+    "name": "Chilli",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cimbru",
+    "name": "Cimbru",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ciolan-de-miel",
+    "name": "Ciolan de miel",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ciolan-de-porc",
+    "name": "Ciolan de porc",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ciuperci",
+    "name": "Ciuperci",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ciuperci-gratar",
+    "name": "Ciuperci gratar",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-coasta-porc-afumata",
+    "name": "Coasta porc afumata",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-coaste-afumate",
+    "name": "Coaste afumate",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-coaste-marinate",
+    "name": "Coaste marinate",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-coaste-porc",
+    "name": "Coaste porc",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-coaste-porc-la-garnita",
+    "name": "Coaste porc la garnita",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-coniac",
+    "name": "Coniac",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-conopida",
+    "name": "Conopida",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-coquellet",
+    "name": "Coquellet",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cordon-bleu-pui",
+    "name": "Cordon bleu pui",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cotlet-berbecut",
+    "name": "Cotlet berbecut",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-cotlet-de-porc",
+    "name": "Cotlet de porc",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-crap",
+    "name": "Crap",
+    "contains_allergens": false,
+    "from_frozen": true,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-creier",
+    "name": "Creier",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-creveti",
+    "name": "Creveti",
+    "contains_allergens": true,
+    "from_frozen": true,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-creveti-black-tiger",
+    "name": "Creveti black tiger",
+    "contains_allergens": false,
+    "from_frozen": true,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-dorada",
+    "name": "Dorada",
+    "contains_allergens": false,
+    "from_frozen": true,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-dovlecei",
+    "name": "Dovlecei",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-dressing",
+    "name": "Dressing",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-dressing-otet-balsamic",
+    "name": "Dressing otet balsamic",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-edamame",
+    "name": "Edamame",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-faina",
+    "name": "Faina",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-fasole",
+    "name": "Fasole",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-fasole-boabe",
+    "name": "Fasole boabe",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-fasole-verde",
+    "name": "Fasole verde",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ficatei",
+    "name": "Ficatei",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ficatei-pui",
+    "name": "Ficatei pui",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-frigarui-porc",
+    "name": "Frigarui porc",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-frigarui-pulpe-pui",
+    "name": "Frigarui pulpe pui",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-gogosari",
+    "name": "Gogosari",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-gogosari-murati",
+    "name": "Gogosari murati",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-gorgonzola",
+    "name": "Gorgonzola",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-hrean",
+    "name": "Hrean",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-jambon",
+    "name": "Jambon",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-kaizer",
+    "name": "Kaizer",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ketchup",
+    "name": "Ketchup",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-lamaie",
+    "name": "Lamaie",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-legume",
+    "name": "Legume",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-mai",
+    "name": "Mai",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": false
+  },
+  {
+    "source_key": "global-maioneza",
+    "name": "Maioneza",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-malai",
+    "name": "Malai",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-mamaliguta",
+    "name": "Mamaliguta",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-mar",
+    "name": "Mar",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-masline",
+    "name": "Masline",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-mici",
+    "name": "Mici",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-midii",
+    "name": "Midii",
+    "contains_allergens": true,
+    "from_frozen": true,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-miere",
+    "name": "Miere",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-morcov",
+    "name": "Morcov",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-mozzarella",
+    "name": "Mozzarella",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-mujdei-de-usturoi",
+    "name": "Mujdei de usturoi",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-muraturi-asortate",
+    "name": "Muraturi asortate",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-muschi-vita",
+    "name": "Muschi vita",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-mustar",
+    "name": "Mustar",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-mustar-dijon",
+    "name": "Mustar dijon",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-nuca",
+    "name": "Nuca",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-nucsoara",
+    "name": "Nucsoara",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-oltenesti",
+    "name": "Oltenesti",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-oregano",
+    "name": "Oregano",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-orez",
+    "name": "Orez",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-orez-salbatic",
+    "name": "Orez salbatic",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-orez-salbatic-cu-parmezan",
+    "name": "Orez salbatic cu parmezan",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-otet-balsamic",
+    "name": "Otet balsamic",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ou",
+    "name": "Ou",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-oua-ochi",
+    "name": "Oua ochi",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ouzo",
+    "name": "Ouzo",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-paine",
+    "name": "Paine",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-panko",
+    "name": "Panko",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-parmezan",
+    "name": "Parmezan",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-pastarnac",
+    "name": "Pastarnac",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-paste",
+    "name": "Paste",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-pastrama-marinata",
+    "name": "Pastrama marinata",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-pastrama-oaie",
+    "name": "Pastrama oaie",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-patrunjel",
+    "name": "Patrunjel",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-pepperoncino",
+    "name": "Pepperoncino",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-pesmet",
+    "name": "Pesmet",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-piept-de-curcan",
+    "name": "Piept de curcan",
+    "contains_allergens": false,
+    "from_frozen": true,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-piept-de-pui",
+    "name": "Piept de pui",
+    "contains_allergens": false,
+    "from_frozen": true,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-piept-de-rata",
+    "name": "Piept de rata",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-piper-verde",
+    "name": "Piper verde",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-piure-de-cartofi",
+    "name": "Piure de cartofi",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-portocala",
+    "name": "Portocala",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-praz",
+    "name": "Praz",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-prosciutto-crudo",
+    "name": "Prosciutto crudo",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-pui-shanghai",
+    "name": "Pui shanghai",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-pulpa-berbecut",
+    "name": "Pulpa berbecut",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-pulpe-de-pui",
+    "name": "Pulpe de pui",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-rosii",
+    "name": "Rosii",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-rosii-cherry",
+    "name": "Rosii cherry",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-rozmarin",
+    "name": "Rozmarin",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-rucola",
+    "name": "Rucola",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-salam-sibiu",
+    "name": "Salam sibiu",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-salata-coleslaw",
+    "name": "Salata coleslaw",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-salata-iceberg",
+    "name": "Salata iceberg",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-salata-mozaic",
+    "name": "Salata mozaic",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-salata-verde",
+    "name": "Salata verde",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-salau",
+    "name": "Salau",
+    "contains_allergens": false,
+    "from_frozen": true,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-salvie",
+    "name": "Salvie",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-smantana",
+    "name": "Smantana",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-smantana-gatit",
+    "name": "Smantana gatit",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-smantana-vegetala",
+    "name": "Smantana vegetala",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-snitel-de-pui",
+    "name": "Snitel de pui",
+    "contains_allergens": false,
+    "from_frozen": true,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-somon",
+    "name": "Somon",
+    "contains_allergens": false,
+    "from_frozen": true,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-somon-fume",
+    "name": "Somon fume",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-sos",
+    "name": "Sos",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-sos-bbq",
+    "name": "Sos bbq",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-sos-bechamel",
+    "name": "Sos bechamel",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-sos-bolognez",
+    "name": "Sos bolognez",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-sos-caesar",
+    "name": "Sos caesar",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-sos-maioneza",
+    "name": "Sos maioneza",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-sos-rosii",
+    "name": "Sos rosii",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-spanac",
+    "name": "Spanac",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-sparanghel",
+    "name": "Sparanghel",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-strugure",
+    "name": "Strugure",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-sunculita",
+    "name": "Sunculita",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-telemea",
+    "name": "Telemea",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-telina",
+    "name": "Telina",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-toast",
+    "name": "Toast",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ulei",
+    "name": "Ulei",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-ulei-de-masline",
+    "name": "Ulei de masline",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-unt",
+    "name": "Unt",
+    "contains_allergens": true,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-usturoi",
+    "name": "Usturoi",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": true,
+    "is_active": true
+  },
+  {
+    "source_key": "global-varza",
+    "name": "Varza",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-varza-alba",
+    "name": "Varza alba",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-vin",
+    "name": "Vin",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-vin-alb",
+    "name": "Vin alb",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-vin-rosu",
+    "name": "Vin rosu",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  },
+  {
+    "source_key": "global-vinete",
+    "name": "Vinete",
+    "contains_allergens": false,
+    "from_frozen": false,
+    "needs_review": false,
+    "is_active": true
+  }
+]

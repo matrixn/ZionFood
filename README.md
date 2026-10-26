@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.10** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.11** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -56,6 +56,8 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [x] `0.0.9`: navigare grupată, pregătirea restaurantului prima sub selectorul locației și editori integrați în wizard pentru program, livrare, meniu, identitate, personal și locații — `2a0c23c`.
 - [x] `0.0.10`: documentarea editorilor integrați și a comportamentului navigării în wizard.
 
+- [x] `0.0.11`: catalog cu 183 de ingrediente unice din PDF, administrare comună/proprie, marcaje pentru alergeni/congelat, ingrediente ordonate pe produs, gramaj și preț în lei.
+
 ## Implementat
 
 ### Prima pagină de prezentare
@@ -99,6 +101,12 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [x] Interfețe RO/EN cu selector persistent cu steag și numele limbii, validări și notificări localizate.
 
 ### Meniu, comenzi și bucătărie
+
+- [x] 183 de ingrediente unice extrase din meniul PDF: 19 cu marcaj de alergeni, 16 cu marcaj de posibil congelat, 32 de verificat; o denumire ambiguă este ascunsă inițial.
+- [x] Catalog comun gestionat de administratorul general și ingrediente proprii fiecărui restaurant, cu adăugare, editare, ascundere și eliminare.
+- [x] Ingrediente selectabile și ordonate pe produs, gramaj flexibil (de exemplu 350 g sau 200/250 g), preț și variante introduse în lei, păstrate intern în bani.
+- [x] Marcaje independente pentru alergeni și congelat, textul solicitat pe meniul public și referința legală actuală; informațiile rețetelor existente se păstrează după ascunderea/eliminarea ingredientelor.
+- [x] Identificatori de catalog cu prefixul `global-`, seed automat la migrare/deployment și reseed fără suprascrierea modificărilor administratorilor; [reguli și audit PDF](docs/INGREDIENTS.md).
 
 - [x] Categorii, produse, fotografii, disponibilitate, variante și grupuri de opțiuni/modificatori.
 - [x] Meniu public, personalizarea produselor, coș și checkout pentru ridicare, livrare sau masă.
@@ -175,6 +183,8 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [ ] Eliminarea rutei publice temporare `/test-email` după încheierea diagnosticării.
 
 ## Verificări executate
+
+Ingredientele, gramajele și prețurile în lei (`0.0.11`) au trecut **159 de teste backend / 1376 de aserțiuni pe SQLite**, iar cele 7 teste noi au trecut și pe baza MariaDB dedicată (**428 de aserțiuni**). Au trecut 11 teste frontend, TypeScript/build, ESLint și Pint pe Linux. Patru fluxuri de browser au verificat administrarea catalogului comun, ingredientele proprii și rețeta completă, salvarea exactă a prețului, gramajul, păstrarea informațiilor după ascundere, meniul public RO/EN/mobil și regresia wizard-ului. [Reguli, seed și limite](docs/INGREDIENTS.md).
 
 Navigarea și editorii integrați (`0.0.9`) au trecut **152 de teste backend / 948 de aserțiuni pe SQLite**, 8 teste frontend, TypeScript/build, ESLint și Pint pe Linux. Trei scenarii de browser au verificat setup-ul existent, salvările în wizard, avertizarea pentru modificări nesalvate, gruparea meniului, locațiile și toate cele șase ecrane integrate pe mobil, în RO/EN. Capturile desktop/mobil au fost inspectate.
 

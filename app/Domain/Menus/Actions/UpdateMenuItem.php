@@ -4,6 +4,7 @@ namespace App\Domain\Menus\Actions;
 
 use App\Domain\Menus\RecordMenuChange;
 use App\Domain\Tenancy\TenantAccess;
+use App\Models\Ingredient;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\ModifierGroup;
@@ -29,7 +30,7 @@ class UpdateMenuItem
         $oldMenuId = $item?->category?->menu_id;
 
         return DB::transaction(function () use ($data, $organizationId, $item, $ids, $category, $oldMenuId) {
-            $fields = array_intersect_key($data, array_flip(['category_id', 'name', 'description', 'price', 'tax_basis_points', 'is_available', 'image_path']));
+            $fields = array_intersect_key($data, array_flip(['category_id', 'name', 'description', 'price', 'tax_basis_points', 'is_available', 'image_path', 'portion_size', 'contains_allergens', 'from_frozen']));
             if ($item) {
                 $item->update($fields);
             } else {
@@ -41,13 +42,22 @@ class UpdateMenuItem
                     $item->variants()->create(['name' => $variant['name'], 'price' => $variant['price']]);
                 }
             }
+            if (array_key_exists('ingredient_ids', $data)) {
+                $ingredientIds = $data['ingredient_ids'];
+                $previous = $item->ingredients()->pluck('ingredients.id');
+                $ingredients = Ingredient::withTrashed()->whereIn('id', $ingredientIds)->lockForUpdate()->get();
+                if ($ingredients->count() !== count($ingredientIds) || $ingredients->contains(fn ($i) => ($i->restaurant_id !== null && $i->restaurant_id !== $category->menu->restaurant_id) || ((! $i->is_active || $i->trashed()) && ! $previous->contains($i->id)))) {
+                    throw ValidationException::withMessages(['ingredient_ids' => __('Choose available ingredients for this restaurant.')]);
+                }
+                $item->ingredients()->sync(collect($ingredientIds)->mapWithKeys(fn ($id, $position) => [$id => ['organization_id' => $organizationId, 'position' => $position]])->all());
+            }
             $item->modifierGroups()->sync(collect($ids)->mapWithKeys(fn ($id) => [$id => ['organization_id' => $organizationId]])->all());
             app(RecordMenuChange::class)->execute($organizationId, $category->menu_id, ['item_id' => $item->public_id]);
             if ($oldMenuId && $oldMenuId !== $category->menu_id) {
                 app(RecordMenuChange::class)->execute($organizationId, $oldMenuId, ['item_id' => $item->public_id, 'removed' => true]);
             }
 
-            return $item->fresh(['variants', 'modifierGroups.options']);
+            return $item->fresh(['variants', 'modifierGroups.options', 'ingredients']);
         });
     }
 }

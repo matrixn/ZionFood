@@ -51,6 +51,7 @@ app/Http/Controllers/Concerns/ChecksTokenAbilities.php
 app/Http/Controllers/Controller.php
 app/Http/Controllers/CuisineController.php
 app/Http/Controllers/DiningController.php
+app/Http/Controllers/IngredientController.php
 app/Http/Controllers/IntegrationController.php
 app/Http/Controllers/LocaleController.php
 app/Http/Controllers/MenuController.php
@@ -84,6 +85,7 @@ app/Models/Cuisine.php
 app/Models/DeliveryZone.php
 app/Models/DiningSession.php
 app/Models/DiningTable.php
+app/Models/Ingredient.php
 app/Models/LocationBusinessHour.php
 app/Models/LocationFulfillmentSetting.php
 app/Models/LocationStaff.php
@@ -147,6 +149,7 @@ config/session.php
 config/zionfood.php
 database/.gitignore
 database/data/cuisines.json
+database/data/ingredients.json
 database/factories/MenuCategoryFactory.php
 database/factories/MenuFactory.php
 database/factories/MenuItemFactory.php
@@ -167,8 +170,11 @@ database/migrations/2026_10_26_000300_add_reservations_and_table_sessions.php
 database/migrations/2026_10_26_000400_add_delivery_polygons.php
 database/migrations/2026_10_26_000500_add_table_menu_controls.php
 database/migrations/2026_10_26_000600_add_cuisine_catalog.php
+database/migrations/2026_10_26_000700_add_ingredients_and_portions.php
 database/seeders/DatabaseSeeder.php
 database/seeders/DemoSeeder.php
+database/seeders/IngredientSeeder.php
+docs/ADMIN_NAVIGATION.md
 docs/API.md
 docs/ARCHITECTURE.md
 docs/BENCHMARKS.md
@@ -178,6 +184,8 @@ docs/CUISINE_PHOTO_CREDITS.md
 docs/DATABASE_SCHEMA.md
 docs/DEPLOYMENT.md
 docs/IMPLEMENTED_FILES.txt
+docs/INGREDIENTS.md
+docs/INGREDIENT_IMPORT_AUDIT.json
 docs/LANDING_PAGE.md
 docs/MASTER_PROMPT.md
 docs/MVP_SCOPE.md
@@ -243,6 +251,7 @@ resources/css/app.css
 resources/js/app.ts
 resources/js/components/AuthForm.vue
 resources/js/components/maps/DeliveryMap.vue
+resources/js/components/menu/IngredientManager.vue
 resources/js/components/menu/MenuItemEditor.vue
 resources/js/components/menu/ModifierGroupEditor.vue
 resources/js/components/order/KitchenOrderCard.vue
@@ -256,6 +265,7 @@ resources/js/components/restaurant/RestaurantLocationPicker.vue
 resources/js/components/storefront/CartDrawer.vue
 resources/js/components/storefront/CheckoutForm.vue
 resources/js/components/storefront/ProductConfigurator.vue
+resources/js/components/storefront/ProductIngredients.vue
 resources/js/components/ui/LanguageSelector.vue
 resources/js/components/ui/ZFConfirmDialog.vue
 resources/js/components/ui/ZFDataTable.vue
@@ -278,9 +288,12 @@ resources/js/lib/brand.ts
 resources/js/lib/deliveryGeometry.ts
 resources/js/lib/echo.ts
 resources/js/lib/http.ts
+resources/js/lib/ingredients.ts
+resources/js/lib/useSetupEditorGuard.ts
 resources/js/pages/Onboarding.vue
 resources/js/pages/Welcome.vue
 resources/js/pages/admin/Cuisines.vue
+resources/js/pages/admin/Ingredients.vue
 resources/js/pages/admin/Organizations.vue
 resources/js/pages/admin/TestEmail.vue
 resources/js/pages/auth/ForgotPassword.vue
@@ -291,8 +304,10 @@ resources/js/pages/auth/VerifyEmail.vue
 resources/js/pages/invitations/Accept.vue
 resources/js/pages/restaurant/Branding.vue
 resources/js/pages/restaurant/Dashboard.vue
+resources/js/pages/restaurant/Ingredients.vue
 resources/js/pages/restaurant/Integrations.vue
 resources/js/pages/restaurant/Kitchen.vue
+resources/js/pages/restaurant/Locations.vue
 resources/js/pages/restaurant/Menu.vue
 resources/js/pages/restaurant/Orders.vue
 resources/js/pages/restaurant/Reservations.vue
@@ -333,11 +348,13 @@ tests/Feature/DeliveryPolygonsTest.php
 tests/Feature/EmailDeliveryTest.php
 tests/Feature/ExampleTest.php
 tests/Feature/HardeningTest.php
+tests/Feature/IngredientCatalogTest.php
 tests/Feature/MailDiagnosticsTest.php
 tests/Feature/ResendMailTest.php
 tests/Feature/ReservationsDiningTest.php
 tests/Feature/RestaurantGeocodingTest.php
 tests/Feature/RestaurantSetupTest.php
+tests/Feature/SetupWorkspaceTest.php
 tests/Feature/StaffBrandingLocaleTest.php
 tests/Feature/TestEmailPageTest.php
 tests/Feature/WebhooksTest.php
@@ -349,13 +366,16 @@ tests/Unit/ExampleTest.php
 tests/e2e/administration.spec.ts
 tests/e2e/cuisines.spec.ts
 tests/e2e/email-test.spec.ts
+tests/e2e/ingredients.spec.ts
 tests/e2e/landing.spec.ts
 tests/e2e/ordering.spec.ts
 tests/e2e/restaurant-location.spec.ts
 tests/e2e/setup.spec.ts
 tests/e2e/venue-services.spec.ts
+tests/e2e/wizard-workspace.spec.ts
 tests/frontend/cart.test.ts
 tests/frontend/deliveryGeometry.test.ts
+tests/frontend/ingredients.test.ts
 tests/frontend/kitchen.test.ts
 tests/frontend/localization.test.ts
 tests/integration/order-concurrency.php
@@ -364,8 +384,3 @@ tests/load/ordering.js
 tsconfig.json
 vite.config.ts
 vitest.config.ts
-docs/ADMIN_NAVIGATION.md
-resources/js/lib/useSetupEditorGuard.ts
-resources/js/pages/restaurant/Locations.vue
-tests/Feature/SetupWorkspaceTest.php
-tests/e2e/wizard-workspace.spec.ts

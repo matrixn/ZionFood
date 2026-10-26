@@ -8,6 +8,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(IngredientSeeder::class);
         if (app()->environment('local')) {
             $this->call(DemoSeeder::class);
         }

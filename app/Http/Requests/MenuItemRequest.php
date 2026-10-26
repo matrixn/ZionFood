@@ -18,7 +18,7 @@ class MenuItemRequest extends FormRequest
             if (! is_array($payload)) {
                 throw ValidationException::withMessages(['payload' => __('Invalid product payload.')]);
             }
-            $this->merge(array_intersect_key($payload, array_flip(['category_id', 'name', 'description', 'price', 'tax_basis_points', 'is_available', 'variants', 'modifier_group_ids'])));
+            $this->merge(array_intersect_key($payload, array_flip(['category_id', 'name', 'description', 'price', 'tax_basis_points', 'is_available', 'variants', 'modifier_group_ids', 'ingredient_ids', 'portion_size', 'contains_allergens', 'from_frozen'])));
         }
     }
 
@@ -31,6 +31,8 @@ class MenuItemRequest extends FormRequest
     {
         return [
             'category_id' => ['required', 'integer'], 'name' => ['required', 'string', 'max:150'], 'description' => ['nullable', 'string', 'max:2000'],
+            'portion_size' => ['nullable', 'string', 'max:50'], 'contains_allergens' => ['sometimes', 'boolean'], 'from_frozen' => ['sometimes', 'boolean'],
+            'ingredient_ids' => ['sometimes', 'array', 'max:100'], 'ingredient_ids.*' => ['required', 'integer', 'distinct'],
             'price' => ['required', 'integer', 'min:0', 'max:10000000'], 'tax_basis_points' => ['sometimes', 'integer', 'min:0', 'max:10000'],
             'is_available' => ['required', 'boolean'], 'variants' => ['sometimes', 'array', 'max:20'],
             'variants.*.name' => ['required', 'string', 'max:100'], 'variants.*.price' => ['required', 'integer', 'min:0', 'max:10000000'],

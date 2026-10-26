@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ZionFood API",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session."
   },
   "servers": [
@@ -1606,6 +1606,29 @@
             "items": {
               "type": "integer"
             }
+          },
+          "portion_size": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 50,
+            "example": "350 g"
+          },
+          "ingredient_ids": {
+            "type": "array",
+            "maxItems": 100,
+            "uniqueItems": true,
+            "description": "Ordered common or same-restaurant IDs. Omission preserves an existing recipe; hidden/deleted IDs may only be retained.",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "contains_allergens": {
+            "type": "boolean",
+            "description": "Explicit product flag; the public menu also combines ingredient flags."
+          },
+          "from_frozen": {
+            "type": "boolean",
+            "description": "Explicit possible-frozen flag; the public menu also combines ingredient flags."
           }
         }
       },

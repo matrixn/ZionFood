@@ -24,7 +24,12 @@ class MenuItem extends Model
 
     use SoftDeletes;
 
-    protected $casts = ['is_available' => 'boolean'];
+    protected $casts = ['is_available' => 'boolean', 'contains_allergens' => 'boolean', 'from_frozen' => 'boolean'];
+
+    public function ingredients()
+    {
+        return $this->belongsToMany(Ingredient::class, 'menu_item_ingredients', 'item_id', 'ingredient_id')->withTrashed()->withPivot('organization_id', 'position')->orderByPivot('position');
+    }
 
     public function category()
     {

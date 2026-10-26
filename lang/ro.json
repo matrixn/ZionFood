@@ -1,6 +1,6 @@
 {
-    "The menu for this table is closed by the restaurant team.": "Meniul acestei mese a fost închis de personal.",
-    "Table ordering has closed for today. Please contact the restaurant team.": "Comenzile la masă s-au închis pentru astăzi. Te rugăm să contactezi personalul.",
+  "The menu for this table is closed by the restaurant team.": "Meniul acestei mese a fost închis de personal.",
+  "Table ordering has closed for today. Please contact the restaurant team.": "Comenzile la masă s-au închis pentru astăzi. Te rugăm să contactezi personalul.",
   "Welcome back": "Bine ai revenit",
   "Start serving smarter": "Administrează-ți restaurantul mai simplu",
   "Reset your password": "Resetează parola",
@@ -422,5 +422,9 @@
   "Cuisine saved.": "Specificul culinar a fost salvat.",
   "Choose available cuisines from the catalogue.": "Alege opțiuni disponibile din catalogul de specific culinar.",
   "Address search is temporarily unavailable. Try again or place the pin on the map.": "Căutarea adresei este temporar indisponibilă. Încearcă din nou sau așază pinul pe hartă.",
-  "Address search is busy. Wait a few seconds and try again.": "Căutarea adresei este ocupată. Așteaptă câteva secunde și încearcă din nou."
+  "Address search is busy. Wait a few seconds and try again.": "Căutarea adresei este ocupată. Așteaptă câteva secunde și încearcă din nou.",
+  "An ingredient with this name already exists. Choose it from the catalogue.": "Un ingredient cu acest nume există deja. Alege-l din catalog.",
+  "Ingredient saved.": "Ingredientul a fost salvat.",
+  "Ingredient removed. Existing recipes retain their ingredient information.": "Ingredientul a fost eliminat. Rețetele existente își păstrează informațiile despre ingrediente.",
+  "Choose available ingredients for this restaurant.": "Alege ingrediente disponibile pentru acest restaurant."
 }

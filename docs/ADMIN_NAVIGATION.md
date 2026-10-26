@@ -23,3 +23,5 @@ Hours shows schedules and the QR cutoff; Delivery shows polygons/postal prefixes
 The standalone `/app/locations/{public_id}/locations` page and inline `setup/locations` step list only existing locations accessible to the signed-in user. Configure links appear only where that user can manage the organization and lead to setup/basics. This increment adds no location creation, deletion, organization transfer or access grants. Every destination still enforces tenant authorization.
 
 Backend tests cover editor data, standalone compatibility, foreign/staff denials, menu save return/persistence, unsupported setup writes and scoped location lists. Browser checks cover grouping/order, embedded saves, dirty navigation cancellation, location configuration, mobile and RO/EN. Completed results and limits are in CODEX_PROGRESS.md.
+
+Restaurant management now includes Ingredients. Platform administration also links the shared ingredient catalogue. Menu has an inline Manage ingredients dialog, including within setup/menu, so product and custom ingredient preparation remain inside the guide. Standalone ingredient administration remains available. See INGREDIENTS.md.

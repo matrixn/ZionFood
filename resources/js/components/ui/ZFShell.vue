@@ -36,6 +36,7 @@ const navGroups = computed(() => [
                   title: t('nav_administration'),
                   items: [
                       { name: t('menu_studio'), icon: 'pi-book', path: '/menu' },
+                      { name: t('ingredients_title'), icon: 'pi-list', path: '/ingredients' },
                       { name: t('staff'), icon: 'pi-users', path: '/staff' },
                       { name: t('nav_locations'), icon: 'pi-map-marker', path: '/locations' },
                       { name: t('restaurant_branding'), icon: 'pi-palette', path: '/branding' },
@@ -185,6 +186,9 @@ function switchLocation(id: string) {
                     </section>
                     <template v-if="mode === 'Platform admin'">
                         <Link href="/admin" class="block p-3 text-brand">{{ $t('organizations') }}</Link>
+                        <Link href="/admin/ingredients" class="block p-3 text-brand">{{
+                            $t('ingredients_title')
+                        }}</Link>
                         <Link href="/admin/cuisines" class="block p-3 text-brand">{{ $t('cuisine_admin_title') }}</Link>
                     </template>
                 </nav>
