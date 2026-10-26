@@ -12,12 +12,13 @@ const props = defineProps<{
     token?: string;
     email?: string;
     status?: string;
+    invited?: boolean;
 }>();
 const title = computed(
     () =>
         ({
             login: t('welcome_back'),
-            register: t('start_serving_smarter'),
+            register: props.invited ? t('invitation_register_title') : t('start_serving_smarter'),
             forgot: t('reset_your_password'),
             reset: t('choose_a_new_password'),
         })[props.mode],
@@ -48,7 +49,9 @@ function submit() {
         <p class="muted mb-8 mt-3">
             {{
                 mode === 'register'
-                    ? $t('create_your_account_your_restaurant_comes_next')
+                    ? invited
+                        ? $t('invitation_register_hint')
+                        : $t('create_your_account_your_restaurant_comes_next')
                     : $t('one_workspace_for_every_order')
             }}
         </p>
@@ -57,7 +60,13 @@ function submit() {
             <ZFFormField v-if="mode === 'register'" :label="$t('full_name')" for="name" :error="form.errors.name"
                 ><InputText id="name" v-model="form.name" autocomplete="name" required /></ZFFormField
             ><ZFFormField :label="$t('email')" for="email" :error="form.errors.email"
-                ><InputText id="email" v-model="form.email" type="email" autocomplete="email" required /></ZFFormField
+                ><InputText
+                    id="email"
+                    v-model="form.email"
+                    :readonly="invited"
+                    type="email"
+                    autocomplete="email"
+                    required /></ZFFormField
             ><ZFFormField v-if="mode !== 'forgot'" :label="$t('password')" for="password" :error="form.errors.password"
                 ><InputText
                     id="password"

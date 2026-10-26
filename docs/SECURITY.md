@@ -18,7 +18,7 @@ Webhook delivery accepts only public DNS HTTPS destinations on port 443, with no
 
 No payment-card processing, fiscal certification, automatic billing, MFA, data-retention automation or full audit trail is claimed. Order history is immutable through the model, not against direct SQL writes. Production TLS/DNS, backups/restores, SMTP and sustained capacity require deployment verification. Never commit `.env`, demo credentials, integration tokens or private fixture files.
 
-Staff invitation tokens are hashed, expire after seven days, require verified matching email acceptance and remain in URL fragments/tab storage until the acceptance POST. Queued invitation notifications are encrypted and skip revoked/obsolete invitations. Owner access cannot be altered by this management UI; managers cannot create or edit manager/owner roles. Membership removal immediately denies authoritative API access and revokes organization-scoped tokens. Existing identifier-only WebSocket subscriptions may persist until reconnection; forced socket disconnection is not implemented.
+Staff invitation tokens are hashed and expire after seven days. An email-bound token proves the invited address during prepare/accept; the fragment is removed and an encrypted server-session proof can bind registration to the invitation. An unverified account is verified only when that exact emailed proof is accepted under current role/scope/revocation checks. Queued invitation notifications are encrypted and skip revoked/obsolete invitations. Owner access cannot be altered by this management UI; managers cannot create or edit manager/owner roles. Membership removal immediately denies authoritative API access and revokes organization-scoped tokens. Existing identifier-only WebSocket subscriptions may persist until reconnection; forced socket disconnection is not implemented.
 
 Language preferences accept only ro/en and use an encrypted HttpOnly SameSite cookie plus account storage. API schema keys and enums remain locale independent. API and private-channel authentication use the current XSRF cookie after login/session rotation.
 
@@ -36,3 +36,12 @@ Ingredient scopes are derived server-side from the authenticated location/catego
 ## Storefront experience (0.0.12)
 
 Anonymous checkout reverse lookup accepts only valid coordinates inside an active polygon for an accepting delivery location. Verified custom hosts cannot lookup another location. IP/minute, IP/hour and location/minute limits supplement the shared provider cooldown/cache. No customer names, phone numbers or typed addresses reach the reverse provider. The UI discloses coordinate forwarding. Client-side validation and cart image paths do not influence authoritative checkout pricing, zone or authorization.
+
+
+## Company lookup and friendly public routing (0.0.15)
+
+ANAF lookup is available only to verified owners/managers for their own location. The upstream HTTPS URL is fixed; clients cannot supply provider URLs or credentials. Transport disables redirects/proxies, verifies TLS and bounds connection/read/overall time, JSON depth and response bytes. Only CUI and reference date are sent. Results must match the requested CUI. Logs omit CUI, business contact data and provider content. Five attempts/minute and fifty/hour per user supplement the global provider lock and one-second cooldown; positive/negative results are cached. Private legal details never become public storefront props.
+
+Slug routes resolve only locations belonging to that restaurant; mapped storefront hosts remain pinned to their configured location and cannot enumerate other brands/branches. Unknown/inactive tables and foreign-host access still return 404. Known disabled or paused table menus display no session/customer data and do not grant a token or bypass service/hour/checkout checks. Rotation does not reopen a table or enable its service.
+
+Invitation prepare requires the secret fragment proof before revealing email. Pending session proof is additionally encrypted and revalidated at registration. Email matching, inviter permissions, scope, expiration/revocation and membership creation remain authoritative under database locks. Registration and acceptance run in one transaction. No client invitation flags or supplied verification timestamp can bypass normal registration verification.

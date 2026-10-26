@@ -1,4 +1,4 @@
-# ZionFood 0.0.14
+# ZionFood 0.0.15
 
 The restaurant shell groups operations, administration and connection links, with Setup below the location selector. Setup embeds existing editors and loads selected editor props through WorkspaceController's shared authorization/data builder. Standalone routes and save endpoints remain; saves return to the wizard referer. See ADMIN_NAVIGATION.md for scope, unsaved guards and location selection.
 
@@ -79,3 +79,12 @@ Public-menu HTML supplies restaurant-specific sharing metadata before JavaScript
 
 
 Share metadata uses a dedicated StorefrontShareImage derivative rather than the original logo. The server bounds input bytes/dimensions before GD decoding, flattens transparency on white, contains the entire image in a 600px square and caches by immutable upload path plus layout version. Metadata declares PNG type and exact dimensions in both initial HTML and Vue Head. Branding cleanup runs after commit; image-generation failure cannot prevent menu rendering.
+
+
+## Restaurant entry points and company identity (0.0.15)
+
+Public menus use the restaurant's managed slug. Legacy ULID links resolve the current slug; multiple locations have an explicit chooser and a scoped `/{location-public-id}` suffix. Model-derived storefront paths supply workspace links. Verified custom hosts resolve only their own mapped location. Guest table pages distinguish service-disabled and table-paused states before attempting QR connection; authorization/ordering windows remain in domain actions.
+
+ResolveCompany normalizes ANAF v9 data into private legal fields and never saves on lookup. It prefers registered-office address components, falling back to the fiscal address only when the registered-office address is unavailable. Fiscal postal codes are not substituted into an existing registered-office address. Optional flags retain unknown/null states rather than inventing false values. The UI rejects late results after form edits or CUI changes, and existing revision-protected legal saves persist explicit user review.
+
+Invitation tokens move from fragments to a CSRF-protected prepare exchange and encrypted pending server session. Registration uses this capability to prefill the exact email and atomically create user, proven-email verification and invited membership before login/Registered. Normal owner registration keeps the verification flow. See STAFF_BRANDING_LOCALIZATION_WEBHOOKS.md.

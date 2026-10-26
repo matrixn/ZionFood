@@ -71,6 +71,7 @@ export interface BusinessHour {
     closes_at: string;
 }
 export interface Location {
+    storefront_path: string;
     restaurant_id: number;
     id: number;
     public_id: string;

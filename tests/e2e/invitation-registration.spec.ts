@@ -1,0 +1,31 @@
+import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+
+test('emailed invitation pre-fills registration and opens assigned staff workspace directly', async ({ page }) => {
+    const account = JSON.parse(readFileSync('storage/app/private/browser-invitation.json', 'utf8'));
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.goto(`/invitations/${account.invitation}#token=${account.token}`);
+    await expect(page.getByText(account.invited_email, { exact: true })).toBeVisible();
+    expect(new URL(page.url()).hash).toBe('');
+    await page.getByRole('link', { name: 'Creează cont', exact: true }).click();
+    await expect(page.locator('#email')).toHaveValue(account.invited_email);
+    await expect(page.locator('#email')).toHaveAttribute('readonly', '');
+    await expect(page.getByRole('heading', { name: 'Alătură-te echipei restaurantului', exact: true })).toBeVisible();
+    await page.locator('#name').fill('Invited Staff Browser');
+    await page.locator('#password').fill('safe-staff-password-123!');
+    await page.locator('#password_confirmation').fill('safe-staff-password-123!');
+    await page.getByRole('button', { name: 'Creează cont', exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(`/app/locations/${account.location}$`), { timeout: 20000 });
+    const nav = page.getByRole('navigation', { name: 'Navigare restaurant', exact: true });
+    await expect(nav.getByRole('link', { name: 'Personal', exact: true })).toHaveCount(0);
+    await expect(nav.getByRole('link', { name: 'Ecran bucătărie', exact: true })).toBeVisible();
+    const menu = await page.request.get(`/api/v1/locations/${account.location}/menu`);
+    expect(menu.status()).toBe(200);
+    const staffManagement = await page.request.get(`/app/locations/${account.location}/staff`);
+    expect(staffManagement.status()).toBe(403);
+    await page.reload();
+    await expect(page).toHaveURL(new RegExp(`/app/locations/${account.location}$`));
+    await page.screenshot({ path: 'test-results/invited-staff-workspace.png', fullPage: true });
+    expect(errors).toEqual([]);
+});

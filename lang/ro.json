@@ -427,5 +427,10 @@
   "Ingredient saved.": "Ingredientul a fost salvat.",
   "Ingredient removed. Existing recipes retain their ingredient information.": "Ingredientul a fost eliminat. Rețetele existente își păstrează informațiile despre ingrediente.",
   "Choose available ingredients for this restaurant.": "Alege ingrediente disponibile pentru acest restaurant.",
-  "Discover the menu and choose your favourite dish!": "Descoperă meniul și alege-ți preparatul preferat!"
+  "Discover the menu and choose your favourite dish!": "Descoperă meniul și alege-ți preparatul preferat!",
+  "Enter a Romanian CUI containing 2 to 10 digits, optionally prefixed with RO.": "Introdu un CUI românesc de 2–10 cifre, opțional cu prefixul RO.",
+  "Company lookup is temporarily unavailable. Try again later or complete the fields manually.": "Căutarea firmei este temporar indisponibilă. Încearcă mai târziu sau completează câmpurile manual.",
+  "Company lookup is busy. Wait a few seconds and try again.": "Căutarea firmei este ocupată. Așteaptă câteva secunde și încearcă din nou.",
+  "Table ordering is disabled at this location. Please contact the restaurant team.": "Comenzile la masă sunt dezactivate în această locație. Te rugăm să contactezi personalul restaurantului.",
+  "Use the email address from your restaurant invitation.": "Folosește adresa de email din invitația restaurantului."
 }

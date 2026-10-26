@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Component } from 'vue';
-import { computed, onBeforeUnmount, watch } from 'vue';
+import { computed, onBeforeUnmount, nextTick, ref, watch } from 'vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { tr as t } from '@/i18n';
+import { api } from '@/lib/http';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import ZFPageHeader from '@/components/ui/ZFPageHeader.vue';
 import Button from 'primevue/button';
@@ -188,8 +189,94 @@ const legal = useForm({
     terms_url: '',
     privacy_url: '',
     cancellation_policy: '',
+    company_phone: '',
+    company_postal_code: '',
+    company_city: '',
+    company_county: '',
+    company_country: '',
+    company_caen: '',
+    company_legal_form: '',
+    company_status: '',
+    company_iban: '',
+    company_vat: null as boolean | null,
+    company_inactive: null as boolean | null,
+    company_efactura: null as boolean | null,
     ...props.profile.legal,
 });
+const companyBusy = ref(false);
+const companyMessage = ref('');
+const companyError = ref('');
+let companyGeneration = 0;
+const companyTextFields = [
+    { key: 'company_phone', limit: 40 },
+    { key: 'company_postal_code', limit: 20 },
+    { key: 'company_city', limit: 100 },
+    { key: 'company_county', limit: 100 },
+    { key: 'company_country', limit: 100 },
+    { key: 'company_caen', limit: 20 },
+    { key: 'company_legal_form', limit: 100 },
+    { key: 'company_status', limit: 200 },
+    { key: 'company_iban', limit: 40 },
+] as const;
+const companyFlags = ['company_vat', 'company_inactive', 'company_efactura'] as const;
+const companyFlagOptions = computed(() => [
+    { label: t('company_unknown'), value: null },
+    { label: t('company_yes'), value: true },
+    { label: t('company_no'), value: false },
+]);
+watch(
+    () => legal.tax_id,
+    () => {
+        companyGeneration++;
+        companyBusy.value = false;
+        companyMessage.value = '';
+        companyError.value = '';
+    },
+);
+onBeforeUnmount(() => companyGeneration++);
+async function findCompany() {
+    if (companyBusy.value || !legal.tax_id?.trim()) return;
+    const generation = ++companyGeneration;
+    const snapshot = JSON.stringify(legal.data());
+    companyBusy.value = true;
+    companyMessage.value = '';
+    companyError.value = '';
+    try {
+        const response = await api<{ company: Record<string, string | boolean | null> | null }>(
+            `/app/locations/${props.location.public_id}/setup/company`,
+            'POST',
+            { tax_id: legal.tax_id },
+        );
+        if (generation !== companyGeneration) return;
+        if (snapshot !== JSON.stringify(legal.data())) {
+            companyMessage.value = t('company_edited');
+            return;
+        }
+        if (!response.company) {
+            companyMessage.value = t('company_not_found');
+            return;
+        }
+        const company = response.company;
+        for (const key of [
+            'tax_id',
+            'company_name',
+            'company_address',
+            'registration_number',
+            ...companyTextFields.map((f) => f.key),
+        ] as const) {
+            legal[key] = typeof company[key] === 'string' ? (company[key] as string) : '';
+        }
+        for (const key of companyFlags)
+            legal[key] = typeof company[key] === 'boolean' ? (company[key] as boolean) : null;
+        // CUI normalization triggers the watcher; publish feedback after that update.
+        await nextTick();
+        companyMessage.value = t('company_loaded');
+    } catch (error) {
+        if (generation === companyGeneration) companyError.value = (error as Error).message;
+    } finally {
+        if (generation === companyGeneration) companyBusy.value = false;
+    }
+}
 const publish = useForm({ revision: props.revision, accepting_orders: props.location.accepting_orders });
 interface WizardForm {
     revision: number;
@@ -580,6 +667,27 @@ onBeforeUnmount(
                         </template>
                     </div>
                     <div v-else-if="step === 'legal'" class="grid gap-5 md:grid-cols-2">
+                        <div class="md:col-span-2 rounded-xl border border-violet-100 bg-violet-50/50 p-4">
+                            <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+                                <label class="field min-w-0"
+                                    >{{ $t('setup_tax_id')
+                                    }}<InputText v-model="legal.tax_id" maxlength="40" placeholder="RO12345678"
+                                /></label>
+                                <Button
+                                    type="button"
+                                    :label="$t('company_lookup')"
+                                    icon="pi pi-search"
+                                    :loading="companyBusy"
+                                    :disabled="companyBusy || !legal.tax_id?.trim()"
+                                    @click="findCompany"
+                                />
+                            </div>
+                            <p class="muted mt-3">{{ $t('company_lookup_hint') }}</p>
+                            <p v-if="companyMessage" role="status" class="mt-3 text-sm text-brand">
+                                {{ companyMessage }}
+                            </p>
+                            <p v-if="companyError" role="alert" class="mt-3 text-sm text-red-700">{{ companyError }}</p>
+                        </div>
                         <label class="field"
                             >{{ $t('setup_company_name')
                             }}<InputText v-model="legal.company_name" required maxlength="200"
@@ -587,9 +695,6 @@ onBeforeUnmount(
                         <label class="field"
                             >{{ $t('setup_company_address')
                             }}<InputText v-model="legal.company_address" required maxlength="255"
-                        /></label>
-                        <label class="field"
-                            >{{ $t('setup_tax_id') }}<InputText v-model="legal.tax_id" maxlength="40"
                         /></label>
                         <label class="field"
                             >{{ $t('setup_registration')
@@ -602,6 +707,25 @@ onBeforeUnmount(
                             >{{ $t('setup_privacy_url')
                             }}<InputText v-model="legal.privacy_url" type="url" maxlength="255"
                         /></label>
+                        <details
+                            class="md:col-span-2 rounded-xl border border-slate-200 p-4"
+                            data-testid="company-details"
+                        >
+                            <summary class="cursor-pointer font-medium">{{ $t('company_details') }}</summary>
+                            <div class="mt-4 grid gap-4 md:grid-cols-2">
+                                <label v-for="field in companyTextFields" :key="field.key" class="field"
+                                    >{{ $t(field.key) }}<InputText v-model="legal[field.key]" :maxlength="field.limit"
+                                /></label>
+                                <label v-for="field in companyFlags" :key="field" class="field"
+                                    >{{ $t(field)
+                                    }}<Select
+                                        v-model="legal[field]"
+                                        :options="companyFlagOptions"
+                                        option-label="label"
+                                        option-value="value"
+                                /></label>
+                            </div>
+                        </details>
                         <label class="field md:col-span-2"
                             >{{ $t('setup_cancel_policy')
                             }}<Textarea v-model="legal.cancellation_policy" rows="4" maxlength="3000"
@@ -626,7 +750,7 @@ onBeforeUnmount(
                                 :disabled="!progress.ready_to_publish && !location.accepting_orders"
                         /></label>
                         <a
-                            :href="`/store/${location.public_id}`"
+                            :href="location.storefront_path"
                             target="_blank"
                             rel="noopener"
                             class="inline-block font-semibold text-brand"

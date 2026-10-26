@@ -195,7 +195,7 @@ function switchLocation(id: string) {
                 <div v-if="location" class="mt-12 rounded-xl bg-surface p-4 dark:bg-slate-800">
                     <p class="text-sm font-semibold">{{ $t('your_storefront') }}</p>
                     <p class="muted my-2">{{ $t('make_something_delicious_happen') }}</p>
-                    <a :href="'/store/' + location.public_id" target="_blank" class="text-sm font-medium text-brand"
+                    <a :href="location.storefront_path" target="_blank" class="text-sm font-medium text-brand"
                         >{{ $t('open_menu') }} <i aria-hidden="true" class="pi pi-arrow-up-right ml-1"
                     /></a>
                 </div>

@@ -6,6 +6,7 @@ use App\Domain\Orders\Actions\PlaceOrderAction;
 use App\Domain\Restaurants\StorefrontShareImage;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
+use App\Models\Restaurant;
 use App\Models\RestaurantLocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -13,6 +14,28 @@ use Inertia\Inertia;
 
 class PublicOrderingController extends Controller
 {
+    public function slug(Request $request, string $slug, ?string $location = null)
+    {
+        $restaurant = Restaurant::where('slug', $slug)->firstOrFail();
+        $places = $restaurant->locations()->orderBy('id')->get();
+        if ($mapped = $request->attributes->get('storefront_location')) {
+            $places = $places->where('id', $mapped);
+            abort_if($places->isEmpty(), 404);
+        }
+        if ($location) {
+            $selected = $places->firstWhere('public_id', $location);
+            abort_unless($selected, 404);
+
+            return $this->page($request, $selected);
+        }
+        abort_if($places->isEmpty(), 404);
+        if ($places->count() === 1) {
+            return $this->page($request, $places->first());
+        }
+
+        return Inertia::render('storefront/Locations', ['restaurant' => $restaurant->only('name', 'slug', 'logo_path', 'primary_color'), 'locations' => $places->map(fn ($place) => $place->only('name', 'address', 'storefront_path'))->values()]);
+    }
+
     public function page(Request $request, RestaurantLocation $location)
     {
         $restaurant = $location->restaurant;
@@ -36,7 +59,7 @@ class PublicOrderingController extends Controller
     {
         return ['mapConfig' => config('maps'), 'mapCenter' => isset($location->setup_profile['basics']['latitude'], $location->setup_profile['basics']['longitude']) ? [(float) $location->setup_profile['basics']['latitude'], (float) $location->setup_profile['basics']['longitude']] : [44.4268, 26.1025], 'location' => $location->only('public_id', 'name', 'address', 'currency', 'accepting_orders', 'timezone'), 'restaurant' => $location->restaurant->only('name', 'slug', 'description', 'tagline', 'primary_color', 'logo_path', 'cover_path', 'contact_email', 'contact_phone', 'website'),
             'menus' => Cache::remember('public-menu:'.$location->public_id, 30, fn () => $location->menus()->where('is_active', true)->with(['categories' => fn ($q) => $q->orderBy('sort_order'), 'categories.items' => fn ($q) => $q->where('is_available', true), 'categories.items.ingredients', 'categories.items.variants' => fn ($q) => $q->where('is_available', true), 'categories.items.modifierGroups.options' => fn ($q) => $q->where('is_available', true)])->get()->map(fn ($menu) => ['id' => $menu->id, 'name' => $menu->name, 'categories' => $menu->categories->map(fn ($category) => ['id' => $category->id, 'name' => $category->name, 'items' => $category->items->map(fn ($item) => [...$item->only('id', 'public_id', 'name', 'description', 'price', 'tax_basis_points', 'image_path', 'portion_size', 'contains_allergens', 'from_frozen'), 'contains_allergens' => $item->contains_allergens || $item->ingredients->contains('contains_allergens', true), 'from_frozen' => $item->from_frozen || $item->ingredients->contains('from_frozen', true), 'ingredients' => $item->ingredients->map(fn ($i) => $i->only('id', 'name', 'name_en', 'contains_allergens', 'from_frozen')), 'variants' => $item->variants->map(fn ($v) => $v->only('id', 'name', 'price')), 'modifier_groups' => $item->modifierGroups->map(fn ($g) => [...$g->only('id', 'name', 'min_choices', 'max_choices'), 'options' => $g->options->map(fn ($o) => $o->only('id', 'name', 'price'))])])])])->all()),
-            'fulfillment' => $location->fulfillment, 'zones' => $location->zones()->where('is_active', true)->get(), 'hours' => $location->hours];
+            'fulfillment' => $location->fulfillment ?? ['pickup_enabled' => false, 'delivery_enabled' => false, 'reservations_enabled' => false], 'zones' => $location->zones()->where('is_active', true)->get(), 'hours' => $location->hours];
     }
 
     public function menu(Request $request, string $location)

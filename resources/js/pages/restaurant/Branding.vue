@@ -189,7 +189,7 @@ useSetupEditorGuard(
                         >
                             {{ $t('preview_order_button') }}
                         </div>
-                        <a :href="'/store/' + location.public_id" target="_blank" class="text-sm font-medium text-brand"
+                        <a :href="location.storefront_path" target="_blank" class="text-sm font-medium text-brand"
                             >{{ $t('open_storefront') }} <i aria-hidden="true" class="pi pi-arrow-up-right ml-1"
                         /></a>
                     </div>

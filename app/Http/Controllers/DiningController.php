@@ -8,6 +8,7 @@ use App\Models\DiningTable;
 use App\Models\RestaurantLocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class DiningController extends Controller
@@ -38,7 +39,6 @@ class DiningController extends Controller
         $table = DiningTable::where('public_id', $id)->where('is_active', true)->firstOrFail();
         $mapped = $request->attributes->get('storefront_location');
         abort_if($mapped && (int) $mapped !== $table->location_id, 404);
-        abort_unless($table->location->fulfillment?->dine_in_enabled, 404);
 
         return $table;
     }
@@ -47,6 +47,10 @@ class DiningController extends Controller
     {
         $context = $this->publicTable($request, $table);
 
+        if (! $context->location->fulfillment?->dine_in_enabled || $context->ordering_paused) {
+            return Inertia::render('storefront/TableUnavailable', ['restaurant' => $context->location->restaurant->only('name', 'slug', 'primary_color', 'logo_path'), 'reason' => ! $context->location->fulfillment?->dine_in_enabled ? 'service_disabled' : 'table_closed', 'menuUrl' => $request->attributes->get('storefront_location') ? '/' : $context->location->storefront_path])->toResponse($request)->header('Cache-Control', 'no-store');
+        }
+
         return Inertia::render('storefront/Menu', [...$ordering->data($context->location), 'tableContext' => $context->only('public_id', 'code', 'area', 'ordering_paused')]);
     }
 
@@ -54,6 +58,9 @@ class DiningController extends Controller
     {
         $data = $request->validate(['qr_token' => 'required|string|size:64']);
         $context = $this->publicTable($request, $table);
+        if (! $context->location->fulfillment?->dine_in_enabled) {
+            throw ValidationException::withMessages(['table' => __('Table ordering is disabled at this location. Please contact the restaurant team.')]);
+        }
         $session = $sessions->open($context, null, $data['qr_token']);
 
         return response()->json(['session_id' => $session->public_id, 'token' => Crypt::decryptString($session->token_encrypted), 'expires_at' => $session->expires_at])->header('Cache-Control', 'no-store');

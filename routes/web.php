@@ -25,14 +25,17 @@ Route::get('/', function (Request $request, PublicOrderingController $controller
     return Inertia::render('Welcome');
 });
 Route::get('/store/{location}', function (Request $r, string $location, PublicOrderingController $c) {
-    return $c->page($r, $c->resolve($r, $location));
+    return redirect($c->resolve($r, $location)->storefront_path, 301);
 });
+Route::get('/restaurant/{slug}/{location?}', [PublicOrderingController::class, 'slug']);
 Route::post('/locale', [LocaleController::class, 'update']);
 Route::get('/reserve/{location}', [ReservationController::class, 'form']);
 Route::get('/reservations/{reservation}', fn (string $reservation) => Inertia::render('storefront/Reservation', ['reservationId' => $reservation]));
 Route::get('/table/{table}', [DiningController::class, 'menu']);
 Route::get('/track/{order}', fn (string $order) => Inertia::render('storefront/Tracking', ['orderId' => $order]));
 Route::get('/invitations/{invitation}', [StaffController::class, 'invitation']);
+Route::post('/invitations/{invitation}/prepare', [StaffController::class, 'prepare'])->middleware('throttle:invitation-prepare');
+Route::post('/invitations/{invitation}', [StaffController::class, 'accept'])->middleware(['auth', 'throttle:invitation-prepare']);
 // Temporary public diagnostic page; remove after email delivery is verified.
 Route::get('/test-email', [TestEmailController::class, 'show']);
 Route::post('/test-email', [TestEmailController::class, 'send'])->middleware('throttle:admin-mail-test');
@@ -47,8 +50,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/app/locations/{location}/setup/{step?}', [RestaurantSetupController::class, 'show']);
     Route::post('/app/locations/{location}/setup/geocode', [RestaurantSetupController::class, 'locate'])->middleware('throttle:geocoding');
     Route::post('/app/locations/{location}/setup/reverse-geocode', [RestaurantSetupController::class, 'reverse'])->middleware('throttle:geocoding');
+    Route::post('/app/locations/{location}/setup/company', [RestaurantSetupController::class, 'company'])->middleware('throttle:company-lookup');
     Route::put('/app/locations/{location}/setup/{step}', [RestaurantSetupController::class, 'update']);
-    Route::post('/invitations/{invitation}', [StaffController::class, 'accept']);
     Route::post('/app/locations/{location}/staff/invitations', [StaffController::class, 'invite'])->middleware('throttle:staff-invitations');
     Route::delete('/app/locations/{location}/staff/invitations/{invitation}', [StaffController::class, 'revoke']);
     Route::put('/app/locations/{location}/staff/{membership}', [StaffController::class, 'update']);

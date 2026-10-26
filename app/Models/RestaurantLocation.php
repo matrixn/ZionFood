@@ -25,6 +25,15 @@ class RestaurantLocation extends Model
 
     protected $hidden = ['setup_profile'];
 
+    protected $appends = ['storefront_path'];
+
+    public function getStorefrontPathAttribute(): string
+    {
+        $path = '/restaurant/'.$this->restaurant->slug;
+
+        return $this->restaurant->locations()->where('id', '!=', $this->id)->exists() ? $path.'/'.$this->public_id : $path;
+    }
+
     public function cuisines()
     {
         return $this->belongsToMany(Cuisine::class, 'location_cuisines', 'location_id', 'cuisine_id')->withPivot('organization_id')->withTimestamps();

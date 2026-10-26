@@ -26,7 +26,7 @@ it('renders restaurant sharing metadata in raw html without requiring javascript
     Storage::disk('public')->put('branding/logo-test.png', file_get_contents($logo->getPathname()));
     [, $location] = tenantFixture('share-raw');
     $location->restaurant->update(['name' => 'Queen & Friends', 'description' => 'Mâncare <b>bună</b>', 'logo_path' => 'branding/logo-test.png']);
-    $html = $this->get('/store/'.$location->public_id.'?utm_source=test')->assertOk()->getContent();
+    $html = $this->get($location->storefront_path.'?utm_source=test')->assertOk()->getContent();
     $dom = new DOMDocument;
     @$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
     $xpath = new DOMXPath($dom);
@@ -36,7 +36,7 @@ it('renders restaurant sharing metadata in raw html without requiring javascript
         ->and($xpath->evaluate('string(//meta[@property="og:image"]/@content)'))->toContain('/shares/')
         ->and($xpath->evaluate('string(//meta[@property="og:image:width"]/@content)'))->toBe('600')
         ->and($xpath->evaluate('string(//meta[@property="og:image:height"]/@content)'))->toBe('600')
-        ->and($xpath->evaluate('string(//meta[@property="og:url"]/@content)'))->toBe(url('/store/'.$location->public_id))
+        ->and($xpath->evaluate('string(//meta[@property="og:url"]/@content)'))->toBe(url($location->storefront_path))
         ->and($xpath->evaluate('string(//meta[@property="og:description"]/@content)'))->toBe('Descoperă meniul și alege-ți preparatul preferat!');
 });
 

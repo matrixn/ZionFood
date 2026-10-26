@@ -41,6 +41,8 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('reservation-slots', fn (Request $r) => Limit::perMinute(10)->by($r->ip()));
         RateLimiter::for('checkout-address', fn (Request $r) => [Limit::perMinute(10)->by('checkout-address-ip:'.$r->ip()), Limit::perHour(100)->by('checkout-address-hour:'.$r->ip()), Limit::perMinute(60)->by('checkout-address-location:'.$r->route('location'))]);
         RateLimiter::for('geocoding', fn (Request $r) => Limit::perMinute(10)->by((string) $r->user()?->id));
+        RateLimiter::for('company-lookup', fn (Request $r) => [Limit::perMinute(5)->by('company-user:'.$r->user()?->id), Limit::perHour(50)->by('company-hour:'.$r->user()?->id)]);
+        RateLimiter::for('invitation-prepare', fn (Request $r) => Limit::perMinute(10)->by($r->ip()));
         RateLimiter::for('table-connect', fn (Request $r) => Limit::perMinute(20)->by($r->ip()));
         RateLimiter::for('table-operations', fn (Request $r) => Limit::perMinute(30)->by((string) $r->user()?->id));
         Event::listen(MessageSending::class, [QueueOutgoingEmail::class, 'handle']);

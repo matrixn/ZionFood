@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.15 — 2026-10-27
+
+- Use `/restaurant/{slug}` public menus with legacy-link redirects, scoped location selection for multi-location restaurants and verified-host isolation.
+- Explain disabled/closed QR table ordering with a guest page; give disabled staff controls tooltips and a management link to activate the location service.
+- Put CUI first in legal setup and resolve public ANAF v9 company details into editable private fields, with bounded cached transport, provider-wide rate protection and manual fallback.
+- Link guest registration to a proven emailed staff invitation: prefilled locked email, transactional membership/verification and direct assigned-workspace access. Ordinary registration retains email verification.
+
 ## 0.0.14 — 2026-10-26
 
 - Replace repeated restaurant-title share descriptions with a Romanian menu call to action, with an English translation for English pages; retain branding descriptions in the menu itself.

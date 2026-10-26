@@ -79,7 +79,7 @@ test('staff opens a table and its QR submits a real order with the table identit
     await card.getByRole('button', { name: 'Închide meniul mesei', exact: true }).click();
     await expect(card.getByRole('button', { name: 'Deschide meniul mesei', exact: true })).toBeVisible();
     await tab.goto(qrUrl!);
-    await expect(tab.getByText('Meniul acestei mese a fost închis de personal.', { exact: true })).toBeVisible();
+    await expect(tab.getByText('Personalul a închis meniul de comandă pentru această masă.', { exact: false })).toBeVisible();
     await expect(tab.getByRole('button').filter({ hasText: 'Preparat de test' })).toHaveCount(0);
     await guest.close();
     expect(errors).toEqual([]);

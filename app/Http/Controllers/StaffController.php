@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain\Tenancy\Actions\AcceptStaffInvitation;
 use App\Domain\Tenancy\Actions\InviteStaff;
 use App\Domain\Tenancy\Actions\ManageStaff;
+use App\Domain\Tenancy\PendingStaffInvitation;
 use App\Http\Requests\StaffRequest;
 use App\Models\Organization;
 use App\Models\RestaurantLocation;
@@ -50,21 +51,22 @@ class StaffController extends Controller
 
     public function invitation(Request $request, string $invitation)
     {
-        if (! $request->user()?->hasVerifiedEmail()) {
-            $request->session()->put('url.intended', '/invitations/'.$invitation);
+        return Inertia::render('invitations/Accept', ['invitationId' => $invitation])->toResponse($request)->header('Cache-Control', 'no-store');
+    }
 
-            return Inertia::render('invitations/Accept', ['invitationId' => $invitation, 'invitation' => null]);
-        }
-        $record = StaffInvitation::where('public_id', $invitation)->firstOrFail();
-        abort_unless(strtolower($record->email) === strtolower($request->user()->email), 403);
+    public function prepare(Request $request, string $invitation, PendingStaffInvitation $pending)
+    {
+        $data = $request->validate(['token' => ['required', 'string', 'size:64']]);
+        $record = $pending->prepare($request, $invitation, $data['token']);
 
-        return Inertia::render('invitations/Accept', ['invitationId' => $invitation, 'invitation' => [...$record->only('role', 'expires_at', 'accepted_at', 'revoked_at'), 'organization' => Organization::findOrFail($record->organization_id)->name]]);
+        return response()->json(['email' => $record->email, 'role' => $record->role, 'organization' => Organization::findOrFail($record->organization_id)->name])->header('Cache-Control', 'no-store');
     }
 
     public function accept(Request $request, string $invitation, AcceptStaffInvitation $action)
     {
         $data = $request->validate(['token' => ['required', 'string', 'size:64']]);
         $action->execute($request->user(), $invitation, $data['token']);
+        app(PendingStaffInvitation::class)->clear($request);
 
         return redirect('/app')->with('success', __('Invitation accepted.'));
     }

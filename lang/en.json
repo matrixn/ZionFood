@@ -7,5 +7,10 @@
     "reservation_status_rejected": "Rejected",
     "reservation_status_no_show": "No-show",
     "reservation_status_expired": "Request expired",
-    "Discover the menu and choose your favourite dish!": "Discover the menu and choose your favourite dish!"
+    "Discover the menu and choose your favourite dish!": "Discover the menu and choose your favourite dish!",
+    "Enter a Romanian CUI containing 2 to 10 digits, optionally prefixed with RO.": "Enter a Romanian CUI containing 2 to 10 digits, optionally prefixed with RO.",
+    "Company lookup is temporarily unavailable. Try again later or complete the fields manually.": "Company lookup is temporarily unavailable. Try again later or complete the fields manually.",
+    "Company lookup is busy. Wait a few seconds and try again.": "Company lookup is busy. Wait a few seconds and try again.",
+    "Table ordering is disabled at this location. Please contact the restaurant team.": "Table ordering is disabled at this location. Please contact the restaurant team.",
+    "Use the email address from your restaurant invitation.": "Use the email address from your restaurant invitation."
 }

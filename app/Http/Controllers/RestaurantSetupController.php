@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Companies\ResolveCompany;
 use App\Domain\Restaurants\Actions\SaveRestaurantSetup;
 use App\Domain\Restaurants\LocateRestaurant;
 use App\Domain\Restaurants\SetupProgress;
@@ -55,5 +56,14 @@ class RestaurantSetupController extends Controller
         $data = $request->validate(['latitude' => ['required', 'numeric', 'between:-85,85'], 'longitude' => ['required', 'numeric', 'between:-180,180']]);
 
         return response()->json(['address' => $locator->reverse($data)])->header('Cache-Control', 'no-store');
+    }
+
+    public function company(Request $request, string $location, ResolveCompany $resolver)
+    {
+        $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
+        app(TenantAccess::class)->requireManage($request->user(), $context->organization_id);
+        $data = $request->validate(['tax_id' => ['required', 'string', 'max:40']]);
+
+        return response()->json(['company' => $resolver->execute($data['tax_id']), 'source' => 'ANAF', 'checked_at' => now('Europe/Bucharest')->toIso8601String()])->header('Cache-Control', 'no-store');
     }
 }

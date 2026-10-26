@@ -70,5 +70,5 @@ it('keeps the menu available when a logo is missing or corrupt', function () {
     expect($service->url($restaurant))->toBeNull();
     Storage::disk('public')->put('branding/missing.png', 'invalid image');
     expect($service->url($restaurant))->toBeNull();
-    $this->get('/store/'.$location->public_id)->assertOk()->assertDontSee('property="og:image"', false);
+    $this->get($location->storefront_path)->assertOk()->assertDontSee('property="og:image"', false);
 });

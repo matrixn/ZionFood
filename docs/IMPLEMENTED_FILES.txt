@@ -13,6 +13,7 @@ app/Console/Commands/MailStatus.php
 app/Console/Commands/MakeBrowserFixtures.php
 app/Console/Commands/MakeLoadFixtures.php
 app/Console/Commands/SendTestEmail.php
+app/Domain/Companies/ResolveCompany.php
 app/Domain/Delivery/Polygon.php
 app/Domain/Dining/OrderingWindow.php
 app/Domain/Dining/TableSessions.php
@@ -45,6 +46,7 @@ app/Domain/Tenancy/Actions/AcceptStaffInvitation.php
 app/Domain/Tenancy/Actions/InviteStaff.php
 app/Domain/Tenancy/Actions/ManageStaff.php
 app/Domain/Tenancy/Actions/OnboardOrganization.php
+app/Domain/Tenancy/PendingStaffInvitation.php
 app/Domain/Tenancy/TenantAccess.php
 app/Events/OrderChanged.php
 app/Http/Controllers/BrandingController.php
@@ -321,9 +323,11 @@ resources/js/pages/restaurant/Setup.vue
 resources/js/pages/restaurant/Staff.vue
 resources/js/pages/restaurant/Tables.vue
 resources/js/pages/restaurant/Webhooks.vue
+resources/js/pages/storefront/Locations.vue
 resources/js/pages/storefront/Menu.vue
 resources/js/pages/storefront/Reservation.vue
 resources/js/pages/storefront/Reserve.vue
+resources/js/pages/storefront/TableUnavailable.vue
 resources/js/pages/storefront/Tracking.vue
 resources/js/stores/cart.ts
 resources/js/stores/kitchen.ts
@@ -348,13 +352,16 @@ storage/framework/sessions/.gitignore
 storage/framework/testing/.gitignore
 storage/framework/views/.gitignore
 storage/logs/.gitignore
+tests/Feature/CompanyLookupTest.php
 tests/Feature/CuisinesTest.php
 tests/Feature/DeliveryPolygonsTest.php
 tests/Feature/EmailDeliveryTest.php
 tests/Feature/ExampleTest.php
 tests/Feature/HardeningTest.php
 tests/Feature/IngredientCatalogTest.php
+tests/Feature/InvitationRegistrationTest.php
 tests/Feature/MailDiagnosticsTest.php
+tests/Feature/PublicRestaurantRoutesTest.php
 tests/Feature/ResendMailTest.php
 tests/Feature/ReservationsDiningTest.php
 tests/Feature/RestaurantGeocodingTest.php
@@ -371,9 +378,11 @@ tests/Pest.php
 tests/TestCase.php
 tests/Unit/ExampleTest.php
 tests/e2e/administration.spec.ts
+tests/e2e/company-dining.spec.ts
 tests/e2e/cuisines.spec.ts
 tests/e2e/email-test.spec.ts
 tests/e2e/ingredients.spec.ts
+tests/e2e/invitation-registration.spec.ts
 tests/e2e/landing.spec.ts
 tests/e2e/ordering.spec.ts
 tests/e2e/restaurant-location.spec.ts

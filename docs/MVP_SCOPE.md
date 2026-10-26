@@ -1,4 +1,4 @@
-# Scope at 0.0.14
+# Scope at 0.0.15
 
 ## Implemented
 
@@ -50,3 +50,6 @@ Products support ordered catalogue ingredients, optional portion labels and expl
 ## Storefront experience (0.0.12)
 
 Implemented storefront polish: restaurant-specific share metadata, product/serving/ingredient redesign, compact image cart, persistent modal action footers, and editable delivery-pin reverse lookup. The allergen notice now references Regulation 1169/2011 with an expandable fourteen-group summary. Actual messaging-platform preview/cache behavior and provider geographic coverage remain operational checks.
+
+
+0.0.15 adds slug-based restaurant entry points, branch selection, explicit guest QR unavailability pages, disabled-control guidance, ANAF company autofill in legal setup, and invitation-aware employee registration. Payments remain placeholders. ANAF has no required API credentials, so no platform API-key settings screen is introduced. Provider availability and complete data coverage are not guaranteed.
