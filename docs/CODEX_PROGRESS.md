@@ -1,4 +1,9 @@
-# ZionFood progress — 0.0.1
+# ZionFood progress — 0.0.2
+
+## Version 0.0.2 - October 26
+
+At the user's request, synchronized current application, Composer/npm package, lock-root, API and documentation versions to 0.0.2. All earlier feature commits were already pushed; no history rewrite was performed. Each future commit must increment the patch version. Dependency versions, historical notes and the original master specification remain unchanged. This version-only commit is authorized for push, with no tag or manual deployment requested. Validation checks version consistency, Composer metadata and the Linux Pint CI command; the prior 138-test feature results remain historical rather than being claimed as rerun.
+
 
 ## Current increment - cuisine catalogue and selection (October 26)
 

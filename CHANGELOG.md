@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased — 2026-10-26 (version remains 0.0.1)
+## 0.0.2 — 2026-10-26
+
+- Synchronized application/package/API versions and established a patch increment for each new commit.
 
 - Dedicated cuisine selection step after name/address, with 27 illustrated bilingual categories, multiple selections, saved activation dates and platform catalogue/photo/availability management.
 

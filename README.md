@@ -1,6 +1,6 @@
 # ZionFood
 
-**Version 0.0.1** · Multi-tenant restaurant ordering SaaS.
+**Version 0.0.2** · Multi-tenant restaurant ordering SaaS.
 
 Laravel 12 / PHP 8.4 / MariaDB / Redis / Horizon / Reverb / Sanctum, with Vue 3, Inertia 3, strict TypeScript, PrimeVue 4 and Tailwind 4.
 
