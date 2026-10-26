@@ -24,18 +24,20 @@ Inspection limits: disabled/gated services were not enabled merely to reveal dee
 | --- | --- | --- |
 | Your restaurant | Name and address | Saves restaurant name, location name/address/time zone, city/country/postal code, phone/email/website and an optional map pin found from address search or adjusted on the map |
 | Your restaurant | Cuisine | Selects multiple catalogue photo cards with search, selected list and saved activation dates; see CUISINES.md |
+| Your restaurant | Locations | Lists existing accessible locations and configures manageable locations within the guide; no new location creation |
 | Your restaurant | Areas, tables and seats | Saves either total capacity or a table plan with unique table codes, area/terrace labels and seat counts; computes the total server-side |
 | How you operate | Services | Updates pickup, delivery, QR ordering and reservation flags independently; retains scheduled/catering preparation |
-| How you operate | Hours and delivery | Opens the existing location editor for business hours and drawn polygon or postal-prefix delivery zones/fees/minimums |
-| How you operate | Menu | Opens the existing category, item, variant, modifier and product-tax editor |
-| How you operate | Branding | Opens the existing logo/cover/colors/contact editor |
+| How you operate | Opening hours | Edits and saves hours/QR cutoff inside the guide using the shared settings editor |
+| How you operate | Delivery zones | Edits drawn polygons/postal prefixes, fees and minimums inside the guide |
+| How you operate | Menu | Embeds the existing category, item, variant, modifier and product-tax editor |
+| How you operate | Branding | Embeds the existing logo/cover/colors/contact editor |
 | Team and guests | Reservation preparation | Saves intended confirmation mode, seating duration, slot interval, notice/horizon, party-size bounds, cancellation notice and guest instructions |
-| Team and guests | Staff and access | Opens the existing protected staff/invitation editor; the owner already has access, so invitations are optional |
+| Team and guests | Staff and access | Embeds the protected staff/invitation editor; the owner already has access, so invitations are optional |
 | Team and guests | Company and policies | Stores legal entity/address, tax/registration identifiers, policy URLs and cancellation text as private setup data |
 | Launch | Review and publish | Calculates blockers from current data, previews the public menu and changes the existing order-acceptance flag |
 | Launch | Payments | Informational placeholder; no form, keys, provider connection, payment policy persistence or charges |
 
-All pages have RO/EN copy and the existing persistent language selector. The desktop guide has grouped submenus, current-step highlighting and completion checks. Mobile uses a compact step selector. Saving stays on the current step; navigation has explicit previous/next links. Unsaved changes trigger a leave-page confirmation. Progress is recalculated from saved data; it is not a client-supplied completion flag. Use the existing setup navigation to return after editing menu/staff/hours/branding.
+All pages have RO/EN copy and the existing persistent language selector. The desktop guide has grouped submenus, current-step highlighting and completion checks. Mobile uses a compact step selector. Saving stays on the current step; navigation has explicit previous/next links. Unsaved changes trigger a leave-page confirmation. Progress is recalculated from saved data. Menu, staff, hours, delivery and branding editors remain inside the wizard; accessible locations have a supporting configuration/selection step. See ADMIN_NAVIGATION.md.
 
 ## Data ownership and integrity
 

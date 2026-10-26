@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSetupEditorGuard } from '@/lib/useSetupEditorGuard';
 import { computed, ref, watch, onUnmounted } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
@@ -68,16 +69,21 @@ function save() {
             form.cover = null;
             form.remove_logo = false;
             form.remove_cover = false;
+            form.defaults();
         },
     });
 }
+useSetupEditorGuard(
+    () => !!props.embedded,
+    () => form.isDirty,
+);
 </script>
 <template>
     <RestaurantLayout v-bind="$props"
-        ><Head :title="$t('restaurant_branding')" /><ZFPageHeader
+        ><Head v-if="!embedded" :title="$t('restaurant_branding')" /><ZFPageHeader
             :title="$t('make_it_unmistakably_yours')"
             :description="$t('your_identity_images_and_public_contact_details_across_every_storefront')" />
-        <div class="grid gap-6 xl:grid-cols-[1.2fr_1fr]">
+        <div class="grid min-w-0 gap-6" :class="embedded ? 'grid-cols-1' : 'xl:grid-cols-[1.2fr_1fr]'">
             <form class="grid gap-6" @submit.prevent="save">
                 <section class="panel grid gap-5">
                     <h2 class="text-xl font-semibold">{{ $t('restaurant_identity') }}</h2>

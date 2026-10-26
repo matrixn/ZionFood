@@ -17,24 +17,54 @@ function theme() {
     document.documentElement.classList.toggle('dark', dark.value);
 }
 const base = computed(() => `/app/locations/${props.location?.public_id}`);
-const nav = computed(() => [
-    { name: t('overview'), icon: 'pi-chart-bar', path: '' },
-    { name: t('orders'), icon: 'pi-shopping-bag', path: '/orders' },
-    { name: t('booking_manage'), icon: 'pi-calendar', path: '/reservations' },
-    { name: t('dining_tables'), icon: 'pi-qrcode', path: '/tables' },
+const navGroups = computed(() => [
+    {
+        id: 'operations',
+        title: t('nav_operations'),
+        items: [
+            { name: t('overview'), icon: 'pi-chart-bar', path: '' },
+            { name: t('orders'), icon: 'pi-shopping-bag', path: '/orders' },
+            { name: t('booking_manage'), icon: 'pi-calendar', path: '/reservations' },
+            { name: t('dining_tables'), icon: 'pi-qrcode', path: '/tables' },
+            { name: t('kitchen_display'), icon: 'pi-th-large', path: '/kitchen' },
+        ],
+    },
     ...(props.canManage
         ? [
-              { name: t('setup_title'), icon: 'pi-sliders-h', path: '/setup' },
-              { name: t('menu_studio'), icon: 'pi-book', path: '/menu' },
-              { name: t('settings'), icon: 'pi-cog', path: '/settings' },
-              { name: t('staff'), icon: 'pi-users', path: '/staff' },
-              { name: t('restaurant_branding'), icon: 'pi-palette', path: '/branding' },
-              { name: t('webhooks'), icon: 'pi-send', path: '/webhooks' },
-              { name: t('integrations'), icon: 'pi-link', path: '/integrations' },
+              {
+                  id: 'administration',
+                  title: t('nav_administration'),
+                  items: [
+                      { name: t('menu_studio'), icon: 'pi-book', path: '/menu' },
+                      { name: t('staff'), icon: 'pi-users', path: '/staff' },
+                      { name: t('nav_locations'), icon: 'pi-map-marker', path: '/locations' },
+                      { name: t('restaurant_branding'), icon: 'pi-palette', path: '/branding' },
+                      { name: t('nav_schedule_delivery'), icon: 'pi-cog', path: '/settings' },
+                  ],
+              },
+              {
+                  id: 'connections',
+                  title: t('nav_connections'),
+                  items: [
+                      { name: t('integrations'), icon: 'pi-link', path: '/integrations' },
+                      { name: t('webhooks'), icon: 'pi-send', path: '/webhooks' },
+                  ],
+              },
           ]
         : []),
-    { name: t('kitchen_display'), icon: 'pi-th-large', path: '/kitchen' },
 ]);
+function active(path: string) {
+    const current = page.url.split('?')[0];
+    return path === ''
+        ? current === base.value
+        : current === base.value + path || current.startsWith(base.value + path + '/');
+}
+function switchLocation(id: string) {
+    const suffix = page.url.split('?')[0].startsWith(base.value + '/setup')
+        ? page.url.split('?')[0].slice(base.value.length)
+        : '';
+    router.visit('/app/locations/' + id + suffix);
+}
 </script>
 <template>
     <div class="min-h-screen">
@@ -87,7 +117,7 @@ const nav = computed(() => [
                 v-if="location || mode === 'Platform admin'"
                 :class="[
                     'w-64 shrink-0 border-r border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-900 md:block',
-                    mobile ? 'fixed inset-y-20 z-30 block' : 'hidden',
+                    mobile ? 'fixed bottom-0 top-20 z-30 block overflow-y-auto' : 'hidden',
                 ]"
             >
                 <p class="muted mb-3 text-xs uppercase tracking-widest">{{ $t('workspace') }}</p>
@@ -105,28 +135,58 @@ const nav = computed(() => [
                     :options="locations"
                     option-label="name"
                     option-value="public_id"
-                    class="mb-7 w-full"
+                    class="mb-3 w-full"
                     :aria-label="$t('active_location')"
-                    @update:model-value="router.visit('/app/locations/' + $event)"
+                    @update:model-value="switchLocation"
                 />
-                <nav class="grid gap-2">
+                <nav :aria-label="$t('nav_workspace')" class="space-y-6">
                     <Link
-                        v-for="item in location ? nav : []"
-                        :key="item.path"
-                        :href="base + item.path"
-                        :class="[
-                            'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium',
-                            page.url.split('?')[0] === base + item.path
-                                ? 'bg-violet-50 text-brand dark:bg-violet-950'
-                                : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800',
-                        ]"
-                        ><i aria-hidden="true" :class="['pi', item.icon]" />{{ item.name }}</Link
-                    ><Link v-if="mode === 'Platform admin'" href="/admin" class="p-3 text-brand">{{
-                        $t('organizations')
-                    }}</Link>
-                    <Link v-if="mode === 'Platform admin'" href="/admin/cuisines" class="p-3 text-brand">{{
-                        $t('cuisine_admin_title')
-                    }}</Link>
+                        v-if="location && canManage"
+                        :href="base + '/setup'"
+                        class="flex items-center gap-3 rounded-xl border border-violet-100 px-4 py-3 text-sm font-semibold text-brand dark:border-violet-800"
+                        :class="
+                            active('/setup')
+                                ? 'bg-violet-50 dark:bg-violet-950'
+                                : 'hover:bg-violet-50 dark:hover:bg-violet-950'
+                        "
+                        :aria-current="active('/setup') ? 'page' : undefined"
+                        @click="mobile = false"
+                    >
+                        <i aria-hidden="true" class="pi pi-sliders-h" />{{ $t('setup_title') }}
+                    </Link>
+                    <section
+                        v-for="group in location ? navGroups : []"
+                        :key="group.id"
+                        :aria-labelledby="'nav-' + group.id"
+                    >
+                        <h2
+                            :id="'nav-' + group.id"
+                            class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400"
+                        >
+                            {{ group.title }}
+                        </h2>
+                        <div class="grid gap-1">
+                            <Link
+                                v-for="item in group.items"
+                                :key="item.path"
+                                :href="base + item.path"
+                                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                                :class="
+                                    active(item.path)
+                                        ? 'bg-violet-50 text-brand dark:bg-violet-950'
+                                        : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                "
+                                :aria-current="active(item.path) ? 'page' : undefined"
+                                @click="mobile = false"
+                            >
+                                <i aria-hidden="true" :class="['pi', item.icon]" />{{ item.name }}
+                            </Link>
+                        </div>
+                    </section>
+                    <template v-if="mode === 'Platform admin'">
+                        <Link href="/admin" class="block p-3 text-brand">{{ $t('organizations') }}</Link>
+                        <Link href="/admin/cuisines" class="block p-3 text-brand">{{ $t('cuisine_admin_title') }}</Link>
+                    </template>
                 </nav>
                 <div v-if="location" class="mt-12 rounded-xl bg-surface p-4 dark:bg-slate-800">
                     <p class="text-sm font-semibold">{{ $t('your_storefront') }}</p>

@@ -48,12 +48,20 @@ class WorkspaceController extends Controller
 
     public function show(Request $request, string $location, string $section = 'dashboard')
     {
+        return Inertia::render('restaurant/'.ucfirst($section), $this->workspaceProps($request, $location, $section));
+    }
+
+    public function workspaceProps(Request $request, string $location, string $section): array
+    {
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
         app(TenantAccess::class)->requireOperate($request->user(), $context);
-        abort_unless(in_array($section, ['dashboard', 'orders', 'menu', 'settings', 'kitchen', 'integrations', 'staff', 'branding', 'webhooks']), 404);
+        abort_unless(in_array($section, ['dashboard', 'orders', 'menu', 'settings', 'kitchen', 'integrations', 'staff', 'branding', 'webhooks', 'locations']), 404);
         $manage = app(TenantAccess::class)->canManage($request->user(), $context->organization_id);
-        abort_if(in_array($section, ['menu', 'settings', 'integrations', 'staff', 'branding', 'webhooks']) && ! $manage, 403);
+        abort_if(in_array($section, ['menu', 'settings', 'integrations', 'staff', 'branding', 'webhooks', 'locations']) && ! $manage, 403);
         $props = ['location' => $context->load('restaurant', 'hours', 'fulfillment', 'zones'), 'locations' => $this->locations($request), 'canManage' => $manage];
+        if ($section === 'locations') {
+            $props['manageableLocationIds'] = $props['locations']->filter(fn ($place) => app(TenantAccess::class)->canManage($request->user(), $place->organization_id))->pluck('public_id')->values();
+        }
         if ($section === 'staff') {
             $props['actorRole'] = app(TenantAccess::class)->role($request->user(), $context->organization_id);
             $props['members'] = OrganizationMembership::where('organization_id', $context->organization_id)->with('user:id,name,email')->get()->map(fn ($m) => [...$m->only('id', 'role', 'user_id'), 'user' => $m->user, 'location_ids' => LocationStaff::where('organization_id', $context->organization_id)->where('user_id', $m->user_id)->pluck('location_id')]);
@@ -75,7 +83,7 @@ class WorkspaceController extends Controller
             $props['subscription'] = OrganizationSubscription::with('plan')->where('organization_id', $context->organization_id)->first();
         }
 
-        return Inertia::render('restaurant/'.ucfirst($section), $props);
+        return $props;
     }
 
     public function category(Request $request, string $location)

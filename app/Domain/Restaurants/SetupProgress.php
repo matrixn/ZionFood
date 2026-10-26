@@ -6,7 +6,7 @@ use App\Models\RestaurantLocation;
 
 class SetupProgress
 {
-    public const STEPS = ['basics', 'cuisines', 'seating', 'services', 'hours', 'menu', 'branding', 'reservations', 'staff', 'legal', 'publish', 'payments'];
+    public const STEPS = ['basics', 'cuisines', 'locations', 'seating', 'services', 'hours', 'delivery', 'menu', 'branding', 'reservations', 'staff', 'legal', 'publish', 'payments'];
 
     public function for(RestaurantLocation $location): array
     {
@@ -16,6 +16,8 @@ class SetupProgress
         $servicesReady = (bool) ($location->fulfillment?->pickup_enabled || $location->fulfillment?->dine_in_enabled || ($location->fulfillment?->delivery_enabled && $location->zones()->where('is_active', true)->exists()));
         $ready = [
             'basics' => filled($location->name) && filled($location->address) && filled($basics['city'] ?? null) && filled($basics['phone'] ?? null),
+            'locations' => true,
+            'delivery' => ! $location->fulfillment?->delivery_enabled || $location->zones()->where('is_active', true)->exists(),
             'seating' => isset($profile['seating']),
             'cuisines' => $location->cuisines()->where('is_active', true)->exists(),
             'services' => $servicesReady,

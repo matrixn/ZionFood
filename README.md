@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.8** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.9** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -53,6 +53,8 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [x] `0.0.7`: preluarea adresei din pin și centrarea cu zoom a zonelor de livrare pe restaurant — `95a0843`.
 - [x] `0.0.8`: ghid de utilizare pentru adresa din pin și harta zonelor de livrare, cu istoricul actualizat.
 
+- [x] `0.0.9`: navigare grupată, pregătirea restaurantului prima sub selectorul locației și editori integrați în wizard pentru program, livrare, meniu, identitate, personal și locații.
+
 ## Implementat
 
 ### Prima pagină de prezentare
@@ -71,6 +73,10 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [x] Panou general pentru organizații/trial și acces protejat la Horizon; administratorul platformei este separat de rolurile restaurantului.
 
 ### Setup, branding și specific culinar
+
+- [x] „Pregătește restaurantul” imediat sub selectorul locației; meniul este grupat în Operațiuni, Administrarea restaurantului și Conectări.
+- [x] Configurarea programului, zonelor de livrare, meniului, identității și personalului în wizard, cu salvare pe același pas și avertizare la părăsirea modificărilor nesalvate.
+- [x] Lista locațiilor accesibile, cu acces la configurare pentru owner/manager și păstrarea wizard-ului la schimbarea locației.
 
 - [x] Setup cu submeniuri, progres calculat pe server, protecție pentru salvări concurente și avertizare pentru modificări nesalvate.
 - [x] Nume, adresă, localitate, contacte, website și fus orar; buton de localizare după adresă, feedback pentru date lipsă și hartă cu pin ajustabil.
@@ -169,6 +175,8 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 
 ## Verificări executate
 
+Navigarea și editorii integrați (`0.0.9`) au trecut **152 de teste backend / 948 de aserțiuni pe SQLite**, 8 teste frontend, TypeScript/build, ESLint și Pint pe Linux. Trei scenarii de browser au verificat setup-ul existent, salvările în wizard, avertizarea pentru modificări nesalvate, gruparea meniului, locațiile și toate cele șase ecrane integrate pe mobil, în RO/EN. Capturile desktop/mobil au fost inspectate.
+
 Preluarea adresei din pin și centrarea zonelor de livrare (`0.0.7`) au trecut **148 de teste backend / 784 de aserțiuni pe SQLite**, 8 teste frontend, TypeScript/build, ESLint și Pint pe Linux. Șase scenarii de browser au verificat localizarea, completarea și salvarea adresei/pinului, adresele incomplete și răspunsurile întârziate, zoom-ul și selecția adresei, RO/EN/mobil, setup-ul și desenarea/salvarea unei zone cu checkout pe hartă. A fost verificată și preluarea reală a adresei unui pin public din București.
 
 Localizarea restaurantului (`0.0.5`) a trecut **144 de teste backend / 738 de aserțiuni pe SQLite**, 8 teste frontend, TypeScript/build, ESLint și Pint pe Linux. Trei scenarii Playwright au verificat datele lipsă, harta și salvarea pinului, alegerea adreselor, erorile, RO/EN, mobil și regresia setup-ului. A trecut și regresia de browser pentru desenarea unei zone de livrare și checkout cu pin pe hartă. A fost verificată și o căutare reală pentru o adresă publică din București. Detalii în [RESTAURANT_LOCATION.md](docs/RESTAURANT_LOCATION.md).
@@ -180,6 +188,16 @@ Etapa catalogului culinar a trecut **138 de teste backend / 698 de aserțiuni pe
 Etapele anterioare includ concurență pentru checkout și rezervări, fluxuri QR/livrare în browser și [benchmark-uri locale cu condiții documentate](docs/BENCHMARKS.md). Incidentul Horizon și confirmările Resend observate atunci sunt descrise în [documentația de operare](docs/DEPLOYMENT.md#mail-delivery-diagnostics-and-worker-recovery).
 
 Aceste rezultate sunt istorice, pentru etapele indicate. Modificarea README-ului și a imaginii nu reprezintă o rerulare a tuturor testelor sau o verificare live a producției.
+
+## Navigarea în administrarea restaurantului
+
+**Pregătește restaurantul** este primul acces sub selectorul locației. Pașii pentru program, zone de livrare, meniu, identitate și personal includ editorii funcționali: salvezi și continui în același ghid. „Locații” permite alegerea unei locații accesibile și continuarea configurării în wizard.
+
+- **Operațiuni:** prezentare generală, comenzi, rezervări, mese și QR, ecranul bucătăriei.
+- **Administrarea restaurantului:** meniu, personal, locații, identitate, program și livrare.
+- **Conectări:** integrări și webhooks.
+
+Paginile separate folosesc aceleași date și salvări. Personalul fără drepturi de administrare vede doar accesul operațional permis. Vezi [ADMIN_NAVIGATION.md](docs/ADMIN_NAVIGATION.md).
 
 ## Adresa din pin și harta de livrare
 

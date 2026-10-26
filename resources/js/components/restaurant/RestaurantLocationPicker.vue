@@ -225,7 +225,7 @@ function move(value: DeliveryPoint) {
         </div>
         <p class="text-xs leading-relaxed text-slate-400">
             {{ $t('restaurant_location_provider') }}
-            <a href="https://photon.komoot.io/" target="_blank" rel="noreferrer" class="underline">Photon</a> Â·
+            <a href="https://photon.komoot.io/" target="_blank" rel="noreferrer" class="underline">Photon</a> ·
             <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" class="underline"
                 >© OpenStreetMap contributors</a
             >

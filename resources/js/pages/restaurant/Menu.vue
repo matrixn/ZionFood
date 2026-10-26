@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSetupEditorGuard } from '@/lib/useSetupEditorGuard';
 import { tr as t } from '@/i18n';
 
 import { computed, ref } from 'vue';
@@ -51,10 +52,14 @@ function remove(p: Product) {
         },
     });
 }
+useSetupEditorGuard(
+    () => !!props.embedded,
+    () => editor.value || groupEditor.value || (categoryEditor.value && category.isDirty),
+);
 </script>
 <template>
     <RestaurantLayout v-bind="$props"
-        ><Head :title="$t('menu_studio')" /><ZFPageHeader
+        ><Head v-if="!embedded" :title="$t('menu_studio')" /><ZFPageHeader
             :title="$t('made_to_be_ordered')"
             :description="$t('build_a_menu_that_feels_like_your_restaurant')"
             ><div class="flex gap-2">

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Component } from 'vue';
 import { computed, onBeforeUnmount, watch } from 'vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { tr as t } from '@/i18n';
@@ -10,6 +11,11 @@ import InputNumber from 'primevue/inputnumber';
 import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
 import ToggleSwitch from 'primevue/toggleswitch';
+import SettingsEditor from './Settings.vue';
+import MenuEditor from './Menu.vue';
+import BrandingEditor from './Branding.vue';
+import StaffEditor from './Staff.vue';
+import LocationsEditor from './Locations.vue';
 import CuisinePicker from '@/components/restaurant/CuisinePicker.vue';
 import RestaurantLocationPicker from '@/components/restaurant/RestaurantLocationPicker.vue';
 import type { DeliveryPoint, MapConfig } from '@/lib/deliveryGeometry';
@@ -67,6 +73,7 @@ interface Profile {
 }
 const props = defineProps<
     WorkspaceProps & {
+        editor: Record<string, unknown> | null;
         step: string;
         profile: Profile;
         revision: number;
@@ -86,9 +93,11 @@ const base = computed(() => `/app/locations/${props.location.public_id}`);
 const steps = [
     'basics',
     'cuisines',
+    'locations',
     'seating',
     'services',
     'hours',
+    'delivery',
     'menu',
     'branding',
     'reservations',
@@ -98,8 +107,8 @@ const steps = [
     'payments',
 ];
 const groups = [
-    { title: 'setup_group_place', steps: ['basics', 'cuisines', 'seating'] },
-    { title: 'setup_group_operations', steps: ['services', 'hours', 'menu', 'branding'] },
+    { title: 'setup_group_place', steps: ['basics', 'cuisines', 'locations', 'seating'] },
+    { title: 'setup_group_operations', steps: ['services', 'hours', 'delivery', 'menu', 'branding'] },
     { title: 'setup_group_guests', steps: ['reservations', 'staff', 'legal'] },
     { title: 'setup_group_launch', steps: ['publish', 'payments'] },
 ];
@@ -225,8 +234,15 @@ const totalSeats = computed(() =>
 );
 const next = computed(() => steps[steps.indexOf(props.step) + 1]);
 const previous = computed(() => steps[steps.indexOf(props.step) - 1]);
-const editors: Record<string, string> = { hours: '/settings', menu: '/menu', branding: '/branding', staff: '/staff' };
-const external = computed(() => editors[props.step]);
+const editors: Record<string, Component> = {
+    hours: SettingsEditor,
+    delivery: SettingsEditor,
+    menu: MenuEditor,
+    branding: BrandingEditor,
+    staff: StaffEditor,
+    locations: LocationsEditor,
+};
+const editorComponent = computed(() => editors[props.step]);
 watch(
     () => props.revision,
     (revision) => {
@@ -319,7 +335,9 @@ onBeforeUnmount(
                     <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-brand">
                         {{ $t('setup_your_restaurant') }}
                     </p>
-                    <h2 class="text-2xl font-semibold">{{ $t(`setup_step_${step}`) }}</h2>
+                    <h2 data-testid="setup-step-heading" class="text-2xl font-semibold">
+                        {{ $t(`setup_step_${step}`) }}
+                    </h2>
                     <p class="muted mt-2">{{ $t(`setup_hint_${step}`) }}</p>
                 </div>
                 <form v-if="currentForm" class="setup-form panel space-y-6" @submit.prevent="save">
@@ -464,7 +482,7 @@ onBeforeUnmount(
                         /></label>
                         <Link
                             v-if="services.delivery_enabled"
-                            :href="base + '/settings'"
+                            :href="base + '/setup/delivery'"
                             class="inline-block font-medium text-brand"
                             >{{ $t('setup_delivery_zones') }} →</Link
                         >
@@ -595,7 +613,7 @@ onBeforeUnmount(
                             <ul class="mt-2 list-inside list-disc">
                                 <li v-for="blocker in progress.blockers" :key="blocker">
                                     <Link
-                                        :href="`${base}/setup/${blocker === 'delivery_zones' ? 'services' : blocker}`"
+                                        :href="`${base}/setup/${blocker === 'delivery_zones' ? 'delivery' : blocker}`"
                                         >{{ $t(`setup_step_${blocker}`) }}</Link
                                     >
                                 </li>
@@ -627,15 +645,14 @@ onBeforeUnmount(
                         />
                     </div>
                 </form>
-                <div v-else-if="external" class="panel space-y-5">
-                    <p class="muted">{{ $t('setup_existing_editor') }}</p>
-                    <Link
-                        :href="base + external"
-                        class="inline-block rounded-xl bg-brand px-5 py-3 font-semibold text-white"
-                        >{{ $t('setup_open_editor') }} →</Link
-                    >
-                    <p class="text-sm text-slate-500">{{ $t('setup_return_hint') }}</p>
-                </div>
+                <component
+                    :is="editorComponent"
+                    v-else-if="editorComponent && editor"
+                    :key="`${location.public_id}-${step}`"
+                    v-bind="editor"
+                    :embedded="true"
+                    :editor-section="step === 'hours' || step === 'delivery' ? step : undefined"
+                />
                 <div v-else-if="step === 'payments'" class="panel space-y-4">
                     <i class="pi pi-wallet text-4xl text-brand" aria-hidden="true" />
                     <h3 class="text-xl font-semibold">{{ $t('setup_payments_later') }}</h3>

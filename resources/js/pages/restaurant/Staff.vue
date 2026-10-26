@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSetupEditorGuard } from '@/lib/useSetupEditorGuard';
 import { tr as t } from '@/i18n';
 
 import { ref, computed } from 'vue';
@@ -62,10 +63,14 @@ function revoke(invitation: Invitation) {
         accept: () => router.delete(`${base}/invitations/${invitation.public_id}`, { preserveScroll: true }),
     });
 }
+useSetupEditorGuard(
+    () => !!props.embedded,
+    () => invite.isDirty || (visible.value && edit.isDirty),
+);
 </script>
 <template>
     <RestaurantLayout v-bind="$props"
-        ><Head :title="$t('staff')" /><ZFPageHeader
+        ><Head v-if="!embedded" :title="$t('staff')" /><ZFPageHeader
             :title="$t('your_team_connected')"
             :description="$t('invite_colleagues_and_control_their_access_to_restaurant_locations')" />
         <section class="panel mb-6">
@@ -74,9 +79,16 @@ function revoke(invitation: Invitation) {
                 {{ $t('the_invitation_expires_in_seven_days_the_recipient_must_verify_the_invited_email_address') }}
             </p>
             <form
-                class="grid items-end gap-4 lg:grid-cols-4"
+                class="grid items-end gap-4"
+                :class="embedded ? 'md:grid-cols-2' : 'lg:grid-cols-4'"
                 @submit.prevent="
-                    invite.post(base + '/invitations', { onSuccess: () => invite.reset('email'), preserveScroll: true })
+                    invite.post(base + '/invitations', {
+                        onSuccess: () => {
+                            invite.reset('email');
+                            invite.defaults();
+                        },
+                        preserveScroll: true,
+                    })
                 "
             >
                 <label class="field"

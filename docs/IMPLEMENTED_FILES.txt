@@ -364,3 +364,8 @@ tests/load/ordering.js
 tsconfig.json
 vite.config.ts
 vitest.config.ts
+docs/ADMIN_NAVIGATION.md
+resources/js/lib/useSetupEditorGuard.ts
+resources/js/pages/restaurant/Locations.vue
+tests/Feature/SetupWorkspaceTest.php
+tests/e2e/wizard-workspace.spec.ts

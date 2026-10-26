@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSetupEditorGuard } from '@/lib/useSetupEditorGuard';
 import { api } from '@/lib/http';
 import { tr as t } from '@/i18n';
 
@@ -16,6 +17,7 @@ import Button from 'primevue/button';
 import type { WorkspaceProps } from '@/types';
 const props = defineProps<
     WorkspaceProps & {
+        editorSection?: 'hours' | 'delivery';
         mapCenter: number[] | null;
         mapConfig: MapConfig;
         mapAddress: { address: string; city: string; country: string; postal_code: string };
@@ -32,7 +34,7 @@ onBeforeUnmount(() => {
     disposed = true;
 });
 onMounted(async () => {
-    if (restaurantCenter.value) return;
+    if (props.editorSection === 'hours' || restaurantCenter.value) return;
     if (
         props.mapAddress.address.trim().length < 5 ||
         props.mapAddress.city.trim().length < 2 ||
@@ -92,17 +94,29 @@ const form = useForm({
         priority: z.priority ?? 0,
     })),
 });
+useSetupEditorGuard(
+    () => !!props.embedded,
+    () => form.isDirty,
+);
 </script>
 <template>
     <RestaurantLayout v-bind="$props"
-        ><Head :title="$t('location_settings')" /><ZFPageHeader
+        ><Head v-if="!embedded" :title="$t('location_settings')" /><ZFPageHeader
             :title="$t('set_the_pace')"
             :description="$t('opening_hours_fulfillment_and_your_location_details')" />
-        <form class="grid gap-6" @submit.prevent="form.put('/app/locations/' + location.public_id + '/settings')">
+        <form
+            class="grid gap-6"
+            @submit.prevent="
+                form.put('/app/locations/' + location.public_id + '/settings', {
+                    preserveScroll: true,
+                    onSuccess: () => form.defaults(),
+                })
+            "
+        >
             <div v-if="Object.keys(form.errors).length" role="alert" class="panel text-red-600">
                 <p v-for="(message, key) in form.errors" :key="key">{{ message }}</p>
             </div>
-            <section class="panel grid gap-5">
+            <section v-if="!editorSection" class="panel grid gap-5">
                 <h2 class="text-xl font-semibold">{{ $t('location') }}</h2>
                 <label class="field">{{ $t('name') }}<InputText v-model="form.name" required /></label
                 ><label class="field">{{ $t('address') }}<InputText v-model="form.address" required /></label
@@ -117,7 +131,7 @@ const form = useForm({
                     >
                 </div>
             </section>
-            <section class="panel">
+            <section v-if="!editorSection || editorSection === 'hours'" class="panel">
                 <h2 class="mb-5 text-xl font-semibold">{{ $t('opening_hours') }}</h2>
                 <label class="field mb-4"
                     >{{ $t('dining_cutoff_minutes')
@@ -159,7 +173,7 @@ const form = useForm({
                     "
                 />
             </section>
-            <section class="panel">
+            <section v-if="!editorSection || editorSection === 'delivery'" class="panel">
                 <h2 class="mb-2 text-xl font-semibold">{{ $t('delivery_zones') }}</h2>
                 <p class="muted mb-4">{{ $t('map_delivery_policy') }}</p>
                 <div v-if="form.zones.length" class="mb-6 space-y-4">
@@ -205,7 +219,12 @@ const form = useForm({
                         :center="restaurantCenter ?? undefined"
                     />
                 </div>
-                <div v-for="(z, i) in form.zones" :key="i" class="mb-5 grid items-end gap-3 lg:grid-cols-5">
+                <div
+                    v-for="(z, i) in form.zones"
+                    :key="i"
+                    class="mb-5 grid min-w-0 items-end gap-3"
+                    :class="embedded ? 'md:grid-cols-2' : 'lg:grid-cols-5'"
+                >
                     <label class="field">{{ $t('name') }}<InputText v-model="z.name" required /></label
                     ><label class="field"
                         >{{ $t('postal_prefix') }}<InputText v-model="z.postal_prefix" :required="!z.geometry" /></label

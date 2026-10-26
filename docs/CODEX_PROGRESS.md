@@ -1,4 +1,12 @@
-# ZionFood progress — 0.0.8
+# ZionFood progress — 0.0.9
+
+## Version 0.0.9 - coherent navigation and inline setup editors (October 26)
+
+Setup is the first navigation item below the location selector. Visible labelled groups separate Operations, Restaurant management and Connections. Deep setup routes retain their active state; mobile navigation scrolls and switching locations retains the current wizard step. Staff keep operation-only navigation.
+
+Hours, delivery, menu, branding, staff and existing accessible locations now render real editor components inside the setup shell. Shared WorkspaceController props enforce existing role/location checks for both contexts; existing save routes return to the wizard via the current referer. Settings filters to hours or delivery within the guide and skips unrelated geocoding on the hours step. Embedded layouts suppress duplicate shells/Head, use narrower responsive layouts, and warn before leaving dirty forms. Location cards only offer configuration for manageable locations. No new location creation, tenant switching grants, schema, payments or dependencies were introduced.
+
+Validation passed: 152 SQLite backend tests / 948 assertions, eight Vitest checks, TypeScript/Vite build, ESLint, Composer validation and exact Linux Pint across 186 PHP files. Three Chromium scenarios passed: existing setup regression, integrated editor saves/unsaved cancellation/grouping/locations, and RO/EN/mobile checks across all six embedded screens. Desktop/mobile screenshots were inspected. Initial test assumptions about existing fixture categories, timing and localized labels/status selectors were corrected; mobile QA exposed branding input overflow, fixed by constrained embedded-field widths. Shared editor pages retain standalone compatibility under backend tests. The existing app-chunk warning remains around 530 kB; no new MariaDB, Forge, deployment or performance claim is made. Version metadata, unchanged dependency locks, matching catalogue keys and README links were checked. New backend tests cover editor props, standalone compatibility, foreign/staff denial, menu save return and persistence, unsupported wizard writes and location scoping. Version raised to 0.0.9 for a local commit; no push, tag or deployment was requested.
 
 ## Version 0.0.8 - README usage guide and publication (October 26)
 

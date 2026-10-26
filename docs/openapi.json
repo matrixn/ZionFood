@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ZionFood API",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session."
   },
   "servers": [

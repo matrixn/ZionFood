@@ -107,6 +107,7 @@ export interface Order {
     history: { id: number; to_status: OrderStatus; created_at: string; reason: string | null }[];
 }
 export interface WorkspaceProps {
+    embedded?: boolean;
     location: Location;
     locations: Location[];
     canManage: boolean;

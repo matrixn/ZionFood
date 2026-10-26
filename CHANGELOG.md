@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.9 — 2026-10-26
+
+- Moved restaurant setup directly below the location selector and grouped navigation into Operations, Restaurant management and Connections, with nested active states and scrollable mobile navigation.
+- Embedded hours, delivery zones, menu, branding, staff and accessible locations in the setup guide, reusing protected editor data and save routes. Saves stay on the current step; embedded editors warn on unsaved navigation.
+- Added separate Locations navigation for accessible locations and retained standalone editors; no location-creation, payment or schema changes.
+
 ## 0.0.8 — 2026-10-26
 
 - Added a Romanian README usage guide for address-from-pin, saving the location, delivery-map zoom/recentering, ambiguous addresses and polygon saving.

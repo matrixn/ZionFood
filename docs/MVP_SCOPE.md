@@ -1,4 +1,4 @@
-# Scope at 0.0.8
+# Scope at 0.0.9
 
 ## Implemented
 
@@ -41,3 +41,5 @@
 - Validate capacity on the intended production runtime. Local load results must be read with their precise test conditions; notification p95 and sustained outage recovery are not production guarantees.
 
 No inert P0 buttons are intentionally exposed. Future integrations are described as unavailable rather than presented as functioning services. See CODEX_PROGRESS.md for exact measured verification and outstanding work.
+
+Restaurant navigation groups Operations, Restaurant management and Connections, with Setup first below the location selector. Real hours, delivery, menu, branding and staff editors stay within the wizard; existing accessible locations can be selected/configured there. Location creation/deletion and organization transfer are not part of this change. See ADMIN_NAVIGATION.md.
