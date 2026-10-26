@@ -1,0 +1,10 @@
+{
+    "reservation_status_pending": "Awaiting confirmation",
+    "reservation_status_confirmed": "Confirmed",
+    "reservation_status_seated": "Seated",
+    "reservation_status_completed": "Completed",
+    "reservation_status_cancelled": "Cancelled",
+    "reservation_status_rejected": "Rejected",
+    "reservation_status_no_show": "No-show",
+    "reservation_status_expired": "Request expired"
+}

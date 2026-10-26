@@ -1,24 +1,62 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { computed, onMounted, ref } from 'vue';
+import { Head, Link } from '@inertiajs/vue3';
 import StorefrontLayout from '@/layouts/StorefrontLayout.vue';
 import ProductConfigurator from '@/components/storefront/ProductConfigurator.vue';
 import CartDrawer from '@/components/storefront/CartDrawer.vue';
 import CheckoutForm from '@/components/storefront/CheckoutForm.vue';
 import Button from 'primevue/button';
 import { useCart } from '@/stores/cart';
-import { money } from '@/lib/http';
+import { api, money } from '@/lib/http';
 import type { Menu, Product, Zone, RestaurantBrand } from '@/types';
+import type { MapConfig } from '@/lib/deliveryGeometry';
 const props = defineProps<{
     location: { public_id: string; name: string; address: string; accepting_orders: boolean };
     restaurant: RestaurantBrand;
     menus: Menu[];
-    fulfillment: { pickup_enabled: boolean; delivery_enabled: boolean };
+    fulfillment: { pickup_enabled: boolean; delivery_enabled: boolean; reservations_enabled?: boolean };
     zones: Zone[];
+    mapConfig: MapConfig;
+    mapCenter: number[];
+    tableContext?: { public_id: string; code: string; area: string; ordering_paused: boolean };
 }>();
 const cart = useCart();
-cart.scope(props.location.public_id);
-const categories = computed(() => props.menus.flatMap((m) => m.categories));
+cart.scope(props.location.public_id + (props.tableContext ? `:${props.tableContext.public_id}` : ''));
+const sessionToken = ref<string | null>(null);
+const menuPaused = ref(props.tableContext?.ordering_paused ?? false);
+const tableError = ref('');
+const tableBusy = ref(false);
+async function connectTable() {
+    if (!props.tableContext) return;
+    const id = props.tableContext.public_id;
+    const fragment = new URLSearchParams(window.location.hash.slice(1)).get('token');
+    if (fragment?.length === 64) sessionStorage.setItem(`zf-table-qr-${id}`, fragment);
+    history.replaceState(null, '', window.location.pathname);
+    const proof = sessionStorage.getItem(`zf-table-qr-${id}`);
+    if (!proof) {
+        tableError.value = 'dining_scan_again';
+        return;
+    }
+    tableBusy.value = true;
+    tableError.value = '';
+    try {
+        const result = await api<{ session_id: string; token: string }>(`/api/v1/public/tables/${id}/connect`, 'POST', {
+            qr_token: proof,
+        });
+        sessionToken.value = result.token;
+        menuPaused.value = false;
+        cart.scope(`${props.location.public_id}:${id}:${result.session_id}`);
+    } catch (e) {
+        sessionToken.value = null;
+        tableError.value = (e as Error).message;
+    } finally {
+        tableBusy.value = false;
+    }
+}
+onMounted(() => {
+    if (props.tableContext) void connectTable();
+});
+const categories = computed(() => (menuPaused.value ? [] : props.menus.flatMap((m) => m.categories)));
 const product = ref<Product | null>(null);
 const configure = ref(false);
 const drawer = ref(false);
@@ -30,8 +68,26 @@ const checkout = ref(false);
             ><Button
                 :label="$t('cart_count', { count: cart.lines.length })"
                 icon="pi pi-shopping-bag"
+                :disabled="!!tableContext && !sessionToken"
                 @click="drawer = true"
         /></template>
+        <section v-if="tableContext" class="panel mb-6 space-y-3">
+            <p v-if="menuPaused" class="rounded-xl bg-amber-50 p-4 text-amber-900">{{ $t('dining_menu_paused') }}</p>
+            <h2 class="text-xl font-semibold">
+                {{ $t('dining_table') }} {{ tableContext.code }} · {{ tableContext.area }}
+            </h2>
+            <p v-if="tableError" role="alert" class="text-red-700">
+                {{ tableError === 'dining_scan_again' ? $t(tableError) : tableError }}
+            </p>
+            <p v-if="sessionToken" class="font-medium text-brand">{{ $t('dining_session_ready') }}</p>
+            <Button v-else :label="$t('dining_connect')" :loading="tableBusy" @click="connectTable" />
+        </section>
+        <Link
+            v-if="fulfillment.reservations_enabled && !tableContext"
+            :href="`/reserve/${location.public_id}`"
+            class="mb-6 inline-block rounded-xl bg-brand px-5 py-3 font-semibold text-white"
+            >{{ $t('booking_title') }}</Link
+        >
         <section class="relative mb-8 overflow-hidden rounded-3xl bg-ink p-8 text-white md:p-12">
             <img
                 v-if="restaurant.cover_path"
@@ -92,7 +148,7 @@ const checkout = ref(false);
                 </button>
             </div>
         </section>
-        <p v-if="!categories.length" class="muted py-16 text-center">
+        <p v-if="!categories.length && !menuPaused" class="muted py-16 text-center">
             {{ $t('the_restaurant_is_preparing_its_menu_check_back_soon') }}
         </p>
         <ProductConfigurator v-model:visible="configure" :product="product" /><CartDrawer
@@ -102,5 +158,8 @@ const checkout = ref(false);
             :location-id="location.public_id"
             :fulfillment="fulfillment"
             :zones="zones"
+            :table-session-token="sessionToken"
+            :map-config="mapConfig"
+            :map-center="mapCenter"
     /></StorefrontLayout>
 </template>

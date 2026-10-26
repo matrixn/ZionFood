@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain\Menus\RecordMenuChange;
 use App\Domain\Tenancy\Actions\OnboardOrganization;
 use App\Domain\Tenancy\TenantAccess;
+use App\Http\Requests\LocationSettingsRequest;
 use App\Http\Requests\OnboardingRequest;
 use App\Models\LocationStaff;
 use App\Models\MenuCategory;
@@ -58,6 +59,11 @@ class WorkspaceController extends Controller
             $props['members'] = OrganizationMembership::where('organization_id', $context->organization_id)->with('user:id,name,email')->get()->map(fn ($m) => [...$m->only('id', 'role', 'user_id'), 'user' => $m->user, 'location_ids' => LocationStaff::where('organization_id', $context->organization_id)->where('user_id', $m->user_id)->pluck('location_id')]);
             $props['invitations'] = StaffInvitation::where('organization_id', $context->organization_id)->whereNull('accepted_at')->latest()->get();
         }
+        if ($section === 'settings') {
+            $basics = $context->setup_profile['basics'] ?? [];
+            $props['mapCenter'] = isset($basics['latitude'], $basics['longitude']) ? [(float) $basics['latitude'], (float) $basics['longitude']] : [44.4268, 26.1025];
+            $props['mapConfig'] = config('maps');
+        }
         if ($section === 'menu') {
             $props['menus'] = $context->menus()->with('categories.items.variants', 'categories.items.modifierGroups')->get();
             $props['groups'] = ModifierGroup::with('options')->where('organization_id', $context->organization_id)->get();
@@ -106,21 +112,26 @@ class WorkspaceController extends Controller
         return back()->with('success', __('Modifier group saved.'));
     }
 
-    public function settings(Request $request, string $location)
+    public function settings(LocationSettingsRequest $request, string $location)
     {
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
         app(TenantAccess::class)->requireManage($request->user(), $context->organization_id);
-        $data = $request->validate(['name' => ['required', 'string', 'max:150'], 'address' => ['required', 'string', 'max:255'], 'accepting_orders' => ['required', 'boolean'], 'pickup_enabled' => ['required', 'boolean'], 'delivery_enabled' => ['required', 'boolean'], 'hours' => ['present', 'array', 'max:7'], 'hours.*.weekday' => ['required', 'integer', 'between:1,7', 'distinct'], 'hours.*.opens_at' => ['required', 'date_format:H:i'], 'hours.*.closes_at' => ['required', 'date_format:H:i', 'after:hours.*.opens_at'], 'zones' => ['present', 'array', 'max:30'], 'zones.*.name' => ['required', 'string', 'max:100'], 'zones.*.postal_prefix' => ['required', 'string', 'max:20'], 'zones.*.fee' => ['required', 'integer', 'between:0,1000000'], 'zones.*.minimum_order' => ['required', 'integer', 'between:0,1000000']]);
+        $data = $request->validated();
         DB::transaction(function () use ($context, $data) {
+            RestaurantLocation::whereKey($context->id)->lockForUpdate()->firstOrFail();
             $context->update(array_intersect_key($data, array_flip(['name', 'address', 'accepting_orders'])));
-            $context->fulfillment()->updateOrCreate(['location_id' => $context->id], ['pickup_enabled' => $data['pickup_enabled'], 'delivery_enabled' => $data['delivery_enabled']]);
+            $context->fulfillment()->updateOrCreate(['location_id' => $context->id], array_intersect_key($data, array_flip(['pickup_enabled', 'delivery_enabled', 'dine_in_cutoff_minutes'])));
             $context->hours()->delete();
             foreach ($data['hours'] as $hours) {
                 $context->hours()->create(array_intersect_key($hours, array_flip(['weekday', 'opens_at', 'closes_at'])));
             }
             $context->zones()->delete();
             foreach ($data['zones'] as $zone) {
-                $context->zones()->create(array_intersect_key($zone, array_flip(['name', 'postal_prefix', 'fee', 'minimum_order'])));
+                $zone['postal_prefix'] ??= '';
+                if (isset($zone['geometry'])) {
+                    $zone['geometry'] = array_intersect_key($zone['geometry'], array_flip(['type', 'coordinates']));
+                }
+                $context->zones()->create(array_intersect_key($zone, array_flip(['name', 'postal_prefix', 'fee', 'minimum_order', 'geometry', 'priority'])));
             }
         });
 

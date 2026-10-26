@@ -4,7 +4,7 @@
 
 Laravel 12 / PHP 8.4 / MariaDB / Redis / Horizon / Reverb / Sanctum, with Vue 3, Inertia 3, strict TypeScript, PrimeVue 4 and Tailwind 4.
 
-Implemented flows include onboarding, tenant-aware menus and staff invitations/access, full restaurant branding, public ordering, server pricing, idempotent checkout, secure tracking, realtime kitchen operations, organization-scoped tokens and signed webhooks with delivery history/retries. Romanian is the default interface language; English is available through a flag/name selector on every layout. Billing automation, the WordPress plugin and custom-domain provisioning remain outside this release.
+Implemented flows include onboarding, tenant-aware menus and staff invitations/access, full restaurant branding, capacity/table reservations, guest cancellation, table QR orders, mapped delivery, public ordering, server pricing, idempotent checkout, secure tracking, realtime kitchen operations, organization-scoped tokens and signed webhooks with delivery history/retries. Romanian is the default interface language; English is available through a flag/name selector on every layout. Billing automation, the WordPress plugin and custom-domain provisioning remain outside this release.
 
 Transactional email supports Resend through Laravel's native driver. Configure `MAIL_MAILER=resend`, `RESEND_API_KEY` and a verified `MAIL_FROM_ADDRESS` in Forge; see [Resend setup and test command](docs/DEPLOYMENT.md#resend-transactional-email-forge). Local development uses the log mailer.
 
@@ -33,6 +33,7 @@ Use Linux/WSL for Composer and Horizon. Run Horizon, Reverb and the scheduler as
 - [Security boundaries](docs/SECURITY.md)
 - [Staff, branding, languages and webhook operations](docs/STAFF_BRANDING_LOCALIZATION_WEBHOOKS.md)
 - [Guided restaurant setup and reference analysis](docs/RESTAURANT_SETUP.md)
+- [Reservations, table QR orders and mapped delivery](docs/RESERVATIONS_DINING_DELIVERY.md)
 - [Implemented scope](docs/MVP_SCOPE.md)
 - [Verification and progress](docs/CODEX_PROGRESS.md)
 - [Measured benchmarks](docs/BENCHMARKS.md)

@@ -20,7 +20,7 @@ Machine-readable contract: [openapi.json](openapi.json). API host in production:
 
 Locations/items/orders in URLs use public ULIDs. Category, variant, modifier-option and delivery-zone IDs in payloads are internal numeric references checked against the resolved tenant and menu. Authenticated order results use API Resources with pagination; `?active=1` excludes terminal statuses. Follow `links.next` until null to recover the complete active queue.
 
-Checkout input contains `customer_name`, `customer_phone`, `fulfillment` (`pickup` or `delivery`), optional notes, and items containing `product_id`, `quantity`, optional `variant_id`, optional `modifier_ids`. Delivery also requires `delivery_address`, `postal_code` and `delivery_zone_id`. Prices/totals from clients have no effect. The server returns 201 and `order_id`, `tracking_token`, `replayed:false`; an identical replay returns 200 and `replayed:true`. A changed payload with an existing key returns 409.
+Checkout input contains `customer_name`, `customer_phone`, `fulfillment` (`pickup`, `delivery` or `dine_in`), optional notes, and items containing `product_id`, `quantity`, optional `variant_id`, optional `modifier_ids`. Delivery requires `delivery_address`. With active polygons it also requires `delivery_latitude`/`delivery_longitude`; the server ignores the selected zone and calculates eligibility/fee/minimum by polygon priority. Without polygons, `postal_code` and `delivery_zone_id` are required. Dine-in requires a live `table_session_token` and the enabled service. Prices/totals from clients have no effect. The server returns 201 and `order_id`, `tracking_token`, `replayed:false`; an identical replay returns 200 and `replayed:true`. A changed payload with an existing key returns 409.
 
 Status transitions require the current integer `version`. A successful operation increments it. Invalid transitions return 422; stale versions return 409; forbidden tenant/ability access returns 403. Invalid or mismatched tracking tokens return 404. Public tracking responses use `Cache-Control: no-store`.
 
@@ -35,3 +35,19 @@ Browser routes under /app/locations/{location} include /staff, /branding and /we
 ## Guided setup web routes
 
 Verified browser sessions for tenant owners/managers may GET /app/locations/{public_id}/setup/{step?} and PUT /app/locations/{public_id}/setup/{step}. CSRF applies to writes. A revision is required; stale revision, invalid fields, capacity/party conflicts and publication blockers return normal validation errors. Read-only steps link to existing editors; payments has no supported write. Setup profile/legal data is not added to the public menu/tracking API. See RESTAURANT_SETUP.md for field groups and current limitations.
+
+## Reservation and table endpoints
+
+| Method | Endpoint under /api/v1 | Contract |
+| --- | --- | --- |
+| GET | /public/locations/{location}/reservation-slots | date YYYY-MM-DD, party_size; local ISO slots and timezone; no-store; 10/min/IP |
+| POST | /public/locations/{location}/reservations | Idempotency-Key; guest_name, guest_phone, optional guest_email/notes, party_size, starts_at YYYY-MM-DDTHH:mm in venue timezone; 201/200 reservation_id/token/replayed |
+| GET | /public/reservations/{reservation} | Private 64-character bearer; times/status/version/can_cancel without guest contact data; no-store |
+| POST | /public/reservations/{reservation}/cancel | Same bearer, expected version; 409 stale / 422 cutoff or invalid transition |
+| POST | /public/tables/{table}/connect | qr_token proof, current enabled location/table; returns session_id/token/expires_at; no-store; 20/min/IP |
+
+Booking mutations use 10/hour/IP and 60/min/location limits. Public endpoints enforce verified storefront location mappings. Browser session writes retain CSRF. Tokens for reservations/table sessions are capabilities separate from Sanctum integration tokens. No reservation integration-token management API is introduced.
+
+Verified staff browser routes: GET /app/locations/{location}/reservations (date/status filter, 50/page), POST /app/reservations/{reservation}/status (status/version), GET /app/locations/{location}/tables and POST /app/tables/{table}/{open|close|rotate}. Tenant location staff may operate; only owners/managers receive or rotate permanent QR credentials. Table operations are throttled 30/min/user. Public web pages are /reserve/{location}, /reservations/{reservation} and /table/{table}; private tokens belong in fragments/session storage, never query parameters. See RESERVATIONS_DINING_DELIVERY.md for state transitions and limitations.
+
+Permanent QR menu pause is enforced independently of session expiry; a connect request cannot undo staff closure. Connection and dine-in checkout enforce the location closing cutoff (default 30 minutes). Settings persist dine_in_cutoff_minutes between 0 and 240. Staff open/close preserve the permanent QR; rotate replaces its credential.

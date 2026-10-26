@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\BrandingController;
+use App\Http\Controllers\DiningController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PublicOrderingController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RestaurantSetupController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\TestEmailController;
@@ -24,12 +26,19 @@ Route::get('/store/{location}', function (Request $r, string $location, PublicOr
     return Inertia::render('storefront/Menu', $c->data($c->resolve($r, $location)));
 });
 Route::post('/locale', [LocaleController::class, 'update']);
+Route::get('/reserve/{location}', [ReservationController::class, 'form']);
+Route::get('/reservations/{reservation}', fn (string $reservation) => Inertia::render('storefront/Reservation', ['reservationId' => $reservation]));
+Route::get('/table/{table}', [DiningController::class, 'menu']);
 Route::get('/track/{order}', fn (string $order) => Inertia::render('storefront/Tracking', ['orderId' => $order]));
 Route::get('/invitations/{invitation}', [StaffController::class, 'invitation']);
 // Temporary public diagnostic page; remove after email delivery is verified.
 Route::get('/test-email', [TestEmailController::class, 'show']);
 Route::post('/test-email', [TestEmailController::class, 'send'])->middleware('throttle:admin-mail-test');
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/app/locations/{location}/reservations', [ReservationController::class, 'manage']);
+    Route::get('/app/locations/{location}/tables', [DiningController::class, 'manage']);
+    Route::post('/app/reservations/{reservation}/status', [ReservationController::class, 'transition']);
+    Route::post('/app/tables/{table}/{operation}', [DiningController::class, 'operation'])->middleware('throttle:table-operations');
     Route::get('/app/locations/{location}/setup/{step?}', [RestaurantSetupController::class, 'show']);
     Route::put('/app/locations/{location}/setup/{step}', [RestaurantSetupController::class, 'update']);
     Route::post('/invitations/{invitation}', [StaffController::class, 'accept']);

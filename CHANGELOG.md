@@ -2,6 +2,10 @@
 
 ## Unreleased — 2026-10-26 (version remains 0.0.1)
 
+- Actual per-location reservations with capacity/table allocation, expiring holds, private guest receipts/cancellation and versioned staff management.
+- Permanent table QR with persistent staff menu pause/reopen, optional activation policy and configurable closing cutoff; authoritative dine-in checkout and table snapshots in the kitchen.
+- Leaflet/Geoman delivery polygon editor, customer delivery pins and server-selected zones/fees/minimums; configurable tile provider. Payments remain placeholder.
+
 - Guided RO/EN restaurant setup with private location profiles, table/capacity planning, draft reservation rules, optional catering preparation, live service controls, readiness checks and a payments placeholder.
 - Fixed Horizon worker provisioning for custom Forge environments; added mail-status diagnostics and safe PHP/file lifecycle logs with Resend acceptance confirmation.
 - Temporary public RO/EN /test-email page targeting ADMIN_EMAIL with CSRF protection and three-per-hour test throttling; authentication/admin restrictions removed at the user's explicit request.

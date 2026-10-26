@@ -13,5 +13,5 @@ class DeliveryZone extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = ['is_active' => 'boolean'];
+    protected $casts = ['is_active' => 'boolean', 'geometry' => 'array', 'priority' => 'integer'];
 }

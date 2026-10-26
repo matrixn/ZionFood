@@ -20,6 +20,8 @@ const base = computed(() => `/app/locations/${props.location?.public_id}`);
 const nav = computed(() => [
     { name: t('overview'), icon: 'pi-chart-bar', path: '' },
     { name: t('orders'), icon: 'pi-shopping-bag', path: '/orders' },
+    { name: t('booking_manage'), icon: 'pi-calendar', path: '/reservations' },
+    { name: t('dining_tables'), icon: 'pi-qrcode', path: '/tables' },
     ...(props.canManage
         ? [
               { name: t('setup_title'), icon: 'pi-sliders-h', path: '/setup' },

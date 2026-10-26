@@ -36,6 +36,7 @@ async function transition(status: OrderStatus) {
             ><span :class="age > 20 ? 'text-red-600' : 'muted'">{{ age }} {{ $t('min') }}</span>
         </div>
         <ZFStatusBadge :status="order.status" />
+        <p v-if="order.table_code" class="mt-3 rounded-lg bg-violet-50 p-3 font-semibold text-brand">{{ $t('dining_table') }} {{ order.table_code }} · {{ order.table_area }}</p>
         <p class="my-3 text-sm font-medium">{{ order.customer_name }} · {{ $t('fulfillment_' + order.fulfillment) }}</p>
         <div v-for="item in order.items" :key="item.id" class="my-3 border-t border-slate-100 pt-3">
             <strong class="text-sm">{{ item.quantity }} × {{ item.name }}</strong>

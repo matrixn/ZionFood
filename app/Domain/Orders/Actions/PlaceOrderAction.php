@@ -2,8 +2,11 @@
 
 namespace App\Domain\Orders\Actions;
 
+use App\Domain\Delivery\Polygon;
+use App\Domain\Dining\OrderingWindow;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\CheckoutIdempotencyKey;
+use App\Models\DiningSession;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -49,6 +52,12 @@ class PlaceOrderAction
                 return ['order' => $order, 'tracking_token' => Crypt::decryptString($order->tracking_token_encrypted), 'replayed' => true];
             }
             $this->checkAvailability($location, $data['fulfillment']);
+            $session = null;
+            if ($data['fulfillment'] === 'dine_in') {
+                app(OrderingWindow::class)->ensureOpen($location);
+                $session = DiningSession::with('table')->where('location_id', $location->id)->where('organization_id', $location->organization_id)->where('token_hash', hash('sha256', $data['table_session_token']))->whereNull('closed_at')->where('expires_at', '>', now())->first();
+                $this->require($session && $session->table->is_active && ! $session->table->ordering_paused, __('The table session has ended. Ask the restaurant team for help.'));
+            }
             $lines = [];
             $subtotal = 0;
             $menuIds = $location->menus()->where('is_active', true)->pluck('menus.id');
@@ -86,13 +95,27 @@ class PlaceOrderAction
             }
             $fee = 0;
             if ($data['fulfillment'] === 'delivery') {
-                $zone = $location->zones()->whereKey($data['delivery_zone_id'] ?? 0)->where('is_active', true)->first();
-                $this->require($zone && str_starts_with($data['postal_code'] ?? '', $zone->postal_prefix), __('Address is outside the selected delivery zone.'));
+                $zones = $location->zones()->where('is_active', true)->orderBy('priority')->orderBy('id')->get();
+                $mappedZones = $zones->whereNotNull('geometry');
+                if ($mappedZones->isNotEmpty()) {
+                    $this->require(isset($data['delivery_latitude'], $data['delivery_longitude']), __('Select the delivery location on the map.'));
+                    $zone = $mappedZones->first(fn ($candidate) => Polygon::contains($candidate->geometry, (float) $data['delivery_latitude'], (float) $data['delivery_longitude']));
+                    $this->require((bool) $zone, __('The delivery pin is outside all delivery zones.'));
+                } else {
+                    $zone = $zones->firstWhere('id', $data['delivery_zone_id'] ?? 0);
+                    $this->require($zone && filled($zone->postal_prefix) && str_starts_with($data['postal_code'] ?? '', $zone->postal_prefix), __('Address is outside the selected delivery zone.'));
+                }
                 $this->require($subtotal >= $zone->minimum_order, __('Delivery minimum order has not been reached.'));
                 $fee = $zone->fee;
             }
             $token = Str::random(64);
             $order = Order::create(['organization_id' => $location->organization_id, 'location_id' => $location->id, 'tracking_token_hash' => hash('sha256', $token), 'tracking_token_encrypted' => Crypt::encryptString($token), 'fulfillment' => $data['fulfillment'], 'customer_name' => $data['customer_name'], 'customer_phone' => $data['customer_phone'], 'delivery_address' => $data['delivery_address'] ?? null, 'notes' => $data['notes'] ?? null, 'currency' => $location->currency, 'subtotal' => $subtotal, 'delivery_fee' => $fee, 'total' => $subtotal + $fee]);
+            if ($session) {
+                $order->update(['dining_session_id' => $session->id, 'table_code' => $session->table->code, 'table_area' => $session->table->area]);
+            }
+            if ($data['fulfillment'] === 'delivery' && isset($data['delivery_latitude'], $data['delivery_longitude'])) {
+                $order->update(['delivery_latitude' => $data['delivery_latitude'], 'delivery_longitude' => $data['delivery_longitude']]);
+            }
             foreach ($lines as $line) {
                 $saved = OrderItem::create(['order_id' => $order->id, ...$line['line']]);
                 foreach ($line['modifiers'] as $modifier) {

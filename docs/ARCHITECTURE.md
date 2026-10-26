@@ -18,7 +18,7 @@ Issued Sanctum tokens have an organization ID, selected abilities and a 90-day e
 
 Public menu retrieval caches the menu tree in Redis for 30 seconds by location public ULID. Menu/category/item/group model changes invalidate organization menu caches after commit. Location availability, fulfillment and hours are fetched fresh; checkout always validates current database state. Direct SQL writes bypass model invalidation and may take up to 30 seconds to appear publicly.
 
-Checkout locks the location row, checks idempotency, verifies availability, opening hours and trial entitlement, then validates assigned menus, products, variants, modifier bounds and delivery zone. It ignores client prices and calculates integer totals. Basic delivery uses postal prefix matching; it does not geocode addresses. Same-day opening intervals are supported; overnight intervals are rejected. Tax basis points are recorded as snapshots, without fiscal compliance claims.
+Checkout locks the location row, checks idempotency, verifies availability, opening hours and trial entitlement, then validates assigned menus, products, variants, modifier bounds and delivery zone. It ignores client prices and calculates integer totals. Delivery uses server-selected GeoJSON polygons when configured, otherwise postal prefixes; it does not geocode addresses. Same-day opening intervals are supported; overnight intervals are rejected. Tax basis points are recorded as snapshots, without fiscal compliance claims.
 
 The order, item/modifier snapshots, initial history, idempotency key and outbox message are committed together. Requests with the same key and canonical validated payload return the same order and tracking token; changed payloads return 409. Idempotency records currently have no automatic expiry. Location serialization prioritizes correctness over maximum per-location throughput. Database deadlock retries are enabled.
 
@@ -44,4 +44,12 @@ The October 26 increment adds protected owner/manager/staff administration, expi
 
 ## Guided setup
 
-The owner/manager-only setup controller delegates writes to SaveRestaurantSetup and live readiness calculation to SetupProgress. Location setup JSON is private and revision-checked under a row lock. No arbitrary completion flag or requested payment/provider state is persisted. The UI reuses the existing Vue/PrimeVue editors for operational data. On-site/scheduled/reservation preferences remain preparation only until their dedicated customer/fulfillment engines exist; payments is a placeholder by explicit user choice. New onboarding opens setup; existing restaurants are not forcibly paused or redirected.
+The owner/manager-only setup controller delegates writes to SaveRestaurantSetup and live readiness calculation to SetupProgress. Location setup JSON is private and revision-checked under a row lock. No arbitrary completion flag or requested payment/provider state is persisted. The UI reuses the existing Vue/PrimeVue editors for operational data. Scheduled/catering preferences remain preparation only until their dedicated fulfillment engines exist; payments is a placeholder by explicit user choice. New onboarding opens setup; existing restaurants are not forcibly paused or redirected.
+
+## Reservations and dining
+
+Availability validates local-time rules and allocates either pooled peak concurrent capacity or a single fitting table. Creation, transitions, seating edits and QR operations take the location lock, shared with checkout. Slot previews batch-load a day of bookings/tables and have no capacity guarantee. Booking idempotency, private bearer receipts, hold expiry and optimistic staff versions are independent of order status. Optional encrypted guest notifications reuse the existing after-commit quota-controlled queue.
+
+QR links prove possession through a fragment token exchanged under the rotation lock for an expiring session. Dine-in checkout snapshots the table while preserving server pricing, idempotency, history and outbox. Service flags default off and are location-scoped. Delivery polygons are portable GeoJSON; the browser map previews the PHP zone priority/containment check. See RESERVATIONS_DINING_DELIVERY.md for operational boundaries.
+
+Permanent QR credentials outlive eight-hour sessions. A separate persisted table pause blocks all guest reconnects until staff reopen the menu. OrderingWindow checks same-day venue hours and a configurable per-location closing cutoff on both connection and checkout; staff menu controls do not override time eligibility.

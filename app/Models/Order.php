@@ -26,7 +26,7 @@ class Order extends Model
 
     protected $hidden = ['tracking_token_hash', 'tracking_token_encrypted'];
 
-    protected $casts = ['status' => OrderStatus::class];
+    protected $casts = ['status' => OrderStatus::class, 'delivery_latitude' => 'float', 'delivery_longitude' => 'float'];
 
     public function items()
     {

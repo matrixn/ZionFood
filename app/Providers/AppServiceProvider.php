@@ -37,6 +37,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         RateLimiter::for('admin-mail-test', fn () => Limit::perHour(3)->by('admin-mail-test'));
+        RateLimiter::for('reservations', fn (Request $r) => [Limit::perHour(10)->by($r->ip()), Limit::perMinute(60)->by('reservation-location:'.$r->route('location'))]);
+        RateLimiter::for('reservation-slots', fn (Request $r) => Limit::perMinute(10)->by($r->ip()));
+        RateLimiter::for('table-connect', fn (Request $r) => Limit::perMinute(20)->by($r->ip()));
+        RateLimiter::for('table-operations', fn (Request $r) => Limit::perMinute(30)->by((string) $r->user()?->id));
         Event::listen(MessageSending::class, [QueueOutgoingEmail::class, 'handle']);
         Event::listen(MessageLogged::class, [EmailErrorAlert::class, 'handle']);
         Event::listen(JobQueued::class, function (JobQueued $event) {

@@ -10,8 +10,9 @@ class OrderResource extends JsonResource
     {
         return [
             'public_id' => $this->public_id, 'status' => $this->status->value, 'version' => $this->version,
-            'fulfillment' => $this->fulfillment, 'customer_name' => $this->customer_name,
+            'fulfillment' => $this->fulfillment, 'customer_name' => $this->customer_name, 'table_code' => $this->table_code, 'table_area' => $this->table_area,
             'customer_phone' => $this->customer_phone, 'delivery_address' => $this->delivery_address, 'notes' => $this->notes,
+            'delivery_latitude' => $this->delivery_latitude, 'delivery_longitude' => $this->delivery_longitude,
             'subtotal' => $this->subtotal, 'delivery_fee' => $this->delivery_fee, 'total' => $this->total, 'currency' => $this->currency,
             'created_at' => $this->created_at->toIso8601String(), 'items' => $this->whenLoaded('items'), 'history' => $this->whenLoaded('history'),
             'transitions' => array_map(fn ($s) => $s->value, $this->status->transitions($this->fulfillment)),

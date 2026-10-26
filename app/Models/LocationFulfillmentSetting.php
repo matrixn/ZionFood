@@ -13,5 +13,5 @@ class LocationFulfillmentSetting extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = ['pickup_enabled' => 'boolean', 'delivery_enabled' => 'boolean'];
+    protected $casts = ['pickup_enabled' => 'boolean', 'delivery_enabled' => 'boolean', 'dine_in_enabled' => 'boolean', 'reservations_enabled' => 'boolean', 'dine_in_cutoff_minutes' => 'integer'];
 }

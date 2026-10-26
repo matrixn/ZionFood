@@ -33,13 +33,14 @@ class RestaurantSetupRequest extends FormRequest
                 'tables.*.code' => ['required', 'string', 'max:30', 'distinct:ignore_case'],
                 'tables.*.area' => ['required', 'string', 'max:80'], 'tables.*.seats' => ['required', 'integer', 'between:1,100'],
             ],
-            'services' => ['pickup_enabled' => ['required', 'boolean'], 'delivery_enabled' => ['required', 'boolean'], 'dine_in_planned' => ['required', 'boolean'], 'scheduled_orders_planned' => ['required', 'boolean'], 'catering_planned' => ['sometimes', 'boolean']],
+            'services' => ['pickup_enabled' => ['required', 'boolean'], 'delivery_enabled' => ['required', 'boolean'], 'dine_in_planned' => ['required', 'boolean'], 'scheduled_orders_planned' => ['required', 'boolean'], 'catering_planned' => ['sometimes', 'boolean'], 'dine_in_enabled' => ['sometimes', 'boolean'], 'reservations_enabled' => ['sometimes', 'boolean'], 'qr_requires_staff' => ['sometimes', 'boolean']],
             'reservations' => [
                 'planned' => ['required', 'boolean'], 'confirmation' => ['required', Rule::in(['manual', 'automatic'])],
                 'duration_minutes' => ['required', 'integer', 'between:15,480'], 'interval_minutes' => ['required', 'integer', Rule::in([15, 30, 60])],
                 'minimum_notice_minutes' => ['required', 'integer', 'between:0,10080'], 'advance_days' => ['required', 'integer', 'between:1,365'],
                 'min_party_size' => ['required', 'integer', 'between:1,100'], 'max_party_size' => ['required', 'integer', 'gte:min_party_size', 'max:100'],
                 'cancellation_hours' => ['required', 'integer', 'between:0,720'], 'guest_notes' => ['nullable', 'string', 'max:1500'],
+                'hold_minutes' => ['sometimes', 'integer', 'between:5,120'],
             ],
             'legal' => [
                 'company_name' => ['required', 'string', 'max:200'], 'company_address' => ['required', 'string', 'max:255'],

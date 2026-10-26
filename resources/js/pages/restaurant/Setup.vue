@@ -34,7 +34,12 @@ interface Profile {
         longitude: number | null;
     };
     seating?: { mode: string; capacity: number; tables: Table[] };
-    services?: { dine_in_planned: boolean; scheduled_orders_planned: boolean; catering_planned?: boolean };
+    services?: {
+        dine_in_planned: boolean;
+        scheduled_orders_planned: boolean;
+        catering_planned?: boolean;
+        qr_requires_staff?: boolean;
+    };
     reservations?: {
         planned: boolean;
         confirmation: string;
@@ -129,6 +134,9 @@ const services = useForm({
     dine_in_planned: props.profile.services?.dine_in_planned ?? false,
     scheduled_orders_planned: props.profile.services?.scheduled_orders_planned ?? false,
     catering_planned: props.profile.services?.catering_planned ?? false,
+    dine_in_enabled: props.location.fulfillment.dine_in_enabled ?? false,
+    reservations_enabled: props.location.fulfillment.reservations_enabled ?? false,
+    qr_requires_staff: props.profile.services?.qr_requires_staff ?? false,
 });
 const reservations = useForm({
     revision: props.revision,
@@ -141,6 +149,7 @@ const reservations = useForm({
     min_party_size: 1,
     max_party_size: 8,
     cancellation_hours: 24,
+    hold_minutes: 15,
     guest_notes: '',
     ...props.profile.reservations,
 });
@@ -432,13 +441,26 @@ onBeforeUnmount(
                             class="inline-block font-medium text-brand"
                             >{{ $t('setup_delivery_zones') }} →</Link
                         >
+                        <label class="flex items-center justify-between gap-4"
+                            ><span>{{ $t('booking_enable') }}</span
+                            ><ToggleSwitch v-model="services.reservations_enabled" :aria-label="$t('booking_enable')"
+                        /></label>
+                        <label class="flex items-center justify-between gap-4"
+                            ><span>{{ $t('dining_enable') }}</span
+                            ><ToggleSwitch v-model="services.dine_in_enabled" :aria-label="$t('dining_enable')"
+                        /></label>
+                        <label v-if="services.dine_in_enabled" class="flex items-center justify-between gap-4"
+                            ><span>{{ $t('dining_staff_required') }}</span
+                            ><ToggleSwitch
+                                v-model="services.qr_requires_staff"
+                                :aria-label="$t('dining_staff_required')"
+                        /></label>
+                        <p v-if="services.dine_in_enabled" class="text-sm text-slate-500">
+                            {{ services.qr_requires_staff ? $t('dining_staff_policy') : $t('dining_static_policy') }}
+                        </p>
                         <div class="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
                             {{ $t('setup_planning_only') }}
                         </div>
-                        <label class="flex items-center justify-between gap-4"
-                            ><span>{{ $t('setup_dine_in_plan') }}</span
-                            ><ToggleSwitch v-model="services.dine_in_planned"
-                        /></label>
                         <label class="flex items-center justify-between gap-4"
                             ><span>{{ $t('setup_scheduled_plan') }}</span
                             ><ToggleSwitch v-model="services.scheduled_orders_planned"
@@ -457,6 +479,10 @@ onBeforeUnmount(
                             ><ToggleSwitch v-model="reservations.planned" :aria-label="$t('setup_reservations_plan')"
                         /></label>
                         <template v-if="reservations.planned">
+                            <label class="field"
+                                >{{ $t('booking_hold_minutes')
+                                }}<InputNumber v-model="reservations.hold_minutes" fluid :min="5" :max="120"
+                            /></label>
                             <label class="field"
                                 >{{ $t('setup_confirmation')
                                 }}<Select

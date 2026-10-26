@@ -47,7 +47,7 @@ test('owner completes guided restaurant setup with tables, reservation preferenc
     await page.getByRole('switch', { name: 'Vreau să ofer rezervări', exact: true }).click();
     await page.getByRole('button', { name: 'Salvează pasul', exact: true }).click();
     await expect(page.getByRole('status')).toContainText('Configurarea restaurantului a fost salvată.');
-    await expect(page.getByText(/Nu se confirmă rezervări și nu se încasează bani/)).toBeVisible();
+    await expect(page.getByText(/Confirmările și rezervările sunt funcționale/)).toBeVisible();
     await page.goto(`${base}/payments`);
     await expect(page.getByRole('heading', { name: 'Plăți — în curând', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Salvează pasul', exact: true })).toHaveCount(0);

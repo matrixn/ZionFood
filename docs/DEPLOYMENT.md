@@ -132,3 +132,11 @@ Log stages: `queued` (persisted to queue), `processing`, `quota_deferred` (inclu
 A provider_accepted record confirms submission, not delivery or inbox placement. Use the logged provider_email_id in Resend to inspect Delivered/Bounced/Delayed status. Failures log exception class, safe HTTP status and a bounded configuration hint, without raw exception/provider messages, addresses, email content, tokens, headers or API keys. 401 points to API credentials; 403 to verified sender/domain/key permissions or test-recipient restrictions; 429 to provider throttling. Logs cannot be produced for jobs that no worker ever starts, so use the status command when a queue stays pending.
 
 After updating code/configuration, rebuild `php artisan config:cache` and gracefully restart the supervised Horizon process (`php artisan horizon:terminate`). Do not stop another application's Horizon process or flush shared Redis. No quota reset is needed to recover this incident.
+
+## Reservations, QR and delivery polygons
+
+Apply additive migrations 2026_10_26_000300, 000400 and 000500, rebuild frontend/config and gracefully restart Horizon. Keep the existing minute scheduler running: zionfood:reservations-expire records timed-out pending holds. New reservation/QR flags default off; enable each location after seating/rules review. Keep APP_KEY stable for encrypted booking/QR/session credentials and queued guest notifications. No payments are enabled.
+
+ZF_MAP_TILE_URL and ZF_MAP_ATTRIBUTION configure the browser raster tile provider. Default standard OpenStreetMap tiles are for light best-effort use under their usage policy; choose a suitable production service and preserve attribution. Only public browser tile credentials belong here. No geocoder or paid provider account is provisioned. See RESERVATIONS_DINING_DELIVERY.md for provider alternatives, pin/address semantics and operational limits.
+
+New QR menus use permanent codes with persistent staff pause/reopen. Set the dine-in ordering cutoff in each location Settings page (default 30 minutes). Both new connections and orders from existing sessions stop at closing minus that interval. No payment settings are enabled.

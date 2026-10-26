@@ -6,7 +6,7 @@
 - Onboarding creates organization, owner membership, restaurant, location, hours, fulfillment defaults, main menu, subdomain mapping and 14-day trial.
 - Explicit organization/location authorization, Policies and composite tenant foreign keys.
 - Restaurant dashboard, location switcher, orders/history/detail drawer, categories, item create/edit/soft deletion, image uploads, variants and modifier groups.
-- Same-day opening hours, pickup and postal-prefix delivery zones with fees and minimums.
+- Same-day opening hours, pickup and polygon/postal-prefix delivery zones with authoritative fees and minimums.
 - Public menu, product customization, cart, checkout, server pricing, snapshots, idempotency and secure polling-based tracking.
 - KDS accept/reject/prepare/ready/dispatch/complete/cancel workflow, optimistic concurrency, private realtime invalidations, sound after user activation, polling/reconnect recovery and fullscreen control.
 - Transactional outbox, after-commit dispatch, retries and scheduler reconciliation.
@@ -19,9 +19,11 @@
 - Signed per-location webhooks for order/menu/item events, secure destination resolution/pinning, durable delivery history, retries and reconciliation.
 - MariaDB/Redis local Compose services, three restaurant demos, factories, automated tests, OpenAPI and configurable k6 scenarios.
 
+- Transactional capacity/table reservations, expiring holds, private guest receipts/cancellation, staff booking management, QR sessions/dine-in orders and drawn delivery areas. See RESERVATIONS_DINING_DELIVERY.md.
+
 ## Remaining before production launch
 
-- Implement the customer reservation/capacity-allocation engine, on-site/QR ordering, catering/event fulfillment, scheduled fulfillment, split/overnight/per-service/holiday schedules and payment processing. Setup preferences do not activate these future services.
+- Implement catering/event fulfillment, scheduled fulfillment, split/overnight/per-service/holiday schedules and payment processing. Reservations and QR ordering are implemented and independently enabled per location.
 
 - Complete Forge deployment and external DNS/TLS/mail configuration, including verified live subdomains.
 - Complete multi-restaurant/multi-location creation screens. Onboarding creates one of each; the schema and location switcher support multiple records.

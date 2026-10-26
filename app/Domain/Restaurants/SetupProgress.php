@@ -13,7 +13,7 @@ class SetupProgress
         $profile = $location->setup_profile ?? [];
         $basics = $profile['basics'] ?? [];
         $menuReady = $location->menus()->where('is_active', true)->whereHas('categories.items', fn ($query) => $query->where('is_available', true))->exists();
-        $servicesReady = (bool) ($location->fulfillment?->pickup_enabled || ($location->fulfillment?->delivery_enabled && $location->zones()->where('is_active', true)->exists()));
+        $servicesReady = (bool) ($location->fulfillment?->pickup_enabled || $location->fulfillment?->dine_in_enabled || ($location->fulfillment?->delivery_enabled && $location->zones()->where('is_active', true)->exists()));
         $ready = [
             'basics' => filled($location->name) && filled($location->address) && filled($basics['city'] ?? null) && filled($basics['phone'] ?? null),
             'seating' => isset($profile['seating']),

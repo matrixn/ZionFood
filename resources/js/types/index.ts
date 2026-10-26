@@ -47,6 +47,8 @@ export interface Zone {
     postal_prefix: string;
     fee: number;
     minimum_order: number;
+    geometry?: import('@/lib/deliveryGeometry').DeliveryPolygon | null;
+    priority?: number;
 }
 export interface BusinessHour {
     weekday: number;
@@ -64,7 +66,13 @@ export interface Location {
     accepting_orders: boolean;
     restaurant: RestaurantBrand;
     hours: BusinessHour[];
-    fulfillment: { pickup_enabled: boolean; delivery_enabled: boolean };
+    fulfillment: {
+        pickup_enabled: boolean;
+        delivery_enabled: boolean;
+        dine_in_enabled?: boolean;
+        dine_in_cutoff_minutes?: number;
+        reservations_enabled?: boolean;
+    };
     zones: Zone[];
 }
 export type OrderStatus =
@@ -74,9 +82,13 @@ export interface Order {
     status: OrderStatus;
     version: number;
     fulfillment: string;
+    table_code?: string | null;
+    table_area?: string | null;
     customer_name: string;
     customer_phone: string;
     delivery_address: string | null;
+    delivery_latitude?: number | null;
+    delivery_longitude?: number | null;
     notes: string | null;
     subtotal: number;
     delivery_fee: number;
