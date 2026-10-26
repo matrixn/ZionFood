@@ -37,7 +37,7 @@ it('renders restaurant sharing metadata in raw html without requiring javascript
         ->and($xpath->evaluate('string(//meta[@property="og:image:width"]/@content)'))->toBe('600')
         ->and($xpath->evaluate('string(//meta[@property="og:image:height"]/@content)'))->toBe('600')
         ->and($xpath->evaluate('string(//meta[@property="og:url"]/@content)'))->toBe(url('/store/'.$location->public_id))
-        ->and($xpath->evaluate('string(//meta[@property="og:description"]/@content)'))->toBe('Mâncare bună');
+        ->and($xpath->evaluate('string(//meta[@property="og:description"]/@content)'))->toBe('Descoperă meniul și alege-ți preparatul preferat!');
 });
 
 it('uses the mapped storefront brand at its root and never borrows another restaurant logo', function () {

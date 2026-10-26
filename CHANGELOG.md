@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.14 — 2026-10-26
+
+- Replace repeated restaurant-title share descriptions with a Romanian menu call to action, with an English translation for English pages; retain branding descriptions in the menu itself.
+- Restore compact per-dialog desktop widths while retaining viewport bounds and persistent action footers.
+- Record the user's standing authorization for automatic version increments, validation, commits and pushes.
+
 ## 0.0.13 — 2026-10-26
 
 - Generate a separate cached 600px square PNG for restaurant sharing, containing the full proportionally scaled logo on white with 60px minimum padding. Existing uploads work without re-upload.

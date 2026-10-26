@@ -18,7 +18,7 @@ class PublicOrderingController extends Controller
         $restaurant = $location->restaurant;
         $title = $restaurant->name.' '.(app()->getLocale() === 'en' ? 'Digital Menu' : 'Meniu Digital');
         $image = app(StorefrontShareImage::class)->url($restaurant);
-        $meta = ['title' => $title, 'name' => $restaurant->name, 'description' => mb_substr(strip_tags($restaurant->description ?: $restaurant->tagline ?: $title), 0, 250), 'image' => $image, 'url' => $request->url(), 'locale' => app()->getLocale() === 'en' ? 'en_GB' : 'ro_RO'];
+        $meta = ['title' => $title, 'name' => $restaurant->name, 'description' => __('Discover the menu and choose your favourite dish!'), 'image' => $image, 'url' => $request->url(), 'locale' => app()->getLocale() === 'en' ? 'en_GB' : 'ro_RO'];
 
         return Inertia::render('storefront/Menu', [...$this->data($location), 'shareMeta' => $meta])->withViewData(['storefrontMeta' => $meta]);
     }

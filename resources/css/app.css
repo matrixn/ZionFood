@@ -65,8 +65,18 @@ a {
     display: flex;
     flex-direction: column;
     max-height: calc(100dvh - 2rem) !important;
-    max-width: calc(100vw - 1rem);
+    max-width: min(var(--zf-dialog-width, 32rem), calc(100vw - 1rem));
     overflow: hidden;
+}
+/* Keep size caps alongside the global rule, which overrides layered Tailwind utilities. */
+.p-dialog.max-w-xl {
+    --zf-dialog-width: 36rem;
+}
+.p-dialog.max-w-2xl {
+    --zf-dialog-width: 42rem;
+}
+.p-dialog.max-w-3xl {
+    --zf-dialog-width: 48rem;
 }
 .p-dialog-header,
 .p-dialog-footer,

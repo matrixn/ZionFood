@@ -118,6 +118,7 @@ test('share metadata is in raw HTML and product information switches languages',
     expect(raw).toMatch(/property="og:image" content="http[^"]+\/shares\//);
     await page.goto(url);
     await expect(page.locator('meta[property="og:title"]')).toHaveCount(1);
+    await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', 'Descoperă meniul și alege-ți preparatul preferat!');
     await expect(page.locator('meta[property="og:image"]')).toHaveCount(1);
     await expect(page.locator('meta[property="og:image:width"]')).toHaveCount(1);
     await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '600');
@@ -141,6 +142,7 @@ test('share metadata is in raw HTML and product information switches languages',
     await expect(page.getByTestId('menu-product-card').first()).toContainText('Serving · 350 g');
     await expect(notice).toContainText('Molluscs');
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'Restaurant Test Digital Menu');
+    await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', 'Discover the menu and choose your favourite dish!');
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.screenshot({ animations: 'disabled', path: 'test-results/menu-desktop.png', fullPage: true });
 });
@@ -155,6 +157,9 @@ test('restaurant editors submit through their always visible footer', async ({ p
     await page.goto(`/app/locations/${account.location}/setup/menu`);
     await page.getByRole('button', { name: 'Editează Preparat de test', exact: true }).click();
     const dialog = page.getByRole('dialog');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await expect.poll(async () => Math.round((await dialog.boundingBox())!.width)).toBe(672);
+    await page.setViewportSize({ width: 390, height: 844 });
     const save = dialog.getByRole('button', { name: 'Salvează produsul', exact: true });
     const name = dialog.getByRole('textbox', { name: 'Nume', exact: true });
     await name.fill('');
@@ -172,4 +177,27 @@ test('restaurant editors submit through their always visible footer', async ({ p
     await inViewport(groupSave);
     await groupSave.click();
     await expect(dialog).toHaveCount(0);
+});
+
+test('product and checkout dialogs keep compact centered widths on desktop and fit mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto(`/store/${fixture().location}`);
+    await page.getByTestId('menu-product-card').filter({ hasText: 'Preparat de test' }).click();
+    const dialog = page.locator('.p-dialog[role=dialog]');
+    for (const width of [1920, 1280, 390]) {
+        await page.setViewportSize({ width, height: 1080 });
+        await expect.poll(async () => Math.round((await dialog.boundingBox())!.width)).toBe(Math.min(512, width - 16));
+        const box = (await dialog.boundingBox())!;
+        expect(Math.abs(box.x + box.width / 2 - width / 2)).toBeLessThan(2);
+    }
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.screenshot({ path: 'test-results/product-desktop-compact.png', animations: 'disabled' });
+    await dialog.getByRole('checkbox').first().check();
+    await dialog.getByRole('button', { name: /Adaugă în coș/ }).click();
+    await page.getByRole('button', { name: /Coșul tău/ }).click();
+    await page.getByRole('button', { name: /Continuă la finalizare/ }).click();
+    await expect.poll(async () => Math.round((await dialog.boundingBox())!.width)).toBe(576);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect.poll(async () => Math.round((await dialog.boundingBox())!.width)).toBe(374);
+    await inViewport(dialog.getByRole('button', { name: 'Plasează comanda', exact: true }));
 });

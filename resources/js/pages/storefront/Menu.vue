@@ -74,7 +74,7 @@ const checkout = ref(false);
             <meta
                 head-key="store-description"
                 name="description"
-                :content="shareMeta?.description || restaurant.description || restaurant.name"
+                :content="$t('storefront_share_cta')"
             />
             <meta head-key="og-title" property="og:title" :content="restaurant.name + ' ' + $t('digital_menu')" />
             <meta head-key="og-name" property="og:site_name" :content="restaurant.name" />
@@ -89,7 +89,7 @@ const checkout = ref(false);
                 v-if="shareMeta"
                 head-key="og-description"
                 property="og:description"
-                :content="shareMeta.description"
+                :content="$t('storefront_share_cta')"
             />
             <meta v-if="shareMeta?.image" head-key="og-image" property="og:image" :content="shareMeta.image" />
             <meta v-if="shareMeta?.image" head-key="og-image-width" property="og:image:width" content="600" />
