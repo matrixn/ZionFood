@@ -4,7 +4,9 @@ namespace App\Domain\Mail;
 
 use App\Jobs\DeliverEmail;
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Support\Facades\Bus;
 use InvalidArgumentException;
+use Throwable;
 
 class QueueOutgoingEmail
 {
@@ -24,7 +26,13 @@ class QueueOutgoingEmail
             throw new InvalidArgumentException('Email delivery requires a persistent queue connection.');
         }
 
-        DeliverEmail::dispatch(clone $event->message, $mailer)->onConnection($connection)->afterCommit();
+        $job = (new DeliverEmail(clone $event->message, $mailer))->onConnection($connection)->afterCommit();
+        try {
+            Bus::dispatch($job);
+        } catch (Throwable $error) {
+            EmailDeliveryLog::write('queue_failed', ['delivery_id' => $job->deliveryId, 'mailer' => $mailer, ...EmailDeliveryLog::failure($error)], 'error');
+            throw $error;
+        }
 
         return false;
     }

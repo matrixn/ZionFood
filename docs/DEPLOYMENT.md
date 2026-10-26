@@ -118,3 +118,17 @@ Visit `https://your-application-domain/test-email` and click the send-test butto
 The dummy recipient is deliberately non-operational: replace ADMIN_EMAIL with your own email for a real test. Queue acceptance is shown separately from actual provider/inbox delivery. No account or platform access is needed for this temporary diagnostic route.
 
 The public-page browser test runs as a guest and needs no credentials. The existing optional local admin fixture command remains restricted to APP_ENV=local and is unnecessary for this page.
+
+## Mail delivery diagnostics and worker recovery
+
+Run `php artisan zionfood:mail-status` in the deployed `current` directory. It does not send mail or print secrets. It checks the configured mailer/key, queue counts, shared quota and whether a running Horizon supervisor actually has workers assigned to the email connection/queue. A live Horizon master alone is insufficient. Inspect `php artisan horizon:status` together with this command. Database queues still require a separate worker and are outside Horizon.
+
+The October 26 live incident was caused by APP_ENV=test while Horizon only had production/local plans. The master stayed running with zero supervisors; three email jobs waited without any provider attempts. A site-scoped three-worker recovery plan drained the queue, and the Resend dashboard confirmed all three ZionFood messages as Delivered. The persistent fix adds a conservative wildcard Horizon plan after the named production/local entries, retaining their intended worker counts. Keep shared APP_KEY, Redis prefix/DB and queue configuration consistent between PHP-FPM and workers.
+
+All actual delivery jobs now log lifecycle events to both `storage/logs/mail-delivery-YYYY-MM-DD.log` (14-day rotation) and PHP's error_log handler at info level or higher, independently of LOG_LEVEL. Web enqueue records go to the PHP-FPM error destination; worker records go to the Horizon PHP process error destination, often the Forge process/Supervisor log. They are not necessarily the same file. Configure PHP's error_log destination if a single shared PHP log is required.
+
+Log stages: `queued` (persisted to queue), `processing`, `quota_deferred` (includes wait seconds), `provider_accepted` (includes the Resend email ID when available), `attempt_failed`, `queue_failed` and `permanently_failed`. Search by `delivery_id` to correlate the stages. Existing queued jobs without a correlation ID remain compatible and receive one when processed. A logging failure cannot turn successful provider acceptance into a duplicate retry. Mail diagnostic errors are excluded from the error-alert email listener to avoid feedback loops.
+
+A provider_accepted record confirms submission, not delivery or inbox placement. Use the logged provider_email_id in Resend to inspect Delivered/Bounced/Delayed status. Failures log exception class, safe HTTP status and a bounded configuration hint, without raw exception/provider messages, addresses, email content, tokens, headers or API keys. 401 points to API credentials; 403 to verified sender/domain/key permissions or test-recipient restrictions; 429 to provider throttling. Logs cannot be produced for jobs that no worker ever starts, so use the status command when a queue stays pending.
+
+After updating code/configuration, rebuild `php artisan config:cache` and gracefully restart the supervised Horizon process (`php artisan horizon:terminate`). Do not stop another application's Horizon process or flush shared Redis. No quota reset is needed to recover this incident.

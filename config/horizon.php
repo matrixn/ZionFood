@@ -226,6 +226,13 @@ return [
                 'maxProcesses' => 3,
             ],
         ],
+
+        // Match explicit environments first; custom Forge names still need workers.
+        '*' => [
+            'supervisor-1' => [
+                'maxProcesses' => 3,
+            ],
+        ],
     ],
 
     /*

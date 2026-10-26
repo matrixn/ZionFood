@@ -14,7 +14,7 @@ class EmailErrorAlert
 
     public function handle(MessageLogged $event): void
     {
-        if ($this->reporting || ! config('email_delivery.alerts_enabled') ||
+        if (($event->context['mail_delivery'] ?? false) || $this->reporting || ! config('email_delivery.alerts_enabled') ||
             ! in_array($event->level, ['error', 'critical', 'alert', 'emergency'], true) ||
             ! filter_var(config('email_delivery.admin_email'), FILTER_VALIDATE_EMAIL)) {
             return;

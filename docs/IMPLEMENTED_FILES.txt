@@ -266,3 +266,6 @@ app/Http/Controllers/TestEmailController.php
 resources/js/pages/admin/TestEmail.vue
 tests/Feature/TestEmailPageTest.php
 tests/e2e/email-test.spec.ts
+app/Console/Commands/MailStatus.php
+app/Domain/Mail/EmailDeliveryLog.php
+tests/Feature/MailDiagnosticsTest.php

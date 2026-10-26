@@ -49,6 +49,7 @@ it('defers quota overflow without calling the provider and retains the original 
     $email = (new Email)->from('app@example.test')->to('user@example.test')->subject('Test')->text('original');
     $job = new DeliverEmail($email, 'resend');
     $queueJob = Mockery::mock(Job::class);
+    $queueJob->shouldReceive('attempts')->andReturn(1);
     $queueJob->shouldReceive('release')->once()->with(Mockery::on(fn ($delay) => $delay >= 86400 && $delay <= 86430));
     $job->setJob($queueJob);
     Mail::shouldReceive('mailer')->never();
@@ -134,6 +135,7 @@ it('does not create a recursive error alert when alert delivery fails', function
     $email->getHeaders()->addTextHeader('X-ZionFood-Error-Alert', 'test-id');
     $job = new DeliverEmail($email, 'resend');
     $queueJob = Mockery::mock(Job::class);
+    $queueJob->shouldReceive('attempts')->andReturn(1);
     $queueJob->shouldReceive('release')->once()->with(3600);
     $job->setJob($queueJob);
     Mail::shouldReceive('mailer')->andThrow(new RuntimeException('provider unavailable'));

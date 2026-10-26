@@ -52,6 +52,24 @@ return [
 
     'channels' => [
 
+        'mail_delivery' => [
+            'driver' => 'stack',
+            'channels' => ['mail_delivery_file', 'mail_delivery_php'],
+            'ignore_exceptions' => false,
+        ],
+
+        'mail_delivery_file' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/mail-delivery.log'),
+            'level' => 'info',
+            'days' => 14,
+        ],
+
+        'mail_delivery_php' => [
+            'driver' => 'errorlog',
+            'level' => 'info',
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', env('LOG_STACK', 'single')),

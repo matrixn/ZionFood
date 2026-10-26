@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Domain\Mail\EmailDeliveryLog;
 use App\Domain\Mail\EmailQuota;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
@@ -9,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Symfony\Component\Mailer\Envelope;
 use Symfony\Component\Mime\Email;
 use Throwable;
@@ -23,9 +25,12 @@ class DeliverEmail implements ShouldBeEncrypted, ShouldQueue
 
     public int $expiresAt;
 
+    public ?string $deliveryId = null;
+
     public function __construct(public Email $email, public string $mailer)
     {
         $this->expiresAt = now()->addDays(30)->timestamp;
+        $this->deliveryId = (string) Str::ulid();
     }
 
     public function retryUntil(): \DateTimeInterface
@@ -40,17 +45,28 @@ class DeliverEmail implements ShouldBeEncrypted, ShouldQueue
 
     public function handle(EmailQuota $quota): void
     {
+        $this->deliveryId ??= (string) Str::ulid();
+        $context = ['delivery_id' => $this->deliveryId, 'mailer' => $this->mailer, 'attempt' => $this->job ? $this->attempts() : 1];
         try {
+            EmailDeliveryLog::write('processing', $context);
             $envelope = Envelope::create($this->email);
             $wait = $quota->reserve(count($envelope->getRecipients()));
             if ($wait > 0) {
+                EmailDeliveryLog::write('quota_deferred', [...$context, 'retry_after_seconds' => $wait], 'warning');
                 $this->release($wait + random_int(1, 30));
 
                 return;
             }
             // Bypass MessageSending here: the message is already rendered and queued.
-            Mail::mailer($this->mailer)->getSymfonyTransport()->send($this->email, $envelope);
+            $sent = Mail::mailer($this->mailer)->getSymfonyTransport()->send($this->email, $envelope);
+            if (! $sent) {
+                throw new \RuntimeException('Mail transport did not accept the message.');
+            }
+            $original = $sent->getOriginalMessage();
+            $providerId = $original instanceof Email ? $original->getHeaders()->get('X-Resend-Email-ID')?->getBodyAsString() : null;
+            EmailDeliveryLog::write('provider_accepted', [...$context, 'recipient_count' => count($envelope->getRecipients()), 'provider_email_id' => $providerId]);
         } catch (Throwable $error) {
+            EmailDeliveryLog::write('attempt_failed', [...$context, ...EmailDeliveryLog::failure($error)], 'error');
             if ($this->email->getHeaders()->has('X-ZionFood-Error-Alert')) {
                 // Alert delivery failures must never produce another email alert.
                 Log::warning('Error alert delivery failed; inspect provider and queue health.');
@@ -61,5 +77,10 @@ class DeliverEmail implements ShouldBeEncrypted, ShouldQueue
 
             throw $error;
         }
+    }
+
+    public function failed(?Throwable $error): void
+    {
+        EmailDeliveryLog::write('permanently_failed', ['delivery_id' => $this->deliveryId, 'mailer' => $this->mailer, ...($error ? EmailDeliveryLog::failure($error) : [])], 'error');
     }
 }
