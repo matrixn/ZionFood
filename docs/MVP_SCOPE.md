@@ -13,12 +13,15 @@
 - Organization/trial platform overview, admin setup command and protected Horizon access.
 - Versioned public/integration APIs; organization-scoped tokens with abilities, expiry, listing and revocation.
 - Staff administration with protected roles, location assignments, expiring/revocable invitations and verified-email acceptance.
+- Guided RO/EN owner/manager setup with private location profiles, capacity/table-area planning, reservation preferences, publication readiness and existing-editor navigation; payments placeholder only.
 - Restaurant identity, managed slug, tagline, logo/cover, action colors, public contacts, preview and branded tracking.
 - Romanian-default and English interfaces with persistent flag/name selectors across all layouts.
 - Signed per-location webhooks for order/menu/item events, secure destination resolution/pinning, durable delivery history, retries and reconciliation.
 - MariaDB/Redis local Compose services, three restaurant demos, factories, automated tests, OpenAPI and configurable k6 scenarios.
 
 ## Remaining before production launch
+
+- Implement the customer reservation/capacity-allocation engine, on-site/QR ordering, scheduled fulfillment, split/overnight/per-service/holiday schedules and payment processing. Setup preferences do not activate these future services.
 
 - Complete Forge deployment and external DNS/TLS/mail configuration, including verified live subdomains.
 - Complete multi-restaurant/multi-location creation screens. Onboarding creates one of each; the schema and location switcher support multiple records.

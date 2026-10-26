@@ -1,0 +1,62 @@
+import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+
+test('owner completes guided restaurant setup with tables, reservation preferences and a payments placeholder', async ({
+    page,
+}) => {
+    test.setTimeout(90000);
+    const account = JSON.parse(readFileSync('storage/app/private/browser-account.json', 'utf8')) as {
+        email: string;
+        password: string;
+        location: string;
+    };
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    const base = `/app/locations/${account.location}/setup`;
+    await page.goto('/login');
+    await page.locator('#email').fill(account.email);
+    await page.locator('#password').fill(account.password);
+    await page.getByRole('button', { name: 'Autentificare', exact: true }).click();
+    await expect(page).toHaveURL(/\/app\/locations\//);
+    await page.goto(base);
+    await expect(page.getByRole('heading', { name: 'Pregătește restaurantul', exact: true })).toBeVisible();
+    await page.getByRole('textbox', { name: 'Localitate', exact: true }).fill('Râmnicu Vâlcea');
+    await page.getByRole('textbox', { name: 'Telefonul locației', exact: true }).fill('0712345678');
+    await page.getByRole('button', { name: 'Salvează pasul', exact: true }).click();
+    await expect(page.getByRole('status')).toContainText('Configurarea restaurantului a fost salvată.');
+    await page.goto(`${base}/seating`);
+    await page.getByRole('combobox', { name: 'Cum organizezi locurile?', exact: true }).click();
+    await page.getByRole('option', { name: 'Mese pe săli', exact: true }).click();
+    await page.getByRole('button', { name: 'Adaugă o masă', exact: true }).click();
+    await page.getByRole('button', { name: 'Adaugă o masă', exact: true }).click();
+    await expect(page.getByText('Total locuri: 8', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Salvează pasul', exact: true }).click();
+    await expect(page.getByRole('status')).toContainText('Configurarea restaurantului a fost salvată.');
+    await page.reload();
+    await expect(page.getByRole('textbox', { name: 'Cod unic', exact: true })).toHaveCount(2);
+    await page.goto(`${base}/reservations`);
+    await page.getByRole('switch', { name: 'Vreau să ofer rezervări', exact: true }).click();
+    await page.getByRole('button', { name: 'Salvează pasul', exact: true }).click();
+    await expect(page.getByRole('status')).toContainText('Configurarea restaurantului a fost salvată.');
+    await expect(page.getByText(/Nu se confirmă rezervări și nu se încasează bani/)).toBeVisible();
+    await page.goto(`${base}/payments`);
+    await expect(page.getByRole('heading', { name: 'Plăți — în curând', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Salvează pasul', exact: true })).toHaveCount(0);
+    await page.getByTestId('language-selector').click();
+    await page.getByRole('option', { name: 'English', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Payments — coming soon', exact: true })).toBeVisible();
+    await page.setViewportSize({ width: 390, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.screenshot({ path: 'test-results/setup-mobile.png', fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto(`${base}/seating`);
+    await page.getByTestId('language-selector').click();
+    await page.getByRole('option', { name: 'Română', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Săli, mese și locuri', exact: true })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.screenshot({ path: 'test-results/setup-desktop.png', fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.screenshot({ path: 'test-results/setup-seating-mobile.png', fullPage: true });
+    expect(errors).toEqual([]);
+});

@@ -21,7 +21,9 @@ class RestaurantLocation extends Model
         });
     }
 
-    protected $casts = ['accepting_orders' => 'boolean'];
+    protected $casts = ['accepting_orders' => 'boolean', 'setup_profile' => 'array', 'setup_revision' => 'integer'];
+
+    protected $hidden = ['setup_profile'];
 
     public function restaurant()
     {

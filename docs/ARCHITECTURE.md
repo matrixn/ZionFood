@@ -41,3 +41,7 @@ References: [Laravel 12 installation](https://laravel.com/docs/12.x/installation
 ## Administration and language increment
 
 The October 26 increment adds protected owner/manager/staff administration, expiring accepted-email invitations, restaurant identity/assets/contacts, Romanian-first Vue I18n and Laravel messages, and signed per-location webhooks. See [operational details and limits](STAFF_BRANDING_LOCALIZATION_WEBHOOKS.md). Kitchen transitions apply the confirmed API response immediately and reconcile the authoritative queue in the background; older in-flight list responses cannot overwrite a newer confirmed version. Locale changes retain API keys/status enums unchanged. The API/Echo clients read the latest XSRF cookie after session rotation.
+
+## Guided setup
+
+The owner/manager-only setup controller delegates writes to SaveRestaurantSetup and live readiness calculation to SetupProgress. Location setup JSON is private and revision-checked under a row lock. No arbitrary completion flag or requested payment/provider state is persisted. The UI reuses the existing Vue/PrimeVue editors for operational data. On-site/scheduled/reservation preferences remain preparation only until their dedicated customer/fulfillment engines exist; payments is a placeholder by explicit user choice. New onboarding opens setup; existing restaurants are not forcibly paused or redirected.

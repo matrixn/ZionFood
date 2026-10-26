@@ -22,6 +22,7 @@ const nav = computed(() => [
     { name: t('orders'), icon: 'pi-shopping-bag', path: '/orders' },
     ...(props.canManage
         ? [
+              { name: t('setup_title'), icon: 'pi-sliders-h', path: '/setup' },
               { name: t('menu_studio'), icon: 'pi-book', path: '/menu' },
               { name: t('settings'), icon: 'pi-cog', path: '/settings' },
               { name: t('staff'), icon: 'pi-users', path: '/staff' },

@@ -4,6 +4,7 @@ use App\Http\Controllers\BrandingController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PublicOrderingController;
+use App\Http\Controllers\RestaurantSetupController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\TestEmailController;
 use App\Http\Controllers\WorkspaceController;
@@ -29,6 +30,8 @@ Route::get('/invitations/{invitation}', [StaffController::class, 'invitation']);
 Route::get('/test-email', [TestEmailController::class, 'show']);
 Route::post('/test-email', [TestEmailController::class, 'send'])->middleware('throttle:admin-mail-test');
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/app/locations/{location}/setup/{step?}', [RestaurantSetupController::class, 'show']);
+    Route::put('/app/locations/{location}/setup/{step}', [RestaurantSetupController::class, 'update']);
     Route::post('/invitations/{invitation}', [StaffController::class, 'accept']);
     Route::post('/app/locations/{location}/staff/invitations', [StaffController::class, 'invite'])->middleware('throttle:staff-invitations');
     Route::delete('/app/locations/{location}/staff/invitations/{invitation}', [StaffController::class, 'revoke']);

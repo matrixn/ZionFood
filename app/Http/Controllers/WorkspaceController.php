@@ -42,7 +42,7 @@ class WorkspaceController extends Controller
     {
         $location = $action->execute($request->user(), $request->validated());
 
-        return redirect('/app/locations/'.$location->public_id);
+        return redirect('/app/locations/'.$location->public_id.'/setup');
     }
 
     public function show(Request $request, string $location, string $section = 'dashboard')

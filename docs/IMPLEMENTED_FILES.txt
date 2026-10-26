@@ -269,3 +269,12 @@ tests/e2e/email-test.spec.ts
 app/Console/Commands/MailStatus.php
 app/Domain/Mail/EmailDeliveryLog.php
 tests/Feature/MailDiagnosticsTest.php
+app/Domain/Restaurants/SetupProgress.php
+app/Domain/Restaurants/Actions/SaveRestaurantSetup.php
+app/Http/Controllers/RestaurantSetupController.php
+app/Http/Requests/RestaurantSetupRequest.php
+database/migrations/2026_10_26_000200_add_restaurant_setup_profile.php
+resources/js/pages/restaurant/Setup.vue
+tests/Feature/RestaurantSetupTest.php
+tests/e2e/setup.spec.ts
+docs/RESTAURANT_SETUP.md

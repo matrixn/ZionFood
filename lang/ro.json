@@ -368,9 +368,14 @@
   "This action is unauthorized.": "Nu ai permisiunea de a efectua această acțiune.",
   "Server Error": "Eroare de server",
   "Too Many Attempts.": "Prea multe încercări. Încearcă din nou mai târziu.",
-    "Configure a valid ADMIN_EMAIL in the environment.": "Configurează o adresă ADMIN_EMAIL validă în mediul aplicației.",
-    "Configure a delivery mailer and its credentials first.": "Configurează mai întâi serviciul de email și datele de acces.",
-    "ZionFood test email. The configured mail service is working.": "Email de test ZionFood. Serviciul de email configurat funcționează.",
-    "Email could not be queued. Check delivery configuration and queue health.": "Emailul nu a putut fi pus în coadă. Verifică serviciul de email și coada de procesare.",
-    "Test email queued for the administrator. Check the recipient inbox after processing.": "Emailul de test a fost pus în coadă pentru administrator. Verifică primirea după procesare."
+  "Configure a valid ADMIN_EMAIL in the environment.": "Configurează o adresă ADMIN_EMAIL validă în mediul aplicației.",
+  "Configure a delivery mailer and its credentials first.": "Configurează mai întâi serviciul de email și datele de acces.",
+  "ZionFood test email. The configured mail service is working.": "Email de test ZionFood. Serviciul de email configurat funcționează.",
+  "Email could not be queued. Check delivery configuration and queue health.": "Emailul nu a putut fi pus în coadă. Verifică serviciul de email și coada de procesare.",
+  "Test email queued for the administrator. Check the recipient inbox after processing.": "Emailul de test a fost pus în coadă pentru administrator. Verifică primirea după procesare.",
+  "The setup was changed in another window. Reload before saving.": "Configurarea a fost modificată în altă fereastră. Reîncarcă pagina înainte de salvare.",
+  "The maximum party size cannot exceed the configured seating capacity.": "Numărul maxim de persoane nu poate depăși capacitatea configurată.",
+  "Check the seating capacity and the maximum reservation party size.": "Verifică numărul de locuri și numărul maxim de persoane pentru rezervări.",
+  "Complete the required setup steps before accepting orders.": "Completează pașii obligatorii înainte de a accepta comenzi.",
+  "Restaurant setup saved.": "Configurarea restaurantului a fost salvată."
 }
