@@ -80,7 +80,7 @@ Submit a real smoke test only to an address you control:
 php artisan zionfood:mail-test your-address@example.com
 ```
 
-The command submits to the configured default mailer and queues external delivery, rejects invalid recipients, log/array mailers and a missing Resend key, and returns a failing exit code on provider errors. A successful exit confirms queue acceptance, not provider submission or inbox delivery. Check Resend's email dashboard and the inbox/spam folder. An authenticated platform-admin test page is available at /test-email as documented below. Provider error details and API keys are not printed by this command.
+The command submits to the configured default mailer and queues external delivery, rejects invalid recipients, log/array mailers and a missing Resend key, and returns a failing exit code on provider errors. A successful exit confirms queue acceptance, not provider submission or inbox delivery. Check Resend's email dashboard and the inbox/spam folder. A temporary public test page is available at /test-email as documented below. Provider error details and API keys are not printed by this command.
 
 No live Resend account, DNS verification or real email delivery was exercised during implementation. Automated tests use an in-memory HTTP transport and no external recipient. Resend delivery-event webhooks are not included; the existing restaurant webhooks remain a separate feature.
 
@@ -113,8 +113,8 @@ To exercise the alert path on staging after replacing ADMIN_EMAIL and starting w
 
 ## Browser email test page
 
-Visit `https://your-application-domain/test-email`, sign in with a verified **platform administrator** account, and click the send-test button. The page displays ADMIN_EMAIL and supports Romanian/English. GET only displays the form; POST performs the action with session authentication, platform-admin authorization, CSRF protection and a shared maximum of three test submissions per hour. The recipient cannot be overridden by form/query data and always comes from ADMIN_EMAIL. Tests also consume the common 140-recipient/24h delivery quota. The platform organization overview links to this page. Log/array mailers, missing Resend credentials and invalid ADMIN_EMAIL produce a form error rather than a delivery claim.
+Visit `https://your-application-domain/test-email` and click the send-test button. At the user's explicit request this page is temporarily public: no authentication, email verification or administrator role is required. Remove both GET and POST routes after completing email diagnostics. The page displays ADMIN_EMAIL and supports Romanian/English. GET only displays the form; POST performs the action with CSRF protection and a shared maximum of three test submissions per hour, across guests and signed-in users. The recipient cannot be overridden by form/query data and always comes from ADMIN_EMAIL. Tests also consume the common 140-recipient/24h delivery quota. The platform organization overview links to this page. Log/array mailers, missing Resend credentials and invalid ADMIN_EMAIL produce a form error rather than a delivery claim.
 
-The dummy recipient is deliberately non-operational: replace ADMIN_EMAIL with your own email for a real test. Queue acceptance is shown separately from actual provider/inbox delivery. If needed, grant platform access only to an existing trusted account with `php artisan zionfood:admin your-account@example.com`.
+The dummy recipient is deliberately non-operational: replace ADMIN_EMAIL with your own email for a real test. Queue acceptance is shown separately from actual provider/inbox delivery. No account or platform access is needed for this temporary diagnostic route.
 
-Local browser QA uses `php artisan zionfood:browser-fixtures --admin` to generate a new isolated admin account in ignored private storage; it never changes an existing user's privileges or password. This fixture command remains restricted to APP_ENV=local.
+The public-page browser test runs as a guest and needs no credentials. The existing optional local admin fixture command remains restricted to APP_ENV=local and is unnecessary for this page.

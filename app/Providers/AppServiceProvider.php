@@ -15,7 +15,6 @@ use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,7 +33,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('platform-admin', fn ($user) => (bool) $user->is_platform_admin);
         RateLimiter::for('admin-mail-test', fn () => Limit::perHour(3)->by('admin-mail-test'));
         Event::listen(MessageSending::class, [QueueOutgoingEmail::class, 'handle']);
         Event::listen(MessageLogged::class, [EmailErrorAlert::class, 'handle']);

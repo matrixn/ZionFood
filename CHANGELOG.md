@@ -2,7 +2,7 @@
 
 ## Unreleased — 2026-10-26 (version remains 0.0.1)
 
-- Protected RO/EN /test-email administrator page targeting ADMIN_EMAIL with CSRF protection and three-per-hour test throttling.
+- Temporary public RO/EN /test-email page targeting ADMIN_EMAIL with CSRF protection and three-per-hour test throttling; authentication/admin restrictions removed at the user's explicit request.
 - Global encrypted mail queue, atomic rolling 140-recipient/24h Redis quota with deferred overflow, and deduplicated error/exception email alerts via ADMIN_EMAIL.
 - Native Resend email transport SDK, RESEND_API_KEY configuration, Forge instructions and a validated Artisan mail test command.
 - Staff invitations/acceptance/revocation, protected owner/manager roles, location assignments and scoped token removal.
