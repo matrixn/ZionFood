@@ -182,6 +182,8 @@ docs/RESERVATIONS_DINING_DELIVERY.md
 docs/RESTAURANT_SETUP.md
 docs/SECURITY.md
 docs/STAFF_BRANDING_LOCALIZATION_WEBHOOKS.md
+docs/assets/zionfood-hero-ai.png
+docs/assets/zionfood-hero-ai.prompt.md
 docs/benchmarks/conditions.json
 docs/benchmarks/k6-arrival.json
 docs/benchmarks/k6-initial.json

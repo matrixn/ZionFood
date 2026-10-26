@@ -1,4 +1,13 @@
-# ZionFood progress — 0.0.2
+# ZionFood progress — 0.0.3
+
+## Version 0.0.3 - README history and AI banner (October 26)
+
+At the user's explicit request, rebuilt README.md in Romanian with a checked chronological Git history, implemented feature inventory, unfinished product/production checklists, historical validation scope, local setup and documentation links. Checked the catalogue, QR/reservation/delivery boundaries, prior commit log and recorded Horizon/Resend incident. Prepared preferences and the payments placeholder remain distinct from operational features. No new production or performance guarantee is made.
+
+Generated one ZionFood landscape brand illustration with the built-in image_gen tool using the imagegen skill. Copied the selected PNG unchanged to docs/assets/zionfood-hero-ai.png and stored the final prompt/provenance alongside it. The README labels it as an AI illustration, not an application screenshot. The banner is not wired into the application's interface.
+
+Bumped the current version to 0.0.3 for this single commit, preserving historical release notes and dependency versions. Local checks passed: 25 README links, 67 implemented checkboxes, 20 remaining checkboxes, a valid 1672 x 941 PNG copied byte-for-byte, synchronized 0.0.3 metadata, Composer validation and exact Linux Pint across 182 PHP files. Composer lock changes only its content hash; package versions are unchanged. No full application test rerun or live deployment is claimed for this documentation/image change. Commit and push are explicitly authorized.
+
 
 ## Version 0.0.2 - October 26
 

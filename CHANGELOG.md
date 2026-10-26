@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.3 — 2026-10-26
+
+- Rebuilt the Romanian README with a checked implementation history, feature inventory, outstanding work and explicit verification boundaries.
+- Added a generated ZionFood brand illustration, embedded project-local image and its final prompt/provenance.
+- Synchronized package/application/API/documentation versions without changing dependencies.
+
 ## 0.0.2 — 2026-10-26
 
 - Synchronized application/package/API versions and established a patch increment for each new commit.
