@@ -1,4 +1,10 @@
-# ZionFood progress — 0.0.9
+# ZionFood progress — 0.0.10
+
+## Version 0.0.10 - README editor inventory and publication (October 26)
+
+Expanded the README with a table describing each inline editor and checked save/navigation/mobile behaviors. Linked the 0.0.9 implementation commit 2a0c23c and synchronized current metadata to 0.0.10 for this documentation commit. Historical notes and locked dependencies are preserved. The user explicitly authorized push of the prior implementation and this README update; no tag or manual deployment was requested.
+
+Validation passed: synchronized 0.0.10 metadata, unchanged locked dependency versions, 32 local README links, Composer validation and exact Linux Pint across 186 PHP files. The application test results recorded below belong to the previous implementation increment and are not claimed as rerun for this documentation change.
 
 ## Version 0.0.9 - coherent navigation and inline setup editors (October 26)
 

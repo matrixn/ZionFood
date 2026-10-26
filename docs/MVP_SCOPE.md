@@ -1,4 +1,4 @@
-# Scope at 0.0.9
+# Scope at 0.0.10
 
 ## Implemented
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.10 — 2026-10-26
+
+- Expanded the Romanian README with the inline-editor table, wizard save/navigation behavior and the 0.0.9 implementation commit.
+- Synchronized current version metadata without runtime or dependency changes.
+
 ## 0.0.9 — 2026-10-26
 
 - Moved restaurant setup directly below the location selector and grouped navigation into Operations, Restaurant management and Connections, with nested active states and scrollable mobile navigation.

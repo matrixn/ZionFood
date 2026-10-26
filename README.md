@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.9** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.10** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -53,7 +53,8 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [x] `0.0.7`: preluarea adresei din pin și centrarea cu zoom a zonelor de livrare pe restaurant — `95a0843`.
 - [x] `0.0.8`: ghid de utilizare pentru adresa din pin și harta zonelor de livrare, cu istoricul actualizat.
 
-- [x] `0.0.9`: navigare grupată, pregătirea restaurantului prima sub selectorul locației și editori integrați în wizard pentru program, livrare, meniu, identitate, personal și locații.
+- [x] `0.0.9`: navigare grupată, pregătirea restaurantului prima sub selectorul locației și editori integrați în wizard pentru program, livrare, meniu, identitate, personal și locații — `2a0c23c`.
+- [x] `0.0.10`: documentarea editorilor integrați și a comportamentului navigării în wizard.
 
 ## Implementat
 
@@ -196,6 +197,20 @@ Aceste rezultate sunt istorice, pentru etapele indicate. Modificarea README-ului
 - **Operațiuni:** prezentare generală, comenzi, rezervări, mese și QR, ecranul bucătăriei.
 - **Administrarea restaurantului:** meniu, personal, locații, identitate, program și livrare.
 - **Conectări:** integrări și webhooks.
+
+| Pas în wizard | Ce poți configura fără să ieși din ghid |
+| --- | --- |
+| Program de funcționare | Orele de deschidere și limita comenzilor QR înainte de închidere |
+| Zone de livrare | Harta, poligoanele sau prefixele poștale, taxele și comenzile minime |
+| Meniu și opțiuni | Categorii, produse, variante și modificatori |
+| Identitate vizuală | Nume, logo, copertă, culoare și contacte publice |
+| Personal și acces | Invitații, roluri și atribuirea locațiilor |
+| Locațiile restaurantului | Alegerea și configurarea unei locații existente la care ai drepturi de administrare |
+
+- [x] Salvarea unui editor păstrează pasul curent al wizard-ului.
+- [x] Navigarea avertizează când există modificări nesalvate.
+- [x] Schimbarea locației din selector păstrează pasul curent al ghidului.
+- [x] Navigarea mobilă este derulabilă; pașii și editorii sunt disponibili în RO/EN.
 
 Paginile separate folosesc aceleași date și salvări. Personalul fără drepturi de administrare vede doar accesul operațional permis. Vezi [ADMIN_NAVIGATION.md](docs/ADMIN_NAVIGATION.md).
 
