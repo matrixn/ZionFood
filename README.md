@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.5** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.6** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -48,7 +48,8 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 
 - [x] `0.0.4`: pagină publică de prezentare RO/EN, imagini generate, animații, previzualizări interactive și CTA-uri către cont/panou.
 
-- [x] `0.0.5`: localizarea restaurantului după adresa din formular, mesaje pentru date lipsă și pin ajustabil, fără câmpuri latitudine/longitudine.
+- [x] `0.0.5`: localizarea restaurantului după adresa din formular, mesaje pentru date lipsă și pin ajustabil, fără câmpuri latitudine/longitudine — `81ed958`.
+- [x] `0.0.6`: documentarea detaliată, cu bife, a localizării restaurantului și a comportamentului hărții.
 
 ## Implementat
 
@@ -71,6 +72,12 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 
 - [x] Setup cu submeniuri, progres calculat pe server, protecție pentru salvări concurente și avertizare pentru modificări nesalvate.
 - [x] Nume, adresă, localitate, contacte, website și fus orar; buton de localizare după adresă, feedback pentru date lipsă și hartă cu pin ajustabil.
+- [x] „Localizează restaurantul” folosește adresa curentă din formular, inclusiv modificările încă nesalvate.
+- [x] Mesaje RO/EN care enumeră datele lipsă și explică adresele negăsite sau pozițiile aproximative.
+- [x] Alegere explicită între mai multe adrese găsite; fără selectarea automată a primului rezultat.
+- [x] Poziționare și ajustare a pinului prin apăsare pe hartă sau mutare, cu păstrare prin „Salvează pasul”.
+- [x] Ștergerea pinului vechi când se modifică adresa și ignorarea răspunsurilor de căutare depășite.
+- [x] Căutare Photon protejată pentru owner/manager, cache și limitarea cererilor; furnizor configurabil, fără câmpuri numerice de coordonate.
 - [x] Capacitate totală sau plan de mese cu coduri unice, săli/terase și număr de locuri.
 - [x] Activare independentă per locație pentru ridicare, livrare, rezervări și comenzi QR.
 - [x] Date private pentru companie/politici și verificări pentru publicarea comenzilor.

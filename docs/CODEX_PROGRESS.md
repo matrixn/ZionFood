@@ -1,4 +1,10 @@
-# ZionFood progress — 0.0.5
+# ZionFood progress — 0.0.6
+
+## Version 0.0.6 - checked README and publication (October 26)
+
+Expanded the Romanian README checklist with current unsaved-address lookup, missing-field/approximate/not-found guidance, explicit candidate selection, pin adjustment and revision-checked saving, stale-address invalidation and protected configurable Photon lookup. Added the 0.0.5 implementation commit to its history. Incremented current version metadata to 0.0.6 for this documentation commit, preserving historical release notes and dependency versions. The user explicitly authorized commit and push, including the previous local 0.0.5 implementation commit; no tag or manual deployment was requested.
+
+Validation passed: README local-link checks, synchronized 0.0.6 metadata, unchanged locked dependency versions, Composer validation and exact Linux php vendor/bin/pint --test across 185 PHP files. The previous increment records the application tests; they are not claimed as rerun for this documentation change.
 
 ## Version 0.0.5 - restaurant address map (October 26)
 

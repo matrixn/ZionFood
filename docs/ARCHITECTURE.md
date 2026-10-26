@@ -1,4 +1,4 @@
-# ZionFood 0.0.5
+# ZionFood 0.0.6
 
 Implementation specification: [original ZionFood SaaS MVP master prompt](MASTER_PROMPT.md), consolidated with **Techstack ZionFood MVP**, conversation `6ade5f72-3784-83ed-b9bf-0f23844f3826`. The substantive Vue/PrimeVue architecture discussion was retrieved; some older answers were available only as content-reference markers. Target MVP date: November 1, 2026.
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.6 — 2026-10-26
+
+- Expanded the README checked inventory for restaurant address lookup, required-field feedback, result selection, map adjustment/saving and stale-pin invalidation.
+- Synchronized current version metadata for the documentation commit; runtime behavior and dependency versions are unchanged.
+
 ## 0.0.5 — 2026-10-26
 
 - Replaced numeric coordinate fields in restaurant setup with a Locate restaurant button, required-address feedback, address candidates and an adjustable saved map pin.
