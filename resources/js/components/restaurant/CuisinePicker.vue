@@ -82,7 +82,12 @@ function toggle(id: number) {
             </div>
         </section>
         <label class="field"
-            >{{ $t('cuisine_search') }}<InputText v-model="search" :placeholder="$t('cuisine_search_placeholder')"
+            ><span class="field-label"
+                >{{ $t('cuisine_search') }}<FieldHelp :label="$t('cuisine_search')" field="cuisine_search" /></span
+            ><InputText
+                v-model="search"
+                :aria-label="$t('cuisine_search')"
+                :placeholder="$t('cuisine_search_placeholder')"
         /></label>
         <div class="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">
             <CuisineCard

@@ -313,12 +313,13 @@ useSetupEditorGuard(
                         <h2 class="text-sm font-semibold">{{ $t('auto_pick_dish') }}</h2>
                         <span class="text-xs text-slate-400">{{ choices.length }}</span>
                     </div>
-                    <InputText
-                        v-model="search"
-                        :placeholder="$t('auto_search')"
-                        :aria-label="$t('auto_search')"
-                        class="mb-3 w-full"
-                    />
+                    <span class="field-control-help"
+                        ><InputText
+                            v-model="search"
+                            :placeholder="$t('auto_search')"
+                            :aria-label="$t('auto_search')"
+                            class="mb-3 w-full" /><FieldHelp :label="$t('auto_search')" field="search" kind="InputText"
+                    /></span>
                     <div class="flex max-h-56 gap-2 overflow-auto xl:max-h-[62vh] xl:flex-col">
                         <button
                             v-for="item in filtered"
@@ -461,8 +462,10 @@ useSetupEditorGuard(
                         </div>
                         <div class="grid gap-5 md:grid-cols-[190px_minmax(0,1fr)]">
                             <label class="grid content-start gap-2 text-sm font-medium"
-                                >{{ $t('auto_portion_weight')
-                                }}<InputNumber
+                                ><span class="field-label"
+                                    >{{ $t('auto_portion_weight')
+                                    }}<FieldHelp :label="$t('auto_portion_weight')" field="auto_portion_weight" /></span
+                                ><InputNumber
                                     v-model="inputs.portion_grams"
                                     :min="1"
                                     :max="10000"
@@ -476,8 +479,10 @@ useSetupEditorGuard(
                                     $t('auto_one_portion_hint')
                                 }}</span></label
                             ><label class="grid gap-2 text-sm font-medium"
-                                >{{ $t('auto_ingredients')
-                                }}<Textarea
+                                ><span class="field-label"
+                                    >{{ $t('auto_ingredients')
+                                    }}<FieldHelp :label="$t('auto_ingredients')" field="auto_ingredients" /></span
+                                ><Textarea
                                     v-model="inputs.ingredients_text"
                                     :aria-label="$t('auto_ingredients')"
                                     rows="3"
@@ -494,15 +499,19 @@ useSetupEditorGuard(
                             <summary class="cursor-pointer text-slate-500">
                                 {{ $t('auto_preparation_optional') }}
                             </summary>
-                            <Textarea
-                                v-model="inputs.preparation"
-                                rows="2"
-                                maxlength="500"
-                                :disabled="!current.writable || busy"
-                                :aria-label="$t('auto_preparation_optional')"
-                                :placeholder="$t('auto_preparation_example')"
-                                class="mt-3 w-full"
-                            />
+                            <span class="field-control-help"
+                                ><Textarea
+                                    v-model="inputs.preparation"
+                                    rows="2"
+                                    maxlength="500"
+                                    :disabled="!current.writable || busy"
+                                    :aria-label="$t('auto_preparation_optional')"
+                                    :placeholder="$t('auto_preparation_example')"
+                                    class="mt-3 w-full" /><FieldHelp
+                                    :label="$t('auto_preparation_optional')"
+                                    field="preparation"
+                                    kind="Textarea"
+                            /></span>
                         </details>
                     </section>
                     <section
@@ -535,7 +544,8 @@ useSetupEditorGuard(
                                     :aria-label="task.name"
                                 /><span
                                     ><span class="block text-sm font-semibold"
-                                        ><i :class="['pi', task.icon, 'mr-2 text-brand']" />{{ task.name }}</span
+                                        ><i :class="['pi', task.icon, 'mr-2 text-brand']" /><span class="field-label"
+                                            >{{ task.name }}<FieldHelp :label="task.name" field="" /></span></span
                                     ><span class="mt-1 block text-xs leading-relaxed text-slate-500">{{
                                         task.hint
                                     }}</span></span
@@ -546,9 +556,12 @@ useSetupEditorGuard(
                             v-if="options.includes('translate')"
                             class="mt-4 rounded-xl bg-slate-50 p-4 dark:bg-slate-800"
                         >
-                            <label for="auto-languages" class="mb-2 block text-sm font-medium">{{
-                                $t('auto_target_languages')
-                            }}</label
+                            <label for="auto-languages" class="mb-2 block text-sm font-medium"
+                                ><span class="field-label"
+                                    >{{ $t('auto_target_languages')
+                                    }}<FieldHelp
+                                        :label="$t('auto_target_languages')"
+                                        field="auto_target_languages" /></span></label
                             ><MultiSelect
                                 v-model="targetLanguages"
                                 input-id="auto-languages"
@@ -608,17 +621,21 @@ useSetupEditorGuard(
         >
             <p class="mb-5 text-sm leading-relaxed text-slate-500">{{ $t('auto_bulk_hint') }}</p>
             <p v-if="error" role="alert" class="mb-3 text-sm text-red-700">{{ error }}</p>
-            <MultiSelect
-                v-model="bulkLanguages"
-                :options="languageOptions"
-                option-label="name"
-                option-value="code"
-                display="chip"
-                :selection-limit="3"
-                :aria-label="$t('auto_target_languages')"
-                :disabled="busy"
-                class="w-full"
-            />
+            <span class="field-control-help"
+                ><MultiSelect
+                    v-model="bulkLanguages"
+                    :options="languageOptions"
+                    option-label="name"
+                    option-value="code"
+                    display="chip"
+                    :selection-limit="3"
+                    :aria-label="$t('auto_target_languages')"
+                    :disabled="busy"
+                    class="w-full" /><FieldHelp
+                    :label="$t('auto_target_languages')"
+                    field="bulkLanguages"
+                    kind="MultiSelect"
+            /></span>
             <template #footer
                 ><Button
                     :label="$t('auto_translate_menu')"
@@ -643,9 +660,11 @@ useSetupEditorGuard(
                     v-for="field in ['allergens', 'may_contain', 'labels'] as const"
                     :key="field"
                     class="grid gap-2 text-sm"
-                    >{{ $t('mc_' + field)
-                    }}<MultiSelect
+                    ><span class="field-label"
+                        >{{ $t('mc_' + field) }}<FieldHelp :label="$t('mc_' + field)" field="mc_" /></span
+                    ><MultiSelect
                         v-model="publishedContent[field]"
+                        :aria-label="$t('mc_' + field)"
                         :options="field === 'labels' ? foodOptions : allergenOptions"
                         option-label="name"
                         option-value="code"
@@ -661,14 +680,16 @@ useSetupEditorGuard(
                 <div class="border-t border-slate-200 pt-5 dark:border-slate-700">
                     <h3 class="mb-3 font-semibold">{{ $t('mc_translations') }}</h3>
                     <div v-if="current.writable" class="mb-4 flex gap-2">
-                        <select
-                            v-model="manualLanguage"
-                            :aria-label="$t('mc_language')"
-                            class="min-w-0 flex-1 rounded-lg border border-slate-200 bg-transparent p-2"
-                        >
-                            <option v-for="(name, code) in props.languages" :key="code" :value="code">
-                                {{ name }}
-                            </option></select
+                        <span class="field-control-help"
+                            ><select
+                                v-model="manualLanguage"
+                                :aria-label="$t('mc_language')"
+                                class="min-w-0 flex-1 rounded-lg border border-slate-200 bg-transparent p-2"
+                            >
+                                <option v-for="(name, code) in props.languages" :key="code" :value="code">
+                                    {{ name }}
+                                </option></select
+                            ><FieldHelp :label="$t('mc_language')" field="manualLanguage" kind="select" /></span
                         ><Button
                             :label="$t('mc_add_language')"
                             icon="pi pi-plus"
@@ -698,31 +719,45 @@ useSetupEditorGuard(
                                 ] as const"
                                 :key="field"
                                 class="grid gap-1 text-xs text-slate-500"
-                                >{{ $t('mc_translation_' + field)
-                                }}<Textarea
+                                ><span class="field-label"
+                                    >{{ $t('mc_translation_' + field)
+                                    }}<FieldHelp :label="$t('mc_translation_' + field)" field="mc_translation_" /></span
+                                ><Textarea
                                     v-if="field === 'description' || field === 'ingredients_text'"
                                     v-model="row[field]"
+                                    :aria-label="$t('mc_translation_' + field)"
                                     rows="3"
                                     :disabled="!current.writable || busy" /><InputText
                                     v-else
                                     v-model="row[field]"
+                                    :aria-label="$t('mc_translation_' + field)"
                                     :disabled="!current.writable || busy" /></label
                             ><label v-for="(_, id) in row.variants" :key="id" class="grid gap-1 text-xs"
-                                >{{ $t('variants')
-                                }}<InputText v-model="row.variants[id]" :disabled="!current.writable || busy"
+                                ><span class="field-label"
+                                    >{{ $t('variants') }}<FieldHelp :label="$t('variants')" field="variants" /></span
+                                ><InputText
+                                    v-model="row.variants[id]"
+                                    :aria-label="$t('variants')"
+                                    :disabled="!current.writable || busy"
                             /></label>
                             <div v-for="(group, id) in row.groups" :key="id" class="grid gap-2">
-                                <InputText
-                                    v-model="group.name"
-                                    :aria-label="$t('mc_translation_group')"
-                                    :disabled="!current.writable || busy"
-                                /><InputText
-                                    v-for="(_, option) in group.options"
-                                    :key="option"
-                                    v-model="group.options[option]"
-                                    :aria-label="$t('mc_translation_group')"
-                                    :disabled="!current.writable || busy"
-                                />
+                                <span class="field-control-help"
+                                    ><InputText
+                                        v-model="group.name"
+                                        :aria-label="$t('mc_translation_group')"
+                                        :disabled="!current.writable || busy" /><FieldHelp
+                                        :label="$t('mc_translation_group')"
+                                        field="name"
+                                        kind="InputText" /></span
+                                ><span v-for="(_, option) in group.options" :key="option" class="field-control-help"
+                                    ><InputText
+                                        v-model="group.options[option]"
+                                        :aria-label="$t('mc_translation_group')"
+                                        :disabled="!current.writable || busy" /><FieldHelp
+                                        :label="$t('mc_translation_group')"
+                                        field="optionsoption"
+                                        kind="InputText"
+                                /></span>
                             </div>
                         </div>
                     </details>

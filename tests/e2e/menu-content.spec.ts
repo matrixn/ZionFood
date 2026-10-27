@@ -80,7 +80,7 @@ test('automatic generation stays compact and reviews live results across workspa
     await expect(approve).toBeInViewport();
     expect((await dialog.boundingBox())!.width).toBeLessThanOrEqual(390);
     await page.screenshot({path:'test-results/automation-review-mobile.png',fullPage:true});
-    await approve.click();await expect(dialog).toContainText('Aprobat');
+    await approve.click();await expect(dialog).toHaveCount(0);
     expect(reviewed).toBeTruthy();
 });
 

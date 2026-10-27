@@ -156,11 +156,15 @@ async function save() {
                 data-testid="product-ingredients"
             >
                 <legend class="px-1 font-semibold">{{ $t('ingredients_title') }}</legend>
-                <InputText
-                    v-model="ingredientSearch"
-                    :aria-label="$t('ingredients_search')"
-                    :placeholder="$t('ingredients_search')"
-                />
+                <span class="field-control-help"
+                    ><InputText
+                        v-model="ingredientSearch"
+                        :aria-label="$t('ingredients_search')"
+                        :placeholder="$t('ingredients_search')" /><FieldHelp
+                        :label="$t('ingredients_search')"
+                        field="ingredientSearch"
+                        kind="InputText"
+                /></span>
                 <p class="text-xs text-slate-500" aria-live="polite">
                     {{ $t('ingredients_selected_count', { count: form.ingredient_ids.length }) }}
                 </p>
@@ -186,8 +190,9 @@ async function save() {
                     >
                         <Checkbox v-model="form.ingredient_ids" :value="i.id" :aria-label="i.label" />
                         <span class="min-w-0 break-words"
-                            >{{ i.label
-                            }}<small v-if="!i.is_active || i.deleted_at" class="block text-slate-500">{{
+                            ><span class="field-label"
+                                >{{ i.label }}<FieldHelp :label="i.label" field="ingredients" /></span
+                            ><small v-if="!i.is_active || i.deleted_at" class="block text-slate-500">{{
                                 $t('ingredients_hidden')
                             }}</small></span
                         >
@@ -212,19 +217,23 @@ async function save() {
             </p>
             <p class="text-xs text-slate-500">{{ $t('ingredients_product_hint') }}</p>
             <label class="flex items-center gap-3"
-                ><ToggleSwitch v-model="form.contains_allergens" :aria-label="$t('ingredients_allergens')" />{{
-                    $t('ingredients_allergens')
-                }}</label
-            >
+                ><ToggleSwitch v-model="form.contains_allergens" :aria-label="$t('ingredients_allergens')" /><span
+                    class="field-label"
+                    >{{ $t('ingredients_allergens')
+                    }}<FieldHelp :label="$t('ingredients_allergens')" field="ingredients_allergens" /></span
+            ></label>
             <label class="flex items-center gap-3"
-                ><ToggleSwitch v-model="form.from_frozen" :aria-label="$t('ingredients_frozen')" />{{
-                    $t('ingredients_frozen')
-                }}</label
-            >
+                ><ToggleSwitch v-model="form.from_frozen" :aria-label="$t('ingredients_frozen')" /><span
+                    class="field-label"
+                    >{{ $t('ingredients_frozen')
+                    }}<FieldHelp :label="$t('ingredients_frozen')" field="ingredients_frozen" /></span
+            ></label>
             <div class="flex items-center gap-3">
-                <ToggleSwitch v-model="form.is_available" input-id="available" /><label for="available">{{
-                    $t('available_to_order')
-                }}</label>
+                <ToggleSwitch v-model="form.is_available" input-id="available" /><label for="available"
+                    ><span class="field-label"
+                        >{{ $t('available_to_order')
+                        }}<FieldHelp :label="$t('available_to_order')" field="available_to_order" /></span
+                ></label>
             </div>
             <ZFFormField :label="$t('modifier_groups')"
                 ><MultiSelect
@@ -238,23 +247,28 @@ async function save() {
             <div>
                 <h3 class="mb-3 font-semibold">{{ $t('variants') }}</h3>
                 <div v-for="(variant, i) in form.variants" :key="i" class="mb-3 flex gap-2">
-                    <InputText
-                        v-model="variant.name"
-                        :placeholder="$t('variant_name')"
-                        :aria-label="$t('variant_name')"
-                        required
-                    /><InputNumber
-                        :model-value="variant.price / 100"
-                        :min="0"
-                        :max="100000"
-                        :min-fraction-digits="2"
-                        :max-fraction-digits="2"
-                        mode="currency"
-                        currency="RON"
-                        :locale="localeTag()"
-                        :aria-label="$t('product_variant_price_lei')"
-                        @update:model-value="variant.price = Math.round(($event ?? 0) * 100)"
-                    /><Button
+                    <span class="field-control-help"
+                        ><InputText
+                            v-model="variant.name"
+                            :placeholder="$t('variant_name')"
+                            :aria-label="$t('variant_name')"
+                            required /><FieldHelp :label="$t('variant_name')" field="name" kind="InputText" /></span
+                    ><span class="field-control-help"
+                        ><InputNumber
+                            :model-value="variant.price / 100"
+                            :min="0"
+                            :max="100000"
+                            :min-fraction-digits="2"
+                            :max-fraction-digits="2"
+                            mode="currency"
+                            currency="RON"
+                            :locale="localeTag()"
+                            :aria-label="$t('product_variant_price_lei')"
+                            @update:model-value="variant.price = Math.round(($event ?? 0) * 100)" /><FieldHelp
+                            :label="$t('product_variant_price_lei')"
+                            field=""
+                            kind="InputNumber" /></span
+                    ><Button
                         icon="pi pi-times"
                         text
                         :aria-label="$t('remove_variant')"

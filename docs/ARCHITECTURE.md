@@ -1,4 +1,4 @@
-# ZionFood 0.0.19
+# ZionFood 0.0.20
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; full Migration Center remains future work. See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -99,3 +99,5 @@ StaffPermissions defines a five-feature none/view/manage matrix on organization 
 Operations exposes independent order-history and active-kitchen paths with the existing orders token abilities as additional requirements. Domain order transitions use an explicit server-chosen feature, not a client selector. Reservation/table/menu mutations and policies enforce their module levels. Shared-menu writes check all attached locations and global modifier operations check all organization locations. Read-only menu payloads omit unused ingredient editor catalogue data for staff.
 
 OrderingWindow now supplies a status snapshot with distinct outside-hours/cutoff reasons and program/cutoff times in the location timezone. Both guest QR entry and staff cards use this source; public connect/checkout continue authoritative checks. Bulk room/all table actions serialize on the location row and reuse the existing table-session operations. They do not change QR credentials, services or business hours.
+
+0.0.20 adds feature/location-scoped RestaurantOverview analytics, approximate daily menu-visit aggregates, compact effective table-state controls and reusable FieldHelp across forms. Definitions deliberately distinguish order value, reservations, QR sessions and approximate visits from receipts, physical occupancy and unique people. Successful generation review closes automatically; failed writes remain open. See [RESTAURANT_ANALYTICS.md](RESTAURANT_ANALYTICS.md).

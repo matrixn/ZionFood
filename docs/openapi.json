@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ZionFood API",
-    "version": "0.0.19",
+    "version": "0.0.20",
     "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session."
   },
   "servers": [
@@ -1590,6 +1590,34 @@
           }
         },
         "description": "Requires kitchen manage permission, assigned location and existing orders:manage token ability; does not grant order history access."
+      }
+    },
+    "/public/locations/{location}/visit": {
+      "post": {
+        "summary": "Record an approximate menu visit",
+        "description": "Browser-rendered menu only. Deduplicated for 30 minutes by a transient daily HMAC of connection/browser data; no raw IP or visitor identifier is stored in the database. Known preview/crawler user agents are excluded. Host/location resolution and per-IP request throttling apply.",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Accepted or deduplicated; no tracking identifier returned."
+          },
+          "404": {
+            "description": "Unknown or mismatched location."
+          },
+          "429": {
+            "description": "Request limit reached."
+          }
+        },
+        "security": []
       }
     }
   },

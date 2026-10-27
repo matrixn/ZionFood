@@ -10,6 +10,8 @@ use App\Models\LocationStaff;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\ModifierGroup;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\OrganizationMembership;
 use App\Models\StaffInvitation;
 use App\Models\User;
@@ -20,7 +22,7 @@ use Illuminate\Support\Str;
 
 class MakeBrowserFixtures extends Command
 {
-    protected $signature = 'zionfood:browser-fixtures {--admin : Create a separate local platform-admin browser fixture} {--services : Prepare a separate restaurant for reservation and QR browser tests} {--storefront : Prepare a photo menu and polygon for storefront UX tests} {--invitation : Prepare a separate unaccepted staff invitation without sending email} {--permissions : Prepare staff permissions and table-room browser fixtures} {--closed-window : Prepare an empty ordering schedule for availability tests}';
+    protected $signature = 'zionfood:browser-fixtures {--admin : Create a separate local platform-admin browser fixture} {--services : Prepare a separate restaurant for reservation and QR browser tests} {--storefront : Prepare a photo menu and polygon for storefront UX tests} {--invitation : Prepare a separate unaccepted staff invitation without sending email} {--permissions : Prepare staff permissions and table-room browser fixtures} {--overview : Prepare isolated analytics samples without notifications} {--closed-window : Prepare an empty ordering schedule for availability tests}';
 
     protected $description = 'Create a private local-only browser test account without changing existing users';
 
@@ -61,7 +63,7 @@ class MakeBrowserFixtures extends Command
                 Storage::disk('public')->put($secondImage, file_get_contents(public_path('images/cuisines/burger.jpg')));
                 MenuItem::create(['organization_id' => $location->organization_id, 'category_id' => $category->id, 'name' => 'Burger de test', 'price' => 3200, 'portion_size' => '400 g', 'image_path' => $secondImage]);
             }
-            if ($this->option('services') || $this->option('permissions')) {
+            if ($this->option('services') || $this->option('permissions') || $this->option('overview')) {
                 $profile = ['basics' => ['city' => 'Râmnicu Vâlcea', 'phone' => '0712345678', 'latitude' => 45.1, 'longitude' => 24.36], 'seating' => ['mode' => 'tables', 'capacity' => 8, 'tables' => [['code' => 'T1', 'area' => 'Salon', 'seats' => 4], ['code' => 'T2', 'area' => 'Terasă', 'seats' => 4]]], 'services' => ['qr_requires_staff' => false], 'reservations' => ['planned' => true, 'confirmation' => 'automatic', 'duration_minutes' => 60, 'interval_minutes' => 30, 'minimum_notice_minutes' => 0, 'advance_days' => 30, 'min_party_size' => 1, 'max_party_size' => 4, 'cancellation_hours' => 0, 'hold_minutes' => 15]];
                 $location->update(['setup_profile' => $profile]);
                 $location->fulfillment()->update(['reservations_enabled' => true, 'dine_in_enabled' => true, 'dine_in_cutoff_minutes' => 0]);
@@ -86,6 +88,19 @@ class MakeBrowserFixtures extends Command
                 $order = app(PlaceOrderAction::class)->execute($location->fresh(), ['customer_name' => 'Permission Browser Guest', 'customer_phone' => '0712345678', 'fulfillment' => 'pickup', 'items' => [['product_id' => $item->public_id, 'quantity' => 1]]], (string) Str::uuid())['order'];
                 $account += ['staff_email' => $staff->email, 'staff_password' => $staffPassword, 'order' => $order->public_id];
             }
+            if ($this->option('overview')) {
+                $items = collect([$category->items()->first()]);
+                for ($index = 2; $index <= 5; $index++) {
+                    $items->push(MenuItem::create(['organization_id' => $location->organization_id, 'category_id' => $category->id, 'name' => 'Preparat statistic '.$index, 'price' => 2500]));
+                }
+                for ($index = 0; $index < 21; $index++) {
+                    $item = $items[$index % 5];
+                    $quantity = $index % 3 + 1;
+                    $value = $quantity * 2500;
+                    $order = Order::create(['organization_id' => $location->organization_id, 'location_id' => $location->id, 'tracking_token_hash' => hash('sha256', Str::random(64)), 'tracking_token_encrypted' => encrypt('local-overview-only'), 'fulfillment' => $index % 2 ? 'dine_in' : 'pickup', 'table_code' => $index % 2 ? 'T1' : null, 'table_area' => $index % 2 ? 'Salon' : null, 'customer_name' => 'Analytics test guest', 'customer_phone' => '0712345678', 'currency' => 'RON', 'subtotal' => $value, 'delivery_fee' => 0, 'total' => $value, 'status' => 'completed', 'created_at' => now()->subDays($index % 14)]);
+                    OrderItem::create(['order_id' => $order->id, 'product_public_id' => $item->public_id, 'name' => $item->name, 'quantity' => $quantity, 'unit_price' => 2500, 'tax_basis_points' => 0, 'total' => $value]);
+                }
+            }
             if ($this->option('closed-window')) {
                 $location->hours()->delete();
             }
@@ -93,6 +108,7 @@ class MakeBrowserFixtures extends Command
             return $account;
         });
         $file = match (true) {
+            (bool) $this->option('overview') => 'browser-overview.json',
             (bool) $this->option('closed-window') => 'browser-closed-window.json',
             (bool) $this->option('permissions') => 'browser-permissions.json',
             (bool) $this->option('invitation') => 'browser-invitation.json',

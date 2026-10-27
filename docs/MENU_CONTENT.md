@@ -1,4 +1,4 @@
-# Automatic menu generation — 0.0.19
+# Automatic menu generation — 0.0.20
 
 Restaurant administration → Automatic generation is a dish-first workspace. Search products by name/category, choose a dish, check prefilled ingredients and the finished weight of **one portion**, then select nutrition, food suggestions, Romanian description rewriting and/or up to three translation languages. The main action stays visible on mobile. Preparation details are optional. Public ingredient associations are edited in the existing product editor; the analysis text is a separate private input.
 
@@ -33,3 +33,5 @@ Only supplied product text, ingredient names/flags, option labels, portion weigh
 Run migrations, build assets and gracefully restart supervised workers (`php artisan horizon:terminate`) through the normal release process. Migration `2026_10_27_001000` creates the notification inbox and deletes **only unpublished/historical drafts of retired kind gloriafood**; published product metadata is preserved. Rolling back this migration removes the inbox table but cannot restore deleted import drafts. Back up before any production migration.
 
 The manual single-product GloriaFood JSON adapter, upload route, import reports and manual recipe calculator have been removed as requested. The previously discussed whole-menu Migration Center remains future work: official backend API client, canonical whole-menu mapping, variant-specific modifiers/quantities, price-semantic verification, inactive publication, fidelity reports, reimport conflicts and controlled rollback. No complete GloriaFood migration or import capability is offered in this release.
+
+In 0.0.20 successful approval/rejection closes the review modal and emits a top-right confirmation. Save failures preserve the open proposal/error. A real configured Groq job was generated and its nutrition-only selection approved on Forge, without copying the stored key; this does not validate estimate/allergen accuracy. All form controls now carry contextual FieldHelp.

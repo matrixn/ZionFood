@@ -44,12 +44,15 @@ async function save() {
                 <p v-if="error" role="alert" class="text-red-700">{{ error }}</p>
                 <p v-if="saved" role="status" class="text-emerald-700">{{ $t('mc_saved') }}</p>
                 <label class="flex items-center gap-3"
-                    ><ToggleSwitch v-model="form.enabled" />{{ $t('mc_enable_ai') }}</label
-                >
+                    ><ToggleSwitch v-model="form.enabled" :aria-label="$t('mc_enable_ai')" /><span class="field-label"
+                        >{{ $t('mc_enable_ai') }}<FieldHelp :label="$t('mc_enable_ai')" field="mc_enable_ai" /></span
+                ></label>
                 <label class="field"
-                    >{{ $t('mc_provider')
-                    }}<Select
+                    ><span class="field-label"
+                        >{{ $t('mc_provider') }}<FieldHelp :label="$t('mc_provider')" field="mc_provider" /></span
+                    ><Select
                         v-model="form.provider"
+                        :aria-label="$t('mc_provider')"
                         :options="['groq', 'openai']"
                         @change="
                             form.model = form.provider === 'groq' ? 'openai/gpt-oss-20b' : '';
@@ -58,25 +61,34 @@ async function save() {
                         "
                 /></label>
                 <label class="field"
-                    >{{ $t('mc_model') }}<InputText v-model="form.model" required class="w-full min-w-0"
+                    ><span class="field-label"
+                        >{{ $t('mc_model') }}<FieldHelp :label="$t('mc_model')" field="mc_model" /></span
+                    ><InputText v-model="form.model" :aria-label="$t('mc_model')" required class="w-full min-w-0"
                 /></label>
                 <p class="muted">{{ $t('mc_groq_models') }}</p>
                 <label class="field"
-                    >{{ $t('mc_api_key')
-                    }}<InputText
+                    ><span class="field-label"
+                        >{{ $t('mc_api_key') }}<FieldHelp :label="$t('mc_api_key')" field="mc_api_key" /></span
+                    ><InputText
                         v-model="form.api_key"
+                        :aria-label="$t('mc_api_key')"
                         type="password"
                         autocomplete="new-password"
                         class="w-full min-w-0"
                 /></label>
                 <p class="muted">{{ form.has_key ? $t('mc_key_present') : $t('mc_key_missing') }}</p>
                 <label class="flex items-center gap-3"
-                    ><Checkbox v-model="form.clear_key" binary />{{ $t('mc_clear_key') }}</label
-                >
+                    ><Checkbox v-model="form.clear_key" :aria-label="$t('mc_clear_key')" binary /><span
+                        class="field-label"
+                        >{{ $t('mc_clear_key') }}<FieldHelp :label="$t('mc_clear_key')" field="mc_clear_key" /></span
+                ></label>
                 <label class="field"
-                    >{{ $t('mc_daily_limit')
-                    }}<InputNumber
+                    ><span class="field-label"
+                        >{{ $t('mc_daily_limit')
+                        }}<FieldHelp :label="$t('mc_daily_limit')" field="mc_daily_limit" /></span
+                    ><InputNumber
                         v-model="form.daily_limit"
+                        :aria-label="$t('mc_daily_limit')"
                         class="w-full min-w-0"
                         input-class="w-full min-w-0"
                         :min="1"

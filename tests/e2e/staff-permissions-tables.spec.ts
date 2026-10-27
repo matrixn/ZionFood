@@ -92,10 +92,14 @@ test('bulk table controls preserve permanent QR and scope changes to the selecte
     const terrace = cards.filter({ has: page.getByRole('heading', { name: 'T2 · Terasă', exact: true }) });
     await salon.locator('summary').click();
     const url = await salon.getByRole('link', { name: 'Deschide linkul QR', exact: true }).getAttribute('href');
-    await page.getByRole('button', { name: 'Activează Salon', exact: true }).click();
+    await page.getByRole('combobox',{name:'Mese de controlat',exact:true}).click();
+    await page.getByRole('option',{name:'Salon',exact:true}).click();
+    await page.getByRole('button', { name: 'Deschide sala', exact: true }).click();
     await expect(salon).toHaveAttribute('data-state', 'open');
     await expect(terrace).toHaveAttribute('data-state', 'table_closed');
     await expect(salon.getByRole('link', { name: 'Deschide linkul QR', exact: true })).toHaveAttribute('href', url!);
+    await page.getByRole('combobox',{name:'Mese de controlat',exact:true}).click();
+    await page.getByRole('option',{name:'Toate sălile',exact:true}).click();
     await page.getByRole('button', { name: 'Activează toate mesele', exact: true }).click();
     await expect(terrace).toHaveAttribute('data-state', 'open');
     await page.setViewportSize({ width: 390, height: 844 });

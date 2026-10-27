@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Analytics\RestaurantOverview;
 use App\Domain\Menus\RecordMenuChange;
 use App\Domain\Tenancy\Actions\OnboardOrganization;
 use App\Domain\Tenancy\StaffPermissions;
@@ -12,7 +13,6 @@ use App\Models\Ingredient;
 use App\Models\LocationStaff;
 use App\Models\MenuCategory;
 use App\Models\ModifierGroup;
-use App\Models\Order;
 use App\Models\Organization;
 use App\Models\OrganizationMembership;
 use App\Models\OrganizationSubscription;
@@ -89,11 +89,10 @@ class WorkspaceController extends Controller
             $props['groups'] = ModifierGroup::with('options')->where('organization_id', $context->organization_id)->get();
         }
         if ($section === 'dashboard') {
-            $query = Order::where('organization_id', $context->organization_id)->where('location_id', $context->id);
-            $props['metrics'] = ['orders' => (clone $query)->whereDate('created_at', today())->count(), 'revenue' => (clone $query)->whereDate('created_at', today())->where('status', 'completed')->sum('total'), 'active' => (clone $query)->whereNotIn('status', ['completed', 'cancelled', 'rejected'])->count()];
-            if (! app(TenantAccess::class)->canFeature($request->user(), $context, 'orders')) {
-                $props['metrics'] = null;
-            }
+            $days = (int) $request->query('days', 30);
+            abort_unless(in_array($days, [7, 30, 90], true), 422);
+            $props['analytics'] = app(RestaurantOverview::class)->build($request->user(), $context, $days);
+            $props['metrics'] = null;
             $props['subscription'] = $manage ? OrganizationSubscription::with('plan')->where('organization_id', $context->organization_id)->first() : null;
         }
 

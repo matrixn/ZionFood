@@ -56,13 +56,17 @@ function transition(booking: Booking, status: string) {
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
             <h1 class="text-3xl font-semibold">{{ $t('booking_manage') }}</h1>
             <div class="flex gap-3">
-                <input
-                    v-model="date"
-                    type="date"
-                    :aria-label="$t('booking_date')"
-                    class="rounded-lg border p-3"
-                    @change="router.get(`/app/locations/${location.public_id}/reservations`, { date })"
-                /><Button :label="$t('booking_refresh')" icon="pi pi-refresh" outlined @click="router.reload()" />
+                <span class="field-control-help"
+                    ><input
+                        v-model="date"
+                        type="date"
+                        :aria-label="$t('booking_date')"
+                        class="rounded-lg border p-3"
+                        @change="router.get(`/app/locations/${location.public_id}/reservations`, { date })" /><FieldHelp
+                        :label="$t('booking_date')"
+                        field="date"
+                        kind="input" /></span
+                ><Button :label="$t('booking_refresh')" icon="pi pi-refresh" outlined @click="router.reload()" />
             </div>
         </div>
         <p v-for="(message, key) in form.errors" :key="key" role="alert" class="mb-4 text-red-700">{{ message }}</p>

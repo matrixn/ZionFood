@@ -46,36 +46,38 @@ async function change(value: string) {
 </script>
 <template>
     <div class="relative">
-        <Select
-            :model-value="selection"
-            :options="options"
-            option-label="name"
-            option-value="code"
-            :loading="busy"
-            :disabled="busy"
-            :aria-label="$t('choose_language')"
-            data-testid="language-selector"
-            class="!min-w-36 !rounded-xl !text-sm"
-            @update:model-value="change"
-            ><template #value="slot"
-                ><span class="flex items-center gap-2.5"
-                    ><img
-                        :src="options.find((o) => o.code === slot.value)?.flag"
-                        alt=""
-                        aria-hidden="true"
-                        class="h-4 w-6 rounded-sm shadow-sm"
-                    /><span>{{ options.find((o) => o.code === slot.value)?.name }}</span></span
-                ></template
-            ><template #option="slot"
-                ><span class="flex items-center gap-2.5"
-                    ><img
-                        :src="slot.option.flag"
-                        alt=""
-                        aria-hidden="true"
-                        class="h-4 w-6 rounded-sm shadow-sm"
-                    /><span>{{ slot.option.name }}</span></span
-                ></template
-            ></Select
+        <span class="field-control-help"
+            ><Select
+                :model-value="selection"
+                :options="options"
+                option-label="name"
+                option-value="code"
+                :loading="busy"
+                :disabled="busy"
+                :aria-label="$t('choose_language')"
+                data-testid="language-selector"
+                class="!min-w-36 !rounded-xl !text-sm"
+                @update:model-value="change"
+                ><template #value="slot"
+                    ><span class="flex items-center gap-2.5"
+                        ><img
+                            :src="options.find((o) => o.code === slot.value)?.flag"
+                            alt=""
+                            aria-hidden="true"
+                            class="h-4 w-6 rounded-sm shadow-sm"
+                        /><span>{{ options.find((o) => o.code === slot.value)?.name }}</span></span
+                    ></template
+                ><template #option="slot"
+                    ><span class="flex items-center gap-2.5"
+                        ><img
+                            :src="slot.option.flag"
+                            alt=""
+                            aria-hidden="true"
+                            class="h-4 w-6 rounded-sm shadow-sm"
+                        /><span>{{ slot.option.name }}</span></span
+                    ></template
+                ></Select
+            ><FieldHelp :label="$t('choose_language')" field="" kind="Select" /></span
         ><span
             v-if="error"
             role="alert"

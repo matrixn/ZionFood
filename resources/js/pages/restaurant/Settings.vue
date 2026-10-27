@@ -118,41 +118,71 @@ useSetupEditorGuard(
             </div>
             <section v-if="!editorSection" class="panel grid gap-5">
                 <h2 class="text-xl font-semibold">{{ $t('location') }}</h2>
-                <label class="field">{{ $t('name') }}<InputText v-model="form.name" required /></label
-                ><label class="field">{{ $t('address') }}<InputText v-model="form.address" required /></label
+                <label class="field"
+                    ><span class="field-label">{{ $t('name') }}<FieldHelp :label="$t('name')" field="name" /></span
+                    ><InputText v-model="form.name" :aria-label="$t('name')" required /></label
+                ><label class="field"
+                    ><span class="field-label"
+                        >{{ $t('address') }}<FieldHelp :label="$t('address')" field="address" /></span
+                    ><InputText v-model="form.address" :aria-label="$t('address')" required /></label
                 ><label class="flex items-center gap-3"
-                    ><ToggleSwitch v-model="form.accepting_orders" />{{ $t('accepting_online_orders') }}</label
-                >
+                    ><ToggleSwitch v-model="form.accepting_orders" :aria-label="$t('accepting_online_orders')" /><span
+                        class="field-label"
+                        >{{ $t('accepting_online_orders')
+                        }}<FieldHelp :label="$t('accepting_online_orders')" field="accepting_online_orders" /></span
+                ></label>
                 <div class="flex flex-wrap gap-8">
                     <label class="flex items-center gap-3"
-                        ><ToggleSwitch v-model="form.pickup_enabled" />{{ $t('pickup') }}</label
+                        ><ToggleSwitch v-model="form.pickup_enabled" :aria-label="$t('pickup')" /><span
+                            class="field-label"
+                            >{{ $t('pickup') }}<FieldHelp :label="$t('pickup')" field="pickup" /></span></label
                     ><label class="flex items-center gap-3"
-                        ><ToggleSwitch v-model="form.delivery_enabled" />{{ $t('delivery') }}</label
-                    >
+                        ><ToggleSwitch v-model="form.delivery_enabled" :aria-label="$t('delivery')" /><span
+                            class="field-label"
+                            >{{ $t('delivery') }}<FieldHelp :label="$t('delivery')" field="delivery" /></span
+                    ></label>
                 </div>
             </section>
             <section v-if="!editorSection || editorSection === 'hours'" class="panel">
                 <h2 class="mb-5 text-xl font-semibold">{{ $t('opening_hours') }}</h2>
                 <label v-if="permissions.tables !== 'none'" class="field mb-4"
-                    >{{ $t('dining_cutoff_minutes')
-                    }}<InputNumber v-model="form.dine_in_cutoff_minutes" :disabled="permissions.tables !== 'manage'" fluid :min="0" :max="240" :step="15"
+                    ><span class="field-label"
+                        >{{ $t('dining_cutoff_minutes')
+                        }}<FieldHelp :label="$t('dining_cutoff_minutes')" field="dining_cutoff_minutes" /></span
+                    ><InputNumber
+                        v-model="form.dine_in_cutoff_minutes"
+                        :aria-label="$t('dining_cutoff_minutes')"
+                        :disabled="permissions.tables !== 'manage'"
+                        fluid
+                        :min="0"
+                        :max="240"
+                        :step="15"
                 /></label>
                 <p class="muted mb-4 text-sm">{{ $t('dining_cutoff_hint') }}</p>
                 <p class="muted mb-4">
                     {{ location.timezone }} {{ $t('omit_closed_days_overnight_opening_is_not_supported') }}
                 </p>
                 <div v-for="(h, i) in form.hours" :key="i" class="mb-3 flex flex-wrap items-center gap-3">
-                    <Select
-                        v-model="h.weekday"
-                        :options="days.map((name, n) => ({ name, id: n + 1 }))"
-                        option-label="name"
-                        option-value="id"
-                        :aria-label="$t('weekday')"
-                        class="w-44"
-                    /><input v-model="h.opens_at" type="time" :aria-label="$t('opening_time')" required /><span>{{
-                        $t('to')
-                    }}</span
-                    ><input v-model="h.closes_at" type="time" :aria-label="$t('closing_time')" required /><Button
+                    <span class="field-control-help"
+                        ><Select
+                            v-model="h.weekday"
+                            :options="days.map((name, n) => ({ name, id: n + 1 }))"
+                            option-label="name"
+                            option-value="id"
+                            :aria-label="$t('weekday')"
+                            class="w-44" /><FieldHelp :label="$t('weekday')" field="weekday" kind="Select" /></span
+                    ><span class="field-control-help"
+                        ><input v-model="h.opens_at" type="time" :aria-label="$t('opening_time')" required /><FieldHelp
+                            :label="$t('opening_time')"
+                            field="opens_at"
+                            kind="input" /></span
+                    ><span>{{ $t('to') }}</span
+                    ><span class="field-control-help"
+                        ><input v-model="h.closes_at" type="time" :aria-label="$t('closing_time')" required /><FieldHelp
+                            :label="$t('closing_time')"
+                            field="closes_at"
+                            kind="input" /></span
+                    ><Button
                         icon="pi pi-times"
                         text
                         :aria-label="$t('remove_opening_day')"
@@ -178,8 +208,10 @@ useSetupEditorGuard(
                 <p class="muted mb-4">{{ $t('map_delivery_policy') }}</p>
                 <div v-if="form.zones.length" class="mb-6 space-y-4">
                     <label class="field"
-                        >{{ $t('map_selected_zone')
-                        }}<Select
+                        ><span class="field-label"
+                            >{{ $t('map_selected_zone')
+                            }}<FieldHelp :label="$t('map_selected_zone')" field="map_selected_zone" /></span
+                        ><Select
                             v-model="selectedZone"
                             :options="
                                 form.zones.map((zone, index) => ({
@@ -225,14 +257,40 @@ useSetupEditorGuard(
                     class="mb-5 grid min-w-0 items-end gap-3"
                     :class="embedded ? 'md:grid-cols-2' : 'lg:grid-cols-5'"
                 >
-                    <label class="field">{{ $t('name') }}<InputText v-model="z.name" required /></label
+                    <label class="field"
+                        ><span class="field-label">{{ $t('name') }}<FieldHelp :label="$t('name')" field="name" /></span
+                        ><InputText v-model="z.name" :aria-label="$t('name')" required /></label
                     ><label class="field"
-                        >{{ $t('postal_prefix') }}<InputText v-model="z.postal_prefix" :required="!z.geometry" /></label
-                    ><label class="field">{{ $t('fee_bani') }}<InputNumber v-model="z.fee" fluid :min="0" /></label
+                        ><span class="field-label"
+                            >{{ $t('postal_prefix')
+                            }}<FieldHelp :label="$t('postal_prefix')" field="postal_prefix" /></span
+                        ><InputText
+                            v-model="z.postal_prefix"
+                            :aria-label="$t('postal_prefix')"
+                            :required="!z.geometry" /></label
                     ><label class="field"
-                        >{{ $t('minimum_bani') }}<InputNumber v-model="z.minimum_order" fluid :min="0" /></label
+                        ><span class="field-label"
+                            >{{ $t('fee_bani') }}<FieldHelp :label="$t('fee_bani')" field="fee_bani" /></span
+                        ><InputNumber v-model="z.fee" :aria-label="$t('fee_bani')" fluid :min="0" /></label
                     ><label class="field"
-                        >{{ $t('map_priority') }}<InputNumber v-model="z.priority" fluid :min="0" :max="1000" /></label
+                        ><span class="field-label"
+                            >{{ $t('minimum_bani')
+                            }}<FieldHelp :label="$t('minimum_bani')" field="minimum_bani" /></span
+                        ><InputNumber
+                            v-model="z.minimum_order"
+                            :aria-label="$t('minimum_bani')"
+                            fluid
+                            :min="0" /></label
+                    ><label class="field"
+                        ><span class="field-label"
+                            >{{ $t('map_priority')
+                            }}<FieldHelp :label="$t('map_priority')" field="map_priority" /></span
+                        ><InputNumber
+                            v-model="z.priority"
+                            :aria-label="$t('map_priority')"
+                            fluid
+                            :min="0"
+                            :max="1000" /></label
                     ><Button
                         :label="$t('remove')"
                         text

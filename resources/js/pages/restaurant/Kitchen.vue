@@ -110,28 +110,41 @@ onUnmounted(() => {
                 }}
                 {{ $t('automatic_recovery_every_15_seconds') }}
             </p>
-            <Select
-                v-model="filter"
-                :options="[
-                    { label: $t('all_orders'), value: 'all' },
-                    { label: $t('pickup'), value: 'pickup' },
-                    { label: $t('delivery'), value: 'delivery' },
-                ]"
-                option-label="label"
-                option-value="value"
-                :aria-label="$t('fulfillment_filter')"
-            />
+            <span class="field-control-help"
+                ><Select
+                    v-model="filter"
+                    :options="[
+                        { label: $t('all_orders'), value: 'all' },
+                        { label: $t('pickup'), value: 'pickup' },
+                        { label: $t('delivery'), value: 'delivery' },
+                    ]"
+                    option-label="label"
+                    option-value="value"
+                    :aria-label="$t('fulfillment_filter')" /><FieldHelp
+                    :label="$t('fulfillment_filter')"
+                    field="filter"
+                    kind="Select"
+            /></span>
         </div>
         <p v-if="kitchen.error" role="alert" class="mb-5 rounded-xl bg-red-50 p-4 text-red-700">
             {{ $t('connection_interrupted') }} {{ kitchen.error }}{{ $t('retrying_automatically') }}
         </p>
         <KitchenStatusColumns
-            :orders="shown" :can-write="permissions.kitchen === 'manage'"
+            :orders="shown"
+            :can-write="permissions.kitchen === 'manage'"
             :now="now"
             @changed="changed"
             @details="
                 selected = $event;
                 drawer = true;
-            " /><OrderDetailsDrawer v-model:visible="drawer" :order="selected" feature="kitchen" :can-write="permissions.kitchen === 'manage'" @updated="selected = $event; changed($event)"
+            " /><OrderDetailsDrawer
+            v-model:visible="drawer"
+            :order="selected"
+            feature="kitchen"
+            :can-write="permissions.kitchen === 'manage'"
+            @updated="
+                selected = $event;
+                changed($event);
+            "
     /></KitchenLayout>
 </template>

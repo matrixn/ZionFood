@@ -7,6 +7,7 @@ import ConfirmationService from 'primevue/confirmationservice';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 import { i18n, primeLocale } from '@/i18n';
+import FieldHelp from '@/components/ui/FieldHelp.vue';
 import '../css/app.css';
 import 'primeicons/primeicons.css';
 const preset = definePreset(Aura, {
@@ -37,6 +38,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         i18n.global.locale.value = props.initialPage.props.locale === 'en' ? 'en' : 'ro';
         createApp({ render: () => h(App, props) })
+            .component('FieldHelp', FieldHelp)
             .use(plugin)
             .use(i18n)
             .use(createPinia())

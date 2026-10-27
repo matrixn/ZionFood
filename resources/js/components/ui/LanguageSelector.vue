@@ -40,36 +40,38 @@ async function change(locale: Locale) {
 </script>
 <template>
     <div class="relative shrink-0">
-        <Select
-            v-model="selection"
-            :options="languages"
-            option-label="name"
-            option-value="code"
-            :aria-label="$t('choose_language')"
-            :loading="busy"
-            :disabled="busy"
-            class="!min-w-36 !rounded-xl !text-sm"
-            data-testid="language-selector"
-            @update:model-value="change"
-            ><template #value="slot"
-                ><span class="flex items-center gap-2.5"
-                    ><img
-                        :src="languages.find((l) => l.code === slot.value)?.flag"
-                        alt=""
-                        aria-hidden="true"
-                        class="h-4 w-6 rounded-sm shadow-sm"
-                    /><span>{{ languages.find((l) => l.code === slot.value)?.name }}</span></span
-                ></template
-            ><template #option="slot"
-                ><span class="flex items-center gap-2.5"
-                    ><img
-                        :src="slot.option.flag"
-                        alt=""
-                        aria-hidden="true"
-                        class="h-4 w-6 rounded-sm shadow-sm"
-                    /><span>{{ slot.option.name }}</span></span
-                ></template
-            ></Select
+        <span class="field-control-help"
+            ><Select
+                v-model="selection"
+                :options="languages"
+                option-label="name"
+                option-value="code"
+                :aria-label="$t('choose_language')"
+                :loading="busy"
+                :disabled="busy"
+                class="!min-w-32 sm:!min-w-36 !rounded-xl !text-sm"
+                data-testid="language-selector"
+                @update:model-value="change"
+                ><template #value="slot"
+                    ><span class="flex items-center gap-1.5 sm:gap-2.5"
+                        ><img
+                            :src="languages.find((l) => l.code === slot.value)?.flag"
+                            alt=""
+                            aria-hidden="true"
+                            class="h-4 w-6 rounded-sm shadow-sm"
+                        /><span>{{ languages.find((l) => l.code === slot.value)?.name }}</span></span
+                    ></template
+                ><template #option="slot"
+                    ><span class="flex items-center gap-1.5 sm:gap-2.5"
+                        ><img
+                            :src="slot.option.flag"
+                            alt=""
+                            aria-hidden="true"
+                            class="h-4 w-6 rounded-sm shadow-sm"
+                        /><span>{{ slot.option.name }}</span></span
+                    ></template
+                ></Select
+            ><FieldHelp :label="$t('choose_language')" field="selection" kind="Select" /></span
         ><span
             v-if="error"
             role="alert"

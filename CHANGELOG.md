@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.20 — 2026-10-27
+
+- Added permission-scoped restaurant analytics for local-calendar 7/30/90-day periods, daily charts/tables, product and table rankings, reservations, capacity and menu reach.
+- Added approximate menu-visit aggregation with transient 30-minute deduplication, preview-bot filtering and no raw visitor identifiers in the database.
+- Added reusable contextual form help throughout the application, preserving explicit input names, keyboard/touch access and scrollable modal layouts.
+- Compacted table controls into room selection plus open/close actions; shortened status copy, moved explanations into help and strengthened state borders/icons.
+- Successful AI approval now closes its modal and confirms publication with a toast; failed saves remain open. Performed a real Groq notification/nutrition approval on the existing Forge restaurant without changing provider credentials.
+
 ## 0.0.19 — 2026-10-27
 
 - Redesigned automatic generation around a searchable dish list, prefilled one-portion inputs, task cards and a persistent generation action.

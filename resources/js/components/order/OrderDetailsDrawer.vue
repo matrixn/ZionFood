@@ -84,21 +84,26 @@ const visible = defineModel<boolean>('visible', { required: true });
             <div class="grid gap-3">
                 <p v-if="error" role="alert" class="text-sm text-red-700">{{ error }}</p>
                 <label class="field"
-                    >{{ $t('order_next_status')
-                    }}<Select
+                    ><span class="field-label"
+                        >{{ $t('order_next_status')
+                        }}<FieldHelp :label="$t('order_next_status')" field="order_next_status" /></span
+                    ><Select
                         v-model="next"
                         :aria-label="$t('order_next_status')"
                         :options="order.transitions.map((status) => ({ label: $t('status_' + status), value: status }))"
                         option-label="label"
                         option-value="value"
                 /></label>
-                <InputText
-                    v-if="next === 'rejected'"
-                    v-model="reason"
-                    :aria-label="$t('reason_for_rejection')"
-                    :placeholder="$t('reason_for_rejection')"
-                    maxlength="500"
-                />
+                <span v-if="next === 'rejected'" class="field-control-help"
+                    ><InputText
+                        v-model="reason"
+                        :aria-label="$t('reason_for_rejection')"
+                        :placeholder="$t('reason_for_rejection')"
+                        maxlength="500" /><FieldHelp
+                        :label="$t('reason_for_rejection')"
+                        field="reason"
+                        kind="InputText"
+                /></span>
                 <Button
                     :label="$t('order_update_status')"
                     :disabled="busy || !next || (next === 'rejected' && !reason.trim())"

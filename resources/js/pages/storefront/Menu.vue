@@ -29,7 +29,10 @@ const props = defineProps<{
     shareMeta?: { title: string; name: string; description: string; image: string | null; url: string; locale: string };
     tableContext?: { public_id: string; code: string; area: string; ordering_paused: boolean };
 }>();
-onMounted(() => document.querySelectorAll('[data-storefront-meta]').forEach((node) => node.remove()));
+onMounted(() => {
+    document.querySelectorAll('[data-storefront-meta]').forEach((node) => node.remove());
+    void api(`/api/v1/public/locations/${props.location.public_id}/visit`, 'POST').catch(() => {});
+});
 const cart = useCart();
 cart.scope(props.location.public_id + (props.tableContext ? `:${props.tableContext.public_id}` : ''));
 const sessionToken = ref<string | null>(null);

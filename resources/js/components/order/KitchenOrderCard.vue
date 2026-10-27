@@ -70,12 +70,17 @@ async function transition(status: OrderStatus) {
                 class="!min-h-12"
                 @click="transition(status)"
             /><template v-if="order.status === 'pending'"
-                ><input
-                    v-model="reason"
-                    :placeholder="$t('reason_for_rejection')"
-                    :aria-label="$t('reason_for_rejection')"
-                    maxlength="500"
-                    class="rounded-lg border border-slate-300 bg-transparent p-3 text-sm" /><Button
+                ><span class="field-control-help"
+                    ><input
+                        v-model="reason"
+                        :placeholder="$t('reason_for_rejection')"
+                        :aria-label="$t('reason_for_rejection')"
+                        maxlength="500"
+                        class="rounded-lg border border-slate-300 bg-transparent p-3 text-sm" /><FieldHelp
+                        :label="$t('reason_for_rejection')"
+                        field="reason"
+                        kind="input" /></span
+                ><Button
                     :label="$t('reject_order')"
                     severity="danger"
                     outlined

@@ -108,7 +108,7 @@ function switchLocation(id: string) {
 <template>
     <div class="min-h-screen">
         <header
-            class="flex min-h-20 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 py-4 dark:border-slate-700 dark:bg-slate-900 md:px-8"
+            class="app-header flex min-h-20 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 py-4 dark:border-slate-700 dark:bg-slate-900 md:px-8"
         >
             <div class="flex items-center gap-2">
                 <Button
@@ -168,16 +168,19 @@ function switchLocation(id: string) {
                         class="h-10 w-10 rounded-lg bg-white object-contain"
                     /><strong class="text-sm">{{ location.restaurant.name }}</strong>
                 </div>
-                <Select
-                    v-if="locations?.length"
-                    :model-value="location?.public_id"
-                    :options="locations"
-                    option-label="name"
-                    option-value="public_id"
-                    class="mb-3 w-full"
-                    :aria-label="$t('active_location')"
-                    @update:model-value="switchLocation"
-                />
+                <span v-if="locations?.length" class="field-control-help"
+                    ><Select
+                        :model-value="location?.public_id"
+                        :options="locations"
+                        option-label="name"
+                        option-value="public_id"
+                        class="mb-3 w-full"
+                        :aria-label="$t('active_location')"
+                        @update:model-value="switchLocation" /><FieldHelp
+                        :label="$t('active_location')"
+                        field=""
+                        kind="Select"
+                /></span>
                 <nav :aria-label="$t('nav_workspace')" class="space-y-6">
                     <Link
                         v-if="location && canManage"

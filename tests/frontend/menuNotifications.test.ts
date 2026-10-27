@@ -22,7 +22,7 @@ it('approves selected sections without allowing client edits to generated nutrit
     mocked.mockResolvedValueOnce({reviewed:true}).mockResolvedValueOnce({notifications:[]});
     await store.decide('approve',['description']);
     expect(mocked).toHaveBeenNthCalledWith(2,'/app/locations/location/menu-content/drafts/draft','POST',{action:'approve',sections:['description'],changes:{description:'Corrected description'}});
-    expect(store.review?.status).toBe('approved');
+    expect(store.review?.status).toBe('approved');expect(store.visible).toBe(false);
     mocked.mockResolvedValueOnce(result());await store.open('location','draft');
     mocked.mockResolvedValueOnce({reviewed:true}).mockResolvedValueOnce({notifications:[]});
     await store.decide('reject',[]);
@@ -33,5 +33,5 @@ it('approves selected sections without allowing client edits to generated nutrit
 it('keeps the proposal for correction when publication fails',async()=>{
     const store=useMenuNotifications();mocked.mockResolvedValueOnce(result());await store.open('location','draft');
     mocked.mockRejectedValueOnce(new Error('Source changed'));
-    await store.decide('approve',['description']);expect(store.review?.status).toBe('ready');expect(store.error).toBe('Source changed');expect(store.busy).toBe(false);
+    await store.decide('approve',['description']);expect(store.review?.status).toBe('ready');expect(store.visible).toBe(true);expect(store.error).toBe('Source changed');expect(store.busy).toBe(false);
 });

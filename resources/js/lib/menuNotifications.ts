@@ -108,7 +108,9 @@ export const useMenuNotifications = defineStore('menu-notifications', () => {
             if (request !== opening) return;
             target.status = action === 'approve' ? 'approved' : 'rejected';
             reviewed.value++;
-            await poll();
+            visible.value = false;
+            // Publication has succeeded even if the subsequent inbox refresh is offline.
+            void poll().catch(() => {});
         } catch (e) {
             if (request === opening) error.value = (e as Error).message;
         } finally {

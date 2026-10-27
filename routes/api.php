@@ -17,6 +17,7 @@ Route::prefix('v1')->group(function () {
     Route::post('public/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->middleware('throttle:reservations');
     Route::post('public/tables/{table}/connect', [DiningController::class, 'connect'])->middleware('throttle:table-connect');
     Route::post('public/locations/{location}/address-from-pin', CheckoutAddressController::class)->middleware('throttle:checkout-address');
+    Route::post('public/locations/{location}/visit', [PublicOrderingController::class, 'visit'])->middleware('throttle:30,1');
     Route::get('public/locations/{location}/menu', [PublicOrderingController::class, 'menu']);
     Route::post('public/locations/{location}/checkout', [PublicOrderingController::class, 'checkout'])->middleware('throttle:checkout');
     Route::get('public/orders/{order}', [PublicOrderingController::class, 'tracking'])->middleware('throttle:tracking');

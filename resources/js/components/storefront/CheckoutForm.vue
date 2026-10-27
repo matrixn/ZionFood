@@ -182,28 +182,44 @@ async function submit() {
         ><form :id="formId" class="grid gap-5" @submit.prevent="submit">
             <p v-if="error" role="alert" class="rounded-lg bg-red-50 p-3 text-red-700">{{ error }}</p>
             <label class="field"
-                >{{ $t('your_name')
-                }}<InputText v-model="form.customer_name" autocomplete="name" maxlength="150" required /></label
+                ><span class="field-label"
+                    >{{ $t('your_name') }}<FieldHelp :label="$t('your_name')" field="your_name" /></span
+                ><InputText
+                    v-model="form.customer_name"
+                    :aria-label="$t('your_name')"
+                    autocomplete="name"
+                    maxlength="150"
+                    required /></label
             ><label class="field"
-                >{{ $t('phone_number')
-                }}<InputText
+                ><span class="field-label"
+                    >{{ $t('phone_number') }}<FieldHelp :label="$t('phone_number')" field="phone_number" /></span
+                ><InputText
                     v-model="form.customer_phone"
+                    :aria-label="$t('phone_number')"
                     type="tel"
                     autocomplete="tel"
                     maxlength="30"
                     required /></label
             ><label class="field"
-                >{{ $t('how_would_you_like_your_order')
-                }}<Select
+                ><span class="field-label"
+                    >{{ $t('how_would_you_like_your_order')
+                    }}<FieldHelp
+                        :label="$t('how_would_you_like_your_order')"
+                        field="how_would_you_like_your_order" /></span
+                ><Select
                     v-model="form.fulfillment"
+                    :aria-label="$t('how_would_you_like_your_order')"
                     :options="methods"
                     option-label="label"
                     option-value="value" /></label
             ><template v-if="form.fulfillment === 'delivery'"
                 ><label class="field"
-                    >{{ $t('delivery_address')
-                    }}<InputText
+                    ><span class="field-label"
+                        >{{ $t('delivery_address')
+                        }}<FieldHelp :label="$t('delivery_address')" field="delivery_address" /></span
+                    ><InputText
                         v-model="form.delivery_address"
+                        :aria-label="$t('delivery_address')"
                         autocomplete="street-address"
                         maxlength="500"
                         required
@@ -226,17 +242,26 @@ async function submit() {
                     </p>
                     <p class="text-sm text-slate-500">{{ $t('map_address_hint') }}</p></template
                 ><label v-else class="field"
-                    >{{ $t('postal_code')
-                    }}<InputText v-model="form.postal_code" autocomplete="postal-code" required /></label
+                    ><span class="field-label"
+                        >{{ $t('postal_code') }}<FieldHelp :label="$t('postal_code')" field="postal_code" /></span
+                    ><InputText
+                        v-model="form.postal_code"
+                        :aria-label="$t('postal_code')"
+                        autocomplete="postal-code"
+                        required /></label
                 ><label v-if="!hasPolygons" class="field"
-                    >{{ $t('delivery_zone')
-                    }}<Select
+                    ><span class="field-label"
+                        >{{ $t('delivery_zone') }}<FieldHelp :label="$t('delivery_zone')" field="delivery_zone" /></span
+                    ><Select
                         v-model="form.delivery_zone_id"
+                        :aria-label="$t('delivery_zone')"
                         :options="zones"
                         option-label="name"
                         option-value="id" /></label></template
             ><label class="field"
-                >{{ $t('order_notes') }}<Textarea v-model="form.notes" rows="2" maxlength="1000"
+                ><span class="field-label"
+                    >{{ $t('order_notes') }}<FieldHelp :label="$t('order_notes')" field="order_notes" /></span
+                ><Textarea v-model="form.notes" :aria-label="$t('order_notes')" rows="2" maxlength="1000"
             /></label>
         </form>
         <template #footer>

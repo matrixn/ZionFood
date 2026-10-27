@@ -90,9 +90,11 @@ function add() {
             <ProductIngredients :product="product" />
             <ProductFoodData :product="product" />
             <label v-if="product.variants.length" class="field"
-                >{{ $t('size_variant')
-                }}<Select
+                ><span class="field-label"
+                    >{{ $t('size_variant') }}<FieldHelp :label="$t('size_variant')" field="size_variant" /></span
+                ><Select
                     v-model="variant"
+                    :aria-label="$t('size_variant')"
                     :options="product.variants.map((v) => ({ ...v, label: v.name + ' · ' + money(v.price) }))"
                     option-label="label"
                     option-value="id"
@@ -102,8 +104,9 @@ function add() {
                     {{ g.name }} <span class="muted">({{ g.min_choices }}–{{ g.max_choices }})</span>
                 </legend>
                 <label v-for="o in g.options" :key="o.id" class="flex items-center gap-3 py-2"
-                    ><Checkbox v-model="choices" :value="o.id" />{{ o.name
-                    }}<span class="ml-auto text-sm">+ {{ money(o.price) }}</span></label
+                    ><Checkbox v-model="choices" :aria-label="o.name" :value="o.id" /><span class="field-label"
+                        >{{ o.name }}<FieldHelp :label="o.name" field="options" /></span
+                    ><span class="ml-auto text-sm">+ {{ money(o.price) }}</span></label
                 >
             </fieldset>
         </div>

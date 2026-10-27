@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Analytics\RecordMenuVisit;
 use App\Domain\Menus\PublicMenuTree;
 use App\Domain\Orders\Actions\PlaceOrderAction;
 use App\Domain\Restaurants\StorefrontShareImage;
@@ -66,6 +67,13 @@ class PublicOrderingController extends Controller
     public function menu(Request $request, string $location)
     {
         return response()->json($this->data($this->resolve($request, $location)));
+    }
+
+    public function visit(Request $request, string $location)
+    {
+        app(RecordMenuVisit::class)->execute($request, $this->resolve($request, $location));
+
+        return response()->noContent()->header('Cache-Control', 'no-store');
     }
 
     public function checkout(CheckoutRequest $request, string $location, PlaceOrderAction $action)

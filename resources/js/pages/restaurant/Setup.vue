@@ -368,15 +368,19 @@ onBeforeUnmount(
                 >{{ progress.completed }}/{{ progress.total }} {{ $t('setup_completed') }}</span
             >
         </ZFPageHeader>
-        <Select
-            :model-value="step"
-            :options="steps.map((key) => ({ label: $t(`setup_step_${key}`), value: key }))"
-            option-label="label"
-            option-value="value"
-            :aria-label="$t('setup_steps')"
-            class="mb-5 w-full xl:!hidden"
-            @update:model-value="router.visit(`${base}/setup/${$event}`)"
-        />
+        <span class="field-control-help"
+            ><Select
+                :model-value="step"
+                :options="steps.map((key) => ({ label: $t(`setup_step_${key}`), value: key }))"
+                option-label="label"
+                option-value="value"
+                :aria-label="$t('setup_steps')"
+                class="mb-5 w-full xl:!hidden"
+                @update:model-value="router.visit(`${base}/setup/${$event}`)" /><FieldHelp
+                :label="$t('setup_steps')"
+                field=""
+                kind="Select"
+        /></span>
         <div class="grid items-start gap-6 xl:grid-cols-[250px_minmax(0,1fr)]">
             <aside class="panel hidden space-y-6 xl:block" :aria-label="$t('setup_steps')">
                 <div
@@ -437,41 +441,92 @@ onBeforeUnmount(
                     </div>
                     <div v-if="step === 'basics'" class="grid gap-5 md:grid-cols-2">
                         <label class="field"
-                            >{{ $t('restaurant_name')
-                            }}<InputText v-model="basics.restaurant_name" required maxlength="150"
+                            ><span class="field-label"
+                                >{{ $t('restaurant_name')
+                                }}<FieldHelp :label="$t('restaurant_name')" field="restaurant_name" /></span
+                            ><InputText
+                                v-model="basics.restaurant_name"
+                                :aria-label="$t('restaurant_name')"
+                                required
+                                maxlength="150"
                         /></label>
                         <label class="field"
-                            >{{ $t('location_name') }}<InputText v-model="basics.name" required maxlength="150"
+                            ><span class="field-label"
+                                >{{ $t('location_name')
+                                }}<FieldHelp :label="$t('location_name')" field="location_name" /></span
+                            ><InputText
+                                v-model="basics.name"
+                                :aria-label="$t('location_name')"
+                                required
+                                maxlength="150"
                         /></label>
                         <label class="field md:col-span-2"
-                            >{{ $t('street_address') }}<InputText v-model="basics.address" required maxlength="255"
+                            ><span class="field-label"
+                                >{{ $t('street_address')
+                                }}<FieldHelp :label="$t('street_address')" field="street_address" /></span
+                            ><InputText
+                                v-model="basics.address"
+                                :aria-label="$t('street_address')"
+                                required
+                                maxlength="255"
                         /></label>
                         <label class="field"
-                            >{{ $t('setup_city') }}<InputText v-model="basics.city" required maxlength="100"
+                            ><span class="field-label"
+                                >{{ $t('setup_city') }}<FieldHelp :label="$t('setup_city')" field="setup_city" /></span
+                            ><InputText v-model="basics.city" :aria-label="$t('setup_city')" required maxlength="100"
                         /></label>
                         <label class="field"
-                            >{{ $t('setup_postal') }}<InputText v-model="basics.postal_code" maxlength="20"
+                            ><span class="field-label"
+                                >{{ $t('setup_postal')
+                                }}<FieldHelp :label="$t('setup_postal')" field="setup_postal" /></span
+                            ><InputText v-model="basics.postal_code" :aria-label="$t('setup_postal')" maxlength="20"
                         /></label>
                         <label class="field"
-                            >{{ $t('setup_country')
-                            }}<Select
+                            ><span class="field-label"
+                                >{{ $t('setup_country')
+                                }}<FieldHelp :label="$t('setup_country')" field="setup_country" /></span
+                            ><Select
                                 v-model="basics.country"
+                                :aria-label="$t('setup_country')"
                                 :options="countries"
                                 option-label="label"
                                 option-value="value"
                         /></label>
                         <label class="field"
-                            >{{ $t('setup_timezone') }}<Select v-model="basics.timezone" :options="zones" editable
+                            ><span class="field-label"
+                                >{{ $t('setup_timezone')
+                                }}<FieldHelp :label="$t('setup_timezone')" field="setup_timezone" /></span
+                            ><Select
+                                v-model="basics.timezone"
+                                :aria-label="$t('setup_timezone')"
+                                :options="zones"
+                                editable
                         /></label>
                         <label class="field"
-                            >{{ $t('setup_phone')
-                            }}<InputText v-model="basics.phone" type="tel" required maxlength="35"
+                            ><span class="field-label"
+                                >{{ $t('setup_phone')
+                                }}<FieldHelp :label="$t('setup_phone')" field="setup_phone" /></span
+                            ><InputText
+                                v-model="basics.phone"
+                                :aria-label="$t('setup_phone')"
+                                type="tel"
+                                required
+                                maxlength="35"
                         /></label>
                         <label class="field"
-                            >{{ $t('email') }}<InputText v-model="basics.email" type="email" maxlength="254"
+                            ><span class="field-label"
+                                >{{ $t('email') }}<FieldHelp :label="$t('email')" field="email" /></span
+                            ><InputText v-model="basics.email" :aria-label="$t('email')" type="email" maxlength="254"
                         /></label>
                         <label class="field"
-                            >{{ $t('setup_website') }}<InputText v-model="basics.website" type="url" maxlength="255"
+                            ><span class="field-label"
+                                >{{ $t('setup_website')
+                                }}<FieldHelp :label="$t('setup_website')" field="setup_website" /></span
+                            ><InputText
+                                v-model="basics.website"
+                                :aria-label="$t('setup_website')"
+                                type="url"
+                                maxlength="255"
                         /></label>
                         <RestaurantLocationPicker
                             v-model="restaurantPoint"
@@ -493,8 +548,10 @@ onBeforeUnmount(
                     </div>
                     <div v-else-if="step === 'seating'" class="space-y-5">
                         <label class="field"
-                            >{{ $t('setup_seating_mode')
-                            }}<Select
+                            ><span class="field-label"
+                                >{{ $t('setup_seating_mode')
+                                }}<FieldHelp :label="$t('setup_seating_mode')" field="setup_seating_mode" /></span
+                            ><Select
                                 v-model="seating.mode"
                                 :aria-label="$t('setup_seating_mode')"
                                 :options="options(['capacity', 'tables'])"
@@ -502,8 +559,15 @@ onBeforeUnmount(
                                 option-value="value"
                         /></label>
                         <label v-if="seating.mode === 'capacity'" class="field"
-                            >{{ $t('setup_capacity')
-                            }}<InputNumber v-model="seating.capacity" fluid :min="0" :max="10000"
+                            ><span class="field-label"
+                                >{{ $t('setup_capacity')
+                                }}<FieldHelp :label="$t('setup_capacity')" field="setup_capacity" /></span
+                            ><InputNumber
+                                v-model="seating.capacity"
+                                :aria-label="$t('setup_capacity')"
+                                fluid
+                                :min="0"
+                                :max="10000"
                         /></label>
                         <div v-else class="space-y-4">
                             <fieldset
@@ -513,15 +577,35 @@ onBeforeUnmount(
                             >
                                 <legend class="px-2 text-sm">{{ $t('setup_table') }} {{ index + 1 }}</legend>
                                 <label class="field"
-                                    >{{ $t('setup_table_code')
-                                    }}<InputText v-model="table.code" required maxlength="30"
+                                    ><span class="field-label"
+                                        >{{ $t('setup_table_code')
+                                        }}<FieldHelp :label="$t('setup_table_code')" field="setup_table_code" /></span
+                                    ><InputText
+                                        v-model="table.code"
+                                        :aria-label="$t('setup_table_code')"
+                                        required
+                                        maxlength="30"
                                 /></label>
                                 <label class="field"
-                                    >{{ $t('setup_area') }}<InputText v-model="table.area" required maxlength="80"
+                                    ><span class="field-label"
+                                        >{{ $t('setup_area')
+                                        }}<FieldHelp :label="$t('setup_area')" field="setup_area" /></span
+                                    ><InputText
+                                        v-model="table.area"
+                                        :aria-label="$t('setup_area')"
+                                        required
+                                        maxlength="80"
                                 /></label>
                                 <label class="field"
-                                    >{{ $t('setup_seats')
-                                    }}<InputNumber v-model="table.seats" fluid :min="1" :max="100"
+                                    ><span class="field-label"
+                                        >{{ $t('setup_seats')
+                                        }}<FieldHelp :label="$t('setup_seats')" field="setup_seats" /></span
+                                    ><InputNumber
+                                        v-model="table.seats"
+                                        :aria-label="$t('setup_seats')"
+                                        fluid
+                                        :min="1"
+                                        :max="100"
                                 /></label>
                                 <Button
                                     type="button"
@@ -560,12 +644,22 @@ onBeforeUnmount(
                     />
                     <div v-else-if="step === 'services'" class="space-y-5">
                         <label class="flex items-center justify-between gap-4"
-                            ><span>{{ $t('setup_pickup_live') }}</span
-                            ><ToggleSwitch v-model="services.pickup_enabled"
+                            ><span
+                                ><span class="field-label"
+                                    >{{ $t('setup_pickup_live')
+                                    }}<FieldHelp
+                                        :label="$t('setup_pickup_live')"
+                                        field="setup_pickup_live" /></span></span
+                            ><ToggleSwitch v-model="services.pickup_enabled" :aria-label="$t('setup_pickup_live')"
                         /></label>
                         <label class="flex items-center justify-between gap-4"
-                            ><span>{{ $t('setup_delivery_live') }}</span
-                            ><ToggleSwitch v-model="services.delivery_enabled"
+                            ><span
+                                ><span class="field-label"
+                                    >{{ $t('setup_delivery_live')
+                                    }}<FieldHelp
+                                        :label="$t('setup_delivery_live')"
+                                        field="setup_delivery_live" /></span></span
+                            ><ToggleSwitch v-model="services.delivery_enabled" :aria-label="$t('setup_delivery_live')"
                         /></label>
                         <Link
                             v-if="services.delivery_enabled"
@@ -574,15 +668,26 @@ onBeforeUnmount(
                             >{{ $t('setup_delivery_zones') }} →</Link
                         >
                         <label class="flex items-center justify-between gap-4"
-                            ><span>{{ $t('booking_enable') }}</span
+                            ><span
+                                ><span class="field-label"
+                                    >{{ $t('booking_enable')
+                                    }}<FieldHelp :label="$t('booking_enable')" field="booking_enable" /></span></span
                             ><ToggleSwitch v-model="services.reservations_enabled" :aria-label="$t('booking_enable')"
                         /></label>
                         <label class="flex items-center justify-between gap-4"
-                            ><span>{{ $t('dining_enable') }}</span
+                            ><span
+                                ><span class="field-label"
+                                    >{{ $t('dining_enable')
+                                    }}<FieldHelp :label="$t('dining_enable')" field="dining_enable" /></span></span
                             ><ToggleSwitch v-model="services.dine_in_enabled" :aria-label="$t('dining_enable')"
                         /></label>
                         <label v-if="services.dine_in_enabled" class="flex items-center justify-between gap-4"
-                            ><span>{{ $t('dining_staff_required') }}</span
+                            ><span
+                                ><span class="field-label"
+                                    >{{ $t('dining_staff_required')
+                                    }}<FieldHelp
+                                        :label="$t('dining_staff_required')"
+                                        field="dining_staff_required" /></span></span
                             ><ToggleSwitch
                                 v-model="services.qr_requires_staff"
                                 :aria-label="$t('dining_staff_required')"
@@ -594,11 +699,23 @@ onBeforeUnmount(
                             {{ $t('setup_planning_only') }}
                         </div>
                         <label class="flex items-center justify-between gap-4"
-                            ><span>{{ $t('setup_scheduled_plan') }}</span
-                            ><ToggleSwitch v-model="services.scheduled_orders_planned"
+                            ><span
+                                ><span class="field-label"
+                                    >{{ $t('setup_scheduled_plan')
+                                    }}<FieldHelp
+                                        :label="$t('setup_scheduled_plan')"
+                                        field="setup_scheduled_plan" /></span></span
+                            ><ToggleSwitch
+                                v-model="services.scheduled_orders_planned"
+                                :aria-label="$t('setup_scheduled_plan')"
                         /></label>
                         <label class="flex items-center justify-between gap-4"
-                            ><span>{{ $t('setup_catering_plan') }}</span
+                            ><span
+                                ><span class="field-label"
+                                    >{{ $t('setup_catering_plan')
+                                    }}<FieldHelp
+                                        :label="$t('setup_catering_plan')"
+                                        field="setup_catering_plan" /></span></span
                             ><ToggleSwitch v-model="services.catering_planned" :aria-label="$t('setup_catering_plan')"
                         /></label>
                     </div>
@@ -607,62 +724,130 @@ onBeforeUnmount(
                             {{ $t('setup_reservation_notice') }}
                         </p>
                         <label class="flex items-center justify-between gap-4"
-                            ><span>{{ $t('setup_reservations_plan') }}</span
+                            ><span
+                                ><span class="field-label"
+                                    >{{ $t('setup_reservations_plan')
+                                    }}<FieldHelp
+                                        :label="$t('setup_reservations_plan')"
+                                        field="setup_reservations_plan" /></span></span
                             ><ToggleSwitch v-model="reservations.planned" :aria-label="$t('setup_reservations_plan')"
                         /></label>
                         <template v-if="reservations.planned">
                             <label class="field"
-                                >{{ $t('booking_hold_minutes')
-                                }}<InputNumber v-model="reservations.hold_minutes" fluid :min="5" :max="120"
+                                ><span class="field-label"
+                                    >{{ $t('booking_hold_minutes')
+                                    }}<FieldHelp
+                                        :label="$t('booking_hold_minutes')"
+                                        field="booking_hold_minutes" /></span
+                                ><InputNumber
+                                    v-model="reservations.hold_minutes"
+                                    :aria-label="$t('booking_hold_minutes')"
+                                    fluid
+                                    :min="5"
+                                    :max="120"
                             /></label>
                             <label class="field"
-                                >{{ $t('setup_confirmation')
-                                }}<Select
+                                ><span class="field-label"
+                                    >{{ $t('setup_confirmation')
+                                    }}<FieldHelp :label="$t('setup_confirmation')" field="setup_confirmation" /></span
+                                ><Select
                                     v-model="reservations.confirmation"
+                                    :aria-label="$t('setup_confirmation')"
                                     :options="options(['manual', 'automatic'])"
                                     option-label="label"
                                     option-value="value"
                             /></label>
                             <div class="grid gap-5 md:grid-cols-2">
                                 <label class="field"
-                                    >{{ $t('setup_duration')
-                                    }}<InputNumber v-model="reservations.duration_minutes" fluid :min="15" :max="480"
+                                    ><span class="field-label"
+                                        >{{ $t('setup_duration')
+                                        }}<FieldHelp :label="$t('setup_duration')" field="setup_duration" /></span
+                                    ><InputNumber
+                                        v-model="reservations.duration_minutes"
+                                        :aria-label="$t('setup_duration')"
+                                        fluid
+                                        :min="15"
+                                        :max="480"
                                 /></label>
                                 <label class="field"
-                                    >{{ $t('setup_interval')
-                                    }}<Select v-model="reservations.interval_minutes" :options="[15, 30, 60]"
+                                    ><span class="field-label"
+                                        >{{ $t('setup_interval')
+                                        }}<FieldHelp :label="$t('setup_interval')" field="setup_interval" /></span
+                                    ><Select
+                                        v-model="reservations.interval_minutes"
+                                        :aria-label="$t('setup_interval')"
+                                        :options="[15, 30, 60]"
                                 /></label>
                                 <label class="field"
-                                    >{{ $t('setup_notice_minutes')
-                                    }}<InputNumber
+                                    ><span class="field-label"
+                                        >{{ $t('setup_notice_minutes')
+                                        }}<FieldHelp
+                                            :label="$t('setup_notice_minutes')"
+                                            field="setup_notice_minutes" /></span
+                                    ><InputNumber
                                         v-model="reservations.minimum_notice_minutes"
+                                        :aria-label="$t('setup_notice_minutes')"
                                         fluid
                                         :min="0"
                                         :max="10080"
                                 /></label>
                                 <label class="field"
-                                    >{{ $t('setup_advance_days')
-                                    }}<InputNumber v-model="reservations.advance_days" fluid :min="1" :max="365"
+                                    ><span class="field-label"
+                                        >{{ $t('setup_advance_days')
+                                        }}<FieldHelp
+                                            :label="$t('setup_advance_days')"
+                                            field="setup_advance_days" /></span
+                                    ><InputNumber
+                                        v-model="reservations.advance_days"
+                                        :aria-label="$t('setup_advance_days')"
+                                        fluid
+                                        :min="1"
+                                        :max="365"
                                 /></label>
                                 <label class="field"
-                                    >{{ $t('setup_min_guests')
-                                    }}<InputNumber v-model="reservations.min_party_size" fluid :min="1" :max="100"
+                                    ><span class="field-label"
+                                        >{{ $t('setup_min_guests')
+                                        }}<FieldHelp :label="$t('setup_min_guests')" field="setup_min_guests" /></span
+                                    ><InputNumber
+                                        v-model="reservations.min_party_size"
+                                        :aria-label="$t('setup_min_guests')"
+                                        fluid
+                                        :min="1"
+                                        :max="100"
                                 /></label>
                                 <label class="field"
-                                    >{{ $t('setup_max_guests')
-                                    }}<InputNumber
+                                    ><span class="field-label"
+                                        >{{ $t('setup_max_guests')
+                                        }}<FieldHelp :label="$t('setup_max_guests')" field="setup_max_guests" /></span
+                                    ><InputNumber
                                         v-model="reservations.max_party_size"
+                                        :aria-label="$t('setup_max_guests')"
                                         :min="reservations.min_party_size"
                                         :max="100"
                                 /></label>
                                 <label class="field"
-                                    >{{ $t('setup_cancel_hours')
-                                    }}<InputNumber v-model="reservations.cancellation_hours" fluid :min="0" :max="720"
+                                    ><span class="field-label"
+                                        >{{ $t('setup_cancel_hours')
+                                        }}<FieldHelp
+                                            :label="$t('setup_cancel_hours')"
+                                            field="setup_cancel_hours" /></span
+                                    ><InputNumber
+                                        v-model="reservations.cancellation_hours"
+                                        :aria-label="$t('setup_cancel_hours')"
+                                        fluid
+                                        :min="0"
+                                        :max="720"
                                 /></label>
                             </div>
                             <label class="field"
-                                >{{ $t('setup_guest_notes')
-                                }}<Textarea v-model="reservations.guest_notes" rows="3" maxlength="1500"
+                                ><span class="field-label"
+                                    >{{ $t('setup_guest_notes')
+                                    }}<FieldHelp :label="$t('setup_guest_notes')" field="setup_guest_notes" /></span
+                                ><Textarea
+                                    v-model="reservations.guest_notes"
+                                    :aria-label="$t('setup_guest_notes')"
+                                    rows="3"
+                                    maxlength="1500"
                             /></label>
                         </template>
                     </div>
@@ -670,8 +855,14 @@ onBeforeUnmount(
                         <div class="md:col-span-2 rounded-xl border border-violet-100 bg-violet-50/50 p-4">
                             <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
                                 <label class="field min-w-0"
-                                    >{{ $t('setup_tax_id')
-                                    }}<InputText v-model="legal.tax_id" maxlength="40" placeholder="RO12345678"
+                                    ><span class="field-label"
+                                        >{{ $t('setup_tax_id')
+                                        }}<FieldHelp :label="$t('setup_tax_id')" field="setup_tax_id" /></span
+                                    ><InputText
+                                        v-model="legal.tax_id"
+                                        :aria-label="$t('setup_tax_id')"
+                                        maxlength="40"
+                                        placeholder="RO12345678"
                                 /></label>
                                 <Button
                                     type="button"
@@ -689,23 +880,53 @@ onBeforeUnmount(
                             <p v-if="companyError" role="alert" class="mt-3 text-sm text-red-700">{{ companyError }}</p>
                         </div>
                         <label class="field"
-                            >{{ $t('setup_company_name')
-                            }}<InputText v-model="legal.company_name" required maxlength="200"
+                            ><span class="field-label"
+                                >{{ $t('setup_company_name')
+                                }}<FieldHelp :label="$t('setup_company_name')" field="setup_company_name" /></span
+                            ><InputText
+                                v-model="legal.company_name"
+                                :aria-label="$t('setup_company_name')"
+                                required
+                                maxlength="200"
                         /></label>
                         <label class="field"
-                            >{{ $t('setup_company_address')
-                            }}<InputText v-model="legal.company_address" required maxlength="255"
+                            ><span class="field-label"
+                                >{{ $t('setup_company_address')
+                                }}<FieldHelp :label="$t('setup_company_address')" field="setup_company_address" /></span
+                            ><InputText
+                                v-model="legal.company_address"
+                                :aria-label="$t('setup_company_address')"
+                                required
+                                maxlength="255"
                         /></label>
                         <label class="field"
-                            >{{ $t('setup_registration')
-                            }}<InputText v-model="legal.registration_number" maxlength="40"
+                            ><span class="field-label"
+                                >{{ $t('setup_registration')
+                                }}<FieldHelp :label="$t('setup_registration')" field="setup_registration" /></span
+                            ><InputText
+                                v-model="legal.registration_number"
+                                :aria-label="$t('setup_registration')"
+                                maxlength="40"
                         /></label>
                         <label class="field"
-                            >{{ $t('setup_terms_url') }}<InputText v-model="legal.terms_url" type="url" maxlength="255"
+                            ><span class="field-label"
+                                >{{ $t('setup_terms_url')
+                                }}<FieldHelp :label="$t('setup_terms_url')" field="setup_terms_url" /></span
+                            ><InputText
+                                v-model="legal.terms_url"
+                                :aria-label="$t('setup_terms_url')"
+                                type="url"
+                                maxlength="255"
                         /></label>
                         <label class="field"
-                            >{{ $t('setup_privacy_url')
-                            }}<InputText v-model="legal.privacy_url" type="url" maxlength="255"
+                            ><span class="field-label"
+                                >{{ $t('setup_privacy_url')
+                                }}<FieldHelp :label="$t('setup_privacy_url')" field="setup_privacy_url" /></span
+                            ><InputText
+                                v-model="legal.privacy_url"
+                                :aria-label="$t('setup_privacy_url')"
+                                type="url"
+                                maxlength="255"
                         /></label>
                         <details
                             class="md:col-span-2 rounded-xl border border-slate-200 p-4"
@@ -714,12 +935,19 @@ onBeforeUnmount(
                             <summary class="cursor-pointer font-medium">{{ $t('company_details') }}</summary>
                             <div class="mt-4 grid gap-4 md:grid-cols-2">
                                 <label v-for="field in companyTextFields" :key="field.key" class="field"
-                                    >{{ $t(field.key) }}<InputText v-model="legal[field.key]" :maxlength="field.limit"
+                                    ><span class="field-label"
+                                        >{{ $t(field.key) }}<FieldHelp :label="$t(field.key)" field="" /></span
+                                    ><InputText
+                                        v-model="legal[field.key]"
+                                        :aria-label="$t(field.key)"
+                                        :maxlength="field.limit"
                                 /></label>
                                 <label v-for="field in companyFlags" :key="field" class="field"
-                                    >{{ $t(field)
-                                    }}<Select
+                                    ><span class="field-label"
+                                        >{{ $t(field) }}<FieldHelp :label="$t(field)" field="" /></span
+                                    ><Select
                                         v-model="legal[field]"
+                                        :aria-label="$t(field)"
                                         :options="companyFlagOptions"
                                         option-label="label"
                                         option-value="value"
@@ -727,8 +955,14 @@ onBeforeUnmount(
                             </div>
                         </details>
                         <label class="field md:col-span-2"
-                            >{{ $t('setup_cancel_policy')
-                            }}<Textarea v-model="legal.cancellation_policy" rows="4" maxlength="3000"
+                            ><span class="field-label"
+                                >{{ $t('setup_cancel_policy')
+                                }}<FieldHelp :label="$t('setup_cancel_policy')" field="setup_cancel_policy" /></span
+                            ><Textarea
+                                v-model="legal.cancellation_policy"
+                                :aria-label="$t('setup_cancel_policy')"
+                                rows="4"
+                                maxlength="3000"
                         /></label>
                     </div>
                     <div v-else-if="step === 'publish'" class="space-y-5">
@@ -744,9 +978,15 @@ onBeforeUnmount(
                             </ul>
                         </div>
                         <label class="flex items-center justify-between gap-4"
-                            ><span>{{ $t('setup_accept_orders') }}</span
+                            ><span
+                                ><span class="field-label"
+                                    >{{ $t('setup_accept_orders')
+                                    }}<FieldHelp
+                                        :label="$t('setup_accept_orders')"
+                                        field="setup_accept_orders" /></span></span
                             ><ToggleSwitch
                                 v-model="publish.accepting_orders"
+                                :aria-label="$t('setup_accept_orders')"
                                 :disabled="!progress.ready_to_publish && !location.accepting_orders"
                         /></label>
                         <a

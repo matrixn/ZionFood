@@ -7,6 +7,7 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from 'primevue/useconfirm';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import Button from 'primevue/button';
+import Select from 'primevue/select';
 import { tr as t } from '@/i18n';
 import type { WorkspaceProps } from '@/types';
 const vTooltip = Tooltip;
@@ -37,6 +38,14 @@ const qr = ref<Record<string, string>>({});
 const form = useForm({});
 const canWrite = computed(() => props.permissions.tables === 'manage');
 const confirm = useConfirm();
+const selectedArea = ref<string | null>(null);
+const selectedTables = computed(() =>
+    selectedArea.value === null ? props.tables : props.tables.filter((table) => table.area === selectedArea.value),
+);
+const areaOptions = computed(() => [
+    { value: null, label: t('tables_all_rooms') },
+    ...rooms.value.map((area) => ({ value: area, label: area })),
+]);
 const rooms = computed(() => [...new Set(props.tables.map((table) => table.area))]);
 function effectiveReason(table: Table) {
     if (!props.location.fulfillment.dine_in_enabled) return 'service_disabled';
@@ -103,7 +112,10 @@ watch(() => props.tables, generate);
             <h1 class="text-3xl font-semibold">{{ $t('dining_tables') }}</h1>
             <Button :label="$t('booking_refresh')" icon="pi pi-refresh" outlined @click="router.reload()" />
         </div>
-        <p class="mb-5 rounded-xl bg-violet-50 p-4 text-sm text-brand">{{ $t('dining_qr_explanation') }}</p>
+        <div class="mb-4 flex items-center gap-2 rounded-xl bg-violet-50 p-3 text-xs text-brand dark:bg-violet-950">
+            <i class="pi pi-qrcode" aria-hidden="true" /><span>{{ $t('tables_qr_short') }}</span
+            ><FieldHelp :label="t('tables_qr_short')" :text="t('dining_qr_explanation')" />
+        </div>
         <p v-if="!location.fulfillment.dine_in_enabled" class="mb-5 rounded-xl bg-amber-50 p-4 text-amber-900">
             {{ $t('dining_disabled') }}
             <a
@@ -129,72 +141,101 @@ watch(() => props.tables, generate);
             </p>
             <p class="mt-2">{{ $t('dining_manual_vs_window') }}</p>
         </div>
-        <section v-if="canWrite && tables.length" class="panel room-actions mb-6 space-y-4">
-            <h2 class="font-semibold">{{ $t('dining_bulk_title') }}</h2>
-            <div class="flex flex-wrap gap-3">
-                <span v-tooltip.top="disabledReason('open') ? t(disabledReason('open')) : ''"
-                    ><Button
-                        :label="$t('dining_open_all')"
-                        icon="pi pi-check-circle"
-                        :disabled="!!disabledReason('open')"
-                        @click="bulk('open')"
+        <section
+            v-if="canWrite && tables.length"
+            class="mb-5 rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900"
+            data-testid="table-quick-controls"
+        >
+            <div class="mb-3 flex items-center justify-between gap-3">
+                <h2 class="text-sm font-semibold">{{ $t('dining_bulk_title') }}</h2>
+                <FieldHelp :text="t('tables_bulk_help')" :label="t('dining_bulk_title')" />
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="field-control-help table-scope"
+                    ><Select
+                        v-model="selectedArea"
+                        :placeholder="$t('tables_all_rooms')"
+                        :options="areaOptions"
+                        option-label="label"
+                        option-value="value"
+                        :aria-label="$t('tables_control_scope')"
+                        class="w-full" /><FieldHelp :label="t('tables_control_scope')" :text="t('tables_scope_help')"
                 /></span>
+                <span
+                    v-tooltip.top="disabledReason('open') ? t(disabledReason('open')) : ''"
+                    :tabindex="disabledReason('open') ? 0 : undefined"
+                    ><Button
+                        :aria-label="selectedArea === null ? t('dining_open_all') : t('tables_open_selected')"
+                        :label="selectedArea === null ? t('dining_open_all') : t('tables_open_selected')"
+                        icon="pi pi-check-circle"
+                        size="small"
+                        :disabled="!!disabledReason('open')"
+                        @click="bulk('open', selectedArea ?? undefined)"
+                        ><span class="sm:hidden">{{ $t('tables_activate_short') }}</span
+                        ><span class="hidden sm:inline">{{
+                            selectedArea === null ? t('dining_open_all') : t('tables_open_selected')
+                        }}</span></Button
+                    ></span
+                >
                 <Button
-                    :label="$t('dining_close_all')"
+                    :aria-label="selectedArea === null ? t('dining_close_all') : t('tables_close_selected')"
+                    :label="selectedArea === null ? t('dining_close_all') : t('tables_close_selected')"
+                    icon="pi pi-times-circle"
                     severity="danger"
                     outlined
+                    size="small"
                     :disabled="form.processing"
-                    @click="bulk('close')"
-                />
-            </div>
-            <div v-if="rooms.length > 1" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                <div v-for="area in rooms" :key="area" class="min-w-0 rounded-xl border border-slate-200 p-3">
-                    <h3 class="mb-3 break-words text-sm font-semibold">{{ area }}</h3>
-                    <div class="grid gap-2">
-                        <span v-tooltip.top="disabledReason('open') ? t(disabledReason('open')) : ''"
-                            ><Button
-                                class="w-full"
-                                :label="$t('dining_open_area', { area })"
-                                outlined
-                                :disabled="!!disabledReason('open')"
-                                @click="bulk('open', area)"
-                        /></span>
-                        <Button
-                            :label="$t('dining_close_area', { area })"
-                            severity="danger"
-                            text
-                            :disabled="form.processing"
-                            @click="bulk('close', area)"
-                        />
-                    </div>
-                </div>
+                    @click="bulk('close', selectedArea ?? undefined)"
+                    ><span class="sm:hidden">{{ $t('tables_deactivate_short') }}</span
+                    ><span class="hidden sm:inline">{{
+                        selectedArea === null ? t('dining_close_all') : t('tables_close_selected')
+                    }}</span></Button
+                >
+                <span class="text-xs text-slate-400">{{ selectedTables.length }} {{ $t('tables_count_short') }}</span>
             </div>
         </section>
         <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             <article
                 v-for="table in tables"
                 :key="table.public_id"
-                class="panel space-y-4 border transition-colors"
+                class="panel space-y-4 !border-2 transition-colors"
                 :class="
                     effectiveReason(table) === 'open'
-                        ? '!border-emerald-200 bg-emerald-50/20 dark:!border-emerald-800'
-                        : '!border-rose-200 bg-rose-50/20 dark:!border-rose-900'
+                        ? '!border-emerald-400 bg-emerald-50/20 dark:!border-emerald-800'
+                        : '!border-rose-400 bg-rose-50/20 dark:!border-rose-900'
                 "
                 :data-state="effectiveReason(table)"
                 data-testid="table-card"
             >
                 <h2 class="text-xl font-semibold">{{ table.code }} · {{ table.area }}</h2>
-                <p class="muted">
-                    {{ table.seats }} {{ $t('setup_seats') }} ·
-                    {{
-                        effectiveReason(table) === 'open' ? $t('dining_effective_open') : $t('dining_effective_closed')
-                    }}
-                </p>
-                <p v-if="effectiveReason(table) !== 'open'" class="text-sm text-slate-500">
-                    {{ $t('dining_reason_' + effectiveReason(table)) }}
-                </p>
-                <p class="text-xs text-slate-500">
-                    {{ table.ordering_paused ? $t('dining_manual_paused') : $t('dining_manual_active') }}
+                <p class="text-xs text-slate-500">{{ table.seats }} {{ $t('setup_seats') }}</p>
+                <div
+                    class="flex items-center gap-2 text-sm"
+                    :class="
+                        effectiveReason(table) === 'open'
+                            ? 'text-emerald-700 dark:text-emerald-400'
+                            : 'text-rose-700 dark:text-rose-400'
+                    "
+                >
+                    <span
+                        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
+                        :class="
+                            effectiveReason(table) === 'open'
+                                ? 'bg-emerald-100 ring-1 ring-emerald-200 dark:bg-emerald-950'
+                                : 'bg-rose-100 ring-1 ring-rose-200 dark:bg-rose-950'
+                        "
+                        ><i
+                            :class="['pi', effectiveReason(table) === 'open' ? 'pi-check' : 'pi-times']"
+                            aria-hidden="true"
+                    /></span>
+                    <span class="font-medium">{{ $t('tables_short_' + effectiveReason(table)) }}</span>
+                    <FieldHelp
+                        :label="t('tables_short_' + effectiveReason(table))"
+                        :text="t('dining_reason_' + effectiveReason(table))"
+                    />
+                </div>
+                <p v-if="!table.ordering_paused && effectiveReason(table) !== 'open'" class="text-xs text-slate-500">
+                    {{ $t('dining_manual_active') }}
                 </p>
                 <img
                     v-if="qr[table.public_id]"
@@ -266,6 +307,15 @@ watch(() => props.tables, generate);
 </template>
 
 <style scoped>
+.table-scope {
+    flex: 1 1 12rem;
+    min-width: 12rem;
+}
+@media (max-width: 640px) {
+    .table-scope {
+        flex-basis: 100%;
+    }
+}
 .room-actions :deep(.p-button-label) {
     white-space: normal;
     overflow-wrap: anywhere;

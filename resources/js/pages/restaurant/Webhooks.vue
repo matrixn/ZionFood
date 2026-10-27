@@ -228,11 +228,16 @@ onUnmounted(() => clearInterval(timer));
             "
             ><form :id="webhookFormId" class="grid gap-5" @submit.prevent="save">
                 <p v-if="error" role="alert" class="text-red-600">{{ error }}</p>
-                <label class="field">{{ $t('name') }}<InputText v-model="form.name" required maxlength="100" /></label
+                <label class="field"
+                    ><span class="field-label">{{ $t('name') }}<FieldHelp :label="$t('name')" field="name" /></span
+                    ><InputText v-model="form.name" :aria-label="$t('name')" required maxlength="100" /></label
                 ><label class="field"
-                    >{{ $t('public_https_url')
-                    }}<InputText
+                    ><span class="field-label"
+                        >{{ $t('public_https_url')
+                        }}<FieldHelp :label="$t('public_https_url')" field="public_https_url" /></span
+                    ><InputText
                         v-model="form.url"
+                        :aria-label="$t('public_https_url')"
                         type="url"
                         required
                         placeholder="https://example.com/zionfood/webhook"
@@ -242,11 +247,17 @@ onUnmounted(() => clearInterval(timer));
                         $t('only_public_https_port_443_credentials_query_parameters_private_addresses_and_redirects_ar')
                     }}
                 </p>
-                <label class="field">{{ $t('events') }}<MultiSelect v-model="form.events" :options="events" /></label
+                <label class="field"
+                    ><span class="field-label"
+                        >{{ $t('events') }}<FieldHelp :label="$t('events')" field="events" /></span
+                    ><MultiSelect v-model="form.events" :aria-label="$t('events')" :options="events" /></label
                 ><label class="field"
-                    >{{ $t('signing_secret')
-                    }}<InputText
+                    ><span class="field-label"
+                        >{{ $t('signing_secret')
+                        }}<FieldHelp :label="$t('signing_secret')" field="signing_secret" /></span
+                    ><InputText
                         v-model="form.secret"
+                        :aria-label="$t('signing_secret')"
                         type="password"
                         autocomplete="new-password"
                         :required="!editing"
@@ -259,8 +270,11 @@ onUnmounted(() => clearInterval(timer));
                     }}
                 </p>
                 <label class="flex items-center gap-3"
-                    ><ToggleSwitch v-model="form.enabled" />{{ $t('enable_webhook_delivery') }}</label
-                >
+                    ><ToggleSwitch v-model="form.enabled" :aria-label="$t('enable_webhook_delivery')" /><span
+                        class="field-label"
+                        >{{ $t('enable_webhook_delivery')
+                        }}<FieldHelp :label="$t('enable_webhook_delivery')" field="enable_webhook_delivery" /></span
+                ></label>
             </form>
             <template #footer
                 ><Button

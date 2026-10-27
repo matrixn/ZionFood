@@ -29,8 +29,10 @@ function change(feature: StaffFeature, level: AccessLevel) {
     >
         <legend class="px-2 text-sm font-semibold">{{ $t('permissions_title') }}</legend>
         <label v-for="feature in features" :key="feature" class="field min-w-0"
-            >{{ $t('permission_feature_' + feature)
-            }}<Select
+            ><span class="field-label"
+                >{{ $t('permission_feature_' + feature)
+                }}<FieldHelp :label="$t('permission_feature_' + feature)" field="permission_feature_" /></span
+            ><Select
                 :model-value="value[feature]"
                 :options="options[feature]"
                 :aria-label="$t('permission_feature_' + feature)"

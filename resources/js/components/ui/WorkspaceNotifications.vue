@@ -54,8 +54,9 @@ watch(
     },
 );
 watch(
-    () => (page.props.flash as { success?: string })?.success,
-    (message) => {
+    () => page.props.flash as { success?: string },
+    (flash) => {
+        const message = flash?.success;
         if (message) toast.add({ severity: 'success', summary: message, life: 5000 });
     },
     { immediate: true },
@@ -74,6 +75,16 @@ watch(
                 data: n,
             } as ToastMessageOptions),
         );
+    },
+);
+watch(
+    () => store.reviewed,
+    () => {
+        toast.add({
+            severity: 'success',
+            summary: t(store.review?.status === 'approved' ? 'auto_published_success' : 'auto_rejected_success'),
+            life: 5000,
+        });
     },
 );
 const poll = () => {
@@ -188,10 +199,12 @@ onUnmounted(() => {
                     ><Checkbox
                         v-if="store.review.status === 'ready' && store.review.can_write"
                         v-model="sections"
+                        :aria-label="sectionLabel(String(key))"
                         :value="key"
                         :disabled="store.busy"
-                    />{{ sectionLabel(String(key))
-                    }}<span
+                    /><span class="field-label"
+                        >{{ sectionLabel(String(key)) }}<FieldHelp :label="sectionLabel(String(key))" field="" /></span
+                    ><span
                         v-if="
                             store.review.status === 'approved' &&
                             store.review.report?.approved_sections &&
@@ -240,18 +253,32 @@ onUnmounted(() => {
                     ><div v-for="(row, language) in store.review.proposal.translations" :key="language" class="mb-4">
                         <p class="text-xs font-semibold uppercase text-brand">{{ language }}</p>
                         <template v-if="editable"
-                            ><InputText
-                                v-model="row.name"
-                                :aria-label="$t('mc_translation_name')"
-                                class="mt-2 w-full" /><Textarea
-                                v-model="row.description"
-                                :aria-label="$t('mc_translation_description')"
-                                rows="3"
-                                class="mt-2 w-full" /><Textarea
-                                v-model="row.ingredients_text"
-                                :aria-label="$t('mc_translation_ingredients_text')"
-                                rows="2"
-                                class="mt-2 w-full" /></template
+                            ><span class="field-control-help"
+                                ><InputText
+                                    v-model="row.name"
+                                    :aria-label="$t('mc_translation_name')"
+                                    class="mt-2 w-full" /><FieldHelp
+                                    :label="$t('mc_translation_name')"
+                                    field="name"
+                                    kind="InputText" /></span
+                            ><span class="field-control-help"
+                                ><Textarea
+                                    v-model="row.description"
+                                    :aria-label="$t('mc_translation_description')"
+                                    rows="3"
+                                    class="mt-2 w-full" /><FieldHelp
+                                    :label="$t('mc_translation_description')"
+                                    field="description"
+                                    kind="Textarea" /></span
+                            ><span class="field-control-help"
+                                ><Textarea
+                                    v-model="row.ingredients_text"
+                                    :aria-label="$t('mc_translation_ingredients_text')"
+                                    rows="2"
+                                    class="mt-2 w-full" /><FieldHelp
+                                    :label="$t('mc_translation_ingredients_text')"
+                                    field="ingredients_text"
+                                    kind="Textarea" /></span></template
                         ><template v-else
                             ><strong>{{ row.name }}</strong>
                             <p class="mt-1 text-sm">{{ row.description }}</p>
@@ -267,27 +294,32 @@ onUnmounted(() => {
                     </div></template
                 >
                 <template v-else-if="key === 'description'"
-                    ><Textarea
-                        v-if="editable"
-                        v-model="store.review.proposal.description"
-                        rows="4"
-                        maxlength="2000"
-                        :aria-label="$t('mc_description')"
-                        class="w-full"
-                    />
+                    ><span v-if="editable" class="field-control-help"
+                        ><Textarea
+                            v-model="store.review.proposal.description"
+                            rows="4"
+                            maxlength="2000"
+                            :aria-label="$t('mc_description')"
+                            class="w-full" /><FieldHelp
+                            :label="$t('mc_description')"
+                            field="description"
+                            kind="Textarea"
+                    /></span>
                     <p v-else class="text-sm leading-relaxed">{{ value }}</p></template
                 >
-                <MultiSelect
-                    v-else-if="editable"
-                    :model-value="value"
-                    :options="key === 'labels' ? labelOptions : allergenOptions"
-                    option-label="name"
-                    option-value="code"
-                    display="chip"
-                    :aria-label="sectionLabel(String(key))"
-                    class="w-full"
-                    @update:model-value="store.review.proposal[key as 'allergens' | 'may_contain' | 'labels'] = $event"
-                />
+                <span v-else-if="editable" class="field-control-help"
+                    ><MultiSelect
+                        :model-value="value"
+                        :options="key === 'labels' ? labelOptions : allergenOptions"
+                        option-label="name"
+                        option-value="code"
+                        display="chip"
+                        :aria-label="sectionLabel(String(key))"
+                        class="w-full"
+                        @update:model-value="
+                            store.review.proposal[key as 'allergens' | 'may_contain' | 'labels'] = $event
+                        " /><FieldHelp :label="sectionLabel(String(key))" field="" kind="MultiSelect"
+                /></span>
                 <p v-else class="text-sm leading-relaxed">
                     {{ (value as string[])?.map(codeLabel).join(', ') || $t('auto_none_suggested') }}
                 </p>

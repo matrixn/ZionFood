@@ -64,11 +64,16 @@ onMounted(load);
         </section>
         <form class="panel mb-6 grid max-w-xl gap-5" @submit.prevent="create">
             <label class="field"
-                >{{ $t('integration_name') }}<InputText v-model="name" required maxlength="100" /></label
+                ><span class="field-label"
+                    >{{ $t('integration_name')
+                    }}<FieldHelp :label="$t('integration_name')" field="integration_name" /></span
+                ><InputText v-model="name" :aria-label="$t('integration_name')" required maxlength="100" /></label
             ><label class="field"
-                >{{ $t('permissions')
-                }}<MultiSelect
+                ><span class="field-label"
+                    >{{ $t('permissions') }}<FieldHelp :label="$t('permissions')" field="permissions" /></span
+                ><MultiSelect
                     v-model="abilities"
+                    :aria-label="$t('permissions')"
                     :options="['menu:read', 'menu:write', 'orders:read', 'orders:manage']" /></label
             ><Button :label="$t('create_token')" type="submit" :loading="busy" />
         </form>

@@ -113,15 +113,29 @@ useSetupEditorGuard(
                 "
             >
                 <label class="field min-w-0"
-                    >{{ $t('email')
-                    }}<InputText v-model="invite.email" class="w-full min-w-0" type="email" required autocomplete="off" /></label
+                    ><span class="field-label">{{ $t('email') }}<FieldHelp :label="$t('email')" field="email" /></span
+                    ><InputText
+                        v-model="invite.email"
+                        :aria-label="$t('email')"
+                        class="w-full min-w-0"
+                        type="email"
+                        required
+                        autocomplete="off" /></label
                 ><label class="field min-w-0"
-                    >{{ $t('role')
-                    }}<Select v-model="invite.role" :options="roles" option-label="label" option-value="value" /></label
+                    ><span class="field-label">{{ $t('role') }}<FieldHelp :label="$t('role')" field="role" /></span
+                    ><Select
+                        v-model="invite.role"
+                        :aria-label="$t('role')"
+                        :options="roles"
+                        option-label="label"
+                        option-value="value" /></label
                 ><label class="field min-w-0"
-                    >{{ $t('assigned_locations')
-                    }}<MultiSelect
+                    ><span class="field-label"
+                        >{{ $t('assigned_locations')
+                        }}<FieldHelp :label="$t('assigned_locations')" field="assigned_locations" /></span
+                    ><MultiSelect
                         v-model="invite.location_ids"
+                        :aria-label="$t('assigned_locations')"
                         :options="locations"
                         option-label="name"
                         option-value="id"
@@ -215,12 +229,20 @@ useSetupEditorGuard(
             >
                 <p class="muted">{{ editing?.user.email }}</p>
                 <label class="field"
-                    >{{ $t('role')
-                    }}<Select v-model="edit.role" :options="roles" option-label="label" option-value="value" /></label
+                    ><span class="field-label">{{ $t('role') }}<FieldHelp :label="$t('role')" field="role" /></span
+                    ><Select
+                        v-model="edit.role"
+                        :aria-label="$t('role')"
+                        :options="roles"
+                        option-label="label"
+                        option-value="value" /></label
                 ><label class="field"
-                    >{{ $t('assigned_locations')
-                    }}<MultiSelect
+                    ><span class="field-label"
+                        >{{ $t('assigned_locations')
+                        }}<FieldHelp :label="$t('assigned_locations')" field="assigned_locations" /></span
+                    ><MultiSelect
                         v-model="edit.location_ids"
+                        :aria-label="$t('assigned_locations')"
                         :options="locations"
                         option-label="name"
                         option-value="id"

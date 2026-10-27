@@ -447,3 +447,15 @@ resources/js/components/ui/WorkspaceNotifications.vue
 resources/js/lib/menuNotifications.ts
 tests/Feature/MenuAutomationTest.php
 tests/frontend/menuNotifications.test.ts
+
+app/Domain/Analytics/RestaurantOverview.php
+app/Domain/Analytics/RecordMenuVisit.php
+database/migrations/2026_10_27_001100_add_menu_visit_stats.php
+resources/js/components/ui/FieldHelp.vue
+resources/js/lib/fieldHelp.ts
+resources/js/components.d.ts
+tests/Feature/RestaurantOverviewTest.php
+tests/frontend/fieldHelp.test.ts
+tests/frontend/fieldHelpCoverage.test.ts
+tests/e2e/overview-help.spec.ts
+docs/RESTAURANT_ANALYTICS.md

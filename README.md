@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.19** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.20** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,17 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 27 octombrie 2026 — statistici, explicații și control compact · 0.0.20
+
+- [x] Prezentare generală cu perioade de 7/30/90 zile, indicatori, grafic și tabel zilnic, top 5 preparate, tipuri de comandă, rezervări, capacitate și top mese după comenzi sau rezervări.
+- [x] Contorizare nouă a vizitelor meniului, deduplicate timp de 30 de minute și agregate pe locație/zi, fără IP-uri sau identificatori de vizitatori în baza de date. Nu inventăm vizite istorice.
+- [x] Date limitate la locația și permisiunile angajatului. Valoarea comenzilor finalizate, persoanele rezervate și sesiunile QR sunt explicate distinct de încasări, prezență fizică sau persoane unice.
+- [x] Control rapid al meselor printr-un selector de sală și două acțiuni compacte; status scurt, explicație în tooltip, check/X în cerc și bordură de 2 px.
+- [x] Iconițe info pentru câmpurile formularelor, cu explicații RO/EN, acces prin hover, focus sau atingere, inclusiv în modale.
+- [x] Aprobarea generării salvează și închide automat modalul; erorile păstrează modalul deschis, iar succesul este confirmat prin notificare.
+- [x] Test real pe Forge cu Groq `openai/gpt-oss-20b`: Feta saganaki, notificare, verificare și aprobare numai pentru secțiunea nutrițională. Cheia nu a fost extrasă sau modificată.
+- [ ] Validarea calității estimărilor pe rețete reale și măsurarea ocupării fizice a meselor necesită date și procese suplimentare. [Definițiile statisticilor și limite](docs/RESTAURANT_ANALYTICS.md).
 
 ### 27 octombrie 2026 — generare automată și notificări · 0.0.19
 

@@ -98,30 +98,66 @@ onBeforeUnmount(cleanup);
             </div>
             <div class="grid gap-5 lg:grid-cols-2">
                 <label class="field"
-                    >{{ $t('cuisine_name_ro') }}<InputText v-model="form.name_ro" required maxlength="100"
+                    ><span class="field-label"
+                        >{{ $t('cuisine_name_ro')
+                        }}<FieldHelp :label="$t('cuisine_name_ro')" field="cuisine_name_ro" /></span
+                    ><InputText v-model="form.name_ro" :aria-label="$t('cuisine_name_ro')" required maxlength="100"
                 /></label>
                 <label class="field"
-                    >{{ $t('cuisine_name_en') }}<InputText v-model="form.name_en" required maxlength="100"
+                    ><span class="field-label"
+                        >{{ $t('cuisine_name_en')
+                        }}<FieldHelp :label="$t('cuisine_name_en')" field="cuisine_name_en" /></span
+                    ><InputText v-model="form.name_en" :aria-label="$t('cuisine_name_en')" required maxlength="100"
                 /></label>
                 <label class="field"
-                    >{{ $t('cuisine_description_ro')
-                    }}<Textarea v-model="form.description_ro" required rows="3" maxlength="1000"
+                    ><span class="field-label"
+                        >{{ $t('cuisine_description_ro')
+                        }}<FieldHelp :label="$t('cuisine_description_ro')" field="cuisine_description_ro" /></span
+                    ><Textarea
+                        v-model="form.description_ro"
+                        :aria-label="$t('cuisine_description_ro')"
+                        required
+                        rows="3"
+                        maxlength="1000"
                 /></label>
                 <label class="field"
-                    >{{ $t('cuisine_description_en')
-                    }}<Textarea v-model="form.description_en" required rows="3" maxlength="1000"
+                    ><span class="field-label"
+                        >{{ $t('cuisine_description_en')
+                        }}<FieldHelp :label="$t('cuisine_description_en')" field="cuisine_description_en" /></span
+                    ><Textarea
+                        v-model="form.description_en"
+                        :aria-label="$t('cuisine_description_en')"
+                        required
+                        rows="3"
+                        maxlength="1000"
                 /></label>
                 <label class="field"
-                    >{{ $t('cuisine_slug')
-                    }}<InputText v-model="form.slug" required maxlength="100" pattern="[a-z0-9]+(-[a-z0-9]+)*"
+                    ><span class="field-label"
+                        >{{ $t('cuisine_slug') }}<FieldHelp :label="$t('cuisine_slug')" field="cuisine_slug" /></span
+                    ><InputText
+                        v-model="form.slug"
+                        :aria-label="$t('cuisine_slug')"
+                        required
+                        maxlength="100"
+                        pattern="[a-z0-9]+(-[a-z0-9]+)*"
                 /></label>
                 <label class="field"
-                    >{{ $t('cuisine_sort_order') }}<InputNumber v-model="form.sort_order" fluid :min="0" :max="65535"
+                    ><span class="field-label"
+                        >{{ $t('cuisine_sort_order')
+                        }}<FieldHelp :label="$t('cuisine_sort_order')" field="cuisine_sort_order" /></span
+                    ><InputNumber
+                        v-model="form.sort_order"
+                        :aria-label="$t('cuisine_sort_order')"
+                        fluid
+                        :min="0"
+                        :max="65535"
                 /></label>
                 <label class="field"
-                    >{{ $t('cuisine_photo')
-                    }}<input
+                    ><span class="field-label"
+                        >{{ $t('cuisine_photo') }}<FieldHelp :label="$t('cuisine_photo')" field="cuisine_photo" /></span
+                    ><input
                         ref="input"
+                        :aria-label="$t('cuisine_photo')"
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
                         :required="!editing"
@@ -139,30 +175,59 @@ onBeforeUnmount(cleanup);
                 <summary class="cursor-pointer font-medium">{{ $t('cuisine_photo_credit') }}</summary>
                 <div class="mt-4 grid gap-4 sm:grid-cols-2">
                     <label class="field"
-                        >{{ $t('cuisine_credit_author') }}<InputText v-model="form.image_credit" maxlength="500"
+                        ><span class="field-label"
+                            >{{ $t('cuisine_credit_author')
+                            }}<FieldHelp :label="$t('cuisine_credit_author')" field="cuisine_credit_author" /></span
+                        ><InputText
+                            v-model="form.image_credit"
+                            :aria-label="$t('cuisine_credit_author')"
+                            maxlength="500"
                     /></label>
                     <label class="field"
-                        >{{ $t('cuisine_photo_source')
-                        }}<InputText v-model="form.image_source_url" type="url" maxlength="1000"
+                        ><span class="field-label"
+                            >{{ $t('cuisine_photo_source')
+                            }}<FieldHelp :label="$t('cuisine_photo_source')" field="cuisine_photo_source" /></span
+                        ><InputText
+                            v-model="form.image_source_url"
+                            :aria-label="$t('cuisine_photo_source')"
+                            type="url"
+                            maxlength="1000"
                     /></label>
                     <label class="field"
-                        >{{ $t('cuisine_photo_license') }}<InputText v-model="form.image_license" maxlength="150"
+                        ><span class="field-label"
+                            >{{ $t('cuisine_photo_license')
+                            }}<FieldHelp :label="$t('cuisine_photo_license')" field="cuisine_photo_license" /></span
+                        ><InputText
+                            v-model="form.image_license"
+                            :aria-label="$t('cuisine_photo_license')"
+                            maxlength="150"
                     /></label>
                     <label class="field"
-                        >{{ $t('cuisine_license_url')
-                        }}<InputText v-model="form.image_license_url" type="url" maxlength="1000"
+                        ><span class="field-label"
+                            >{{ $t('cuisine_license_url')
+                            }}<FieldHelp :label="$t('cuisine_license_url')" field="cuisine_license_url" /></span
+                        ><InputText
+                            v-model="form.image_license_url"
+                            :aria-label="$t('cuisine_license_url')"
+                            type="url"
+                            maxlength="1000"
                     /></label>
                 </div>
             </details>
             <label class="flex items-center gap-3"
-                ><ToggleSwitch v-model="form.is_active" :aria-label="$t('cuisine_catalog_active')" />{{
-                    $t('cuisine_catalog_active')
-                }}</label
-            >
+                ><ToggleSwitch v-model="form.is_active" :aria-label="$t('cuisine_catalog_active')" /><span
+                    class="field-label"
+                    >{{ $t('cuisine_catalog_active')
+                    }}<FieldHelp :label="$t('cuisine_catalog_active')" field="cuisine_catalog_active" /></span
+            ></label>
             <p class="muted text-sm">{{ $t('cuisine_deactivation_hint') }}</p>
             <Button type="submit" :label="$t('cuisine_save')" :loading="form.processing" />
         </form>
-        <label class="field mb-5">{{ $t('cuisine_search') }}<InputText v-model="search" /></label>
+        <label class="field mb-5"
+            ><span class="field-label"
+                >{{ $t('cuisine_search') }}<FieldHelp :label="$t('cuisine_search')" field="cuisine_search" /></span
+            ><InputText v-model="search" :aria-label="$t('cuisine_search')"
+        /></label>
         <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             <CuisineCard v-for="c in filtered" :key="c.id" :cuisine="c"
                 ><Button :label="$t('cuisine_edit')" text icon="pi pi-pencil" @click="edit(c)"

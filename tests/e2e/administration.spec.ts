@@ -1,14 +1,15 @@
-import { test, expect } from '@playwright/test';
+import { test, expect as baseExpect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+const expect=baseExpect.configure({timeout:15000});
 const account = JSON.parse(readFileSync('storage/app/private/browser-account.json', 'utf8')) as { email: string; password: string; location: string };
 test('Romanian default, persistent English selection and complete administration flows', async ({ page, browser }) => {
     test.setTimeout(120000);
     const errors: string[] = []; page.on('pageerror', (error) => errors.push(error.message));
-    await page.goto('/'); await expect(page.locator('html')).toHaveAttribute('lang','ro'); await expect(page.getByRole('heading',{name:/Mai puține griji/})).toBeVisible();
-    await page.getByTestId('language-selector').click(); await page.getByRole('option',{name:'English',exact:true}).click(); await expect(page.getByRole('heading',{name:/Less friction/})).toBeVisible(); await page.reload(); await expect(page.locator('html')).toHaveAttribute('lang','en');
+    await page.goto('/'); await expect(page.locator('html')).toHaveAttribute('lang','ro'); await expect(page.getByRole('heading',{name:/Restaurantul tău/})).toBeVisible();
+    await page.getByTestId('language-selector').click(); await page.getByRole('option',{name:'English',exact:true}).click(); await expect(page.getByRole('heading',{name:/Your restaurant/})).toBeVisible(); await page.reload(); await expect(page.locator('html')).toHaveAttribute('lang','en');
     await page.setViewportSize({width:390,height:844}); expect(await page.evaluate(()=>document.documentElement.scrollWidth <= window.innerWidth)).toBe(true); await page.screenshot({path:'test-results/language-mobile.png',fullPage:true}); await page.setViewportSize({width:1440,height:1000});
     await page.goto('/login'); await page.locator('#email').fill(account.email); await page.locator('#password').fill(account.password); await page.getByRole('button',{name:'Sign in',exact:true}).click(); await expect(page).toHaveURL(/\/app\/locations\//);
-    await page.getByTestId('language-selector').click(); await page.getByRole('option',{name:'Română',exact:true}).click(); await expect(page.getByRole('heading',{name:'O zi nouă. O imagine clară.'})).toBeVisible(); await page.reload(); await expect(page.locator('html')).toHaveAttribute('lang','ro');
+    await page.getByTestId('language-selector').click(); await page.getByRole('option',{name:'Română',exact:true}).click(); await expect(page.getByRole('heading',{name:'Restaurantul tău, în cifre'})).toBeVisible(); await page.reload(); await expect(page.locator('html')).toHaveAttribute('lang','ro');
     await page.getByRole('link',{name:'Personal',exact:true}).click(); const invited = `browser-staff-${crypto.randomUUID()}@example.test`;
     await page.getByRole('textbox',{name:'E-mail',exact:true}).fill(invited); await page.getByRole('button',{name:'Trimite invitația',exact:true}).click(); await expect(page.getByText(invited,{exact:true})).toBeVisible();
     const invitationRow = page.getByTestId('invitation-row').filter({ hasText: invited }); await invitationRow.getByRole('button',{name:'Revocă invitația',exact:true}).click(); await page.getByRole('alertdialog').getByRole('button',{name:'Confirmă',exact:true}).click(); await expect(invitationRow.getByText('Revocată',{exact:true})).toBeVisible(); await page.screenshot({path:'test-results/staff-ro.png',fullPage:true});

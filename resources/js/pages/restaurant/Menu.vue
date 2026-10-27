@@ -213,13 +213,18 @@ useSetupEditorGuard(
                 "
             >
                 <label class="field"
-                    >{{ $t('menu')
-                    }}<Select
+                    ><span class="field-label">{{ $t('menu') }}<FieldHelp :label="$t('menu')" field="menu" /></span
+                    ><Select
                         v-model="category.menu_id"
+                        :aria-label="$t('menu')"
                         :options="menus"
                         option-label="name"
                         option-value="id" /></label
-                ><label class="field">{{ $t('category_name') }}<InputText v-model="category.name" required /></label>
+                ><label class="field"
+                    ><span class="field-label"
+                        >{{ $t('category_name') }}<FieldHelp :label="$t('category_name')" field="category_name" /></span
+                    ><InputText v-model="category.name" :aria-label="$t('category_name')" required
+                /></label>
                 <p v-for="(message, key) in category.errors" :key="key" role="alert" class="text-red-600">
                     {{ message }}
                 </p>

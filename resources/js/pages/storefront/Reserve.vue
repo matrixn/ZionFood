@@ -94,25 +94,32 @@ onMounted(load);
             <section class="panel space-y-5">
                 <div class="grid gap-4 sm:grid-cols-2">
                     <label class="field"
-                        >{{ $t('booking_date')
-                        }}<input
+                        ><span class="field-label"
+                            >{{ $t('booking_date')
+                            }}<FieldHelp :label="$t('booking_date')" field="booking_date" /></span
+                        ><input
                             v-model="date"
+                            :aria-label="$t('booking_date')"
                             type="date"
                             :min="today"
                             required
                             class="rounded-lg border border-slate-300 p-3" /></label
                     ><label class="field"
-                        >{{ $t('booking_guests')
-                        }}<InputNumber
+                        ><span class="field-label"
+                            >{{ $t('booking_guests')
+                            }}<FieldHelp :label="$t('booking_guests')" field="booking_guests" /></span
+                        ><InputNumber
                             v-model="party"
+                            :aria-label="$t('booking_guests')"
                             fluid
                             :min="rules.min_party_size ?? 1"
                             :max="rules.max_party_size ?? 8"
                     /></label>
                 </div>
                 <Button :label="$t('booking_find_slots')" :loading="loading" @click="load" /><label class="field"
-                    >{{ $t('booking_time')
-                    }}<Select
+                    ><span class="field-label"
+                        >{{ $t('booking_time') }}<FieldHelp :label="$t('booking_time')" field="booking_time" /></span
+                    ><Select
                         v-model="slot"
                         :options="options"
                         option-label="label"
@@ -124,21 +131,36 @@ onMounted(load);
             </section>
             <form class="panel space-y-5" @submit.prevent="submit">
                 <label class="field"
-                    >{{ $t('your_name')
-                    }}<InputText v-model="guest.guest_name" required maxlength="150" autocomplete="name" /></label
+                    ><span class="field-label"
+                        >{{ $t('your_name') }}<FieldHelp :label="$t('your_name')" field="your_name" /></span
+                    ><InputText
+                        v-model="guest.guest_name"
+                        :aria-label="$t('your_name')"
+                        required
+                        maxlength="150"
+                        autocomplete="name" /></label
                 ><label class="field"
-                    >{{ $t('phone_number')
-                    }}<InputText
+                    ><span class="field-label"
+                        >{{ $t('phone_number') }}<FieldHelp :label="$t('phone_number')" field="phone_number" /></span
+                    ><InputText
                         v-model="guest.guest_phone"
+                        :aria-label="$t('phone_number')"
                         required
                         type="tel"
                         maxlength="35"
                         autocomplete="tel" /></label
                 ><label class="field"
-                    >{{ $t('email')
-                    }}<InputText v-model="guest.guest_email" type="email" maxlength="254" autocomplete="email" /></label
+                    ><span class="field-label">{{ $t('email') }}<FieldHelp :label="$t('email')" field="email" /></span
+                    ><InputText
+                        v-model="guest.guest_email"
+                        :aria-label="$t('email')"
+                        type="email"
+                        maxlength="254"
+                        autocomplete="email" /></label
                 ><label class="field"
-                    >{{ $t('order_notes') }}<Textarea v-model="guest.notes" rows="3" maxlength="1000"
+                    ><span class="field-label"
+                        >{{ $t('order_notes') }}<FieldHelp :label="$t('order_notes')" field="order_notes" /></span
+                    ><Textarea v-model="guest.notes" :aria-label="$t('order_notes')" rows="3" maxlength="1000"
                 /></label>
                 <p v-if="rules.guest_notes" class="rounded-xl bg-slate-50 p-4 text-sm">{{ rules.guest_notes }}</p>
                 <p class="muted">

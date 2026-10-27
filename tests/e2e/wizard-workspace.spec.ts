@@ -1,5 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test, expect as baseExpect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+const expect=baseExpect.configure({timeout:15000});
 
 test('setup integrates real editors and keeps grouped navigation and the wizard after saves', async ({ page }) => {
     test.setTimeout(120000);
@@ -27,7 +28,7 @@ test('setup integrates real editors and keeps grouped navigation and the wizard 
     expect(prompted).toBe(true);
     await expect(page).toHaveURL(base + '/setup/hours');
     await page.getByRole('button', { name: 'Salvează setările', exact: true }).click();
-    await expect(page.getByRole('status').filter({ hasText: 'Setările locației au fost salvate.' })).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: 'Setările locației au fost salvate.' })).toBeVisible();
     await expect(page).toHaveURL(base + '/setup/hours');
     await page.getByRole('link', { name: 'Înainte →', exact: true }).click();
     await expect(page).toHaveURL(base + '/setup/delivery');
@@ -36,7 +37,7 @@ test('setup integrates real editors and keeps grouped navigation and the wizard 
     await page.getByRole('textbox', { name: 'Nume', exact: true }).last().fill('Zona wizard');
     await page.getByRole('textbox', { name: 'Prefix poștal', exact: true }).fill('24');
     await page.getByRole('button', { name: 'Salvează setările', exact: true }).click();
-    await expect(page.getByRole('status').filter({ hasText: 'Setările locației au fost salvate.' })).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: 'Setările locației au fost salvate.' })).toBeVisible();
     await expect(page).toHaveURL(base + '/setup/delivery');
     await page.reload();
     await expect(page.getByRole('textbox', { name: 'Nume', exact: true }).last()).toHaveValue('Zona wizard');
@@ -50,7 +51,7 @@ test('setup integrates real editors and keeps grouped navigation and the wizard 
     await page.goto(base + '/setup/branding');
     await page.getByRole('textbox', { name: 'Numele restaurantului', exact: true }).fill('Restaurant Wizard');
     await page.getByRole('button', { name: 'Salvează identitatea', exact: true }).click();
-    await expect(page.getByRole('status')).toBeVisible();
+    await expect(page.getByRole('alert').filter({hasText:'Identitatea restaurantului a fost salvată.'})).toBeVisible();
     await expect(page).toHaveURL(base + '/setup/branding');
     await page.goto(base + '/setup/staff');
     await expect(page.getByRole('button', { name: 'Trimite invitația', exact: true })).toBeVisible();

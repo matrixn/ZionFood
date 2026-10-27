@@ -88,9 +88,23 @@ useSetupEditorGuard(
                 <section class="panel grid gap-5">
                     <h2 class="text-xl font-semibold">{{ $t('restaurant_identity') }}</h2>
                     <label class="field"
-                        >{{ $t('restaurant_name') }}<InputText v-model="form.name" required maxlength="150" /></label
+                        ><span class="field-label"
+                            >{{ $t('restaurant_name')
+                            }}<FieldHelp :label="$t('restaurant_name')" field="restaurant_name" /></span
+                        ><InputText
+                            v-model="form.name"
+                            :aria-label="$t('restaurant_name')"
+                            required
+                            maxlength="150" /></label
                     ><label class="field"
-                        >{{ $t('storefront_address_slug') }}<InputText v-model="form.slug" required maxlength="50"
+                        ><span class="field-label"
+                            >{{ $t('storefront_address_slug')
+                            }}<FieldHelp :label="$t('storefront_address_slug')" field="storefront_address_slug" /></span
+                        ><InputText
+                            v-model="form.slug"
+                            :aria-label="$t('storefront_address_slug')"
+                            required
+                            maxlength="50"
                     /></label>
                     <p class="muted">
                         {{
@@ -99,53 +113,101 @@ useSetupEditorGuard(
                             )
                         }}
                     </p>
-                    <label class="field">{{ $t('tagline') }}<InputText v-model="form.tagline" maxlength="180" /></label
+                    <label class="field"
+                        ><span class="field-label"
+                            >{{ $t('tagline') }}<FieldHelp :label="$t('tagline')" field="tagline" /></span
+                        ><InputText v-model="form.tagline" :aria-label="$t('tagline')" maxlength="180" /></label
                     ><label class="field"
-                        >{{ $t('description') }}<Textarea v-model="form.description" rows="4" maxlength="1000"
+                        ><span class="field-label"
+                            >{{ $t('description') }}<FieldHelp :label="$t('description')" field="description" /></span
+                        ><Textarea v-model="form.description" :aria-label="$t('description')" rows="4" maxlength="1000"
                     /></label>
                     <div class="field">
-                        <label for="brand-color">{{ $t('brand_color') }}</label>
+                        <label for="brand-color"
+                            ><span class="field-label"
+                                >{{ $t('brand_color')
+                                }}<FieldHelp :label="$t('brand_color')" field="brand_color" /></span
+                        ></label>
                         <div class="flex items-center gap-3">
                             <input
                                 id="brand-color"
                                 v-model="form.primary_color"
                                 type="color"
                                 class="h-12 w-14 cursor-pointer rounded-lg border border-slate-200"
-                            /><InputText v-model="form.primary_color" :aria-label="$t('hex_color')" maxlength="7" />
+                            /><span class="field-control-help"
+                                ><InputText
+                                    v-model="form.primary_color"
+                                    :aria-label="$t('hex_color')"
+                                    maxlength="7" /><FieldHelp
+                                    :label="$t('hex_color')"
+                                    field="primary_color"
+                                    kind="InputText"
+                            /></span>
                         </div>
                     </div>
                 </section>
                 <section class="panel grid gap-5">
                     <h2 class="text-xl font-semibold">{{ $t('logo_and_cover') }}</h2>
                     <label class="field"
-                        >{{ $t('restaurant_logo')
-                        }}<input
+                        ><span class="field-label"
+                            >{{ $t('restaurant_logo')
+                            }}<FieldHelp :label="$t('restaurant_logo')" field="restaurant_logo" /></span
+                        ><input
+                            :aria-label="$t('restaurant_logo')"
                             type="file"
                             accept="image/jpeg,image/png,image/webp"
                             @change="form.logo = ($event.target as HTMLInputElement).files?.[0] ?? null" /></label
                     ><label v-if="brand.logo_path" class="flex items-center gap-3"
-                        ><Checkbox v-model="form.remove_logo" binary />{{ $t('remove_existing_logo') }}</label
+                        ><Checkbox v-model="form.remove_logo" :aria-label="$t('remove_existing_logo')" binary /><span
+                            class="field-label"
+                            >{{ $t('remove_existing_logo')
+                            }}<FieldHelp
+                                :label="$t('remove_existing_logo')"
+                                field="remove_existing_logo" /></span></label
                     ><label class="field"
-                        >{{ $t('cover_image')
-                        }}<input
+                        ><span class="field-label"
+                            >{{ $t('cover_image') }}<FieldHelp :label="$t('cover_image')" field="cover_image" /></span
+                        ><input
+                            :aria-label="$t('cover_image')"
                             type="file"
                             accept="image/jpeg,image/png,image/webp"
                             @change="form.cover = ($event.target as HTMLInputElement).files?.[0] ?? null" /></label
                     ><label v-if="brand.cover_path" class="flex items-center gap-3"
-                        ><Checkbox v-model="form.remove_cover" binary />{{ $t('remove_existing_cover') }}</label
-                    >
+                        ><Checkbox v-model="form.remove_cover" :aria-label="$t('remove_existing_cover')" binary /><span
+                            class="field-label"
+                            >{{ $t('remove_existing_cover')
+                            }}<FieldHelp :label="$t('remove_existing_cover')" field="remove_existing_cover" /></span
+                    ></label>
                     <p class="muted">{{ $t('jpeg_png_or_webp_maximum_4_mb_per_image') }}</p>
                 </section>
                 <section class="panel grid gap-5">
                     <h2 class="text-xl font-semibold">{{ $t('public_contact_details') }}</h2>
                     <label class="field"
-                        >{{ $t('contact_email') }}<InputText v-model="form.contact_email" type="email" /></label
+                        ><span class="field-label"
+                            >{{ $t('contact_email')
+                            }}<FieldHelp :label="$t('contact_email')" field="contact_email" /></span
+                        ><InputText
+                            v-model="form.contact_email"
+                            :aria-label="$t('contact_email')"
+                            type="email" /></label
                     ><label class="field"
-                        >{{ $t('contact_phone')
-                        }}<InputText v-model="form.contact_phone" type="tel" maxlength="30" /></label
+                        ><span class="field-label"
+                            >{{ $t('contact_phone')
+                            }}<FieldHelp :label="$t('contact_phone')" field="contact_phone" /></span
+                        ><InputText
+                            v-model="form.contact_phone"
+                            :aria-label="$t('contact_phone')"
+                            type="tel"
+                            maxlength="30" /></label
                     ><label class="field"
-                        >{{ $t('website_https')
-                        }}<InputText v-model="form.website" type="url" placeholder="https://restaurant.ro"
+                        ><span class="field-label"
+                            >{{ $t('website_https')
+                            }}<FieldHelp :label="$t('website_https')" field="website_https" /></span
+                        ><InputText
+                            v-model="form.website"
+                            :aria-label="$t('website_https')"
+                            type="url"
+                            placeholder="https://restaurant.ro"
                     /></label>
                 </section>
                 <div v-if="Object.keys(form.errors).length" role="alert" class="panel text-red-600">
