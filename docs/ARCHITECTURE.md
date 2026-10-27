@@ -1,4 +1,4 @@
-# ZionFood 0.0.17
+# ZionFood 0.0.18
 
 Menu-content metadata uses the shared validated v1 representation described in [MENU_CONTENT.md](MENU_CONTENT.md). Tenant-scoped encrypted drafts separate import/AI/calculation from reviewed publication; content/source hashes prevent stale writes. Nutrition is deterministic recipe/reference arithmetic, with no AI estimates. Platform-only encrypted provider settings and a global quota/paced queue serve all restaurants. PublicMenuTree exposes only reviewed fields and current translations, with source-language fallback. The full GloriaFood price/modifier migration remains a separate planned compatibility/publication workflow.
 

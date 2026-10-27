@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.18 — 2026-10-27
+
+- Fix Groq strict-schema rejection of empty translation/variant/modifier maps by generating schemas specific to translation, rewrite or food suggestions and omitting empty nested maps.
+- Restore omitted known-empty maps after translation so saved proposals, review and public/editor payloads retain their existing structure.
+- Add recursive wire-JSON schema regression coverage for both providers, every operation, sparse products and empty option groups.
+
 ## 0.0.17 — 2026-10-27
 
 - Add reviewed structured allergens, trace declarations, dietary labels and recipe-based nutrition with explicit units, source references, cooked yield and unknown-value handling; disable AI nutrition estimation.

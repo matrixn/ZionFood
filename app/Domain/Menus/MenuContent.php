@@ -52,7 +52,7 @@ class MenuContent
             $rules["translations.$language.groups"] = ['sometimes', 'array', 'max:20'];
             $rules["translations.$language.groups.*"] = ['array:name,options'];
             $rules["translations.$language.groups.*.name"] = ['required', 'string', 'max:100'];
-            $rules["translations.$language.groups.*.options"] = ['required', 'array', 'max:30'];
+            $rules["translations.$language.groups.*.options"] = ['present', 'array', 'max:30'];
             $rules["translations.$language.groups.*.options.*"] = ['string', 'max:100'];
         }
         $validated = Validator::make($data, $rules)->validate();

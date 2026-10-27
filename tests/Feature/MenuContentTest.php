@@ -4,12 +4,14 @@ use App\Domain\Menus\Actions\UpdateMenuItem;
 use App\Domain\Menus\CalculateNutrition;
 use App\Domain\Menus\GloriaFoodContent;
 use App\Domain\Menus\ManageMenuContent;
+use App\Domain\Menus\MenuAi;
 use App\Domain\Menus\MenuContent;
 use App\Jobs\GenerateMenuContent;
 use App\Models\LocationStaff;
 use App\Models\MenuAiSetting;
 use App\Models\MenuContentDraft;
 use App\Models\MenuItem;
+use App\Models\ModifierGroup;
 use App\Models\OrganizationMembership;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
@@ -20,6 +22,54 @@ function menuTranslation(array $extra = []): array
 {
     return ['name' => 'Translated dish', 'description' => 'Translated description', 'ingredients_text' => 'milk *', 'portion_size' => '200 g', 'category_name' => 'Category', 'menu_name' => 'Menu', 'variants' => [], 'groups' => [], ...$extra];
 }
+
+it('sends populated strict schema object maps for every provider operation and sparse product shape', function (string $provider, string $kind, string $shape) {
+    Http::preventStrayRequests();
+    MenuAiSetting::create(['id' => 1, 'enabled' => true, 'provider' => $provider, 'model' => $provider === 'groq' ? 'openai/gpt-oss-20b' : 'configured-model', 'api_key' => 'fake_schema_key', 'daily_limit' => 5]);
+    $source = ['name' => 'Preparat de test', 'description' => 'Descriere', 'variants' => [], 'groups' => []];
+    if ($shape === 'variants') {
+        $source['variants'] = [['id' => 15, 'name' => 'Mare']];
+        $source['groups'] = [['id' => 26, 'name' => 'Sosuri', 'options' => [['id' => 37, 'name' => 'Roșii']]]];
+    } elseif ($shape === 'empty_options') {
+        $source['groups'] = [['id' => 26, 'name' => 'Sosuri', 'options' => []]];
+    }
+    $languages = $kind === 'translate' ? ['en', 'de'] : [];
+    Http::fake(function ($request) use ($provider, $kind, $languages) {
+        // Inspect actual wire JSON as objects: associative decoding hides {} versus [].
+        $wire = json_decode($request->body(), flags: JSON_THROW_ON_ERROR);
+        $schema = $provider === 'groq' ? $wire->response_format->json_schema->schema : $wire->text->format->schema;
+        $check = function ($node) use (&$check) {
+            if (is_object($node)) {
+                if (($node->type ?? null) === 'object') {
+                    expect($node->properties)->toBeInstanceOf(stdClass::class);
+                    expect(get_object_vars($node->properties))->not->toBeEmpty();
+                    expect($node->additionalProperties)->toBeFalse();
+                    expect($node->required)->toBe(array_map('strval', array_keys(get_object_vars($node->properties))));
+                }
+                foreach (get_object_vars($node) as $child) {
+                    $check($child);
+                }
+            } elseif (is_array($node)) {
+                foreach ($node as $child) {
+                    $check($child);
+                }
+            }
+        };
+        $check($schema);
+        if ($kind !== 'translate') {
+            expect(property_exists($schema->properties, 'translations'))->toBeFalse();
+        }
+        $result = match ($kind) {
+            'translate' => ['translations' => array_fill_keys($languages, menuTranslation()), 'notes' => ''],
+            'rewrite' => ['description' => 'Descriere rescrisă.', 'notes' => ''],
+            default => ['allergens' => ['milk'], 'may_contain' => [], 'labels' => ['vegetarian'], 'notes' => ''],
+        };
+
+        return Http::response($provider === 'groq' ? ['choices' => [['finish_reason' => 'stop', 'message' => ['content' => json_encode($result)]]]] : ['status' => 'completed', 'output' => [['content' => [['type' => 'output_text', 'text' => json_encode($result)]]]]]);
+    });
+    expect(app(MenuAi::class)->generate($source, $languages, $kind))->toBeArray();
+    Http::assertSentCount(1);
+})->with(['groq', 'openai'])->with(['suggest', 'rewrite', 'translate'])->with(['empty', 'variants', 'empty_options']);
 
 function menuRecipe(): array
 {
@@ -129,11 +179,12 @@ it('saves validated AI translations locally without publication then requires cu
     Http::preventStrayRequests();
     MenuAiSetting::create(['id' => 1, 'enabled' => true, 'provider' => 'groq', 'model' => 'openai/gpt-oss-20b', 'api_key' => 'gsk_fake', 'daily_limit' => 5]);
     [$owner, $location, $item] = tenantFixture('content-ai');
-    Http::fake(['api.groq.com/*' => Http::response(['choices' => [['finish_reason' => 'stop', 'message' => ['content' => json_encode(['translations' => ['de' => menuTranslation()], 'notes' => 'Check terminology.'])]]]])]);
+    Http::fake(['api.groq.com/*' => Http::response(['choices' => [['finish_reason' => 'stop', 'message' => ['content' => json_encode(['translations' => ['de' => array_diff_key(menuTranslation(), ['variants' => true, 'groups' => true])], 'notes' => 'Check terminology.'])]]]])]);
     $manager = app(ManageMenuContent::class);
     $draft = $manager->draft($owner, $location, $item, 'translate', ['de']);
     (new GenerateMenuContent($draft->id))->handle();
     expect($draft->fresh()->status)->toBe('ready')->and($item->fresh()->content)->toBeNull();
+    expect($draft->fresh()->proposal['translations']['de']['variants'])->toBe([])->and($draft->fresh()->proposal['translations']['de']['groups'])->toBe([]);
     Http::assertSent(fn ($r) => $r->url() === 'https://api.groq.com/openai/v1/chat/completions' && $r->hasHeader('Authorization', 'Bearer gsk_fake') && $r['response_format']['json_schema']['strict'] === true && ! str_contains($r->body(), $owner->email));
     $manager->approve($owner, $location, $draft->fresh());
     expect(app(MenuContent::class)->publicData($item->fresh())['translations']['de']['name'])->toBe('Translated dish');
@@ -195,4 +246,22 @@ it('marks an interrupted provider attempt failed without making a duplicate requ
     (new GenerateMenuContent($draft->id))->handle();
     expect($draft->fresh()->status)->toBe('failed');
     Http::assertNothingSent();
+});
+
+it('restores known empty option maps after a sparse translation response', function () {
+    Queue::fake();
+    Http::preventStrayRequests();
+    MenuAiSetting::create(['id' => 1, 'enabled' => true, 'provider' => 'groq', 'model' => 'openai/gpt-oss-20b', 'api_key' => 'gsk_fake', 'daily_limit' => 5]);
+    [$owner, $location, $item] = tenantFixture('content-empty-options');
+    $group = ModifierGroup::create(['organization_id' => $location->organization_id, 'name' => 'Sosuri', 'min_choices' => 0, 'max_choices' => 1]);
+    $item->modifierGroups()->attach($group->id, ['organization_id' => $location->organization_id]);
+    $row = array_diff_key(menuTranslation(), ['variants' => true, 'groups' => true]);
+    $row['groups'] = [(string) $group->id => ['name' => 'Sauces']];
+    Http::fake(['api.groq.com/*' => Http::response(['choices' => [['finish_reason' => 'stop', 'message' => ['content' => json_encode(['translations' => ['en' => $row], 'notes' => ''])]]]])]);
+    $manager = app(ManageMenuContent::class);
+    $draft = $manager->draft($owner, $location, $item, 'translate', ['en']);
+    (new GenerateMenuContent($draft->id))->handle();
+    expect($draft->fresh()->status)->toBe('ready')->and($draft->fresh()->proposal['translations']['en']['groups'][$group->id]['options'])->toBe([]);
+    $manager->approve($owner, $location, $draft->fresh());
+    expect($item->fresh()->content['translations']['en']['groups'][$group->id]['name'])->toBe('Sauces');
 });

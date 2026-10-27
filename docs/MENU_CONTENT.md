@@ -1,4 +1,6 @@
-# Menu content, nutrition and GloriaFood metadata — 0.0.17
+# Menu content, nutrition and GloriaFood metadata — 0.0.18
+
+The 0.0.18 transport fix builds an operation-specific strict schema. Suggestion/rewrite requests omit translations altogether; translation requests omit empty variant/group/option maps rather than sending zero-property object schemas rejected by Groq. Known-empty maps are restored locally before validation/review. Strict mode, provider selection, keys, nutrition rules and publication guards remain unchanged. Deploy the updated worker code and gracefully restart supervised Horizon (`php artisan horizon:terminate`); previously failed proposals require explicit regeneration. No migration or credential change is needed for this fix.
 
 The menu content editor is available under Restaurant administration → Menu content. Romanian remains the source language; operational UI is Romanian/English. Stored menu translations support English, German, French, Italian, Spanish, Hungarian, Ukrainian, Bulgarian, Turkish and Polish. Public selectors offer languages with reviewed, current translations, plus RO/EN fallback. Missing or stale product text falls back to Romanian. Fixed allergen, dietary and nutrient vocabulary is bundled locally for these menu languages; numbers, money, product IDs and ordering rules are never translated.
 

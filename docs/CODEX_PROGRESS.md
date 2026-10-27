@@ -1,4 +1,12 @@
-# ZionFood progress — 0.0.17
+# ZionFood progress — 0.0.18
+
+## Version 0.0.18 - Groq strict schema compatibility (October 27)
+
+The user reported Groq rejecting `/properties/translations` because required was present while properties was treated as missing. Reproduced the source of the failure with recursive checks of actual outgoing JSON, decoded as objects rather than associative arrays: suggestion/rewrite operations emitted a zero-property translations object, and simple products could also emit empty variant/group/option object schemas. The regression failed before the fix. Official Groq structured-output documentation was checked; strict mode remains enabled.
+
+MenuAi now builds only the fields needed by each operation: translation plus notes, Romanian rewrite plus notes, or named allergen/trace/diet suggestions plus notes. Translation schemas omit maps with no source entries, including empty option maps inside named groups. A local construction guard prevents future zero-property schema objects. Numeric source IDs remain string keys in the wire schema. The worker restores omitted empty maps before local validation, preserving the stored/editor/public contract and review/source-hash checks. Known empty option maps require key presence and array type rather than a nonempty array. No credentials, provider selection, nutrition authority, prices, queue budget or data records are changed.
+
+Validation completed: 219 SQLite backend tests / 2082 assertions, including eighteen wire-schema combinations across both providers, three operations and three product shapes, plus sparse-map persistence/approval checks. Fifteen frontend tests, ESLint, TypeScript/Vite build, Composer validation and exact Linux Pint across 217 PHP files passed. All 31 menu-content tests also passed on dedicated MariaDB (361 assertions). Both relevant Playwright flows passed: persisted recipe/translation/metadata review and private platform AI settings/mobile layout. Version metadata, unchanged dependency versions and README links were verified. No dependency version or database migration is introduced. Previous failed drafts are not silently retried; deploy the code, gracefully restart supervised Horizon and regenerate the failed operation explicitly. All provider transport tests use fake HTTP responses; no real provider request, direct Forge change or production verification is claimed. The existing approximately 565 kB application-chunk warning remains.
 
 ## Version 0.0.17 - reviewed menu content, local translations and recipe nutrition (October 27)
 

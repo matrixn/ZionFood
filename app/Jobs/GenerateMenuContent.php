@@ -74,6 +74,20 @@ class GenerateMenuContent implements ShouldQueue
             if ($draft->kind === 'translate' && (array_diff(array_keys($patch['translations']), $draft->input['languages']) || array_diff($draft->input['languages'], array_keys($patch['translations'])))) {
                 throw new \RuntimeException('ai_invalid_languages');
             }
+            if ($draft->kind === 'translate') {
+                // Sparse wire schemas omit empty maps; keep the stored/editor contract stable.
+                $emptyGroups = collect($draft->input['source']['groups'])->filter(fn ($group) => ! $group['options'])->pluck('id')->map(fn ($id) => (string) $id);
+                foreach ($patch['translations'] as &$translation) {
+                    $translation += ['variants' => [], 'groups' => []];
+                    foreach ($translation['groups'] as $id => &$group) {
+                        if ($emptyGroups->contains((string) $id)) {
+                            $group += ['options' => []];
+                        }
+                    }
+                    unset($group);
+                }
+                unset($translation);
+            }
             app(MenuContent::class)->validate(array_replace(app(MenuContent::class)->empty(), array_diff_key($patch, ['description' => true])));
             $draft->update(['status' => 'ready', 'proposal' => $patch, 'report' => ['notes' => mb_substr((string) ($result['notes'] ?? ''), 0, 3000), 'provider' => MenuAiSetting::find(1)?->provider, 'nutrition' => 'recipe_calculation_only']]);
         } catch (Throwable $e) {
