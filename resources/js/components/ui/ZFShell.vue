@@ -58,6 +58,7 @@ const navGroups = computed(() =>
                           { name: t('staff'), icon: 'pi-users', path: '/staff' },
                           { name: t('nav_locations'), icon: 'pi-map-marker', path: '/locations' },
                           { name: t('restaurant_branding'), icon: 'pi-palette', path: '/branding' },
+                          { name: t('general_title'), icon: 'pi-sliders-h', path: '/general-settings' },
                           { name: t('nav_schedule_delivery'), icon: 'pi-cog', path: '/settings' },
                       ],
                   },
@@ -232,6 +233,7 @@ function switchLocation(id: string) {
                         <Link href="/admin/ingredients" class="block p-3 text-brand">{{
                             $t('ingredients_title')
                         }}</Link>
+                        <Link href="/admin/email-alerts" class="block p-3 text-brand">{{ $t('alerts_title') }}</Link>
                         <Link href="/admin/menu-ai" class="block p-3 text-brand">{{ $t('mc_ai_settings') }}</Link>
                         <Link href="/admin/cuisines" class="block p-3 text-brand">{{ $t('cuisine_admin_title') }}</Link>
                     </template>

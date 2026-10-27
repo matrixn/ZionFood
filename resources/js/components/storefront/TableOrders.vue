@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { computed, onMounted, onBeforeUnmount, ref, watch } from 'vue';
 import Button from 'primevue/button';
 import ZFStatusBadge from '@/components/ui/ZFStatusBadge.vue';
@@ -162,9 +164,7 @@ onBeforeUnmount(() => {
                     <span class="text-sm font-semibold">{{
                         $t('table_order_number', { number: order.public_id.slice(-6) })
                     }}</span
-                    ><span class="ml-2 text-xs text-slate-500">{{
-                        new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                    }}</span>
+                    ><span class="ml-2 text-xs text-slate-500">{{ dates.time(order.created_at) }}</span>
                 </div>
                 <ZFStatusBadge :status="order.status" />
             </div>

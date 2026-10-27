@@ -47,3 +47,8 @@ Migration 000900 adds nullable menu_items.content JSON and content_revision, enc
 ## Migration Center and menu compatibility (0.0.22)
 
 Migration 001200 adds category/variant group pivots, nullable product order_types, source key/internal name, variant default/nutrition, group required/quantity flags, option defaults/max quantity/internal names and immutable modifier quantity/internal-name snapshots. Nullable is_required retains legacy behavior from existing min_choices. Six import tables store scoped batches, encrypted source/canonical data, issues, reports, entity mappings and approved publication fingerprints/previous assignments. See MIGRATION_CENTER.md.
+
+## 0.0.24 additions
+
+- `restaurant_locations.preferences` nullable JSON and `preferences_revision` default 0: whitelisted presentation/date settings, independent of setup_profile/setup_revision; raw preferences are hidden from model serialization, normalized safe display_settings is exposed.
+- `email_alert_settings` singleton ID 1: enabled, nullable suspended_at/reason, generation/version, bounded JSON admission timestamps and delivery attempt entries. Global platform setting, not tenant-owned. Runtime insert-or-ignore and row-lock transactions coordinate workers; one rolling hour, at most five entries per window. Suspension survives expiration/restart; manual resume clears windows and invalidates queued generations. Provider acceptance updates attempt metadata without re-sending accepted messages on bookkeeping failure. It contains no email bodies, addresses, exception messages or provider keys.

@@ -2,6 +2,8 @@
 import { onMounted, onBeforeUnmount, ref, watch, computed } from 'vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import QRCode from 'qrcode';
+import StaffTableOrders from '@/components/restaurant/StaffTableOrders.vue';
+import { money } from '@/lib/http';
 import Tooltip from 'primevue/tooltip';
 import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from 'primevue/useconfirm';
@@ -19,6 +21,7 @@ interface Table {
     qr_url: string | null;
     sessions: { public_id: string; expires_at: string }[];
     ordering_paused: boolean;
+    order_summary: { active_count: number; daily_total: number } | null;
 }
 const props = defineProps<
     WorkspaceProps & {
@@ -34,6 +37,7 @@ const props = defineProps<
         };
     }
 >();
+const selectedOrderTable = ref<Table | null>(null);
 const qr = ref<Record<string, string>>({});
 const form = useForm({});
 const canWrite = computed(() => props.permissions.tables === 'manage');
@@ -237,6 +241,24 @@ watch(() => props.tables, generate);
                 <p v-if="!table.ordering_paused && effectiveReason(table) !== 'open'" class="text-xs text-slate-500">
                     {{ $t('dining_manual_active') }}
                 </p>
+                <button
+                    v-if="table.order_summary"
+                    type="button"
+                    class="grid w-full grid-cols-2 gap-3 rounded-xl bg-slate-50 p-3 text-left transition hover:bg-violet-50 dark:bg-slate-800"
+                    data-testid="table-order-summary"
+                    @click="selectedOrderTable = table"
+                >
+                    <span
+                        ><strong class="block text-xl text-brand">{{ table.order_summary.active_count }}</strong
+                        ><span class="text-xs">{{ $t('table_orders_active_count') }}</span></span
+                    >
+                    <span
+                        ><strong class="block text-lg">{{
+                            money(table.order_summary.daily_total, location.currency)
+                        }}</strong
+                        ><span class="text-xs">{{ $t('table_orders_daily_total') }}</span></span
+                    >
+                </button>
                 <img
                     v-if="qr[table.public_id]"
                     :src="qr[table.public_id]"
@@ -302,6 +324,7 @@ watch(() => props.tables, generate);
                 </details>
             </article>
         </div>
+        <StaffTableOrders :table="selectedOrderTable" @close="selectedOrderTable = null" @changed="refresh" />
         <ConfirmDialog />
     </RestaurantLayout>
 </template>

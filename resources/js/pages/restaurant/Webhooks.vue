@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { tr as t } from '@/i18n';
 
 import { useId, ref, onMounted, onUnmounted } from 'vue';
@@ -200,7 +202,7 @@ onUnmounted(() => clearInterval(timer));
                     </p>
                 </div>
                 <p class="muted">
-                    {{ new Date(delivery.created_at).toLocaleString($i18n.locale === 'ro' ? 'ro-RO' : 'en-GB') }}
+                    {{ dates.dateTime(delivery.created_at) }}
                 </p>
                 <Button
                     v-if="

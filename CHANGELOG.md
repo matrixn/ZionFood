@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.24 — 2026-10-27
+
+- Added persistent, platform-admin-controlled error-alert suspension at the sixth alert/attempt in a rolling hour; queued old generations are discarded on manual resume, ordinary mail keeps its global quota.
+- Added permission-scoped table order summaries, daily value, snapshot details and versioned ready-to-served actions.
+- Added location date/time/display preferences with embedded setup editing and public-payload filtering; reservation receipts link back to the menu.
+- Added redacted broadcast diagnostics and optional internal Reverb publishing endpoint variables; no live transport fix is claimed.
+
 ## 0.0.23 — 2026-10-27
 
 - Added session-authorized active table receipts, snapshot products/options/quantities/totals, automatic polling and refresh recovery.

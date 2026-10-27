@@ -69,3 +69,7 @@ Address lookup now uses a button and map rather than numeric coordinate inputs. 
 Preia adresa de la pin fills structured address fields from the chosen pin without moving it and explains missing details. Save the step to retain address and pin. Delivery Settings uses the saved pin with zoom/recenter, or resolves a complete saved address once if no pin exists. See RESTAURANT_LOCATION.md.
 
 The inline Menu editor supports ordered ingredients, portion labels and RON price entry. Its ingredient-manager dialog can add/edit/hide/remove restaurant-owned entries without leaving setup/menu; common rows are read-only for tenant users. See INGREDIENTS.md.
+
+## General display settings (0.0.24)
+
+The optional general step embeds the same per-location General Settings editor used outside setup. It has its own preferences_revision and does not alter setup revision or the ten required readiness items. Date-only/date+time choices show concrete examples; seconds-free and 12-hour options are available. Display switches cover phone/email/site/address/restaurant description/product photos. Existing language selection stays in the layouts. Dates are rendered in the venue timezone; native date inputs keep browser calendar UI and ISO wire values.

@@ -12,6 +12,7 @@ import InputNumber from 'primevue/inputnumber';
 import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
 import ToggleSwitch from 'primevue/toggleswitch';
+import GeneralEditor from './GeneralSettings.vue';
 import SettingsEditor from './Settings.vue';
 import MenuEditor from './Menu.vue';
 import BrandingEditor from './Branding.vue';
@@ -101,6 +102,7 @@ const steps = [
     'delivery',
     'menu',
     'branding',
+    'general',
     'reservations',
     'staff',
     'legal',
@@ -109,7 +111,7 @@ const steps = [
 ];
 const groups = [
     { title: 'setup_group_place', steps: ['basics', 'cuisines', 'locations', 'seating'] },
-    { title: 'setup_group_operations', steps: ['services', 'hours', 'delivery', 'menu', 'branding'] },
+    { title: 'setup_group_operations', steps: ['services', 'hours', 'delivery', 'menu', 'branding', 'general'] },
     { title: 'setup_group_guests', steps: ['reservations', 'staff', 'legal'] },
     { title: 'setup_group_launch', steps: ['publish', 'payments'] },
 ];
@@ -322,6 +324,7 @@ const totalSeats = computed(() =>
 const next = computed(() => steps[steps.indexOf(props.step) + 1]);
 const previous = computed(() => steps[steps.indexOf(props.step) - 1]);
 const editors: Record<string, Component> = {
+    general: GeneralEditor,
     hours: SettingsEditor,
     delivery: SettingsEditor,
     menu: MenuEditor,

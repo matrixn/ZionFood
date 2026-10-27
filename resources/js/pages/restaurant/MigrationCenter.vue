@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { ref, computed, onUnmounted } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
@@ -300,7 +302,7 @@ function open(id: string) {
                             :key="b.public_id"
                             text
                             class="w-full min-w-0 !justify-between [&_.p-button-label]:whitespace-normal [&_.p-button-label]:break-words"
-                            :label="`${new Date(b.created_at).toLocaleString()} · ${$t('mig_status_' + b.status)}`"
+                            :label="`${dates.dateTime(b.created_at)} · ${$t('mig_status_' + b.status)}`"
                             @click="open(b.public_id)"
                         />
                     </div>

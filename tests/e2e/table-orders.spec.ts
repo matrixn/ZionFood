@@ -102,7 +102,19 @@ test('QR guests retain shared active products until ready orders are served and 
     await c.goto(qr!);
     await expect(c.getByTestId('table-active-orders')).toHaveCount(0);
     await fresh.close();
-    await status(page, id, 'completed', 4);
+    // Staff serves the ready order from the real table receipt modal.
+    await page.reload();
+    await table.getByTestId('table-order-summary').click();
+    const staffReceipt = page.getByRole('dialog');
+    await expect(staffReceipt.locator(`[data-order="${id}"]`)).toBeVisible();
+    await staffReceipt
+        .locator(`[data-order="${id}"]`)
+        .getByRole('button', { name: 'Selectează pentru servire', exact: true })
+        .click();
+    await staffReceipt.getByRole('button', { name: 'Marchează ca servită', exact: true }).click();
+    await expect(staffReceipt.locator(`[data-order="${id}"]`).getByText('Finalizată', { exact: true })).toBeVisible();
+    await staffReceipt.screenshot({ path: 'test-results/staff-table-order-modal.png' });
+    await staffReceipt.locator('.p-dialog-footer').getByRole('button', { name: 'Închide', exact: true }).click();
     await expect(card).toHaveCount(0);
     await expect(a.locator(`[data-order="${other}"]`)).toBeVisible();
     await status(page, other, 'cancelled', 1);

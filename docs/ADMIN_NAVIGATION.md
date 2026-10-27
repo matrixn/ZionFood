@@ -25,3 +25,5 @@ The standalone `/app/locations/{public_id}/locations` page and inline `setup/loc
 Backend tests cover editor data, standalone compatibility, foreign/staff denials, menu save return/persistence, unsupported setup writes and scoped location lists. Browser checks cover grouping/order, embedded saves, dirty navigation cancellation, location configuration, mobile and RO/EN. Completed results and limits are in CODEX_PROGRESS.md.
 
 Restaurant management now includes Ingredients. Platform administration also links the shared ingredient catalogue. Menu has an inline Manage ingredients dialog, including within setup/menu, so product and custom ingredient preparation remain inside the guide. Standalone ingredient administration remains available. See INGREDIENTS.md.
+
+0.0.24 adds Setări generale beside the location schedule/delivery controls and embeds it in setup/general. Platform admin has Alerte de erori prin email for the global circuit state and manual resume. Mese și QR order-summary controls appear only with independent orders/kitchen read capability; serving additionally needs manage capability.

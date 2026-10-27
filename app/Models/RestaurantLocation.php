@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domain\Restaurants\LocationPreferences;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -21,11 +22,16 @@ class RestaurantLocation extends Model
         });
     }
 
-    protected $casts = ['accepting_orders' => 'boolean', 'setup_profile' => 'array', 'setup_revision' => 'integer'];
+    protected $casts = ['accepting_orders' => 'boolean', 'setup_profile' => 'array', 'setup_revision' => 'integer', 'preferences' => 'array', 'preferences_revision' => 'integer'];
 
-    protected $hidden = ['setup_profile'];
+    protected $hidden = ['setup_profile', 'preferences'];
 
-    protected $appends = ['storefront_path'];
+    protected $appends = ['storefront_path', 'display_settings'];
+
+    public function getDisplaySettingsAttribute(): array
+    {
+        return app(LocationPreferences::class)->values($this);
+    }
 
     public function getStorefrontPathAttribute(): string
     {

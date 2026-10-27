@@ -3,6 +3,8 @@
 use App\Http\Controllers\BrandingController;
 use App\Http\Controllers\CuisineController;
 use App\Http\Controllers\DiningController;
+use App\Http\Controllers\EmailAlertSettingsController;
+use App\Http\Controllers\GeneralSettingsController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MenuContentController;
@@ -43,13 +45,19 @@ Route::post('/invitations/{invitation}', [StaffController::class, 'accept'])->mi
 Route::get('/test-email', [TestEmailController::class, 'show']);
 Route::post('/test-email', [TestEmailController::class, 'send'])->middleware('throttle:admin-mail-test');
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/email-alerts', [EmailAlertSettingsController::class, 'show']);
+    Route::put('/admin/email-alerts', [EmailAlertSettingsController::class, 'update']);
     Route::get('/admin/cuisines', [CuisineController::class, 'index']);
     Route::post('/admin/cuisines', [CuisineController::class, 'save']);
     Route::post('/admin/cuisines/{cuisine}', [CuisineController::class, 'save']);
+    Route::get('/app/locations/{location}/general-settings', [GeneralSettingsController::class, 'show']);
+    Route::put('/app/locations/{location}/general-settings', [GeneralSettingsController::class, 'update']);
     Route::get('/app/locations/{location}/reservations', [ReservationController::class, 'manage']);
     Route::post('/app/locations/{location}/tables/bulk', [DiningController::class, 'bulk'])->middleware('throttle:table-operations');
     Route::get('/app/locations/{location}/tables', [DiningController::class, 'manage']);
     Route::post('/app/reservations/{reservation}/status', [ReservationController::class, 'transition']);
+    Route::get('/app/tables/{table}/orders', [DiningController::class, 'staffOrders']);
+    Route::post('/app/tables/{table}/orders/{order}/served', [DiningController::class, 'serve'])->middleware('throttle:table-operations');
     Route::post('/app/tables/{table}/{operation}', [DiningController::class, 'operation'])->middleware('throttle:table-operations');
     Route::get('/app/locations/{location}/setup/{step?}', [RestaurantSetupController::class, 'show']);
     Route::post('/app/locations/{location}/setup/geocode', [RestaurantSetupController::class, 'locate'])->middleware('throttle:geocoding');

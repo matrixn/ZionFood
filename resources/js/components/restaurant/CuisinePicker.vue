@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { computed, ref } from 'vue';
-import { i18n, localeTag } from '@/i18n';
+import { i18n } from '@/i18n';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import CuisineCard from './CuisineCard.vue';
@@ -63,7 +65,7 @@ function toggle(id: number) {
                                     ? $t('cuisine_unavailable')
                                     : since(c.id)
                                       ? $t('cuisine_active_since', {
-                                            date: new Date(since(c.id)!).toLocaleDateString(localeTag()),
+                                            date: dates.date(since(c.id)!),
                                         })
                                       : $t('cuisine_pending')
                             }}

@@ -2,12 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Domain\Integrations\BroadcastDiagnostics;
 use App\Domain\Integrations\QueueWebhooks;
 use App\Events\OrderChanged;
 use App\Models\OutboxMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DeliverOutbox implements ShouldQueue
 {
@@ -44,6 +46,11 @@ class DeliverOutbox implements ShouldQueue
             } catch (\Throwable $error) {
                 // Never persist transport exception messages: they can include credentials or URLs.
                 $message->update(['last_error' => get_class($error)]);
+                try {
+                    Log::warning('ZionFood broadcast delivery failed', ['event_id' => $message->event_id, 'attempt' => $message->attempts, ...app(BroadcastDiagnostics::class)->failure($error)]);
+                } catch (\Throwable) {
+                    // Diagnostic logging must not replace the original transport failure.
+                }
 
                 return $error;
             }

@@ -1,0 +1,24 @@
+import { test, expect as baseExpect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+const expect = baseExpect.configure({ timeout: 20000 });
+const account = JSON.parse(readFileSync('storage/app/private/browser-email-admin.json', 'utf8'));
+test('platform admin sees a persistent suspension and resumes alerts without sending email', async ({ page }) => {
+    test.setTimeout(60000);
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await page.goto('/login');
+    await page.locator('#email').fill(account.email);
+    await page.locator('#password').fill(account.password);
+    await page.getByRole('button', { name: 'Autentificare', exact: true }).click();
+    await expect(page).toHaveURL(/\/app\/locations\//);
+    await page.goto('/admin/email-alerts');
+    await expect(page.getByText('Alerte suspendate automat', { exact: true })).toBeVisible();
+    await page.reload();
+    await expect(page.getByText('Alerte suspendate automat', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Reactivează alertele', exact: true }).click();
+    await expect(page.getByText('Alerte active', { exact: true })).toBeVisible();
+    await page.reload();
+    await expect(page.getByText('Alerte active', { exact: true })).toBeVisible();
+    await page.screenshot({ path: 'test-results/email-alert-settings.png', fullPage: true });
+    expect(errors).toEqual([]);
+});

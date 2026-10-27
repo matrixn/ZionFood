@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { useSetupEditorGuard } from '@/lib/useSetupEditorGuard';
 import { tr as t } from '@/i18n';
 
@@ -202,11 +204,7 @@ useSetupEditorGuard(
                     <strong>{{ invitation.email }}</strong>
                     <p class="muted">
                         {{ $t('role_' + invitation.role) }} · {{ $t('expires_on') }}
-                        {{
-                            new Date(invitation.expires_at).toLocaleDateString(
-                                $i18n.locale === 'ro' ? 'ro-RO' : 'en-GB',
-                            )
-                        }}
+                        {{ dates.date(invitation.expires_at) }}
                     </p>
                 </div>
                 <span v-if="invitation.revoked_at" class="muted">{{ $t('revoked') }}</span

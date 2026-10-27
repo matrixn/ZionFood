@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain\Analytics\RecordMenuVisit;
 use App\Domain\Menus\PublicMenuTree;
 use App\Domain\Orders\Actions\PlaceOrderAction;
+use App\Domain\Restaurants\LocationPreferences;
 use App\Domain\Restaurants\StorefrontShareImage;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
@@ -59,8 +60,26 @@ class PublicOrderingController extends Controller
 
     public function data(RestaurantLocation $location): array
     {
-        return ['mapConfig' => config('maps'), 'mapCenter' => isset($location->setup_profile['basics']['latitude'], $location->setup_profile['basics']['longitude']) ? [(float) $location->setup_profile['basics']['latitude'], (float) $location->setup_profile['basics']['longitude']] : [44.4268, 26.1025], 'location' => $location->only('public_id', 'name', 'address', 'currency', 'accepting_orders', 'timezone'), 'restaurant' => $location->restaurant->only('name', 'slug', 'description', 'tagline', 'primary_color', 'logo_path', 'cover_path', 'contact_email', 'contact_phone', 'website'),
-            'menus' => Cache::remember('public-menu:'.$location->public_id, 30, fn () => app(PublicMenuTree::class)->build($location)),
+        $preferences = app(LocationPreferences::class);
+        $settings = $preferences->values($location);
+        $menus = Cache::remember('public-menu:'.$location->public_id, 30, fn () => app(PublicMenuTree::class)->build($location));
+        if (! $settings['show_product_images']) {
+            $menus = json_decode(json_encode($menus), true);
+            foreach ($menus as &$menu) {
+                foreach ($menu['categories'] as &$category) {
+                    foreach ($category['items'] as &$item) {
+                        $item['image_path'] = null;
+                    }
+                }
+            }
+        }
+        $publicLocation = $location->only('public_id', 'name', 'address', 'currency', 'accepting_orders', 'timezone', 'display_settings');
+        if (! $settings['show_address']) {
+            $publicLocation['address'] = null;
+        }
+
+        return ['mapConfig' => config('maps'), 'mapCenter' => isset($location->setup_profile['basics']['latitude'], $location->setup_profile['basics']['longitude']) ? [(float) $location->setup_profile['basics']['latitude'], (float) $location->setup_profile['basics']['longitude']] : [44.4268, 26.1025], 'location' => $publicLocation, 'restaurant' => $preferences->publicBrand($location),
+            'menus' => $menus,
             'fulfillment' => $location->fulfillment ?? ['pickup_enabled' => false, 'delivery_enabled' => false, 'reservations_enabled' => false], 'zones' => $location->zones()->where('is_active', true)->get(), 'hours' => $location->hours];
     }
 
@@ -91,6 +110,6 @@ class PublicOrderingController extends Controller
         $mapped = $request->attributes->get('storefront_location');
         abort_if($mapped && (int) $mapped !== $model->location_id, 404);
 
-        return response()->json(['public_id' => $model->public_id, 'status' => $model->status->value, 'total' => $model->total, 'currency' => $model->currency, 'history' => $model->history()->get(['to_status', 'created_at']), 'restaurant' => $model->location->restaurant->only('name', 'slug', 'description', 'tagline', 'primary_color', 'logo_path', 'cover_path', 'contact_email', 'contact_phone', 'website')])->header('Cache-Control', 'no-store');
+        return response()->json(['public_id' => $model->public_id, 'status' => $model->status->value, 'total' => $model->total, 'currency' => $model->currency, 'history' => $model->history()->get(['to_status', 'created_at']), 'restaurant' => app(LocationPreferences::class)->publicBrand($model->location), 'location' => $model->location->only('timezone', 'display_settings')])->header('Cache-Control', 'no-store');
     }
 }

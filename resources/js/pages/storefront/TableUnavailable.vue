@@ -4,6 +4,7 @@ import TableOrders from '@/components/storefront/TableOrders.vue';
 import StorefrontLayout from '@/layouts/StorefrontLayout.vue';
 import type { RestaurantBrand } from '@/types';
 defineProps<{
+    location?: import('@/lib/locationDates').DateContext;
     restaurant: RestaurantBrand;
     reason: 'service_disabled' | 'table_closed' | 'outside_hours' | 'cutoff';
     menuUrl: string;

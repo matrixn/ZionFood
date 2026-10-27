@@ -1,5 +1,8 @@
 <script setup lang="ts">
-defineProps<{ history: { to_status: string; created_at: string }[] }>();
+import { useLocationDates } from '@/lib/locationDates';
+import type { DateContext } from '@/lib/locationDates';
+const dates = useLocationDates(() => props.location);
+const props = defineProps<{ history: { to_status: string; created_at: string }[]; location?: DateContext }>();
 </script>
 <template>
     <ol class="grid gap-5">
@@ -10,7 +13,7 @@ defineProps<{ history: { to_status: string; created_at: string }[] }>();
             <div>
                 <strong class="capitalize">{{ $t('status_' + entry.to_status) }}</strong>
                 <p class="muted">
-                    {{ new Date(entry.created_at).toLocaleString($i18n.locale === 'ro' ? 'ro-RO' : 'en-GB') }}
+                    {{ dates.dateTime(entry.created_at) }}
                 </p>
             </div>
         </li>

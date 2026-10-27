@@ -20,7 +20,13 @@ import { api, money } from '@/lib/http';
 import type { Menu, Product, Zone, RestaurantBrand } from '@/types';
 import type { MapConfig } from '@/lib/deliveryGeometry';
 const props = defineProps<{
-    location: { public_id: string; name: string; address: string; accepting_orders: boolean };
+    location: {
+        public_id: string;
+        name: string;
+        address: string | null;
+        accepting_orders: boolean;
+        display_settings?: import('@/types').DisplaySettings;
+    };
     restaurant: RestaurantBrand;
     menus: Menu[];
     fulfillment: { pickup_enabled: boolean; delivery_enabled: boolean; reservations_enabled?: boolean };
@@ -191,10 +197,14 @@ function placedAtTable() {
                 <span class="text-sm text-violet-300">{{ restaurant.tagline || $t('freshly_made_just_for_you') }}</span>
                 <h1 class="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">{{ restaurant.name }}</h1>
                 <p class="mt-4 max-w-xl text-slate-300">
-                    {{ restaurant.description || $t('good_food_brings_people_together_find_your_favourite_below') }}
+                    {{
+                        location.display_settings?.show_description === false
+                            ? ''
+                            : restaurant.description || $t('good_food_brings_people_together_find_your_favourite_below')
+                    }}
                 </p>
                 <p class="mt-6 text-sm text-slate-400">
-                    <i aria-hidden="true" class="pi pi-map-marker mr-2" />{{ location.address }}
+                    <i v-if="location.address" aria-hidden="true" class="pi pi-map-marker mr-2" />{{ location.address }}
                 </p>
             </div>
         </section>
@@ -224,7 +234,11 @@ function placedAtTable() {
                         configure = true;
                     "
                 >
-                    <div class="h-24 w-24 shrink-0 overflow-hidden rounded-xl sm:h-32 sm:w-32">
+                    <div
+                        v-if="location.display_settings?.show_product_images !== false"
+                        data-testid="menu-product-photo"
+                        class="h-24 w-24 shrink-0 overflow-hidden rounded-xl sm:h-32 sm:w-32"
+                    >
                         <ProductPhoto :path="p.image_path" :name="p.name" />
                     </div>
                     <div class="flex min-w-0 flex-1 flex-col gap-2">
@@ -262,8 +276,12 @@ function placedAtTable() {
             {{ $t('the_restaurant_is_preparing_its_menu_check_back_soon') }}
         </p>
         <AllergenNotice v-if="categories.some((c) => c.items.some((p) => productMarks(p)))" />
-        <ProductConfigurator v-model:visible="configure" :product="product" /><CartDrawer
+        <ProductConfigurator
+            v-model:visible="configure"
+            :show-images="location.display_settings?.show_product_images"
+            :product="product" /><CartDrawer
             v-model:visible="drawer"
+            :show-images="location.display_settings?.show_product_images"
             @checkout="checkout = true" /><CheckoutForm
             v-model:visible="checkout"
             :location-id="location.public_id"

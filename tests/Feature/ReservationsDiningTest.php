@@ -203,3 +203,12 @@ it('saves the restaurant location cutoff in settings without enabling other serv
     $this->actingAs($owner)->put('/app/locations/'.$location->public_id.'/settings', ['name' => $location->name, 'address' => $location->address, 'accepting_orders' => true, 'pickup_enabled' => true, 'delivery_enabled' => false, 'dine_in_cutoff_minutes' => 60, 'hours' => [], 'zones' => []])->assertSessionHasNoErrors();
     expect($location->fulfillment()->first()->dine_in_cutoff_minutes)->toBe(60)->and($location->fulfillment()->first()->delivery_enabled)->toBeFalse();
 });
+
+it('returns a host-safe restaurant link after a reservation including mapped custom domains', function () {
+    [, $location] = seatedVenue('reservation-return');
+    $booking = app(CreateReservation::class)->execute($location, bookingPayload(), (string) Str::uuid());
+    $url = '/api/v1/public/reservations/'.$booking['reservation']->public_id;
+    $this->withToken($booking['token'])->getJson($url)->assertOk()->assertJsonPath('menu_url', $location->storefront_path)->assertJsonPath('display_settings.datetime_format', 'd.m.Y H:i');
+    StorefrontDomain::create(['organization_id' => $location->organization_id, 'location_id' => $location->id, 'hostname' => 'return.zionfood.test', 'verification_status' => 'verified', 'kind' => 'custom']);
+    $this->getJson('http://return.zionfood.test'.$url)->assertOk()->assertJsonPath('menu_url', '/');
+});

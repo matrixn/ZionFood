@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { computed, onMounted, ref, watch } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import StorefrontLayout from '@/layouts/StorefrontLayout.vue';
@@ -33,7 +35,7 @@ const loading = ref(false);
 let key = crypto.randomUUID();
 let signature = '';
 let search = 0;
-const options = computed(() => slots.value.map((time) => ({ label: time.slice(11), value: time })));
+const options = computed(() => slots.value.map((time) => ({ label: dates.time(time), value: time })));
 watch([date, party], () => {
     search++;
     loading.value = false;

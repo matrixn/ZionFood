@@ -11,7 +11,7 @@ import InputNumber from 'primevue/inputnumber';
 import { useCart } from '@/stores/cart';
 import { money } from '@/lib/http';
 import type { Product } from '@/types';
-const props = defineProps<{ product: Product | null }>();
+const props = defineProps<{ product: Product | null; showImages?: boolean }>();
 const visible = defineModel<boolean>('visible', { required: true });
 const variant = ref<number | null>(null);
 const choices = ref<number[]>([]);
@@ -88,7 +88,7 @@ function add() {
 <template>
     <Dialog v-model:visible="visible" :header="product?.name" modal class="w-full max-w-lg"
         ><div v-if="product" class="grid gap-5">
-            <div class="h-48 overflow-hidden rounded-2xl sm:h-60">
+            <div v-if="showImages !== false" class="h-48 overflow-hidden rounded-2xl sm:h-60">
                 <ProductPhoto :path="product.image_path" :name="product.name" />
             </div>
             <div class="flex flex-wrap items-center gap-2">

@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.23** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.24** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,16 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 27 octombrie 2026 — mese, afișare și protecția alertelor · 0.0.24
+
+- [x] Fiecare masă afișează numărul comenzilor active și valoarea comenzilor plasate azi, conform fusului locației; anulate/refuzate sunt excluse.
+- [x] Detalii cu produsele comandate și marcarea comenzilor pregătite ca servite, cu permisiuni și protecție la modificări simultane.
+- [x] Setări generale per locație, și în wizard: formate dată/oră cu sau fără secunde, afișarea telefonului, emailului, site-ului, adresei, descrierii și fotografiilor produselor.
+- [x] Întoarcere la meniul restaurantului din confirmarea rezervării, inclusiv pe domenii personalizate.
+- [x] Maximum 5 alerte distincte/încercări de trimitere într-o oră; depășirea suspendă alertele până la reactivare în **Platformă → Alerte de erori prin email**. Starea persistă în baza de date; alertele vechi nu sunt retrimise după reactivare. Celelalte emailuri păstrează limita globală 140/24h.
+- [x] Diagnostic de broadcast fără secrete și endpoint intern Reverb configurabil separat de conexiunea browserului.
+- [ ] Confirmarea și remedierea cauzei transportului Reverb pe Forge: logul vizibil a confirmat amânări pentru cota de email, dar nu cauza inițială a excepției de broadcast.
 
 ### 27 octombrie 2026 — comenzile active în meniul QR · 0.0.23
 

@@ -119,7 +119,19 @@ export interface BusinessHour {
     opens_at: string;
     closes_at: string;
 }
+export interface DisplaySettings {
+    date_format: string;
+    datetime_format: string;
+    show_phone: boolean;
+    show_email: boolean;
+    show_website: boolean;
+    show_address: boolean;
+    show_description: boolean;
+    show_product_images: boolean;
+}
 export interface Location {
+    display_settings?: DisplaySettings;
+    preferences_revision?: number;
     storefront_path: string;
     restaurant_id: number;
     id: number;

@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Domain\Mail\EmailDeliveryLog;
 use App\Domain\Mail\EmailQuota;
+use App\Domain\Mail\ErrorAlertCircuit;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -49,6 +50,15 @@ class DeliverEmail implements ShouldBeEncrypted, ShouldQueue
         $context = ['delivery_id' => $this->deliveryId, 'mailer' => $this->mailer, 'attempt' => $this->job ? $this->attempts() : 1];
         try {
             EmailDeliveryLog::write('processing', $context);
+            $isAlert = $this->email->getHeaders()->has('X-ZionFood-Error-Alert');
+            $generation = $this->email->getHeaders()->get('X-ZionFood-Alert-Generation')?->getBodyAsString();
+            $generation = ctype_digit($generation ?? '') ? (int) $generation : null;
+            $circuit = app(ErrorAlertCircuit::class);
+            if ($isAlert && ! $circuit->canDeliver($generation)) {
+                EmailDeliveryLog::write('alert_suppressed', $context);
+
+                return;
+            }
             $envelope = Envelope::create($this->email);
             $wait = $quota->reserve(count($envelope->getRecipients()));
             if ($wait > 0) {
@@ -57,10 +67,24 @@ class DeliverEmail implements ShouldBeEncrypted, ShouldQueue
 
                 return;
             }
+            $slot = $isAlert ? $circuit->reserveDelivery($generation) : null;
+            if ($isAlert && $slot === null) {
+                EmailDeliveryLog::write('alert_suppressed', $context);
+
+                return;
+            }
             // Bypass MessageSending here: the message is already rendered and queued.
             $sent = Mail::mailer($this->mailer)->getSymfonyTransport()->send($this->email, $envelope);
             if (! $sent) {
                 throw new \RuntimeException('Mail transport did not accept the message.');
+            }
+            if ($slot !== null) {
+                try {
+                    $circuit->accepted($slot);
+                } catch (Throwable) {
+                    // Never retry a provider-accepted message because bookkeeping failed.
+                    EmailDeliveryLog::write('alert_acceptance_record_failed', $context, 'warning');
+                }
             }
             $original = $sent->getOriginalMessage();
             $providerId = $original instanceof Email ? $original->getHeaders()->get('X-Resend-Email-ID')?->getBodyAsString() : null;

@@ -10,6 +10,7 @@ import { api, money } from '@/lib/http';
 import type { OrderStatus, RestaurantBrand } from '@/types';
 const props = defineProps<{ orderId: string }>();
 const data = ref<{
+    location: import('@/lib/locationDates').DateContext;
     restaurant: RestaurantBrand;
     status: OrderStatus;
     total: number;
@@ -57,7 +58,7 @@ onUnmounted(() => {
                     ><div class="my-6 flex items-center justify-between">
                         <ZFStatusBadge :status="data.status" /><strong>{{ money(data.total, data.currency) }}</strong>
                     </div>
-                    <OrderTrackingTimeline :history="data.history"
+                    <OrderTrackingTimeline :history="data.history" :location="data.location"
                 /></template>
             </div></div
     ></StorefrontLayout>

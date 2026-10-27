@@ -4,6 +4,7 @@ import { useCart } from '@/stores/cart';
 import ZFDrawer from '@/components/ui/ZFDrawer.vue';
 import Button from 'primevue/button';
 import { money } from '@/lib/http';
+defineProps<{ showImages?: boolean }>();
 const visible = defineModel<boolean>('visible', { required: true });
 const emit = defineEmits<{ checkout: [] }>();
 const cart = useCart();
@@ -17,7 +18,7 @@ const cart = useCart();
             class="flex items-center gap-3 border-b border-slate-100 py-3 dark:border-slate-800"
             data-testid="cart-line"
         >
-            <CartProductImage :path="line.image_path" :name="line.name" />
+            <CartProductImage v-if="showImages !== false" :path="line.image_path" :name="line.name" />
             <div class="min-w-0 flex-1">
                 <p class="text-sm font-semibold leading-snug">{{ line.quantity }} × {{ line.name }}</p>
                 <p

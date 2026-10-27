@@ -24,7 +24,7 @@ test('guest reserves a real table and cancels with its private receipt', async (
     await page.getByRole('button', { name: 'Caută locuri disponibile', exact: true }).click();
     await slots;
     await page.getByRole('combobox', { name: 'Ora sosirii', exact: true }).click();
-    await page.getByRole('option', { name: '12:00', exact: true }).click();
+    await page.getByRole('option', { name: /^12:00(?::00)?$/, exact: true }).click();
     await page.getByRole('textbox', { name: 'Numele tău', exact: true }).fill('Browser Guest');
     await page.getByRole('textbox', { name: 'Număr de telefon', exact: true }).fill('0712345678');
     await page.getByRole('button', { name: 'Trimite rezervarea', exact: true }).click();
@@ -35,6 +35,9 @@ test('guest reserves a real table and cancels with its private receipt', async (
     await page.getByRole('button', { name: 'Anulează rezervarea', exact: true }).click();
     await expect(page.getByText('Anulată', { exact: true })).toBeVisible();
     await page.screenshot({ path: 'test-results/reservation-receipt.png', fullPage: true });
+    await page.getByRole('link', { name: 'Înapoi la meniul restaurantului', exact: true }).click();
+    await expect(page).toHaveURL(/\/restaurant\//);
+    await expect(page.getByTestId('menu-product-card').first()).toBeVisible();
     expect(errors).toEqual([]);
 });
 
@@ -66,7 +69,7 @@ test('staff opens a table and its QR submits a real order with the table identit
     await tab.route('**/address-from-pin', (route) => route.fulfill({ json: { address: null, incomplete: true } }));
     await tab.goto(qrUrl!);
     await expect(tab.getByText('Masa este conectată. Poți trimite comanda.', { exact: true })).toBeVisible();
-    await tab.getByRole('button').filter({ hasText: 'Preparat de test' }).click();
+    await tab.getByTestId('menu-product-card').filter({ hasText: 'Preparat de test' }).click();
     await tab.getByRole('button', { name: /Adaugă în coș/ }).click();
     await tab.getByRole('button', { name: /Coș/ }).click();
     await tab.getByRole('button', { name: /Continuă/ }).click();
@@ -132,8 +135,9 @@ test('manager draws a delivery zone and a guest checks out using its map pin', a
     }
     await map.locator('.action-finish').click();
     await expect(page.getByText('Poligon definit', { exact: true })).toBeVisible();
+    const savedSettings = page.waitForResponse((r) => r.url().endsWith('/settings') && r.request().method() === 'PUT');
     await page.getByRole('button', { name: 'Salvează setările', exact: true }).click();
-    await expect(page.getByRole('status')).toBeVisible();
+    expect([302, 303]).toContain((await savedSettings).status());
     await page.reload();
     await expect(page.getByText('Poligon definit', { exact: true })).toBeVisible();
     await expect(
@@ -147,7 +151,7 @@ test('manager draws a delivery zone and a guest checks out using its map pin', a
     const tab = await guest.newPage();
     await tab.route('**/address-from-pin', (route) => route.fulfill({ json: { address: null, incomplete: true } }));
     await tab.goto(`/store/${account.location}`);
-    await tab.getByRole('button').filter({ hasText: 'Preparat de test' }).click();
+    await tab.getByTestId('menu-product-card').filter({ hasText: 'Preparat de test' }).click();
     await tab.getByRole('button', { name: /Adaugă în coș/ }).click();
     await tab.getByRole('button', { name: /Coș/ }).click();
     await tab.getByRole('button', { name: /Continuă/ }).click();
@@ -167,8 +171,8 @@ test('manager draws a delivery zone and a guest checks out using its map pin', a
     await tab.mouse.click(deliveryBox.x + deliveryBox.width * 0.5, deliveryBox.y + deliveryBox.height * 0.5);
     await expect(tab.getByRole('button', { name: 'Plasează comanda', exact: true })).toBeEnabled();
     await tab.getByRole('button', { name: 'Plasează comanda', exact: true }).click();
-    await expect(tab).toHaveURL(/\/table\//);
-    await expect(tab.getByTestId('table-active-orders')).toContainText('Preparat de test');
+    await expect(tab).toHaveURL(/\/track\//);
+    await expect(tab.getByRole('listitem').getByText('În așteptare', { exact: true })).toBeVisible();
     await guest.close();
     expect(errors).toEqual([]);
 });

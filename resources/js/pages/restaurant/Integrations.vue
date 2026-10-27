@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { onMounted, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
@@ -89,7 +91,7 @@ onMounted(load);
                     <p class="muted mt-2">{{ token.abilities.join(', ') }}</p>
                     <p class="muted">
                         {{ $t('expires') }}
-                        {{ new Date(token.expires_at).toLocaleDateString($i18n.locale === 'ro' ? 'ro-RO' : 'en-GB') }}
+                        {{ dates.date(token.expires_at) }}
                     </p>
                 </div>
                 <Button :label="$t('revoke')" severity="danger" outlined @click="revoke(token.id)" />

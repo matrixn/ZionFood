@@ -1,4 +1,4 @@
-# ZionFood 0.0.23
+# ZionFood 0.0.24
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; whole-menu Migration Center is implemented separately with encrypted staging, approved version publication and guarded rollback (see MIGRATION_CENTER.md). See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -109,3 +109,13 @@ The Imports domain adapts fixed-endpoint GloriaFood Fetch Menu v2 into a provide
 ## Guest table receipts (0.0.23)
 
 ActiveTableOrders resolves a read-only bearer capability for the exact organization/location/table/session, selects only nonterminal dine-in orders and serializes snapshot-only guest fields. Receipt access is independent of ordering availability; closed/expired sessions retain active receipts for existing capability holders. Public menu caches remain receipt-free. Vue TableOrders polls the paginated endpoint, handles stale responses and restores per-tab capabilities. See RESERVATIONS_DINING_DELIVERY.md.
+
+## Location preferences, staff table orders and error-alert circuit (0.0.24)
+
+LocationPreferences owns whitelisted location display settings and optimistic revision writes behind owner/manager authorization and a location row lock. Public payloads filter hidden contacts/description/address/photos without mutating shared cached menu data. Vue date rendering uses the venue timezone; date-only and unzoned reservation slots preserve local calendar components. Wire dates, event names and logs remain unchanged. Optional setup/general embeds the same settings page.
+
+StaffTableOrders scopes both orders and sessions to organization/location/table. Summaries use grouped aggregates; active orders span sessions and days, daily value uses DST-aware local-midnight UTC boundaries and excludes cancelled/rejected orders. Table read plus orders/kitchen read is required for summaries/details. Serving additionally requires orders/kitchen manage and delegates the existing versioned Ready→Completed transition; there is no direct pending→completed shortcut. Private details omit customer contacts and secrets.
+
+ErrorAlertCircuit stores a singleton locked database row: enable switch, latched suspension, counters, generation and version. Deduplicated admissions and actual provider attempts each have a rolling-hour budget of five. A sixth attempt latches suspension; elapsed time/restart does not clear it. SMTP/Resend alert jobs carry a generation header and check the latch before quota/provider access. Manual admin resume clears windows and advances generation, invalidating backlog; ordinary emails bypass this alert-only gate but still use EmailQuota. Provider acceptance is recorded separately and is not inbox delivery. Failure attempts count conservatively. MAIL_ERROR_ALERTS remains a server master switch.
+
+Broadcast retries retain durable outbox semantics. Additional logs contain only an error classification/hint/event ID/attempt, never raw request URLs or credentials. Optional REVERB_PUBLISH_* values separate server publishing from browser websocket routing.

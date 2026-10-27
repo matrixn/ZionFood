@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import ZFDataTable from '@/components/ui/ZFDataTable.vue';
@@ -21,9 +23,7 @@ const emit = defineEmits<{ select: [order: Order] }>();
         ><Column :header="$t('total')"
             ><template #body="{ data }">{{ money((data as Order).total) }}</template></Column
         ><Column :header="$t('received')"
-            ><template #body="{ data }">{{
-                new Date((data as Order).created_at).toLocaleString($i18n.locale === 'ro' ? 'ro-RO' : 'en-GB')
-            }}</template></Column
+            ><template #body="{ data }">{{ dates.dateTime((data as Order).created_at) }}</template></Column
         ><Column :header="$t('details')"
             ><template #body="{ data }"
                 ><Button

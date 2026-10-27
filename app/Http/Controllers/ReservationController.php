@@ -32,7 +32,7 @@ class ReservationController extends Controller
         $context = $ordering->resolve($request, $location);
         abort_unless($context->fulfillment?->reservations_enabled, 404);
 
-        return Inertia::render('storefront/Reserve', ['today' => now($context->timezone)->format('Y-m-d'), 'location' => $context->only('public_id', 'name', 'timezone'), 'restaurant' => $context->restaurant->only('name', 'primary_color', 'logo_path'), 'rules' => array_intersect_key($context->setup_profile['reservations'] ?? [], array_flip(['min_party_size', 'max_party_size', 'advance_days', 'guest_notes', 'duration_minutes', 'confirmation', 'hold_minutes']))]);
+        return Inertia::render('storefront/Reserve', ['today' => now($context->timezone)->format('Y-m-d'), 'location' => $context->only('public_id', 'name', 'timezone', 'display_settings'), 'restaurant' => $context->restaurant->only('name', 'primary_color', 'logo_path'), 'rules' => array_intersect_key($context->setup_profile['reservations'] ?? [], array_flip(['min_party_size', 'max_party_size', 'advance_days', 'guest_notes', 'duration_minutes', 'confirmation', 'hold_minutes']))]);
     }
 
     public function available(Request $request, string $location, PublicOrderingController $ordering)
@@ -74,7 +74,7 @@ class ReservationController extends Controller
         $booking = $this->publicBooking($request, $reservation);
         $status = $booking->status === 'pending' && $booking->hold_expires_at?->isPast() ? 'expired' : $booking->status;
 
-        return response()->json([...$booking->only('public_id', 'party_size', 'starts_at', 'ends_at', 'timezone', 'version', 'hold_expires_at', 'cancellation_deadline'), 'status' => $status, 'restaurant' => $booking->location->restaurant->name, 'can_cancel' => $status === 'pending' || ($status === 'confirmed' && ! $booking->cancellation_deadline->isPast())])->header('Cache-Control', 'no-store');
+        return response()->json([...$booking->only('public_id', 'party_size', 'starts_at', 'ends_at', 'timezone', 'version', 'hold_expires_at', 'cancellation_deadline'), 'menu_url' => $request->attributes->get('storefront_location') ? '/' : $booking->location->storefront_path, 'display_settings' => $booking->location->display_settings, 'status' => $status, 'restaurant' => $booking->location->restaurant->name, 'can_cancel' => $status === 'pending' || ($status === 'confirmed' && ! $booking->cancellation_deadline->isPast())])->header('Cache-Control', 'no-store');
     }
 
     public function cancel(Request $request, string $reservation, TransitionReservation $action)

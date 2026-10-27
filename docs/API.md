@@ -109,3 +109,13 @@ Migration Center is a verified browser/CSRF surface under /app/locations/{locati
 ## Guest active table orders (0.0.23)
 
 GET /api/v1/public/tables/{table}/orders uses Authorization: Bearer <dining-session-token>, optional cursor, and returns {orders,next_cursor}. Nonterminal dine-in order snapshots include public_id/status/version/currency/total/created_at and items with name/variant/quantity/total/modifiers. Only the exact session's table/location is accessible. Completed/rejected/cancelled orders, contacts, notes, tracking tokens and internal names are excluded. This read-only receipt capability may outlive ordering permission; session closure/expiry still blocks checkout. Responses are private/no-store and throttled.
+
+## Location configuration and staff table receipts (0.0.24)
+
+Verified browser session/CSRF routes (central host, outside /api/v1):
+- GET/PUT `/app/locations/{location}/general-settings`: managers only; PUT whitelisted display fields plus `revision`, stale writes 409. GET is Inertia.
+- GET `/app/tables/{table}/orders?cursor=…`: tables read and orders/kitchen read. Returns up to 30 active or current-day-completed receipt snapshots, `next_cursor`, `can_serve`; private/no-store.
+- POST `/app/tables/{table}/orders/{order}/served`: tables read and orders/kitchen manage, body `version`; returns 204. Wrong table/order 404, denied 403, stale 409, non-ready 422.
+- GET/PUT `/admin/email-alerts`: platform administrators only. PUT `enabled`, `resume`, `version`; returns safe settings/counter state, conflicts 409. Tenant managers and platform admins without tenant membership do not gain tenant access.
+
+Reservation tracking now returns a server-derived same-site `menu_url` and safe `display_settings`; the existing bearer/host checks apply to the full response. Public menu/tracking payloads apply hidden contact/display flags. Times remain ISO on the wire and monetary values remain integer minor units.

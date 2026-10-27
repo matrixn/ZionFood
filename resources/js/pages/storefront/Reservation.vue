@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import StorefrontLayout from '@/layouts/StorefrontLayout.vue';
 import Button from 'primevue/button';
 import { api } from '@/lib/http';
-import { localeTag } from '@/i18n';
+import { useLocationDates } from '@/lib/locationDates';
+import type { DisplaySettings } from '@/types';
 
 const props = defineProps<{ reservationId: string }>();
 const booking = ref<{
+    menu_url: string;
+    display_settings: DisplaySettings;
     public_id: string;
     status: string;
     version: number;
@@ -19,6 +22,7 @@ const booking = ref<{
     can_cancel: boolean;
     hold_expires_at: string | null;
 } | null>(null);
+const dates = useLocationDates(() => booking.value ?? undefined);
 const token = ref('');
 const error = ref('');
 const busy = ref(false);
@@ -82,18 +86,19 @@ onBeforeUnmount(() => {
                     {{ $t(`reservation_status_${booking.status}`) }}
                 </p>
                 <p>
-                    {{ new Date(booking.starts_at).toLocaleString(localeTag(), { timeZone: booking.timezone }) }} ·
+                    {{ dates.dateTime(booking.starts_at) }} ·
                     {{ booking.timezone }}
                 </p>
                 <p>{{ $t('booking_guests') }}: {{ booking.party_size }}</p>
                 <p v-if="booking.status === 'pending' && booking.hold_expires_at" class="muted">
                     {{ $t('booking_hold_until') }}
-                    {{
-                        new Date(booking.hold_expires_at).toLocaleTimeString(localeTag(), {
-                            timeZone: booking.timezone,
-                        })
-                    }}
+                    {{ dates.time(booking.hold_expires_at) }}
                 </p>
+                <Link
+                    :href="booking.menu_url"
+                    class="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-3 font-semibold text-white"
+                    ><i class="pi pi-arrow-left" aria-hidden="true" />{{ $t('booking_back_to_menu') }}</Link
+                >
                 <Button
                     v-if="booking.can_cancel"
                     :label="$t('booking_cancel')"

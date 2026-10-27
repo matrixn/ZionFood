@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ZionFood API",
-    "version": "0.0.23",
-    "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session. Migration Center uses separate verified browser/CSRF routes documented in MIGRATION_CENTER.md."
+    "version": "0.0.24",
+    "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session. Migration Center uses separate verified browser/CSRF routes documented in MIGRATION_CENTER.md. Location display settings and staff table receipts use verified browser/CSRF routes outside /api/v1; error-alert settings require platform administration."
   },
   "servers": [
     {
@@ -1658,6 +1658,317 @@
             "description": "Rate limited"
           }
         }
+      }
+    },
+    "/app/tables/{table}/orders": {
+      "servers": [
+        {
+          "url": "/"
+        }
+      ],
+      "get": {
+        "summary": "Read permission-scoped active/today-completed table receipt snapshots",
+        "description": "Verified browser session required. Mutations require CSRF. See docs/API.md for permissions and payloads.",
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Stale version/revision"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/app/tables/{table}/orders/{order}/served": {
+      "servers": [
+        {
+          "url": "/"
+        }
+      ],
+      "post": {
+        "summary": "Mark a ready table order completed using its current version",
+        "description": "Verified browser session required. Mutations require CSRF. See docs/API.md for permissions and payloads.",
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Stale version/revision"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "version"
+                ],
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/app/locations/{location}/general-settings": {
+      "servers": [
+        {
+          "url": "/"
+        }
+      ],
+      "get": {
+        "summary": "Read location general settings (Inertia)",
+        "description": "Verified browser session required. Mutations require CSRF. See docs/API.md for permissions and payloads.",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Stale version/revision"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Save whitelisted location display settings using revision",
+        "description": "Verified browser session required. Mutations require CSRF. See docs/API.md for permissions and payloads.",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Stale version/revision"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "revision",
+                  "date_format",
+                  "datetime_format",
+                  "show_phone",
+                  "show_email",
+                  "show_website",
+                  "show_address",
+                  "show_description",
+                  "show_product_images"
+                ],
+                "properties": {
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "date_format": {
+                    "type": "string",
+                    "enum": [
+                      "d.m.Y",
+                      "d/m/Y",
+                      "Y-m-d",
+                      "m/d/Y"
+                    ]
+                  },
+                  "datetime_format": {
+                    "type": "string",
+                    "enum": [
+                      "d.m.Y H:i",
+                      "d.m.Y H:i:s",
+                      "d/m/Y H:i",
+                      "d/m/Y H:i:s",
+                      "Y-m-d H:i",
+                      "Y-m-d H:i:s",
+                      "m/d/Y h:i A",
+                      "m/d/Y h:i:s A"
+                    ]
+                  },
+                  "show_phone": {
+                    "type": "boolean"
+                  },
+                  "show_email": {
+                    "type": "boolean"
+                  },
+                  "show_website": {
+                    "type": "boolean"
+                  },
+                  "show_address": {
+                    "type": "boolean"
+                  },
+                  "show_description": {
+                    "type": "boolean"
+                  },
+                  "show_product_images": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/admin/email-alerts": {
+      "servers": [
+        {
+          "url": "/"
+        }
+      ],
+      "get": {
+        "summary": "Read error-alert settings (platform admin, Inertia)",
+        "description": "Verified browser session required. Mutations require CSRF. See docs/API.md for permissions and payloads.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Stale version/revision"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Configure or resume error-alert circuit (platform admin)",
+        "description": "Verified browser session required. Mutations require CSRF. See docs/API.md for permissions and payloads.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Stale version/revision"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "enabled",
+                  "resume",
+                  "version"
+                ],
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "resume": {
+                    "type": "boolean"
+                  },
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
       }
     }
   },

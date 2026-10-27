@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { computed } from 'vue';
-import { i18n, localeTag } from '@/i18n';
+import { i18n } from '@/i18n';
 import type { Cuisine } from '@/types/cuisine';
 const props = defineProps<{ cuisine: Cuisine; selected?: boolean; selectedAt?: string | null; selectable?: boolean }>();
 defineEmits<{ toggle: [] }>();
@@ -51,7 +53,7 @@ const description = computed(() =>
                 <p v-else-if="selected" class="text-xs font-semibold text-brand">
                     {{
                         selectedAt
-                            ? $t('cuisine_active_since', { date: new Date(selectedAt).toLocaleDateString(localeTag()) })
+                            ? $t('cuisine_active_since', { date: dates.date(selectedAt) })
                             : $t('cuisine_pending')
                     }}
                 </p>

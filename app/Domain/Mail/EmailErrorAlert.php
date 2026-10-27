@@ -35,6 +35,10 @@ class EmailErrorAlert
             if (! $cache->add('mail:alert:'.$fingerprint, true, config('email_delivery.alert_dedup_seconds'))) {
                 return;
             }
+            $generation = app(ErrorAlertCircuit::class)->admit();
+            if ($generation === null) {
+                return;
+            }
             $id = (string) Str::ulid();
             $text = implode("\n", [
                 'ZionFood — Eroare aplicație / Application error',
@@ -47,9 +51,10 @@ class EmailErrorAlert
                 ...$frames,
                 'Raw messages, request data and context are excluded. Inspect the server logs at this time for full diagnostics.',
             ]);
-            Mail::raw($text, function ($message) use ($id) {
+            Mail::raw($text, function ($message) use ($id, $generation) {
                 $message->to(config('email_delivery.admin_email'))->subject('[ZionFood] Eroare / Error '.$id);
                 $message->getSymfonyMessage()->getHeaders()->addTextHeader('X-ZionFood-Error-Alert', $id);
+                $message->getSymfonyMessage()->getHeaders()->addTextHeader('X-ZionFood-Alert-Generation', (string) $generation);
             });
         } catch (Throwable) {
             // The original error must still be logged even if cache/queue/mail is unavailable.

@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { ref } from 'vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import Button from 'primevue/button';
-import { localeTag } from '@/i18n';
 import type { WorkspaceProps } from '@/types';
 interface Booking {
     public_id: string;
@@ -82,18 +83,7 @@ function transition(booking: Booking, status: string) {
                     }}</span>
                 </div>
                 <p>
-                    {{
-                        new Date(booking.starts_at).toLocaleTimeString(localeTag(), {
-                            timeZone: location.timezone,
-                            hour: '2-digit',
-                            minute: '2-digit',
-                        })
-                    }}–{{
-                        new Date(booking.ends_at).toLocaleTimeString(localeTag(), {
-                            timeZone: location.timezone,
-                            hour: '2-digit',
-                            minute: '2-digit',
-                        })
+                    {{ dates.time(booking.starts_at) }}–{{ dates.time(booking.ends_at)
                     }}<span v-if="booking.table"> · {{ booking.table.area }} / {{ booking.table.code }}</span>
                 </p>
                 <p class="muted">{{ booking.guest_phone }} {{ booking.guest_email }}</p>

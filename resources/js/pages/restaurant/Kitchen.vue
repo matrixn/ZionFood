@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import KitchenLayout from '@/layouts/KitchenLayout.vue';
@@ -104,7 +106,7 @@ onUnmounted(() => {
                 {{
                     kitchen.syncedAt
                         ? $t('last_synced', {
-                              time: kitchen.syncedAt.toLocaleTimeString($i18n.locale === 'ro' ? 'ro-RO' : 'en-GB'),
+                              time: dates.time(kitchen.syncedAt),
                           })
                         : $t('connecting')
                 }}

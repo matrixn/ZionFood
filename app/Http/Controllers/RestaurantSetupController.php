@@ -24,7 +24,7 @@ class RestaurantSetupController extends Controller
         return Inertia::render('restaurant/Setup', [
             'location' => $context->load('restaurant', 'hours', 'fulfillment', 'zones'),
             'locations' => app(WorkspaceController::class)->locations($request), 'canManage' => true,
-            'editor' => in_array($step, ['hours', 'delivery', 'menu', 'branding', 'staff', 'locations'], true) ? app(WorkspaceController::class)->workspaceProps($request, $location, in_array($step, ['hours', 'delivery'], true) ? 'settings' : $step) : null,
+            'editor' => in_array($step, ['hours', 'delivery', 'menu', 'branding', 'staff', 'locations', 'general'], true) ? app(WorkspaceController::class)->workspaceProps($request, $location, in_array($step, ['hours', 'delivery', 'general'], true) ? 'settings' : $step) : null,
             'step' => $step, 'profile' => $context->setup_profile ?? [], 'revision' => $context->setup_revision,
             'progress' => app(SetupProgress::class)->for($context),
             'mapConfig' => config('maps'),

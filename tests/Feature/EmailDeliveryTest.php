@@ -2,6 +2,7 @@
 
 use App\Domain\Mail\EmailErrorAlert;
 use App\Domain\Mail\EmailQuota;
+use App\Domain\Mail\ErrorAlertCircuit;
 use App\Jobs\DeliverEmail;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Log\Events\MessageLogged;
@@ -133,6 +134,7 @@ it('does not create a recursive error alert when alert delivery fails', function
     config(['email_delivery.alerts_enabled' => true, 'email_delivery.admin_email' => 'admin@example.test']);
     $email = (new Email)->from('app@example.test')->to('admin@example.test')->text('alert');
     $email->getHeaders()->addTextHeader('X-ZionFood-Error-Alert', 'test-id');
+    $email->getHeaders()->addTextHeader('X-ZionFood-Alert-Generation', (string) app(ErrorAlertCircuit::class)->admit());
     $job = new DeliverEmail($email, 'resend');
     $queueJob = Mockery::mock(Job::class);
     $queueJob->shouldReceive('attempts')->andReturn(1);

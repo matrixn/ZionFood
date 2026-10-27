@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { computed, ref, watch } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
@@ -609,7 +611,7 @@ useSetupEditorGuard(
                 <span
                     >{{ $t('mc_status_' + draft.status)
                     }}<span class="mt-1 block text-xs text-slate-400">{{
-                        new Date(draft.created_at).toLocaleString()
+                        dates.dateTime(draft.created_at)
                     }}</span></span
                 ><i class="pi pi-arrow-right text-brand" /></button
         ></Dialog>
