@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.22 — 2026-10-27
+
+- Added GloriaFood Migration Center: fixed-endpoint Fetch Menu client, encrypted staging, preview, field/rule issues, nutrient-ID resolution, source diff, reference baskets and JSON/printable PDF reports.
+- Added approved location-specific menu publication, source mappings, reimport with local-edit decisions, guarded rollback and stale-secret/draft retention.
+- Completed category/size modifier inheritance, optional/required bounds, quantities, default selections, size nutrition, product fulfillment restrictions and kitchen snapshots across management, storefront and authoritative checkout.
+- Existing orders, menus, ingredient photos and tenant/location authorization are preserved. Real authorized-provider migration still requires production acceptance.
+
 ## 0.0.21 — 2026-10-27
 
 - Fixed Linux Pint method_argument_space failure in RestaurantOverviewTest.

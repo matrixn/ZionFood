@@ -13,5 +13,10 @@ class MenuItemVariant extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = ['is_available' => 'boolean'];
+    protected $casts = ['is_available' => 'boolean', 'is_default' => 'boolean', 'nutrition' => 'array'];
+
+    public function modifierGroups()
+    {
+        return $this->belongsToMany(ModifierGroup::class, 'menu_variant_modifier_groups', 'variant_id', 'group_id')->withPivot('organization_id');
+    }
 }

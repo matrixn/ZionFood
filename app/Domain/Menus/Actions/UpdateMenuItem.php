@@ -2,6 +2,7 @@
 
 namespace App\Domain\Menus\Actions;
 
+use App\Domain\Menus\MenuWriteLock;
 use App\Domain\Menus\RecordMenuChange;
 use App\Domain\Tenancy\TenantAccess;
 use App\Models\Ingredient;
@@ -19,7 +20,8 @@ class UpdateMenuItem
         abort_if($item && $item->organization_id !== $organizationId, 403);
         $category = MenuCategory::whereKey($data['category_id'])->where('organization_id', $organizationId)->first();
         $ids = $data['modifier_group_ids'] ?? [];
-        if (! $category || ModifierGroup::where('organization_id', $organizationId)->whereIn('id', $ids)->count() !== count($ids)) {
+        $allIds = array_values(array_unique([...$ids, ...array_merge([], ...array_map(fn ($v) => $v['modifier_group_ids'] ?? [], $data['variants'] ?? []))]));
+        if (! $category || ModifierGroup::where('organization_id', $organizationId)->whereIn('id', $allIds)->count() !== count($allIds)) {
             throw ValidationException::withMessages(['category_id' => __('Category and modifiers must belong to this organization.')]);
         }
         if ($item && $item->category->menu->restaurant_id !== $category->menu->restaurant_id) {
@@ -33,18 +35,36 @@ class UpdateMenuItem
         $oldMenuId = $item?->category?->menu_id;
 
         return DB::transaction(function () use ($data, $organizationId, $item, $ids, $category, $oldMenuId) {
+            MenuWriteLock::organization($organizationId);
             $nutritionNeedsReview = $item && array_key_exists('portion_size', $data) && $item->portion_size !== $data['portion_size'];
-            $fields = array_intersect_key($data, array_flip(['category_id', 'name', 'description', 'price', 'tax_basis_points', 'is_available', 'image_path', 'portion_size', 'contains_allergens', 'from_frozen']));
+            $fields = array_intersect_key($data, array_flip(['category_id', 'name', 'description', 'price', 'tax_basis_points', 'is_available', 'image_path', 'portion_size', 'contains_allergens', 'from_frozen', 'order_types', 'kitchen_name']));
             if ($item) {
                 $item->update($fields);
             } else {
                 $item = MenuItem::create(['organization_id' => $organizationId, ...$fields]);
             }
             if (array_key_exists('variants', $data)) {
-                $item->variants()->delete();
-                foreach ($data['variants'] as $variant) {
-                    $item->variants()->create(['name' => $variant['name'], 'price' => $variant['price']]);
+                $kept = [];
+                if (count(array_filter($data['variants'], fn ($v) => $v['is_default'] ?? false)) > 1) {
+                    throw ValidationException::withMessages(['variants' => __('Choose only one default variant.')]);
                 }
+                foreach ($data['variants'] as $row) {
+                    $variant = isset($row['id']) ? $item->variants()->whereKey($row['id'])->first() : null;
+                    if (isset($row['id']) && ! $variant) {
+                        throw ValidationException::withMessages(['variants' => __('Invalid variant.')]);
+                    }
+                    $fields = array_intersect_key($row, array_flip(['name', 'price', 'is_default', 'is_available']));
+                    if ($variant) {
+                        $variant->update($fields);
+                    } else {
+                        $variant = $item->variants()->create($fields);
+                    }
+                    if (array_key_exists('modifier_group_ids', $row)) {
+                        $variant->modifierGroups()->sync(collect($row['modifier_group_ids'])->mapWithKeys(fn ($id) => [$id => ['organization_id' => $organizationId]])->all());
+                    }
+                    $kept[] = $variant->id;
+                }
+                $item->variants()->whereNotIn('id', $kept)->delete();
             }
             if (array_key_exists('ingredient_ids', $data)) {
                 $ingredientIds = $data['ingredient_ids'];

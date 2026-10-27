@@ -1,0 +1,358 @@
+{
+    "id": 4108,
+    "restaurant_id": 4172,
+    "active": true,
+    "currency": "USD",
+    "categories": [
+        {
+            "id": 14937,
+            "menu_id": 4108,
+            "name": "Pizza",
+            "active": true,
+            "active_begin": null,
+            "active_end": null,
+            "active_days": 127,
+            "picture_id": 2939,
+            "items": [
+                {
+                    "id": 58424,
+                    "menu_category_id": 14937,
+                    "name": "Pizza Margherita",
+                    "description": "(tomato sauce, cheese)",
+                    "price": 7,
+                    "active": true,
+                    "active_begin": null,
+                    "active_end": null,
+                    "active_days": 127,
+                    "extras": {
+                        "menu_item_order_types": ["pickup", "delivery"],
+                        "menu_item_kitchen_internal_name": "Pizza Margherita Internal Name"
+                    },
+                    "sizes": [
+                        {
+                            "id": 37086,
+                            "menu_item_id": 58424,
+                            "name": "Small",
+                            "price": 0,
+                            "default": true,
+                            "groups": [
+                                {
+                                    "id": 16978,
+                                    "menu_id": 4108,
+                                    "name": "Extra Toppings (Small)",
+                                    "required": false,
+                                    "force_min": 1,
+                                    "force_max": 1,
+                                    "allow_quantity": false,
+                                    "options": [
+                                        {
+                                            "id": 51188,
+                                            "option_group_id": 16978,
+                                            "name": "Corn",
+                                            "price": 0.7,
+                                            "default": false,
+                                            "extras": null
+                                        },
+                                        {
+                                            "id": 51189,
+                                            "option_group_id": 16978,
+                                            "name": "Extra mozzarella",
+                                            "price": 1.2,
+                                            "default": false,
+                                            "extras": {
+                                                "menu_option_kitchen_internal_name": "Extra Mozzarella Internal Name"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 37087,
+                            "menu_item_id": 58424,
+                            "name": "Large",
+                            "price": 2,
+                            "default": false,
+                            "groups": [
+                                {
+                                    "id": 16979,
+                                    "menu_id": 4108,
+                                    "name": "Extra Toppings (Large)",
+                                    "required": false,
+                                    "force_min": 1,
+                                    "force_max": 1,
+                                    "allow_quantity": false,
+                                    "options": [
+                                        {
+                                            "id": 51190,
+                                            "option_group_id": 16979,
+                                            "name": "Corn",
+                                            "price": 1.2,
+                                            "default": false,
+                                            "extras": null
+                                        },
+                                        {
+                                            "id": 51191,
+                                            "option_group_id": 16979,
+                                            "name": "Extra mozzarella",
+                                            "price": 1.7,
+                                            "default": false,
+                                            "extras": null
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "groups": []
+                },
+                {
+                    "id": 58425,
+                    "menu_category_id": 14937,
+                    "name": "Pizza Prosciutto",
+                    "description": "(tomato sauce, cheese, ham)",
+                    "price": 8,
+                    "active": true,
+                    "active_begin": null,
+                    "active_end": null,
+                    "active_days": 127,
+                    "extras": null,
+                    "sizes": [
+                        {
+                            "id": 37088,
+                            "menu_item_id": 58425,
+                            "name": "Small",
+                            "price": 0,
+                            "default": true,
+                            "groups": [
+                                {
+                                    "id": 16978,
+                                    "menu_id": 4108,
+                                    "name": "Extra Toppings (Small)",
+                                    "required": false,
+                                    "force_min": 1,
+                                    "force_max": 1,
+                                    "allow_quantity": false,
+                                    "options": [
+                                        {
+                                            "id": 51188,
+                                            "option_group_id": 16978,
+                                            "name": "Corn",
+                                            "price": 0.7,
+                                            "default": false,
+                                            "extras": null
+                                        },
+                                        {
+                                            "id": 51189,
+                                            "option_group_id": 16978,
+                                            "name": "Extra mozzarella",
+                                            "price": 1.2,
+                                            "default": false,
+                                            "extras": null
+                                        }
+                                    ]
+                                }
+                            ],
+                            "extras": {
+                                "menu_item_nutritional_values": [
+                                    {
+                                        "id": 9,
+                                        "value": "123"
+                                    },
+                                    {
+                                        "id": 10,
+                                        "value": "12"
+                                    },
+                                    {
+                                        "id": 11,
+                                        "value": "12"
+                                    },
+                                    {
+                                        "id": 12,
+                                        "value": "12"
+                                    },
+                                    {
+                                        "id": 13,
+                                        "value": "12"
+                                    },
+                                    {
+                                        "id": 14,
+                                        "value": "12"
+                                    }
+                                ],
+                                "menu_item_nutritional_values_size": "per_100g"
+                            }
+                        },
+                        {
+                            "id": 37089,
+                            "menu_item_id": 58425,
+                            "name": "Large",
+                            "price": 2,
+                            "default": false,
+                            "groups": [
+                                {
+                                    "id": 16979,
+                                    "menu_id": 4108,
+                                    "name": "Extra Toppings (Large)",
+                                    "required": false,
+                                    "force_min": 1,
+                                    "force_max": 1,
+                                    "allow_quantity": false,
+                                    "options": [
+                                        {
+                                            "id": 51190,
+                                            "option_group_id": 16979,
+                                            "name": "Corn",
+                                            "price": 1.2,
+                                            "default": false,
+                                            "extras": null
+                                        },
+                                        {
+                                            "id": 51191,
+                                            "option_group_id": 16979,
+                                            "name": "Extra mozzarella",
+                                            "price": 1.7,
+                                            "default": false,
+                                            "extras": null
+                                        }
+                                    ]
+                                }
+                            ],
+                            "extras": {
+                                "menu_item_nutritional_values": [
+                                    {
+                                        "id": 9,
+                                        "value": "323"
+                                    },
+                                    {
+                                        "id": 10,
+                                        "value": "32"
+                                    },
+                                    {
+                                        "id": 11,
+                                        "value": "32"
+                                    },
+                                    {
+                                        "id": 12,
+                                        "value": "32"
+                                    },
+                                    {
+                                        "id": 13,
+                                        "value": "32"
+                                    },
+                                    {
+                                        "id": 14,
+                                        "value": "32"
+                                    }
+                                ],
+                                "menu_item_nutritional_values_size": "per_100g"
+                            }
+                        }
+                    ],
+                    "groups": []
+                }
+            ],
+            "groups": [
+                {
+                    "id": 16977,
+                    "menu_id": 4108,
+                    "name": "Crust",
+                    "required": true,
+                    "force_min": 1,
+                    "force_max": 1,
+                    "allow_quantity": false,
+                    "options": [
+                        {
+                            "id": 51186,
+                            "option_group_id": 16977,
+                            "name": "Fluffy",
+                            "price": 0,
+                            "default": true,
+                            "extras": null
+                        },
+                        {
+                            "id": 51187,
+                            "option_group_id": 16977,
+                            "name": "Crispy",
+                            "price": 0,
+                            "default": false,
+                            "extras": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 14938,
+            "menu_id": 4108,
+            "name": "Pasta",
+            "active": true,
+            "active_begin": null,
+            "active_end": null,
+            "active_days": 127,
+            "picture_id": 2967,
+            "items": [
+                {
+                    "id": 58426,
+                    "menu_category_id": 14938,
+                    "name": "Spaghetti Bolognese",
+                    "description": "",
+                    "price": 9,
+                    "active": true,
+                    "active_begin": null,
+                    "active_end": null,
+                    "active_days": 127,
+                    "sizes": [],
+                    "groups": [],
+                    "extras": {
+                        "sku": "",
+                        "menu_item_allergens_ids": [
+                            1,
+                            3,
+                            7,
+                            8,
+                            4
+                        ],
+                        "menu_item_allergens_values": [
+                            {
+                                "id": 1,
+                                "name": "Milk"
+                            },
+                            {
+                                "id": 3,
+                                "name": "Eggs"
+                            },
+                            {
+                                "id": 7,
+                                "name": "Shellfish"
+                            },
+                            {
+                                "id": 8,
+                                "name": "Soybeans"
+                            },
+                            {
+                                "id": 4,
+                                "name": "Peanuts"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 58427,
+                    "menu_category_id": 14938,
+                    "name": "Spaghetti Frutti di Mare",
+                    "description": "(with sea food)",
+                    "price": 12,
+                    "active": true,
+                    "active_begin": null,
+                    "active_end": null,
+                    "active_days": 127,
+                    "extras": null,
+                    "sizes": [],
+                    "groups": []
+                }
+            ],
+            "groups": []
+        }
+    ]
+}

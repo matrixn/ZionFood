@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Analytics\RestaurantOverview;
+use App\Domain\Menus\MenuWriteLock;
 use App\Domain\Menus\RecordMenuChange;
 use App\Domain\Tenancy\Actions\OnboardOrganization;
 use App\Domain\Tenancy\StaffPermissions;
@@ -79,14 +80,14 @@ class WorkspaceController extends Controller
             $props['mapAddress'] = ['address' => $context->address, 'city' => $basics['city'] ?? '', 'country' => $basics['country'] ?? 'RO', 'postal_code' => $basics['postal_code'] ?? ''];
         }
         if ($section === 'menu') {
-            $props['menus'] = $context->menus()->with('categories.items.variants', 'categories.items.ingredients', 'categories.items.modifierGroups')->get();
+            $props['menus'] = $context->menus()->with('categories.items.variants.modifierGroups', 'categories.items.ingredients', 'categories.items.modifierGroups', 'categories.modifierGroups')->get();
             $props['menuWritable'] = app(TenantAccess::class)->canFeature($request->user(), $context, 'menu', true) && ! RestaurantLocation::where('organization_id', $context->organization_id)->whereHas('menus', fn ($q) => $q->whereIn('menus.id', $props['menus']->pluck('id')))->get()->contains(fn ($l) => ! app(TenantAccess::class)->canFeature($request->user(), $l, 'menu', true));
             $props['modifierWritable'] = $props['menuWritable'] && ! RestaurantLocation::where('organization_id', $context->organization_id)->get()->contains(fn ($l) => ! app(TenantAccess::class)->canFeature($request->user(), $l, 'menu', true));
             $props['ingredients'] = Ingredient::availableFor($context->restaurant_id)->withTrashed()->orderBy('name')->get();
             if (! $manage) {
                 $props['ingredients'] = $props['menuWritable'] ? $props['ingredients']->map(fn ($ingredient) => $ingredient->only('id', 'name', 'name_en', 'contains_allergens', 'from_frozen', 'is_active', 'deleted_at', 'restaurant_id')) : [];
             }
-            $props['groups'] = ModifierGroup::with('options')->where('organization_id', $context->organization_id)->get();
+            $props['groups'] = ModifierGroup::with('options')->forMenus($props['menus']->pluck('id'))->where('organization_id', $context->organization_id)->get();
         }
         if ($section === 'dashboard') {
             $days = (int) $request->query('days', 30);
@@ -103,12 +104,17 @@ class WorkspaceController extends Controller
     {
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
         app(TenantAccess::class)->requireFeature($request->user(), $context, 'menu', true);
-        $data = $request->validate(['name' => ['required', 'string', 'max:100'], 'menu_id' => ['required', 'integer'], 'id' => ['nullable', 'integer']]);
+        $data = $request->validate(['name' => ['required', 'string', 'max:100'], 'menu_id' => ['required', 'integer'], 'id' => ['nullable', 'integer'], 'modifier_group_ids' => ['sometimes', 'array', 'max:20'], 'modifier_group_ids.*' => ['integer', 'distinct']]);
         abort_unless($context->menus()->where('menus.id', $data['menu_id'])->exists(), 422);
         app(TenantAccess::class)->requireMenu($request->user(), $context->organization_id, $data['menu_id']);
         DB::transaction(function () use ($data, $context) {
+            MenuWriteLock::organization($context->organization_id);
             $category = isset($data['id']) ? MenuCategory::whereKey($data['id'])->where('menu_id', $data['menu_id'])->where('organization_id', $context->organization_id)->firstOrFail() : new MenuCategory(['organization_id' => $context->organization_id, 'menu_id' => $data['menu_id']]);
             $category->fill(['name' => $data['name']])->save();
+            if (isset($data['modifier_group_ids'])) {
+                abort_unless(ModifierGroup::where('organization_id', $context->organization_id)->whereIn('id', $data['modifier_group_ids'])->count() === count($data['modifier_group_ids']), 422);
+                $category->modifierGroups()->sync(collect($data['modifier_group_ids'])->mapWithKeys(fn ($id) => [$id => ['organization_id' => $context->organization_id]])->all());
+            }
 
             app(RecordMenuChange::class)->execute($context->organization_id, $data['menu_id']);
         });
@@ -121,14 +127,17 @@ class WorkspaceController extends Controller
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
         app(TenantAccess::class)->requireFeature($request->user(), $context, 'menu', true);
         abort_if(RestaurantLocation::where('organization_id', $context->organization_id)->get()->contains(fn ($l) => ! app(TenantAccess::class)->canFeature($request->user(), $l, 'menu', true)), 403);
-        $data = $request->validate(['id' => ['nullable', 'integer'], 'name' => ['required', 'string', 'max:100'], 'min_choices' => ['required', 'integer', 'min:0', 'max:20'], 'max_choices' => ['required', 'integer', 'gte:min_choices', 'max:20'], 'options' => ['required', 'array', 'min:1', 'max:30'], 'options.*.name' => ['required', 'string', 'max:100'], 'options.*.price' => ['required', 'integer', 'min:0', 'max:1000000']]);
+        $data = $request->validate(['id' => ['nullable', 'integer'], 'name' => ['required', 'string', 'max:100'], 'is_required' => ['sometimes', 'boolean'], 'allow_quantity' => ['sometimes', 'boolean'], 'min_choices' => ['required', 'integer', 'min:0', 'max:20'], 'max_choices' => ['required', 'integer', 'gte:min_choices', 'max:20'], 'options' => ['required', 'array', 'min:1', 'max:30'], 'options.*.name' => ['required', 'string', 'max:100'], 'options.*.price' => ['required', 'integer', 'min:0', 'max:1000000'], 'options.*.is_default' => ['sometimes', 'boolean'], 'options.*.max_quantity' => ['sometimes', 'integer', 'min:1', 'max:50'], 'options.*.kitchen_name' => ['nullable', 'string', 'max:150']]);
         abort_if($data['min_choices'] > count($data['options']), 422, 'Not enough options for the minimum selection.');
+        $defaultCount = count(array_filter($data['options'], fn ($o) => $o['is_default'] ?? false));
+        abort_if($defaultCount > $data['max_choices'] || ($defaultCount > 0 && $defaultCount < max(($data['is_required'] ?? ($data['min_choices'] > 0)) ? 1 : 0, $data['min_choices'])) || (($data['is_required'] ?? false) && $data['max_choices'] < 1), 422, 'Invalid modifier defaults or selection limits.');
         DB::transaction(function () use ($data, $context) {
+            MenuWriteLock::organization($context->organization_id);
             $group = isset($data['id']) ? ModifierGroup::whereKey($data['id'])->where('organization_id', $context->organization_id)->firstOrFail() : new ModifierGroup(['organization_id' => $context->organization_id]);
-            $group->fill(array_intersect_key($data, array_flip(['name', 'min_choices', 'max_choices'])))->save();
+            $group->fill(array_intersect_key($data, array_flip(['name', 'min_choices', 'max_choices', 'is_required', 'allow_quantity'])))->save();
             $group->options()->delete();
             foreach ($data['options'] as $option) {
-                $group->options()->create(['name' => $option['name'], 'price' => $option['price']]);
+                $group->options()->create(array_intersect_key($option, array_flip(['name', 'price', 'is_default', 'max_quantity', 'kitchen_name'])));
             }
             app(RecordMenuChange::class)->execute($context->organization_id);
         });

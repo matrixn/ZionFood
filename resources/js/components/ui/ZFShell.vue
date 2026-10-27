@@ -65,6 +65,7 @@ const navGroups = computed(() =>
                       id: 'connections',
                       title: t('nav_connections'),
                       items: [
+                          { name: t('mig_title'), icon: 'pi-file-import', path: '/migration-center' },
                           { name: t('integrations'), icon: 'pi-link', path: '/integrations' },
                           { name: t('webhooks'), icon: 'pi-send', path: '/webhooks' },
                       ],
@@ -87,7 +88,8 @@ const navGroups = computed(() =>
             ...group,
             items: group.items.filter(
                 (item) =>
-                    !featurePaths[item.path] || (capabilities.value?.[featurePaths[item.path]] ?? 'none') !== 'none',
+                    (item.path !== '/migration-center' || capabilities.value?.menu === 'manage') &&
+                    (!featurePaths[item.path] || (capabilities.value?.[featurePaths[item.path]] ?? 'none') !== 'none'),
             ),
         }))
         .filter((group) => group.items.length),

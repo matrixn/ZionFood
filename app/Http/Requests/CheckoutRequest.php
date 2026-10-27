@@ -21,6 +21,7 @@ class CheckoutRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:1000'], 'items' => ['required', 'array', 'min:1', 'max:50'],
             'items.*' => ['required', 'array'],
             'items.*.product_id' => ['required', 'string', 'ulid'], 'items.*.quantity' => ['required', 'integer', 'min:1', 'max:50'],
+            'items.*.modifiers' => ['sometimes', 'array', 'max:100'], 'items.*.modifiers.*' => ['array:id,quantity'], 'items.*.modifiers.*.id' => ['required', 'integer', 'distinct'], 'items.*.modifiers.*.quantity' => ['required', 'integer', 'min:1', 'max:50'],
             'items.*.variant_id' => ['nullable', 'integer'], 'items.*.modifier_ids' => ['sometimes', 'array', 'max:30'], 'items.*.modifier_ids.*' => ['integer'],
         ];
     }

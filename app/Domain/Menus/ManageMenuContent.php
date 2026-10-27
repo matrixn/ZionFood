@@ -29,6 +29,7 @@ class ManageMenuContent
         $this->authorize($actor, $location, $context);
 
         return DB::transaction(function () use ($actor, $location, $context, $data, $hash) {
+            MenuWriteLock::organization($location->organization_id);
             $item = MenuItem::whereKey($context->id)->lockForUpdate()->firstOrFail();
             $this->authorize($actor, $location, $item);
             $schema = app(MenuContent::class);
@@ -93,6 +94,7 @@ class ManageMenuContent
     public function approve(User $actor, RestaurantLocation $location, MenuContentDraft $context, ?array $sections = null, array $changes = []): void
     {
         DB::transaction(function () use ($actor, $location, $context, $sections, $changes) {
+            MenuWriteLock::organization($location->organization_id);
             $draft = MenuContentDraft::whereKey($context->id)->lockForUpdate()->firstOrFail();
             abort_unless($draft->location_id === $location->id && $draft->organization_id === $location->organization_id && $draft->status === 'ready', 409);
             $item = MenuItem::whereKey($draft->item_id)->lockForUpdate()->firstOrFail();

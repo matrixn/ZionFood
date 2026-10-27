@@ -45,9 +45,11 @@ async function transition(status: OrderStatus) {
         </p>
         <p class="my-3 text-sm font-medium">{{ order.customer_name }} · {{ $t('fulfillment_' + order.fulfillment) }}</p>
         <div v-for="item in order.items" :key="item.id" class="my-3 border-t border-slate-100 pt-3">
-            <strong class="text-sm">{{ item.quantity }} × {{ item.name }}</strong>
+            <strong class="text-sm">{{ item.quantity }} × {{ item.kitchen_name || item.name }}</strong>
             <p class="muted">{{ item.variant_name }}</p>
-            <p v-for="mod in item.modifiers" :key="mod.id" class="muted">+ {{ mod.name }}</p>
+            <p v-for="mod in item.modifiers" :key="mod.id" class="muted">
+                + {{ mod.quantity ?? 1 }} × {{ mod.kitchen_name || mod.name }}
+            </p>
         </div>
         <p v-if="order.notes" class="my-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{{ order.notes }}</p>
         <p v-if="error" role="alert" class="my-3 text-sm text-red-600">{{ error }}</p>

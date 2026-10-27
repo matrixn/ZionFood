@@ -99,3 +99,9 @@ GET/POST `/admin/menu-ai` remains platform-admin-only; encrypted keys are accept
 ## Restaurant overview and visits (0.0.20)
 
 GET `/app/locations/{location}?days=7|30|90` returns the existing Inertia dashboard with separately permission-gated analytics. Orders use placed-at boundaries, reservations start-at boundaries, and dates use the location time zone. No customer contact details are included in analytics. POST `/api/v1/public/locations/{location}/visit` returns 204 for accepted/deduplicated/known-preview requests, 404 for unknown or host-mismatched locations and 429 on throttling. It returns no visitor identifier. Existing menu responses, order prices and checkout contracts are unchanged. See RESTAURANT_ANALYTICS.md for all count/value definitions.
+
+## Menu compatibility and migration (0.0.22)
+
+Checkout lines accept either legacy modifier_ids (one unit per option) or modifiers: [{id,quantity}], never both non-empty. IDs must belong to inherited category/product/selected-variant groups; counts are distinct options, quantities are bounded and priced server-side. Snapshots include quantities and internal kitchen names. Public variants expose defaults, nutrition and own modifier_groups; products expose order_types. An explicit empty order_types list disallows every service; null is unrestricted.
+
+Migration Center is a verified browser/CSRF surface under /app/locations/{location}/migration-center, not a Sanctum integration API: GET index, POST start, GET {batch}, POST {batch}/resolve, POST {batch}/publish, POST {batch}/revert, GET {batch}/report and GET {batch}/print. See MIGRATION_CENTER.md for source/settings, mandatory review token, blockers, conflicts and version semantics.

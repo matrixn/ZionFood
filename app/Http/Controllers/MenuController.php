@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Menus\Actions\UpdateMenuItem;
+use App\Domain\Menus\MenuWriteLock;
 use App\Domain\Menus\RecordMenuChange;
 use App\Domain\Tenancy\TenantAccess;
 use App\Http\Requests\MenuItemRequest;
@@ -23,7 +24,7 @@ class MenuController extends Controller
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
         app(TenantAccess::class)->requireFeature($request->user(), $context, 'menu');
 
-        return response()->json(['menus' => $context->menus()->with('categories.items.ingredients', 'categories.items.variants', 'categories.items.modifierGroups.options')->get()]);
+        return response()->json(['menus' => $context->menus()->with('categories.items.ingredients', 'categories.items.variants.modifierGroups.options', 'categories.items.modifierGroups.options', 'categories.modifierGroups.options')->get()]);
     }
 
     public function store(MenuItemRequest $request, string $location, UpdateMenuItem $action)
@@ -68,6 +69,7 @@ class MenuController extends Controller
         $model = MenuItem::where('public_id', $item)->firstOrFail();
         app(TenantAccess::class)->requireMenu($request->user(), $model->organization_id, $model->category->menu_id);
         DB::transaction(function () use ($model) {
+            MenuWriteLock::organization($model->organization_id);
             $model->delete();
             app(RecordMenuChange::class)->execute($model->organization_id, $model->category->menu_id, ['item_id' => $model->public_id, 'deleted' => true]);
         });

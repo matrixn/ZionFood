@@ -43,3 +43,7 @@ Ingredient migration 000700 adds ingredients (nullable restaurant/organization c
 ## Menu content (0.0.17)
 
 Migration 000900 adds nullable menu_items.content JSON and content_revision, encrypted-longtext input/proposal/report fields in menu_content_drafts, reviewer/requester/status/source-hash data and composite organization/location/item foreign keys. The singleton menu_ai_settings row uses explicit ID 1, encrypted API key, provider/model/enabled and a global rolling daily request limit. Laravel encryption needs the existing APP_KEY. No ingredient seed, source price, existing account or order snapshot is rewritten. MENU_CONTENT.md defines the canonical v1 metadata and migration boundaries.
+
+## Migration Center and menu compatibility (0.0.22)
+
+Migration 001200 adds category/variant group pivots, nullable product order_types, source key/internal name, variant default/nutrition, group required/quantity flags, option defaults/max quantity/internal names and immutable modifier quantity/internal-name snapshots. Nullable is_required retains legacy behavior from existing min_choices. Six import tables store scoped batches, encrypted source/canonical data, issues, reports, entity mappings and approved publication fingerprints/previous assignments. See MIGRATION_CENTER.md.

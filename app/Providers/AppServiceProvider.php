@@ -36,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        RateLimiter::for('menu-import-review', fn (Request $r) => Limit::perMinute(30)->by((string) $r->user()?->id));
+        RateLimiter::for('menu-import', fn (Request $r) => [Limit::perMinute(3)->by('import-user:'.$r->user()?->id), Limit::perHour(15)->by('import-location:'.$r->route('location'))]);
         RateLimiter::for('menu-content', fn (Request $r) => Limit::perMinute(10)->by((string) $r->user()?->id));
         RateLimiter::for('menu-ai-provider', fn () => Limit::perMinute(1)->by('menu-ai-global'));
         RateLimiter::for('admin-mail-test', fn () => Limit::perHour(3)->by('admin-mail-test'));

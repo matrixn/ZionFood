@@ -108,8 +108,17 @@ onBeforeUnmount(cancelLookup);
 const deliveryZone = computed(() =>
     hasPolygons.value ? polygonZone.value : props.zones.find((z) => z.id === form.value.delivery_zone_id),
 );
+const restrictedProducts = computed(() =>
+    cart.lines.filter(
+        (l) =>
+            l.order_types !== null &&
+            l.order_types !== undefined &&
+            !l.order_types.includes(props.tableSessionToken ? 'dine_in' : form.value.fulfillment),
+    ),
+);
 const valid = computed(() => {
     if (
+        restrictedProducts.value.length > 0 ||
         !cart.lines.length ||
         busy.value ||
         addressLoading.value ||
@@ -153,7 +162,7 @@ async function submit() {
             product_id: l.product_id,
             variant_id: l.variant_id,
             quantity: l.quantity,
-            modifier_ids: l.modifier_ids,
+            ...(l.modifiers ? { modifiers: l.modifiers } : { modifier_ids: l.modifier_ids }),
         })),
     };
     const signature = JSON.stringify(payload);
@@ -266,6 +275,9 @@ async function submit() {
         </form>
         <template #footer>
             <div class="grid w-full gap-3" data-testid="checkout-footer">
+                <p v-if="restrictedProducts.length" role="alert" class="text-sm text-red-700">
+                    {{ $t('mig_service_conflict') }}: {{ restrictedProducts.map((p) => p.name).join(', ') }}
+                </p>
                 <div class="flex items-center justify-between gap-4 text-lg font-semibold">
                     <span>{{ fee ? $t('total_with_delivery') : $t('total') }}</span
                     ><span>{{ money(cart.total + fee) }}</span>

@@ -13,6 +13,7 @@ import ModifierGroupEditor from '@/components/menu/ModifierGroupEditor.vue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
+import MultiSelect from 'primevue/multiselect';
 import Dialog from 'primevue/dialog';
 import { api, money } from '@/lib/http';
 import { useConfirm } from 'primevue/useconfirm';
@@ -37,7 +38,12 @@ const group = ref<ModifierGroup | null>(null);
 const categoryEditor = ref(false);
 const confirm = useConfirm();
 const error = ref('');
-const category = useForm({ id: null as number | null, menu_id: props.menus[0]?.id ?? 0, name: '' });
+const category = useForm({
+    id: null as number | null,
+    menu_id: props.menus[0]?.id ?? 0,
+    name: '',
+    modifier_group_ids: [] as number[],
+});
 function edit(p: Product | null) {
     product.value = p;
     editor.value = true;
@@ -46,6 +52,7 @@ function editCategory(c?: Category) {
     category.id = c?.id ?? null;
     category.menu_id = c?.menu_id ?? props.menus[0]?.id ?? 0;
     category.name = c?.name ?? '';
+    category.modifier_group_ids = c?.modifier_groups?.map((g) => g.id) ?? [];
     category.clearErrors();
     categoryEditor.value = true;
 }
@@ -228,6 +235,17 @@ useSetupEditorGuard(
                 <p v-for="(message, key) in category.errors" :key="key" role="alert" class="text-red-600">
                     {{ message }}
                 </p>
+                <label class="field"
+                    ><span class="field-label"
+                        >{{ $t('mig_category_groups')
+                        }}<FieldHelp :label="$t('mig_category_groups')" :text="$t('mig_category_groups_help')" /></span
+                    ><MultiSelect
+                        v-model="category.modifier_group_ids"
+                        :options="groups"
+                        option-label="name"
+                        option-value="id"
+                        :aria-label="$t('mig_category_groups')"
+                /></label>
             </form>
             <template #footer
                 ><Button

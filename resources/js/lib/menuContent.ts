@@ -34,6 +34,14 @@ export function localizeMenus(menus: Menu[], language: string): Menu[] {
                             variants: product.variants.map((v) => ({
                                 ...v,
                                 name: text.variants?.[String(v.id)] || v.name,
+                                modifier_groups: v.modifier_groups?.map((g) => ({
+                                    ...g,
+                                    name: text.groups?.[String(g.id)]?.name || g.name,
+                                    options: g.options.map((o) => ({
+                                        ...o,
+                                        name: text.groups?.[String(g.id)]?.options?.[String(o.id)] || o.name,
+                                    })),
+                                })),
                             })),
                             modifier_groups: product.modifier_groups.map((g) => ({
                                 ...g,

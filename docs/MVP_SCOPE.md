@@ -1,6 +1,6 @@
-# Scope at 0.0.21
+# Scope at 0.0.22
 
-0.0.19 introduces a dish-first automatic generation workspace, combined AI tasks, approximate one-portion nutrition and durable live review notifications. It replaces the earlier manual reference calculator and retires the manual GloriaFood JSON metadata workflow. Published data remains local and requires review. Full automated whole-menu migration, reimport and rollback remain future work in MENU_CONTENT.md; provider/estimation quality must be validated with a real authorized restaurant.
+0.0.19 introduces a dish-first automatic generation workspace, combined AI tasks, approximate one-portion nutrition and durable live review notifications. It replaces the earlier manual reference calculator and retires the manual GloriaFood JSON metadata workflow. Published data remains local and requires review. Whole-menu GloriaFood migration, approved publication, reimport decisions and guarded rollback are implemented in 0.0.22; see MIGRATION_CENTER.md. Provider fidelity and estimation quality still require validation with a real authorized restaurant.
 
 ## Implemented
 
@@ -60,3 +60,5 @@ Implemented storefront polish: restaurant-specific share metadata, product/servi
 0.0.16 adds individual five-module feature permissions, invitation carry-through, view-only interfaces, independent active kitchen access, order status controls, scoped bulk table/room operations and effective QR availability with shared schedule/cutoff explanations. Owners remain full; existing null permission matrices retain legacy behavior. Time-based restrictions remain active per the user's explicit choice. Payments remain placeholders.
 
 0.0.20 adds feature/location-scoped RestaurantOverview analytics, approximate daily menu-visit aggregates, compact effective table-state controls and reusable FieldHelp across forms. Definitions deliberately distinguish order value, reservations, QR sessions and approximate visits from receipts, physical occupancy and unique people. Successful generation review closes automatically; failed writes remain open. See [RESTAURANT_ANALYTICS.md](RESTAURANT_ANALYTICS.md).
+
+0.0.22 completes the documented compatibility matrix: category/variant groups, quantity/default semantics, structured food metadata and product service restrictions. The Migration Center imports full menus, not the retired single-product manual food JSON workflow. Currency conversion, XML/CSV/XLSX/PDF extraction, customer/order-history import and remote photo downloads are outside this GloriaFood API-focused increment.

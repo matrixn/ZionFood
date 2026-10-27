@@ -2,6 +2,7 @@
 
 use App\Jobs\DeliverOutbox;
 use App\Jobs\DeliverWebhook;
+use App\Models\ImportBatch;
 use App\Models\OutboxMessage;
 use App\Models\Reservation;
 use App\Models\ReservationHistory;
@@ -63,3 +64,20 @@ Artisan::command('zionfood:admin {email}', function () {
     $user->forceFill(['is_platform_admin' => true, 'email_verified_at' => now()])->save();
     $this->info('Platform administrator access granted.');
 });
+
+Artisan::command('zionfood:imports-prune', function () {
+    ImportBatch::where('status', 'queued')->where('created_at', '<', now()->subHour())->update(['credential' => null, 'status' => 'failed', 'failure_code' => 'queue_expired']);
+    ImportBatch::whereIn('status', ['ready', 'failed'])->where('created_at', '<', now()->subDays(max(1, (int) config('imports.retention_days'))))->chunkById(100, function ($batches) {
+        foreach ($batches as $b) {
+            DB::transaction(function () use ($b) {
+                $locked = ImportBatch::whereKey($b->id)->lockForUpdate()->firstOrFail();
+                if (! in_array($locked->status, ['ready', 'failed'], true)) {
+                    return;
+                }DB::table('import_snapshots')->where('batch_id', $b->id)->delete();
+                $locked->update(['credential' => null, 'status' => 'expired']);
+            });
+        }
+    });
+    $this->info('Expired import credentials and unapproved snapshots cleared.');
+});
+Schedule::command('zionfood:imports-prune')->hourly()->withoutOverlapping();

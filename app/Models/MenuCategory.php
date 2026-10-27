@@ -22,4 +22,9 @@ class MenuCategory extends Model
     {
         return $this->belongsTo(Menu::class);
     }
+
+    public function modifierGroups()
+    {
+        return $this->belongsToMany(ModifierGroup::class, 'menu_category_modifier_groups', 'category_id', 'group_id')->withPivot('organization_id');
+    }
 }

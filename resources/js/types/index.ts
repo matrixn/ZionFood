@@ -47,18 +47,25 @@ export interface Ingredient {
     deleted_at?: string | null;
 }
 export interface Variant {
+    is_default?: boolean;
+    modifier_groups?: ModifierGroup[];
+    nutrition?: Nutrition | null;
     id: number;
     name: string;
     price: number;
     is_available: boolean;
 }
 export interface ModifierOption {
+    is_default?: boolean;
+    max_quantity?: number;
     id: number;
     name: string;
     price: number;
     is_available: boolean;
 }
 export interface ModifierGroup {
+    is_required?: boolean | null;
+    allow_quantity?: boolean;
     id: number;
     name: string;
     min_choices: number;
@@ -66,6 +73,8 @@ export interface ModifierGroup {
     options: ModifierOption[];
 }
 export interface Product {
+    order_types?: string[] | null;
+    kitchen_name?: string | null;
     content?: Pick<MenuContent, 'allergens' | 'may_contain' | 'labels' | 'nutrition' | 'translations'>;
     translated_ingredients?: string;
     portion_size?: string | null;
@@ -85,6 +94,7 @@ export interface Product {
     modifier_groups: ModifierGroup[];
 }
 export interface Category {
+    modifier_groups?: ModifierGroup[];
     id: number;
     menu_id: number;
     name: string;
@@ -155,10 +165,11 @@ export interface Order {
     items: {
         id: number;
         name: string;
+        kitchen_name?: string | null;
         variant_name: string | null;
         quantity: number;
         total: number;
-        modifiers: { id: number; name: string; price: number }[];
+        modifiers: { id: number; name: string; price: number; quantity?: number; kitchen_name?: string | null }[];
     }[];
     history: { id: number; to_status: OrderStatus; created_at: string; reason: string | null }[];
 }

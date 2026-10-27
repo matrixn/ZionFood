@@ -4,6 +4,7 @@ namespace App\Domain\Orders\Actions;
 
 use App\Domain\Delivery\Polygon;
 use App\Domain\Dining\OrderingWindow;
+use App\Domain\Menus\EffectiveModifiers;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\CheckoutIdempotencyKey;
 use App\Models\DiningSession;
@@ -27,7 +28,7 @@ class PlaceOrderAction
     {
         $data = Validator::make($input, CheckoutRequest::constraints())->validate();
         Validator::make(['key' => $key], ['key' => ['required', 'string', 'min:16', 'max:100', 'regex:/^[A-Za-z0-9_-]+$/']])->validate();
-        $data['items'] = array_map(fn ($line) => array_intersect_key($line, array_flip(['product_id', 'quantity', 'variant_id', 'modifier_ids'])), $data['items']);
+        $data['items'] = array_map(fn ($line) => array_intersect_key($line, array_flip(['product_id', 'quantity', 'variant_id', 'modifier_ids', 'modifiers'])), $data['items']);
         $canonical = function (array $value) use (&$canonical): array {
             if (! array_is_list($value)) {
                 ksort($value);
@@ -72,26 +73,31 @@ class PlaceOrderAction
                 } else {
                     $this->require(empty($requested['variant_id']), __('Invalid variant.'));
                 }
+                $this->require($item->order_types === null || in_array($data['fulfillment'], $item->order_types, true), __('This product is unavailable for the selected fulfillment method.'));
                 $unit = $variant?->price ?? $item->price;
-                $optionIds = $requested['modifier_ids'] ?? [];
+                $this->require(! isset($requested['modifiers']) || empty($requested['modifier_ids']), __('Use one modifier format only.'));
+                $quantities = isset($requested['modifiers']) ? collect($requested['modifiers'])->pluck('quantity', 'id')->all() : array_fill_keys($requested['modifier_ids'] ?? [], 1);
+                $optionIds = isset($requested['modifiers']) ? array_column($requested['modifiers'], 'id') : ($requested['modifier_ids'] ?? []);
                 $this->require(count($optionIds) === count(array_unique($optionIds)), __('Duplicate modifiers are not allowed.'));
                 $modifiers = [];
                 $matched = [];
-                foreach ($item->modifierGroups as $group) {
+                foreach (app(EffectiveModifiers::class)->groups($item, $variant) as $group) {
                     $options = $group->options->whereIn('id', $optionIds);
-                    $this->require($options->count() >= $group->min_choices && $options->count() <= $group->max_choices, __('Invalid choices for :name.', ['name' => $group->name]));
+                    $this->require(app(EffectiveModifiers::class)->validCount($group, $options->count()), __('Invalid choices for :name.', ['name' => $group->name]));
                     foreach ($options as $option) {
                         $this->require($option->is_available, __('A modifier is unavailable.'));
                         $matched[] = $option->id;
-                        $unit += $option->price;
-                        $modifiers[] = ['group_name' => $group->name, 'name' => $option->name, 'price' => $option->price];
+                        $quantity = (int) $quantities[$option->id];
+                        $this->require($quantity <= ($group->allow_quantity ? $option->max_quantity : 1), __('Invalid modifier quantity.'));
+                        $unit += $option->price * $quantity;
+                        $modifiers[] = ['group_name' => $group->name, 'name' => $option->name, 'price' => $option->price, 'quantity' => $quantity, 'kitchen_name' => $option->kitchen_name];
                     }
                 }
                 $this->require(count($matched) === count($optionIds), __('Invalid modifier selection.'));
                 $total = $unit * $requested['quantity'];
                 $subtotal += $total;
                 $this->require($subtotal <= 100000000, __('Order value exceeds the supported limit.'));
-                $lines[] = ['line' => ['product_public_id' => $item->public_id, 'name' => $item->name, 'variant_name' => $variant?->name, 'quantity' => $requested['quantity'], 'unit_price' => $unit, 'tax_basis_points' => $item->tax_basis_points, 'total' => $total], 'modifiers' => $modifiers];
+                $lines[] = ['line' => ['product_public_id' => $item->public_id, 'name' => $item->name, 'kitchen_name' => $item->kitchen_name, 'variant_name' => $variant?->name, 'quantity' => $requested['quantity'], 'unit_price' => $unit, 'tax_basis_points' => $item->tax_basis_points, 'total' => $total], 'modifiers' => $modifiers];
             }
             $fee = 0;
             if ($data['fulfillment'] === 'delivery') {

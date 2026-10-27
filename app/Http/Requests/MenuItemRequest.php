@@ -18,7 +18,7 @@ class MenuItemRequest extends FormRequest
             if (! is_array($payload)) {
                 throw ValidationException::withMessages(['payload' => __('Invalid product payload.')]);
             }
-            $this->merge(array_intersect_key($payload, array_flip(['category_id', 'name', 'description', 'price', 'tax_basis_points', 'is_available', 'variants', 'modifier_group_ids', 'ingredient_ids', 'portion_size', 'contains_allergens', 'from_frozen'])));
+            $this->merge(array_intersect_key($payload, array_flip(['category_id', 'name', 'description', 'price', 'tax_basis_points', 'is_available', 'variants', 'modifier_group_ids', 'ingredient_ids', 'portion_size', 'contains_allergens', 'from_frozen', 'order_types', 'kitchen_name'])));
         }
     }
 
@@ -34,6 +34,8 @@ class MenuItemRequest extends FormRequest
             'portion_size' => ['nullable', 'string', 'max:50'], 'contains_allergens' => ['sometimes', 'boolean'], 'from_frozen' => ['sometimes', 'boolean'],
             'ingredient_ids' => ['sometimes', 'array', 'max:100'], 'ingredient_ids.*' => ['required', 'integer', 'distinct'],
             'price' => ['required', 'integer', 'min:0', 'max:10000000'], 'tax_basis_points' => ['sometimes', 'integer', 'min:0', 'max:10000'],
+            'order_types' => ['sometimes', 'nullable', 'array', 'max:3'], 'order_types.*' => ['in:pickup,delivery,dine_in', 'distinct'], 'kitchen_name' => ['nullable', 'string', 'max:150'],
+            'variants.*.id' => ['sometimes', 'integer', 'distinct'], 'variants.*.is_default' => ['sometimes', 'boolean'], 'variants.*.is_available' => ['sometimes', 'boolean'], 'variants.*.modifier_group_ids' => ['sometimes', 'array', 'max:20'], 'variants.*.modifier_group_ids.*' => ['integer', 'distinct'],
             'is_available' => ['required', 'boolean'], 'variants' => ['sometimes', 'array', 'max:20'],
             'variants.*.name' => ['required', 'string', 'max:100'], 'variants.*.price' => ['required', 'integer', 'min:0', 'max:10000000'],
             'modifier_group_ids' => ['sometimes', 'array', 'max:20'], 'modifier_group_ids.*' => ['integer', 'distinct'],

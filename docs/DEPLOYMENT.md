@@ -197,3 +197,7 @@ Run migration 000900, build assets and perform the usual cache refresh/long-live
 ## 0.0.20 overview and help upgrade
 
 Run migration `2026_10_27_001100_add_menu_visit_stats` and build the new assets in the normal release. Existing Redis/cache configuration supplies transient 30-minute visit deduplication. APP_KEY remains unchanged. Counts start with browser visits after this release and cannot be backfilled accurately. This adds no analytics SaaS, client tracking cookie, provider credential or chart dependency. The already configured live Groq workflow was exercised through the authenticated restaurant UI; no manual Forge deployment or server credential extraction was performed.
+
+## Migration Center (0.0.22)
+
+Run additive migration 2026_10_27_001200 and build frontend assets. Horizon/default queue performs Fetch Menu jobs; existing scheduler runs hourly zionfood:imports-prune. ZF_IMPORT_RETENTION_DAYS defaults to 30 for unapproved snapshots. Keys are entered per import and never belong in committed configuration. Allow outbound verified HTTPS to pos.globalfoodsoft.com. Configure upload_max_filesize/post_max_size/web request limits to support the advertised five-MiB file maximum. Published audit/version rows are retained. See MIGRATION_CENTER.md for operational checks and rollback constraints. No real-provider or production deployment is implied by local tests.

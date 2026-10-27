@@ -25,6 +25,8 @@ const props = defineProps<{
 const visible = defineModel<boolean>('visible', { required: true });
 const emit = defineEmits<{ saved: [] }>();
 const form = ref({
+    order_types: null as string[] | null,
+    kitchen_name: '',
     category_id: 0,
     name: '',
     description: '',
@@ -35,7 +37,7 @@ const form = ref({
     from_frozen: false,
     tax_basis_points: 0,
     is_available: true,
-    variants: [] as { name: string; price: number }[],
+    variants: [] as { id?: number; name: string; price: number; is_default: boolean; modifier_group_ids: number[] }[],
     modifier_group_ids: [] as number[],
 });
 const priceInLei = computed({
@@ -66,6 +68,8 @@ watch(visible, (open) => {
     if (!open) return;
     const p = props.product;
     form.value = {
+        order_types: p?.order_types ?? null,
+        kitchen_name: p?.kitchen_name ?? '',
         category_id: p?.category_id ?? props.categories[0]?.id ?? 0,
         name: p?.name ?? '',
         description: p?.description ?? '',
@@ -76,7 +80,14 @@ watch(visible, (open) => {
         from_frozen: p?.from_frozen ?? false,
         tax_basis_points: p?.tax_basis_points ?? 0,
         is_available: p?.is_available ?? true,
-        variants: p?.variants.map((v) => ({ name: v.name, price: v.price })) ?? [],
+        variants:
+            p?.variants.map((v) => ({
+                id: v.id,
+                name: v.name,
+                price: v.price,
+                is_default: v.is_default ?? false,
+                modifier_group_ids: v.modifier_groups?.map((g) => g.id) ?? [],
+            })) ?? [],
         modifier_group_ids: p?.modifier_groups.map((g) => g.id) ?? [],
     };
     ingredientSearch.value = '';
@@ -228,6 +239,19 @@ async function save() {
                     >{{ $t('ingredients_frozen')
                     }}<FieldHelp :label="$t('ingredients_frozen')" field="ingredients_frozen" /></span
             ></label>
+            <ZFFormField :label="$t('mig_order_types')" :help="$t('mig_order_types_help')"
+                ><MultiSelect
+                    v-model="form.order_types"
+                    :options="['pickup', 'delivery', 'dine_in']"
+                    :aria-label="$t('mig_order_types')" /><Button
+                    text
+                    size="small"
+                    :label="$t('mig_all_services')"
+                    @click="form.order_types = null"
+            /></ZFFormField>
+            <ZFFormField :label="$t('mig_kitchen_name')"
+                ><InputText v-model="form.kitchen_name" :aria-label="$t('mig_kitchen_name')"
+            /></ZFFormField>
             <div class="flex items-center gap-3">
                 <ToggleSwitch v-model="form.is_available" input-id="available" /><label for="available"
                     ><span class="field-label"
@@ -246,7 +270,11 @@ async function save() {
             /></ZFFormField>
             <div>
                 <h3 class="mb-3 font-semibold">{{ $t('variants') }}</h3>
-                <div v-for="(variant, i) in form.variants" :key="i" class="mb-3 flex gap-2">
+                <div
+                    v-for="(variant, i) in form.variants"
+                    :key="i"
+                    class="mb-3 flex flex-wrap gap-2 rounded-xl border border-slate-200 p-3"
+                >
                     <span class="field-control-help"
                         ><InputText
                             v-model="variant.name"
@@ -268,6 +296,18 @@ async function save() {
                             :label="$t('product_variant_price_lei')"
                             field=""
                             kind="InputNumber" /></span
+                    ><ZFFormField :label="$t('mig_size_groups')"
+                        ><MultiSelect
+                            v-model="variant.modifier_group_ids"
+                            :options="groups"
+                            option-label="name"
+                            option-value="id"
+                            :aria-label="$t('mig_size_groups')"
+                    /></ZFFormField>
+                    <label class="flex items-center gap-2"
+                        ><Checkbox v-model="variant.is_default" binary :aria-label="$t('mig_default')" /><span
+                            >{{ $t('mig_default')
+                            }}<FieldHelp :label="$t('mig_default')" :text="$t('mig_default_help')" /></span></label
                     ><Button
                         icon="pi pi-times"
                         text
@@ -280,7 +320,7 @@ async function save() {
                     size="small"
                     text
                     icon="pi pi-plus"
-                    @click="form.variants.push({ name: '', price: 0 })"
+                    @click="form.variants.push({ name: '', price: 0, is_default: false, modifier_group_ids: [] })"
                 />
             </div>
             <ZFFormField :label="$t('product_image_jpeg_png_or_webp_max_4_mb')"

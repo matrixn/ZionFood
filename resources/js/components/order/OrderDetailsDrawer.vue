@@ -72,7 +72,9 @@ const visible = defineModel<boolean>('visible', { required: true });
                     ><span>{{ money(item.total) }}</span>
                 </div>
                 <p class="muted mt-1">{{ item.variant_name }}</p>
-                <p v-for="mod in item.modifiers" :key="mod.id" class="muted">+ {{ mod.name }}</p>
+                <p v-for="mod in item.modifiers" :key="mod.id" class="muted">
+                    + {{ mod.quantity ?? 1 }} × {{ mod.name }}
+                </p>
             </div>
             <div class="flex justify-between font-semibold">
                 <span>{{ $t('total') }}</span

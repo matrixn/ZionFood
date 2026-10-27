@@ -5,6 +5,7 @@ import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
+import Checkbox from 'primevue/checkbox';
 import type { ModifierGroup } from '@/types';
 const modifierFormId = useId();
 const props = defineProps<{ locationId: string; group: ModifierGroup | null }>();
@@ -12,17 +13,26 @@ const visible = defineModel<boolean>('visible', { required: true });
 const form = useForm({
     id: null as number | null,
     name: '',
+    is_required: false,
+    allow_quantity: false,
     min_choices: 0,
     max_choices: 1,
-    options: [{ name: '', price: 0 }],
+    options: [{ name: '', price: 0, is_default: false, max_quantity: 50 }],
 });
 watch(visible, (open) => {
     if (open) {
         form.id = props.group?.id ?? null;
         form.name = props.group?.name ?? '';
+        form.is_required = props.group?.is_required ?? (props.group?.min_choices ?? 0) > 0;
+        form.allow_quantity = props.group?.allow_quantity ?? false;
         form.min_choices = props.group?.min_choices ?? 0;
         form.max_choices = props.group?.max_choices ?? 1;
-        form.options = props.group?.options.map((o) => ({ name: o.name, price: o.price })) ?? [{ name: '', price: 0 }];
+        form.options = props.group?.options.map((o) => ({
+            name: o.name,
+            price: o.price,
+            is_default: o.is_default ?? false,
+            max_quantity: o.max_quantity ?? 50,
+        })) ?? [{ name: '', price: 0, is_default: false, max_quantity: 50 }];
         form.clearErrors();
     }
 });
@@ -42,6 +52,16 @@ watch(visible, (open) => {
                     >{{ $t('group_name') }}<FieldHelp :label="$t('group_name')" field="group_name" /></span
                 ><InputText v-model="form.name" :aria-label="$t('group_name')" required
             /></label>
+            <label class="flex items-center gap-2"
+                ><Checkbox v-model="form.is_required" binary :aria-label="$t('mig_required')" /><span
+                    >{{ $t('mig_required')
+                    }}<FieldHelp :label="$t('mig_required')" :text="$t('mig_rules_help')" /></span
+            ></label>
+            <label class="flex items-center gap-2"
+                ><Checkbox v-model="form.allow_quantity" binary :aria-label="$t('mig_multiple')" /><span
+                    >{{ $t('mig_multiple')
+                    }}<FieldHelp :label="$t('mig_multiple')" :text="$t('mig_quantity_help')" /></span
+            ></label>
             <div class="grid grid-cols-2 gap-3">
                 <label class="field"
                     ><span class="field-label"
@@ -59,7 +79,7 @@ watch(visible, (open) => {
                     ><InputNumber v-model="form.max_choices" :aria-label="$t('maximum_choices')" :min="0" :max="20"
                 /></label>
             </div>
-            <div v-for="(option, i) in form.options" :key="i" class="flex min-w-0 gap-2">
+            <div v-for="(option, i) in form.options" :key="i" class="flex min-w-0 flex-wrap items-center gap-2">
                 <span class="field-control-help"
                     ><InputText
                         v-model="option.name"
@@ -77,6 +97,10 @@ watch(visible, (open) => {
                         :label="$t('option_price_in_bani')"
                         field="price"
                         kind="InputNumber" /></span
+                ><label class="flex items-center gap-2"
+                    ><Checkbox v-model="option.is_default" binary :aria-label="$t('mig_default')" /><span
+                        >{{ $t('mig_default')
+                        }}<FieldHelp :label="$t('mig_default')" :text="$t('mig_default_help')" /></span></label
                 ><Button
                     class="shrink-0"
                     icon="pi pi-times"
@@ -89,7 +113,7 @@ watch(visible, (open) => {
                 :label="$t('add_option')"
                 text
                 icon="pi pi-plus"
-                @click="form.options.push({ name: '', price: 0 })"
+                @click="form.options.push({ name: '', price: 0, is_default: false, max_quantity: 50 })"
             />
         </form>
         <template #footer

@@ -3,12 +3,14 @@ import { computed, ref } from 'vue';
 export interface CartLine {
     key: string;
     product_id: string;
+    order_types?: string[] | null;
     image_path?: string | null;
     name: string;
     quantity: number;
     variant_id: number | null;
     variant_name: string | null;
     modifier_ids: number[];
+    modifiers?: { id: number; quantity: number }[];
     modifier_names: string[];
     unit_price: number;
 }

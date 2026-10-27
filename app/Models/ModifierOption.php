@@ -13,5 +13,5 @@ class ModifierOption extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = ['is_available' => 'boolean'];
+    protected $casts = ['is_available' => 'boolean', 'is_default' => 'boolean'];
 }

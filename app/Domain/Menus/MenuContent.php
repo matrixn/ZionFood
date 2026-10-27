@@ -86,9 +86,9 @@ class MenuContent
 
     public function source(MenuItem $item): array
     {
-        $item->loadMissing('ingredients', 'variants', 'modifierGroups.options', 'category.menu');
+        $item->loadMissing('ingredients', 'variants.modifierGroups.options', 'modifierGroups.options', 'category.menu', 'category.modifierGroups.options');
 
-        return [...$item->only('name', 'description', 'portion_size'), 'contains_allergens' => (bool) $item->contains_allergens, 'from_frozen' => (bool) $item->from_frozen, 'ingredients' => $item->ingredients->map(fn ($i) => $i->only('id', 'name', 'contains_allergens', 'from_frozen'))->all(), 'variants' => $item->variants->map(fn ($v) => $v->only('id', 'name'))->all(), 'groups' => $item->modifierGroups->map(fn ($g) => ['id' => $g->id, 'name' => $g->name, 'options' => $g->options->map(fn ($o) => $o->only('id', 'name'))->all()])->all(), 'category_name' => $item->category->name, 'menu_name' => $item->category->menu->name];
+        return [...$item->only('name', 'description', 'portion_size'), 'contains_allergens' => (bool) $item->contains_allergens, 'from_frozen' => (bool) $item->from_frozen, 'ingredients' => $item->ingredients->map(fn ($i) => $i->only('id', 'name', 'contains_allergens', 'from_frozen'))->all(), 'variants' => $item->variants->map(fn ($v) => $v->only('id', 'name'))->all(), 'groups' => app(EffectiveModifiers::class)->groups($item)->concat($item->variants->flatMap(fn ($v) => $v->modifierGroups))->unique('id')->values()->map(fn ($g) => ['id' => $g->id, 'name' => $g->name, 'options' => $g->options->map(fn ($o) => $o->only('id', 'name'))->all()])->all(), 'category_name' => $item->category->name, 'menu_name' => $item->category->menu->name];
     }
 
     public function translationHash(MenuItem $item): string
