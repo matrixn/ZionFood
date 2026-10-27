@@ -88,7 +88,7 @@ class ReservationController extends Controller
     public function manage(Request $request, string $location, WorkspaceController $workspace)
     {
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
-        app(TenantAccess::class)->requireOperate($request->user(), $context);
+        app(TenantAccess::class)->requireFeature($request->user(), $context, 'reservations');
         $data = $request->validate(['date' => 'nullable|date_format:Y-m-d', 'status' => 'nullable|in:pending,confirmed,seated,completed,cancelled,rejected,no_show']);
         $date = CarbonImmutable::parse($data['date'] ?? now($context->timezone)->format('Y-m-d'), $context->timezone);
         $query = Reservation::where('location_id', $context->id)->with('table')->where('starts_at', '>=', $date->startOfDay()->utc())->where('starts_at', '<', $date->addDay()->startOfDay()->utc());

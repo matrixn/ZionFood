@@ -7,7 +7,7 @@ import { money } from '@/lib/http';
 import type { WorkspaceProps } from '@/types';
 defineProps<
     WorkspaceProps & {
-        metrics: { orders: number; revenue: number; active: number };
+        metrics: { orders: number; revenue: number; active: number } | null;
         subscription: { status: string; trial_ends_at: string } | null;
     }
 >();
@@ -18,7 +18,7 @@ defineProps<
             :title="$t('a_fresh_day_a_clear_view')"
             :description="location.restaurant.name + ' · ' + location.name"
         />
-        <div class="grid gap-5 lg:grid-cols-3">
+        <div v-if="metrics" class="grid gap-5 lg:grid-cols-3">
             <ZFStatCard :label="$t('orders_today')" :value="metrics.orders" icon="pi-shopping-bag" /><ZFStatCard
                 :label="$t('completed_revenue_today')"
                 :value="money(metrics.revenue)"
@@ -26,7 +26,7 @@ defineProps<
             /><ZFStatCard :label="$t('in_the_kitchen')" :value="metrics.active" icon="pi-clock" />
         </div>
         <div class="mt-7 grid gap-6 lg:grid-cols-2">
-            <div class="panel">
+            <div v-if="permissions.kitchen !== 'none'" class="panel">
                 <span class="text-sm font-medium text-brand">{{ $t('operations') }}</span>
                 <h2 class="my-3 text-2xl font-semibold">{{ $t('every_order_in_the_right_hands') }}</h2>
                 <p class="muted">{{ $t('open_the_live_kitchen_board_to_accept_and_prepare_incoming_orders') }}</p>

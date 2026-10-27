@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Inertia\Testing\AssertableInertia;
 
 beforeEach(function () {
     Queue::fake();
@@ -59,7 +60,7 @@ it('restricts staff to assigned locations and prevents menu writes', function ()
     $this->actingAs($staff)->getJson("/api/v1/locations/{$location->public_id}/orders")->assertForbidden();
     LocationStaff::create(['organization_id' => $location->organization_id, 'user_id' => $staff->id, 'location_id' => $location->id]);
     $this->getJson("/api/v1/locations/{$location->public_id}/orders")->assertOk();
-    $this->get("/app/locations/{$location->public_id}/menu")->assertForbidden();
+    $this->get("/app/locations/{$location->public_id}/menu")->assertOk()->assertInertia(fn (AssertableInertia $page) => $page->where('menuWritable', false));
     expect(app(MenuItemPolicy::class)->update($staff, $item))->toBeFalse();
 });
 it('lets owners update their menu while rejecting foreign categories', function () {

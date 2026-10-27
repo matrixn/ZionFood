@@ -20,9 +20,17 @@ async function load(url = `/api/v1/locations/${props.location.public_id}/orders`
     try {
         const result = await api<{ data: Order[]; links: { next: string | null } }>(url);
         orders.value = append ? [...orders.value, ...result.data] : result.data;
+        if (selected.value)
+            selected.value =
+                orders.value.find((order) => order.public_id === selected.value?.public_id) ?? selected.value;
         next.value = result.links.next;
         error.value = '';
     } catch (e) {
+        if (e instanceof Error && 'status' in e && (e.status === 401 || e.status === 403)) {
+            orders.value = [];
+            selected.value = null;
+            visible.value = false;
+        }
         error.value = (e as Error).message;
     } finally {
         busy.value = false;
@@ -49,6 +57,13 @@ onMounted(() => load());
             class="mt-5"
             :label="$t('load_more_orders')"
             :loading="busy"
-            @click="load(next!, true)" /><OrderDetailsDrawer v-model:visible="visible" :order="selected"
+            @click="load(next!, true)" /><OrderDetailsDrawer
+            v-model:visible="visible"
+            :order="selected"
+            :can-write="permissions.orders === 'manage'"
+            @updated="
+                selected = $event;
+                void load();
+            "
     /></RestaurantLayout>
 </template>

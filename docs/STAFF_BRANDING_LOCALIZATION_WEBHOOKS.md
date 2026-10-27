@@ -59,3 +59,12 @@ Receivers should enforce a short timestamp tolerance, compare signatures in cons
 ## Verification limits
 
 Automated tests use fake HTTP receivers to verify payload bytes, HMAC, DNS pin options, URL/DNS rejection, retries, leases, cancellation, tenant isolation and transaction behavior. No live third-party receiver was contacted with a webhook POST. Browser tests save disabled endpoints and validate a blocked private address. Actual external TLS/receiver interoperability, live SMTP, forced disconnection of already subscribed staff sockets and sustained webhook throughput remain staging work.
+
+
+## Individual feature access (0.0.16)
+
+Memberships and unaccepted invitations store optional permission matrices for `orders`, `reservations`, `tables`, `kitchen` and `menu`. Each level is `none`, `view` or `manage`; manage includes view. Set them in Personal at invitation creation or Editează accesul. The matrix applies within that organization and the employee's assigned locations. Owners remain fully authorized and cannot be edited through staff management. Manager administration of company identity/staff/integrations remains role-based; operational feature access is checked separately. A manager cannot grant a feature/level beyond their own current capabilities, and invitation acceptance rechecks that ceiling.
+
+Existing null matrices preserve prior operational access: owners/managers manage all five features, staff manage the four operational features and read the menu. Explicit matrices fail closed for invalid/missing values. Existing employee assignments, passwords and accepted invitations are preserved by the additive migration. New invitation matrices are copied at acceptance; replaying an already accepted invitation does not restore old capabilities after an administrator changes them.
+
+Hidden navigation is backed by web/API/domain checks, not used as the security boundary. View-only pages omit mutation controls. Kitchen has separate active-only endpoints so kitchen access does not expose full order history. Order-management access has status actions in the detail drawer. Dashboard order metrics are omitted without order-view permission. Menu edits require permission for every location sharing the menu; organization-wide modifier library edits require menu management for all organization locations. Custom ingredient catalogue administration remains under its existing management role. A menu reader sees product data without editor actions. Business settings/owner management remain separate administrative responsibilities.

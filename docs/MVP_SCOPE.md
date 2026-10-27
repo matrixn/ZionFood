@@ -1,4 +1,4 @@
-# Scope at 0.0.15
+# Scope at 0.0.16
 
 ## Implemented
 
@@ -53,3 +53,6 @@ Implemented storefront polish: restaurant-specific share metadata, product/servi
 
 
 0.0.15 adds slug-based restaurant entry points, branch selection, explicit guest QR unavailability pages, disabled-control guidance, ANAF company autofill in legal setup, and invitation-aware employee registration. Payments remain placeholders. ANAF has no required API credentials, so no platform API-key settings screen is introduced. Provider availability and complete data coverage are not guaranteed.
+
+
+0.0.16 adds individual five-module feature permissions, invitation carry-through, view-only interfaces, independent active kitchen access, order status controls, scoped bulk table/room operations and effective QR availability with shared schedule/cutoff explanations. Owners remain full; existing null permission matrices retain legacy behavior. Time-based restrictions remain active per the user's explicit choice. Payments remain placeholders.

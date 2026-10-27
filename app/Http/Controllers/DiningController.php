@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Dining\OrderingWindow;
 use App\Domain\Dining\TableSessions;
 use App\Domain\Tenancy\TenantAccess;
 use App\Models\DiningTable;
@@ -16,12 +17,22 @@ class DiningController extends Controller
     public function manage(Request $request, string $location, WorkspaceController $workspace)
     {
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
-        app(TenantAccess::class)->requireOperate($request->user(), $context);
+        app(TenantAccess::class)->requireFeature($request->user(), $context, 'tables');
         $manager = app(TenantAccess::class)->canManage($request->user(), $context->organization_id);
-        $tables = DiningTable::where('location_id', $context->id)->where('is_active', true)->with(['sessions' => fn ($q) => $q->whereNull('closed_at')->where('expires_at', '>', now())])->get()->map(fn ($table) => [...$table->toArray(), 'qr_url' => $manager ? rtrim(config('app.url'), '/').'/table/'.$table->public_id.'#token='.Crypt::decryptString($table->qr_token_encrypted) : null]);
+        $tables = DiningTable::where('location_id', $context->id)->where('is_active', true)->with(['sessions' => fn ($q) => $q->whereNull('closed_at')->where('expires_at', '>', now())])->get()->map(fn ($table) => [...$table->toArray(), 'qr_url' => app(TenantAccess::class)->canFeature($request->user(), $context, 'tables') ? rtrim(config('app.url'), '/').'/table/'.$table->public_id.'#token='.Crypt::decryptString($table->qr_token_encrypted) : null]);
         Inertia::encryptHistory();
 
-        return Inertia::render('restaurant/Tables', ['staffActivation' => $context->setup_profile['services']['qr_requires_staff'] ?? false, 'location' => $context->load('restaurant', 'hours', 'fulfillment', 'zones'), 'locations' => $workspace->locations($request), 'canManage' => $manager, 'tables' => $tables])->toResponse($request)->header('Cache-Control', 'no-store');
+        return Inertia::render('restaurant/Tables', ['orderingWindow' => app(OrderingWindow::class)->status($context), 'staffActivation' => $context->setup_profile['services']['qr_requires_staff'] ?? false, 'location' => $context->load('restaurant', 'hours', 'fulfillment', 'zones'), 'locations' => $workspace->locations($request), 'canManage' => $manager, 'tables' => $tables])->toResponse($request)->header('Cache-Control', 'no-store');
+    }
+
+    public function bulk(Request $request, string $location, TableSessions $sessions)
+    {
+        $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
+        app(TenantAccess::class)->requireFeature($request->user(), $context, 'tables', true);
+        $data = $request->validate(['operation' => 'required|in:open,close', 'scope' => 'required|in:all,area', 'area' => 'required_if:scope,area|nullable|string|max:80']);
+        $sessions->bulk($request->user(), $context, $data['operation'], $data['scope'] === 'area' ? $data['area'] : null);
+
+        return back()->with('success', __('Table updated.'));
     }
 
     public function operation(Request $request, string $table, string $operation, TableSessions $sessions)
@@ -47,8 +58,9 @@ class DiningController extends Controller
     {
         $context = $this->publicTable($request, $table);
 
-        if (! $context->location->fulfillment?->dine_in_enabled || $context->ordering_paused) {
-            return Inertia::render('storefront/TableUnavailable', ['restaurant' => $context->location->restaurant->only('name', 'slug', 'primary_color', 'logo_path'), 'reason' => ! $context->location->fulfillment?->dine_in_enabled ? 'service_disabled' : 'table_closed', 'menuUrl' => $request->attributes->get('storefront_location') ? '/' : $context->location->storefront_path])->toResponse($request)->header('Cache-Control', 'no-store');
+        $window = app(OrderingWindow::class)->status($context->location);
+        if (! $context->location->fulfillment?->dine_in_enabled || $context->ordering_paused || ! $window['is_open']) {
+            return Inertia::render('storefront/TableUnavailable', ['restaurant' => $context->location->restaurant->only('name', 'slug', 'primary_color', 'logo_path'), 'orderingWindow' => $window, 'reason' => ! $context->location->fulfillment?->dine_in_enabled ? 'service_disabled' : ($context->ordering_paused ? 'table_closed' : $window['reason']), 'menuUrl' => $request->attributes->get('storefront_location') ? '/' : $context->location->storefront_path])->toResponse($request)->header('Cache-Control', 'no-store');
         }
 
         return Inertia::render('storefront/Menu', [...$ordering->data($context->location), 'tableContext' => $context->only('public_id', 'code', 'area', 'ordering_paused')]);

@@ -16,7 +16,6 @@ class UpdateMenuItem
 {
     public function execute(User $actor, int $organizationId, array $data, ?MenuItem $item = null): MenuItem
     {
-        app(TenantAccess::class)->requireManage($actor, $organizationId);
         abort_if($item && $item->organization_id !== $organizationId, 403);
         $category = MenuCategory::whereKey($data['category_id'])->where('organization_id', $organizationId)->first();
         $ids = $data['modifier_group_ids'] ?? [];
@@ -27,6 +26,10 @@ class UpdateMenuItem
             throw ValidationException::withMessages(['category_id' => __('Cannot move products between restaurants.')]);
         }
 
+        app(TenantAccess::class)->requireMenu($actor, $organizationId, $category->menu_id);
+        if ($item) {
+            app(TenantAccess::class)->requireMenu($actor, $organizationId, $item->category->menu_id);
+        }
         $oldMenuId = $item?->category?->menu_id;
 
         return DB::transaction(function () use ($data, $organizationId, $item, $ids, $category, $oldMenuId) {

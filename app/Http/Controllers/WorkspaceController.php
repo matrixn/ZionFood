@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Domain\Menus\RecordMenuChange;
 use App\Domain\Tenancy\Actions\OnboardOrganization;
+use App\Domain\Tenancy\StaffPermissions;
 use App\Domain\Tenancy\TenantAccess;
 use App\Http\Requests\LocationSettingsRequest;
 use App\Http\Requests\OnboardingRequest;
@@ -58,14 +59,17 @@ class WorkspaceController extends Controller
         app(TenantAccess::class)->requireOperate($request->user(), $context);
         abort_unless(in_array($section, ['dashboard', 'orders', 'menu', 'settings', 'kitchen', 'integrations', 'staff', 'branding', 'webhooks', 'locations']), 404);
         $manage = app(TenantAccess::class)->canManage($request->user(), $context->organization_id);
-        abort_if(in_array($section, ['menu', 'settings', 'integrations', 'staff', 'branding', 'webhooks', 'locations']) && ! $manage, 403);
-        $props = ['location' => $context->load('restaurant', 'hours', 'fulfillment', 'zones'), 'locations' => $this->locations($request), 'canManage' => $manage];
+        if (in_array($section, ['orders', 'kitchen', 'menu'], true)) {
+            app(TenantAccess::class)->requireFeature($request->user(), $context, $section);
+        }
+        abort_if(in_array($section, ['settings', 'integrations', 'staff', 'branding', 'webhooks', 'locations']) && ! $manage, 403);
+        $props = ['location' => $context->load('restaurant', 'hours', 'fulfillment', 'zones'), 'locations' => $this->locations($request), 'canManage' => $manage, 'permissions' => app(TenantAccess::class)->permissions($request->user(), $context->organization_id)];
         if ($section === 'locations') {
             $props['manageableLocationIds'] = $props['locations']->filter(fn ($place) => app(TenantAccess::class)->canManage($request->user(), $place->organization_id))->pluck('public_id')->values();
         }
         if ($section === 'staff') {
             $props['actorRole'] = app(TenantAccess::class)->role($request->user(), $context->organization_id);
-            $props['members'] = OrganizationMembership::where('organization_id', $context->organization_id)->with('user:id,name,email')->get()->map(fn ($m) => [...$m->only('id', 'role', 'user_id'), 'user' => $m->user, 'location_ids' => LocationStaff::where('organization_id', $context->organization_id)->where('user_id', $m->user_id)->pluck('location_id')]);
+            $props['members'] = OrganizationMembership::where('organization_id', $context->organization_id)->with('user:id,name,email')->get()->map(fn ($m) => [...$m->only('id', 'role', 'user_id', 'permissions'), 'effective_permissions' => StaffPermissions::effective($m), 'user' => $m->user, 'location_ids' => LocationStaff::where('organization_id', $context->organization_id)->where('user_id', $m->user_id)->pluck('location_id')]);
             $props['invitations'] = StaffInvitation::where('organization_id', $context->organization_id)->whereNull('accepted_at')->latest()->get();
         }
         if ($section === 'settings') {
@@ -76,13 +80,21 @@ class WorkspaceController extends Controller
         }
         if ($section === 'menu') {
             $props['menus'] = $context->menus()->with('categories.items.variants', 'categories.items.ingredients', 'categories.items.modifierGroups')->get();
+            $props['menuWritable'] = app(TenantAccess::class)->canFeature($request->user(), $context, 'menu', true) && ! RestaurantLocation::where('organization_id', $context->organization_id)->whereHas('menus', fn ($q) => $q->whereIn('menus.id', $props['menus']->pluck('id')))->get()->contains(fn ($l) => ! app(TenantAccess::class)->canFeature($request->user(), $l, 'menu', true));
+            $props['modifierWritable'] = $props['menuWritable'] && ! RestaurantLocation::where('organization_id', $context->organization_id)->get()->contains(fn ($l) => ! app(TenantAccess::class)->canFeature($request->user(), $l, 'menu', true));
             $props['ingredients'] = Ingredient::availableFor($context->restaurant_id)->withTrashed()->orderBy('name')->get();
+            if (! $manage) {
+                $props['ingredients'] = $props['menuWritable'] ? $props['ingredients']->map(fn ($ingredient) => $ingredient->only('id', 'name', 'name_en', 'contains_allergens', 'from_frozen', 'is_active', 'deleted_at', 'restaurant_id')) : [];
+            }
             $props['groups'] = ModifierGroup::with('options')->where('organization_id', $context->organization_id)->get();
         }
         if ($section === 'dashboard') {
             $query = Order::where('organization_id', $context->organization_id)->where('location_id', $context->id);
             $props['metrics'] = ['orders' => (clone $query)->whereDate('created_at', today())->count(), 'revenue' => (clone $query)->whereDate('created_at', today())->where('status', 'completed')->sum('total'), 'active' => (clone $query)->whereNotIn('status', ['completed', 'cancelled', 'rejected'])->count()];
-            $props['subscription'] = OrganizationSubscription::with('plan')->where('organization_id', $context->organization_id)->first();
+            if (! app(TenantAccess::class)->canFeature($request->user(), $context, 'orders')) {
+                $props['metrics'] = null;
+            }
+            $props['subscription'] = $manage ? OrganizationSubscription::with('plan')->where('organization_id', $context->organization_id)->first() : null;
         }
 
         return $props;
@@ -91,9 +103,10 @@ class WorkspaceController extends Controller
     public function category(Request $request, string $location)
     {
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
-        app(TenantAccess::class)->requireManage($request->user(), $context->organization_id);
+        app(TenantAccess::class)->requireFeature($request->user(), $context, 'menu', true);
         $data = $request->validate(['name' => ['required', 'string', 'max:100'], 'menu_id' => ['required', 'integer'], 'id' => ['nullable', 'integer']]);
         abort_unless($context->menus()->where('menus.id', $data['menu_id'])->exists(), 422);
+        app(TenantAccess::class)->requireMenu($request->user(), $context->organization_id, $data['menu_id']);
         DB::transaction(function () use ($data, $context) {
             $category = isset($data['id']) ? MenuCategory::whereKey($data['id'])->where('menu_id', $data['menu_id'])->where('organization_id', $context->organization_id)->firstOrFail() : new MenuCategory(['organization_id' => $context->organization_id, 'menu_id' => $data['menu_id']]);
             $category->fill(['name' => $data['name']])->save();
@@ -107,7 +120,8 @@ class WorkspaceController extends Controller
     public function modifier(Request $request, string $location)
     {
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
-        app(TenantAccess::class)->requireManage($request->user(), $context->organization_id);
+        app(TenantAccess::class)->requireFeature($request->user(), $context, 'menu', true);
+        abort_if(RestaurantLocation::where('organization_id', $context->organization_id)->get()->contains(fn ($l) => ! app(TenantAccess::class)->canFeature($request->user(), $l, 'menu', true)), 403);
         $data = $request->validate(['id' => ['nullable', 'integer'], 'name' => ['required', 'string', 'max:100'], 'min_choices' => ['required', 'integer', 'min:0', 'max:20'], 'max_choices' => ['required', 'integer', 'gte:min_choices', 'max:20'], 'options' => ['required', 'array', 'min:1', 'max:30'], 'options.*.name' => ['required', 'string', 'max:100'], 'options.*.price' => ['required', 'integer', 'min:0', 'max:1000000']]);
         abort_if($data['min_choices'] > count($data['options']), 422, 'Not enough options for the minimum selection.');
         DB::transaction(function () use ($data, $context) {
@@ -128,6 +142,9 @@ class WorkspaceController extends Controller
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
         app(TenantAccess::class)->requireManage($request->user(), $context->organization_id);
         $data = $request->validated();
+        if (isset($data['dine_in_cutoff_minutes']) && $data['dine_in_cutoff_minutes'] !== $context->fulfillment?->dine_in_cutoff_minutes) {
+            app(TenantAccess::class)->requireFeature($request->user(), $context, 'tables', true);
+        }
         DB::transaction(function () use ($context, $data) {
             RestaurantLocation::whereKey($context->id)->lockForUpdate()->firstOrFail();
             $context->update(array_intersect_key($data, array_flip(['name', 'address', 'accepting_orders'])));

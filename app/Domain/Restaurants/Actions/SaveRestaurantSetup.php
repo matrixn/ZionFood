@@ -16,13 +16,32 @@ class SaveRestaurantSetup
     public function execute(User $actor, RestaurantLocation $context, string $step, array $data): void
     {
         app(TenantAccess::class)->requireManage($actor, $context->organization_id);
-        DB::transaction(function () use ($context, $step, $data) {
+        DB::transaction(function () use ($actor, $context, $step, $data) {
             $location = RestaurantLocation::whereKey($context->id)->lockForUpdate()->firstOrFail();
             if ($location->setup_revision !== (int) $data['revision']) {
                 throw ValidationException::withMessages(['revision' => __('The setup was changed in another window. Reload before saving.')]);
             }
             $profile = $location->setup_profile ?? [];
             unset($data['revision']);
+            if ($step === 'reservations') {
+                app(TenantAccess::class)->requireFeature($actor, $location, 'reservations', true);
+            }
+            if ($step === 'publish' && (bool) $data['accepting_orders'] !== (bool) $location->accepting_orders) {
+                app(TenantAccess::class)->requireFeature($actor, $location, 'orders', true);
+            }
+            if ($step === 'seating') {
+                app(TenantAccess::class)->requireFeature($actor, $location, ($data['mode'] === 'tables' || ($profile['seating']['mode'] ?? '') === 'tables') ? 'tables' : 'reservations', true);
+            }
+            if ($step === 'services') {
+                foreach (['dine_in_enabled' => 'tables', 'reservations_enabled' => 'reservations', 'pickup_enabled' => 'orders', 'delivery_enabled' => 'orders'] as $field => $feature) {
+                    if (array_key_exists($field, $data) && (bool) $data[$field] !== (bool) $location->fulfillment?->{$field}) {
+                        app(TenantAccess::class)->requireFeature($actor, $location, $feature, true);
+                    }
+                }
+                if (array_key_exists('qr_requires_staff', $data) && (bool) $data['qr_requires_staff'] !== (bool) ($profile['services']['qr_requires_staff'] ?? false)) {
+                    app(TenantAccess::class)->requireFeature($actor, $location, 'tables', true);
+                }
+            }
             if ($step === 'cuisines') {
                 $ids = array_map('intval', $data['cuisine_ids']);
                 $previous = $location->cuisines()->pluck('cuisines.id');

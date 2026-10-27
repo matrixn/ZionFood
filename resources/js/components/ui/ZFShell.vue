@@ -7,9 +7,24 @@ import Button from 'primevue/button';
 import Select from 'primevue/select';
 import Toast from 'primevue/toast';
 import LanguageSelector from '@/components/ui/LanguageSelector.vue';
-import type { Location } from '@/types';
-const props = defineProps<{ location?: Location; locations?: Location[]; canManage?: boolean; mode?: string }>();
+import type { Location, FeaturePermissions, StaffFeature } from '@/types';
+const props = defineProps<{
+    location?: Location;
+    locations?: Location[];
+    canManage?: boolean;
+    permissions?: FeaturePermissions;
+    mode?: string;
+}>();
 const page = usePage();
+const capabilities = computed(() => props.permissions ?? (page.props.permissions as FeaturePermissions));
+const featurePaths: Record<string, StaffFeature> = {
+    '/orders': 'orders',
+    '/reservations': 'reservations',
+    '/tables': 'tables',
+    '/kitchen': 'kitchen',
+    '/menu': 'menu',
+    '/ingredients': 'menu',
+};
 const mobile = ref(false);
 const dark = ref(document.documentElement.classList.contains('dark'));
 function theme() {
@@ -17,43 +32,61 @@ function theme() {
     document.documentElement.classList.toggle('dark', dark.value);
 }
 const base = computed(() => `/app/locations/${props.location?.public_id}`);
-const navGroups = computed(() => [
-    {
-        id: 'operations',
-        title: t('nav_operations'),
-        items: [
-            { name: t('overview'), icon: 'pi-chart-bar', path: '' },
-            { name: t('orders'), icon: 'pi-shopping-bag', path: '/orders' },
-            { name: t('booking_manage'), icon: 'pi-calendar', path: '/reservations' },
-            { name: t('dining_tables'), icon: 'pi-qrcode', path: '/tables' },
-            { name: t('kitchen_display'), icon: 'pi-th-large', path: '/kitchen' },
-        ],
-    },
-    ...(props.canManage
-        ? [
-              {
-                  id: 'administration',
-                  title: t('nav_administration'),
-                  items: [
-                      { name: t('menu_studio'), icon: 'pi-book', path: '/menu' },
-                      { name: t('ingredients_title'), icon: 'pi-list', path: '/ingredients' },
-                      { name: t('staff'), icon: 'pi-users', path: '/staff' },
-                      { name: t('nav_locations'), icon: 'pi-map-marker', path: '/locations' },
-                      { name: t('restaurant_branding'), icon: 'pi-palette', path: '/branding' },
-                      { name: t('nav_schedule_delivery'), icon: 'pi-cog', path: '/settings' },
-                  ],
-              },
-              {
-                  id: 'connections',
-                  title: t('nav_connections'),
-                  items: [
-                      { name: t('integrations'), icon: 'pi-link', path: '/integrations' },
-                      { name: t('webhooks'), icon: 'pi-send', path: '/webhooks' },
-                  ],
-              },
-          ]
-        : []),
-]);
+const navGroups = computed(() =>
+    [
+        {
+            id: 'operations',
+            title: t('nav_operations'),
+            items: [
+                { name: t('overview'), icon: 'pi-chart-bar', path: '' },
+                { name: t('orders'), icon: 'pi-shopping-bag', path: '/orders' },
+                { name: t('booking_manage'), icon: 'pi-calendar', path: '/reservations' },
+                { name: t('dining_tables'), icon: 'pi-qrcode', path: '/tables' },
+                { name: t('kitchen_display'), icon: 'pi-th-large', path: '/kitchen' },
+            ],
+        },
+        ...(props.canManage
+            ? [
+                  {
+                      id: 'administration',
+                      title: t('nav_administration'),
+                      items: [
+                          { name: t('menu_studio'), icon: 'pi-book', path: '/menu' },
+                          { name: t('ingredients_title'), icon: 'pi-list', path: '/ingredients' },
+                          { name: t('staff'), icon: 'pi-users', path: '/staff' },
+                          { name: t('nav_locations'), icon: 'pi-map-marker', path: '/locations' },
+                          { name: t('restaurant_branding'), icon: 'pi-palette', path: '/branding' },
+                          { name: t('nav_schedule_delivery'), icon: 'pi-cog', path: '/settings' },
+                      ],
+                  },
+                  {
+                      id: 'connections',
+                      title: t('nav_connections'),
+                      items: [
+                          { name: t('integrations'), icon: 'pi-link', path: '/integrations' },
+                          { name: t('webhooks'), icon: 'pi-send', path: '/webhooks' },
+                      ],
+                  },
+              ]
+            : capabilities.value?.menu !== 'none'
+              ? [
+                    {
+                        id: 'administration',
+                        title: t('nav_administration'),
+                        items: [{ name: t('menu_studio'), icon: 'pi-book', path: '/menu' }],
+                    },
+                ]
+              : []),
+    ]
+        .map((group) => ({
+            ...group,
+            items: group.items.filter(
+                (item) =>
+                    !featurePaths[item.path] || (capabilities.value?.[featurePaths[item.path]] ?? 'none') !== 'none',
+            ),
+        }))
+        .filter((group) => group.items.length),
+);
 function active(path: string) {
     const current = page.url.split('?')[0];
     return path === ''

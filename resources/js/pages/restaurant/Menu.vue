@@ -19,7 +19,15 @@ import { useConfirm } from 'primevue/useconfirm';
 import ZFConfirmDialog from '@/components/ui/ZFConfirmDialog.vue';
 import type { WorkspaceProps, Menu, Product, ModifierGroup, Category, Ingredient } from '@/types';
 const categoryFormId = useId();
-const props = defineProps<WorkspaceProps & { menus: Menu[]; groups: ModifierGroup[]; ingredients: Ingredient[] }>();
+const props = defineProps<
+    WorkspaceProps & {
+        menus: Menu[];
+        groups: ModifierGroup[];
+        ingredients: Ingredient[];
+        menuWritable: boolean;
+        modifierWritable: boolean;
+    }
+>();
 const categories = computed(() => props.menus.flatMap((m) => m.categories));
 const editor = ref(false);
 const ingredientsOpen = ref(false);
@@ -65,8 +73,14 @@ useSetupEditorGuard(
         ><Head v-if="!embedded" :title="$t('menu_studio')" /><ZFPageHeader
             :title="$t('made_to_be_ordered')"
             :description="$t('build_a_menu_that_feels_like_your_restaurant')"
-            ><div class="flex flex-wrap gap-2">
-                <Button :label="$t('ingredients_manage')" outlined icon="pi pi-list" @click="ingredientsOpen = true" />
+            ><div v-if="menuWritable" class="flex flex-wrap gap-2">
+                <Button
+                    v-if="canManage"
+                    :label="$t('ingredients_manage')"
+                    outlined
+                    icon="pi pi-list"
+                    @click="ingredientsOpen = true"
+                />
                 <Button :label="$t('category')" outlined icon="pi pi-plus" @click="editCategory()" /><Button
                     :label="$t('add_product')"
                     icon="pi pi-plus"
@@ -74,6 +88,7 @@ useSetupEditorGuard(
                     @click="edit(null)"
                 /></div
         ></ZFPageHeader>
+        <p v-if="!menuWritable" class="muted mb-5">{{ $t('permissions_read_only') }}</p>
         <p v-if="error" role="alert">{{ error }}</p>
         <ZFEmptyState
             v-if="!categories.length"
@@ -84,6 +99,7 @@ useSetupEditorGuard(
                 <h2 class="text-xl font-semibold">{{ c.name }}</h2>
                 <span class="muted">{{ c.items.length }} {{ $t('products') }}</span
                 ><Button
+                    v-if="menuWritable"
                     icon="pi pi-pencil"
                     text
                     size="small"
@@ -108,7 +124,7 @@ useSetupEditorGuard(
                     <p class="muted my-3 line-clamp-2">{{ p.description || $t('no_description_yet') }}</p>
                     <div class="mt-4 flex items-center justify-between">
                         <strong>{{ money(p.price) }}</strong>
-                        <div>
+                        <div v-if="menuWritable">
                             <Button
                                 icon="pi pi-pencil"
                                 text
@@ -130,6 +146,7 @@ useSetupEditorGuard(
             <div class="mb-4 flex items-center justify-between">
                 <h2 class="text-xl font-semibold">{{ $t('modifier_groups') }}</h2>
                 <Button
+                    v-if="modifierWritable"
                     :label="$t('add_group')"
                     text
                     icon="pi pi-plus"
@@ -152,6 +169,7 @@ useSetupEditorGuard(
                     </p>
                 </div>
                 <Button
+                    v-if="modifierWritable"
                     icon="pi pi-pencil"
                     text
                     :aria-label="$t('edit_named', { name: g.name })"

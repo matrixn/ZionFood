@@ -14,9 +14,10 @@ use Illuminate\Validation\ValidationException;
 
 class TransitionOrderStatus
 {
-    public function execute(User $actor, Order $context, OrderStatus $next, int $version, ?string $reason = null): Order
+    public function execute(User $actor, Order $context, OrderStatus $next, int $version, ?string $reason = null, string $feature = 'orders'): Order
     {
-        app(TenantAccess::class)->requireOperate($actor, $context->location);
+        abort_unless(in_array($feature, ['orders', 'kitchen'], true), 403);
+        app(TenantAccess::class)->requireFeature($actor, $context->location, $feature, true);
 
         return DB::transaction(function () use ($actor, $context, $next, $version, $reason) {
             $order = Order::whereKey($context->id)->lockForUpdate()->firstOrFail();

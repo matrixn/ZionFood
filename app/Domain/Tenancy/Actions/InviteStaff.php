@@ -2,6 +2,7 @@
 
 namespace App\Domain\Tenancy\Actions;
 
+use App\Domain\Tenancy\StaffPermissions;
 use App\Models\Organization;
 use App\Models\OrganizationMembership;
 use App\Models\StaffInvitation;
@@ -31,8 +32,9 @@ class InviteStaff
                 $staff->authorize($actor, $organization, $previous->role);
             }
             $ids = $staff->locations($organization, $data['role'], $data['location_ids']);
+            $permissions = StaffPermissions::grant($actor, $organization, $data['role'], $data['permissions'] ?? null);
             $token = Str::random(64);
-            $invitation = StaffInvitation::updateOrCreate(['organization_id' => $organization, 'email' => $email], ['public_id' => (string) Str::ulid(), 'invited_by' => $actor->id, 'role' => $data['role'], 'location_ids' => $ids, 'token_hash' => hash('sha256', $token), 'expires_at' => now()->addDays(7), 'accepted_at' => null, 'accepted_by' => null, 'revoked_at' => null]);
+            $invitation = StaffInvitation::updateOrCreate(['organization_id' => $organization, 'email' => $email], ['public_id' => (string) Str::ulid(), 'invited_by' => $actor->id, 'role' => $data['role'], 'location_ids' => $ids, 'permissions' => $permissions, 'token_hash' => hash('sha256', $token), 'expires_at' => now()->addDays(7), 'accepted_at' => null, 'accepted_by' => null, 'revoked_at' => null]);
             DB::afterCommit(fn () => Notification::route('mail', $email)->notify((new StaffInvitationNotification($invitation->public_id, $token, $organization))->locale(app()->getLocale())));
 
             return $invitation;

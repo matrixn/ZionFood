@@ -123,7 +123,11 @@ export interface Order {
     }[];
     history: { id: number; to_status: OrderStatus; created_at: string; reason: string | null }[];
 }
+export type StaffFeature = 'orders' | 'reservations' | 'tables' | 'kitchen' | 'menu';
+export type AccessLevel = 'none' | 'view' | 'manage';
+export type FeaturePermissions = Record<StaffFeature, AccessLevel>;
 export interface WorkspaceProps {
+    permissions: FeaturePermissions;
     embedded?: boolean;
     location: Location;
     locations: Location[];

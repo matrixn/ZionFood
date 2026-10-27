@@ -1,4 +1,4 @@
-# ZionFood 0.0.15
+# ZionFood 0.0.16
 
 The restaurant shell groups operations, administration and connection links, with Setup below the location selector. Setup embeds existing editors and loads selected editor props through WorkspaceController's shared authorization/data builder. Standalone routes and save endpoints remain; saves return to the wizard referer. See ADMIN_NAVIGATION.md for scope, unsaved guards and location selection.
 
@@ -88,3 +88,12 @@ Public menus use the restaurant's managed slug. Legacy ULID links resolve the cu
 ResolveCompany normalizes ANAF v9 data into private legal fields and never saves on lookup. It prefers registered-office address components, falling back to the fiscal address only when the registered-office address is unavailable. Fiscal postal codes are not substituted into an existing registered-office address. Optional flags retain unknown/null states rather than inventing false values. The UI rejects late results after form edits or CUI changes, and existing revision-protected legal saves persist explicit user review.
 
 Invitation tokens move from fragments to a CSRF-protected prepare exchange and encrypted pending server session. Registration uses this capability to prefill the exact email and atomically create user, proven-email verification and invited membership before login/Registered. Normal owner registration keeps the verification flow. See STAFF_BRANDING_LOCALIZATION_WEBHOOKS.md.
+
+
+## Employee capabilities and effective dining state (0.0.16)
+
+StaffPermissions defines a five-feature none/view/manage matrix on organization memberships and invitations, with legacy role defaults. TenantAccess combines it with membership, token organization scope and assigned locations. Permissions are shared to private Inertia pages and editor props; navigation and action visibility derive from them. Role-based company/identity/integration/staff administration stays separate. Invitation acceptance snapshots configured capabilities and revalidates current inviter authority. Owner access is immutable in this UI.
+
+Operations exposes independent order-history and active-kitchen paths with the existing orders token abilities as additional requirements. Domain order transitions use an explicit server-chosen feature, not a client selector. Reservation/table/menu mutations and policies enforce their module levels. Shared-menu writes check all attached locations and global modifier operations check all organization locations. Read-only menu payloads omit unused ingredient editor catalogue data for staff.
+
+OrderingWindow now supplies a status snapshot with distinct outside-hours/cutoff reasons and program/cutoff times in the location timezone. Both guest QR entry and staff cards use this source; public connect/checkout continue authoritative checks. Bulk room/all table actions serialize on the location row and reuse the existing table-session operations. They do not change QR credentials, services or business hours.

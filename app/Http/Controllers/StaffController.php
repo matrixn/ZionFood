@@ -26,7 +26,7 @@ class StaffController extends Controller
     public function update(StaffRequest $request, string $location, int $membership, ManageStaff $action)
     {
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
-        $action->update($request->user(), $context->organization_id, $membership, $request->validated('role'), $request->validated('location_ids'));
+        $action->update($request->user(), $context->organization_id, $membership, $request->validated('role'), $request->validated('location_ids'), $request->validated('permissions'));
 
         return back()->with('success', __('Staff access updated.'));
     }

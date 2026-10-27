@@ -432,5 +432,6 @@
   "Company lookup is temporarily unavailable. Try again later or complete the fields manually.": "Căutarea firmei este temporar indisponibilă. Încearcă mai târziu sau completează câmpurile manual.",
   "Company lookup is busy. Wait a few seconds and try again.": "Căutarea firmei este ocupată. Așteaptă câteva secunde și încearcă din nou.",
   "Table ordering is disabled at this location. Please contact the restaurant team.": "Comenzile la masă sunt dezactivate în această locație. Te rugăm să contactezi personalul restaurantului.",
-  "Use the email address from your restaurant invitation.": "Folosește adresa de email din invitația restaurantului."
+  "Use the email address from your restaurant invitation.": "Folosește adresa de email din invitația restaurantului.",
+  "No active tables match the selected area.": "Nu există mese active în sala selectată."
 }

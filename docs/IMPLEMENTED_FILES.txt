@@ -47,6 +47,7 @@ app/Domain/Tenancy/Actions/InviteStaff.php
 app/Domain/Tenancy/Actions/ManageStaff.php
 app/Domain/Tenancy/Actions/OnboardOrganization.php
 app/Domain/Tenancy/PendingStaffInvitation.php
+app/Domain/Tenancy/StaffPermissions.php
 app/Domain/Tenancy/TenantAccess.php
 app/Events/OrderChanged.php
 app/Http/Controllers/BrandingController.php
@@ -175,6 +176,7 @@ database/migrations/2026_10_26_000400_add_delivery_polygons.php
 database/migrations/2026_10_26_000500_add_table_menu_controls.php
 database/migrations/2026_10_26_000600_add_cuisine_catalog.php
 database/migrations/2026_10_26_000700_add_ingredients_and_portions.php
+database/migrations/2026_10_27_000800_add_staff_permissions.php
 database/seeders/DatabaseSeeder.php
 database/seeders/DemoSeeder.php
 database/seeders/IngredientSeeder.php
@@ -266,6 +268,7 @@ resources/js/components/order/OrderTrackingTimeline.vue
 resources/js/components/restaurant/CuisineCard.vue
 resources/js/components/restaurant/CuisinePicker.vue
 resources/js/components/restaurant/RestaurantLocationPicker.vue
+resources/js/components/restaurant/StaffPermissionEditor.vue
 resources/js/components/storefront/AllergenNotice.vue
 resources/js/components/storefront/CartDrawer.vue
 resources/js/components/storefront/CartProductImage.vue
@@ -368,8 +371,10 @@ tests/Feature/RestaurantGeocodingTest.php
 tests/Feature/RestaurantSetupTest.php
 tests/Feature/SetupWorkspaceTest.php
 tests/Feature/StaffBrandingLocaleTest.php
+tests/Feature/StaffPermissionsTest.php
 tests/Feature/StorefrontExperienceTest.php
 tests/Feature/StorefrontShareImageTest.php
+tests/Feature/TableAvailabilityBulkTest.php
 tests/Feature/TestEmailPageTest.php
 tests/Feature/WebhooksTest.php
 tests/Feature/ZionFoodTest.php
@@ -387,6 +392,7 @@ tests/e2e/landing.spec.ts
 tests/e2e/ordering.spec.ts
 tests/e2e/restaurant-location.spec.ts
 tests/e2e/setup.spec.ts
+tests/e2e/staff-permissions-tables.spec.ts
 tests/e2e/storefront-experience.spec.ts
 tests/e2e/venue-services.spec.ts
 tests/e2e/wizard-workspace.spec.ts

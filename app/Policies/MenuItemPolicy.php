@@ -10,6 +10,6 @@ class MenuItemPolicy
 {
     public function update(User $user, MenuItem $item): bool
     {
-        return app(TenantAccess::class)->canManage($user, $item->organization_id);
+        return app(TenantAccess::class)->canMenu($user, $item->organization_id, $item->category->menu_id);
     }
 }

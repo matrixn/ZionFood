@@ -16,7 +16,7 @@ class TransitionReservation
     public function execute(Reservation $context, string $next, int $version, ?User $actor = null): Reservation
     {
         if ($actor) {
-            app(TenantAccess::class)->requireOperate($actor, $context->location);
+            app(TenantAccess::class)->requireFeature($actor, $context->location, 'reservations', true);
         }
 
         return DB::transaction(function () use ($context, $next, $version, $actor) {

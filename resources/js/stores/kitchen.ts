@@ -13,7 +13,7 @@ export const useKitchen = defineStore('kitchen', () => {
         const current = ++revision;
         loading.value = true;
         try {
-            let url: string | null = `/api/v1/locations/${locationId}/orders?active=${active ? 1 : 0}`;
+            let url: string | null = `/api/v1/locations/${locationId}/kitchen-orders?active=${active ? 1 : 0}`;
             const result: Order[] = [];
             while (url) {
                 const page: { data: Order[]; links: { next: string | null } } = await api(url);
@@ -27,7 +27,10 @@ export const useKitchen = defineStore('kitchen', () => {
                 syncedAt.value = new Date();
             }
         } catch (e) {
-            if (current === revision) error.value = (e as Error).message;
+            if (current === revision) {
+                if (e instanceof Error && 'status' in e && (e.status === 401 || e.status === 403)) orders.value = [];
+                error.value = (e as Error).message;
+            }
         } finally {
             if (current === revision) loading.value = false;
         }

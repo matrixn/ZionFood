@@ -10,11 +10,11 @@ class OrderPolicy
 {
     public function view(User $user, Order $order): bool
     {
-        return app(TenantAccess::class)->canOperate($user, $order->location);
+        return app(TenantAccess::class)->canFeature($user, $order->location, 'orders') || app(TenantAccess::class)->canFeature($user, $order->location, 'kitchen');
     }
 
     public function update(User $user, Order $order): bool
     {
-        return $this->view($user, $order);
+        return app(TenantAccess::class)->canFeature($user, $order->location, 'orders', true) || app(TenantAccess::class)->canFeature($user, $order->location, 'kitchen', true);
     }
 }

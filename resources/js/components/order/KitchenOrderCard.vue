@@ -4,7 +4,7 @@ import Button from 'primevue/button';
 import ZFStatusBadge from '@/components/ui/ZFStatusBadge.vue';
 import { api } from '@/lib/http';
 import type { Order, OrderStatus } from '@/types';
-const props = defineProps<{ order: Order; now: number }>();
+const props = defineProps<{ order: Order; now: number; canWrite: boolean }>();
 const emit = defineEmits<{ changed: [order?: Order]; details: [order: Order] }>();
 const busy = ref(false);
 const error = ref('');
@@ -14,11 +14,15 @@ async function transition(status: OrderStatus) {
     busy.value = true;
     error.value = '';
     try {
-        const result = await api<{ data: Order }>('/api/v1/orders/' + props.order.public_id + '/status', 'PATCH', {
-            status,
-            version: props.order.version,
-            reason: reason.value || null,
-        });
+        const result = await api<{ data: Order }>(
+            '/api/v1/kitchen-orders/' + props.order.public_id + '/status',
+            'PATCH',
+            {
+                status,
+                version: props.order.version,
+                reason: reason.value || null,
+            },
+        );
         emit('changed', result.data);
     } catch (e) {
         error.value = (e as Error).message;
@@ -36,7 +40,9 @@ async function transition(status: OrderStatus) {
             ><span :class="age > 20 ? 'text-red-600' : 'muted'">{{ age }} {{ $t('min') }}</span>
         </div>
         <ZFStatusBadge :status="order.status" />
-        <p v-if="order.table_code" class="mt-3 rounded-lg bg-violet-50 p-3 font-semibold text-brand">{{ $t('dining_table') }} {{ order.table_code }} · {{ order.table_area }}</p>
+        <p v-if="order.table_code" class="mt-3 rounded-lg bg-violet-50 p-3 font-semibold text-brand">
+            {{ $t('dining_table') }} {{ order.table_code }} · {{ order.table_area }}
+        </p>
         <p class="my-3 text-sm font-medium">{{ order.customer_name }} · {{ $t('fulfillment_' + order.fulfillment) }}</p>
         <div v-for="item in order.items" :key="item.id" class="my-3 border-t border-slate-100 pt-3">
             <strong class="text-sm">{{ item.quantity }} × {{ item.name }}</strong>
@@ -45,7 +51,7 @@ async function transition(status: OrderStatus) {
         </div>
         <p v-if="order.notes" class="my-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{{ order.notes }}</p>
         <p v-if="error" role="alert" class="my-3 text-sm text-red-600">{{ error }}</p>
-        <div class="mt-4 grid gap-2">
+        <div v-if="canWrite" class="mt-4 grid gap-2">
             <Button
                 v-for="status in order.transitions.filter((s) => !['rejected', 'cancelled'].includes(s))"
                 :key="status"

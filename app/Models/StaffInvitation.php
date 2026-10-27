@@ -10,5 +10,5 @@ class StaffInvitation extends Model
 
     protected $hidden = ['token_hash'];
 
-    protected $casts = ['location_ids' => 'array', 'expires_at' => 'datetime', 'accepted_at' => 'datetime', 'revoked_at' => 'datetime'];
+    protected $casts = ['permissions' => 'array', 'location_ids' => 'array', 'expires_at' => 'datetime', 'accepted_at' => 'datetime', 'revoked_at' => 'datetime'];
 }

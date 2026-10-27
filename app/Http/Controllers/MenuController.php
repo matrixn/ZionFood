@@ -21,7 +21,7 @@ class MenuController extends Controller
     {
         $this->ability($request, 'menu:read');
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
-        app(TenantAccess::class)->requireOperate($request->user(), $context);
+        app(TenantAccess::class)->requireFeature($request->user(), $context, 'menu');
 
         return response()->json(['menus' => $context->menus()->with('categories.items.ingredients', 'categories.items.variants', 'categories.items.modifierGroups.options')->get()]);
     }
@@ -30,7 +30,7 @@ class MenuController extends Controller
     {
         $this->ability($request, 'menu:write');
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
-        app(TenantAccess::class)->requireManage($request->user(), $context->organization_id);
+        app(TenantAccess::class)->requireFeature($request->user(), $context, 'menu', true);
         abort_unless(MenuCategory::whereKey($request->integer('category_id'))->whereIn('menu_id', $context->menus()->pluck('menus.id'))->exists(), 422);
 
         return response()->json($this->save($request, $action, $context->organization_id), 201);
@@ -40,7 +40,7 @@ class MenuController extends Controller
     {
         $this->ability($request, 'menu:write');
         $model = MenuItem::where('public_id', $item)->firstOrFail();
-        app(TenantAccess::class)->requireManage($request->user(), $model->organization_id);
+        app(TenantAccess::class)->requireMenu($request->user(), $model->organization_id, $model->category->menu_id);
 
         return response()->json($this->save($request, $action, $model->organization_id, $model));
     }
@@ -66,7 +66,7 @@ class MenuController extends Controller
     public function destroy(Request $request, string $item)
     {
         $model = MenuItem::where('public_id', $item)->firstOrFail();
-        app(TenantAccess::class)->requireManage($request->user(), $model->organization_id);
+        app(TenantAccess::class)->requireMenu($request->user(), $model->organization_id, $model->category->menu_id);
         DB::transaction(function () use ($model) {
             $model->delete();
             app(RecordMenuChange::class)->execute($model->organization_id, $model->category->menu_id, ['item_id' => $model->public_id, 'deleted' => true]);

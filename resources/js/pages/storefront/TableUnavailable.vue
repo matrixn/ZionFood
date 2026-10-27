@@ -2,7 +2,12 @@
 import { Head, Link } from '@inertiajs/vue3';
 import StorefrontLayout from '@/layouts/StorefrontLayout.vue';
 import type { RestaurantBrand } from '@/types';
-defineProps<{ restaurant: RestaurantBrand; reason: 'service_disabled' | 'table_closed'; menuUrl: string }>();
+defineProps<{
+    restaurant: RestaurantBrand;
+    reason: 'service_disabled' | 'table_closed' | 'outside_hours' | 'cutoff';
+    menuUrl: string;
+    orderingWindow?: { opens_at: string | null; closes_at: string | null; cutoff_at: string | null; timezone: string };
+}>();
 </script>
 <template>
     <StorefrontLayout :name="restaurant.name" :brand="restaurant">
@@ -12,6 +17,19 @@ defineProps<{ restaurant: RestaurantBrand; reason: 'service_disabled' | 'table_c
             <h1 class="text-2xl font-semibold">{{ $t('dining_unavailable_title') }}</h1>
             <p class="leading-relaxed text-slate-600">{{ $t('dining_reason_' + reason) }}</p>
             <p class="muted">{{ $t('dining_ask_team') }}</p>
+            <p
+                v-if="orderingWindow?.opens_at && (reason === 'outside_hours' || reason === 'cutoff')"
+                class="rounded-xl bg-violet-50 p-4 text-sm text-slate-600"
+            >
+                {{
+                    $t('dining_window_times', {
+                        open: orderingWindow.opens_at,
+                        close: orderingWindow.closes_at,
+                        cutoff: orderingWindow.cutoff_at,
+                        zone: orderingWindow.timezone,
+                    })
+                }}
+            </p>
             <Link :href="menuUrl" class="inline-block rounded-xl bg-brand px-5 py-3 font-semibold text-white">{{
                 $t('store_view_menu')
             }}</Link>

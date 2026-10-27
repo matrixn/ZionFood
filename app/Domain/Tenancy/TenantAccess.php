@@ -44,4 +44,48 @@ class TenantAccess
             throw new AuthorizationException;
         }
     }
+
+    public function permissions(User $user, int $organization): array
+    {
+        if (! $this->role($user, $organization)) {
+            return array_fill_keys(StaffPermissions::FEATURES, 'none');
+        }
+        $membership = OrganizationMembership::where('organization_id', $organization)->where('user_id', $user->id)->first();
+
+        return $membership ? StaffPermissions::effective($membership) : array_fill_keys(StaffPermissions::FEATURES, 'none');
+    }
+
+    public function canFeatureInOrganization(User $user, int $organization, string $feature, bool $write = false): bool
+    {
+        $level = $this->permissions($user, $organization)[$feature] ?? 'none';
+
+        return $write ? $level === 'manage' : in_array($level, ['view', 'manage'], true);
+    }
+
+    public function canFeature(User $user, RestaurantLocation $location, string $feature, bool $write = false): bool
+    {
+        return $this->canOperate($user, $location) && $this->canFeatureInOrganization($user, $location->organization_id, $feature, $write);
+    }
+
+    public function requireFeature(User $user, RestaurantLocation $location, string $feature, bool $write = false): void
+    {
+        if (! $this->canFeature($user, $location, $feature, $write)) {
+            throw new AuthorizationException;
+        }
+    }
+
+    public function canMenu(User $user, int $organization, int $menu, bool $write = true): bool
+    {
+        $locations = RestaurantLocation::where('organization_id', $organization)->whereHas('menus', fn ($query) => $query->where('menus.id', $menu))->get();
+        if ($locations->isEmpty()) {
+            return $this->canManage($user, $organization) && $this->canFeatureInOrganization($user, $organization, 'menu', $write);
+        }
+
+        return $locations->contains(fn ($location) => $this->canFeature($user, $location, 'menu', $write)) && (! $write || ! $locations->contains(fn ($location) => ! $this->canFeature($user, $location, 'menu', true)));
+    }
+
+    public function requireMenu(User $user, int $organization, int $menu, bool $write = true): void
+    {
+        abort_unless($this->canMenu($user, $organization, $menu, $write), 403);
+    }
 }

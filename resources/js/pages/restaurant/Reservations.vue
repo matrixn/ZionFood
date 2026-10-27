@@ -96,7 +96,7 @@ function transition(booking: Booking, status: string) {
                 <p v-if="booking.notes" class="rounded-lg bg-amber-50 p-3 text-sm">{{ booking.notes }}</p>
                 <div class="flex flex-wrap gap-2">
                     <Button
-                        v-for="status in actions(booking)"
+                        v-for="status in permissions.reservations === 'manage' ? actions(booking) : []"
                         :key="status"
                         :label="$t(`booking_action_${status}`)"
                         :loading="form.processing"

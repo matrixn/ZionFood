@@ -126,12 +126,12 @@ onUnmounted(() => {
             {{ $t('connection_interrupted') }} {{ kitchen.error }}{{ $t('retrying_automatically') }}
         </p>
         <KitchenStatusColumns
-            :orders="shown"
+            :orders="shown" :can-write="permissions.kitchen === 'manage'"
             :now="now"
             @changed="changed"
             @details="
                 selected = $event;
                 drawer = true;
-            " /><OrderDetailsDrawer v-model:visible="drawer" :order="selected"
+            " /><OrderDetailsDrawer v-model:visible="drawer" :order="selected" feature="kitchen" :can-write="permissions.kitchen === 'manage'" @updated="selected = $event; changed($event)"
     /></KitchenLayout>
 </template>

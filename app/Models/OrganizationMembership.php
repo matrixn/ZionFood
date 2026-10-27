@@ -13,6 +13,8 @@ class OrganizationMembership extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = ['permissions' => 'array'];
+
     public function organization()
     {
         return $this->belongsTo(Organization::class);

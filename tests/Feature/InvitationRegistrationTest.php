@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Notifications\StaffInvitationNotification;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Notification;
+use Inertia\Testing\AssertableInertia;
 use Inertia\Testing\AssertableInertia as Assert;
 
 function registrationInvite(string $slug): array
@@ -37,7 +38,7 @@ it('prefills only proven invited email and registers directly into assigned staf
         ->and(LocationStaff::where('user_id', $user->id)->value('location_id'))->toBe($location->id);
     Notification::assertNotSentTo($user, VerifyEmail::class);
     $this->get('/app')->assertRedirect('/app/locations/'.$location->public_id);
-    $this->get('/app/locations/'.$location->public_id.'/menu')->assertForbidden();
+    $this->get('/app/locations/'.$location->public_id.'/menu')->assertOk()->assertInertia(fn (AssertableInertia $page) => $page->where('menuWritable', false));
 });
 
 it('does not disclose invited email or prefill registration from an id without its correct proof', function () {

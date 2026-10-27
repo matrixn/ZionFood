@@ -20,7 +20,7 @@ test('emailed invitation pre-fills registration and opens assigned staff workspa
     const nav = page.getByRole('navigation', { name: 'Navigare restaurant', exact: true });
     await expect(nav.getByRole('link', { name: 'Personal', exact: true })).toHaveCount(0);
     await expect(nav.getByRole('link', { name: 'Ecran bucătărie', exact: true })).toBeVisible();
-    const menu = await page.request.get(`/api/v1/locations/${account.location}/menu`);
+    const menu = await page.request.get(`/api/v1/locations/${account.location}/menu`, {headers: {Accept: 'application/json', Referer: page.url()}});
     expect(menu.status()).toBe(200);
     const staffManagement = await page.request.get(`/app/locations/${account.location}/staff`);
     expect(staffManagement.status()).toBe(403);

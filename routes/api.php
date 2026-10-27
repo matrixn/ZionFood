@@ -29,6 +29,8 @@ Route::prefix('v1')->group(function () {
         Route::get('locations/{location}/integration-tokens', [IntegrationController::class, 'index']);
         Route::post('locations/{location}/integration-tokens', [IntegrationController::class, 'store']);
         Route::delete('locations/{location}/integration-tokens/{token}', [IntegrationController::class, 'destroy']);
+        Route::get('locations/{location}/kitchen-orders', [OperationsController::class, 'kitchen']);
+        Route::patch('kitchen-orders/{order}/status', [OperationsController::class, 'kitchenTransition']);
         Route::get('locations/{location}/orders', [OperationsController::class, 'index']);
         Route::patch('orders/{order}/status', [OperationsController::class, 'transition']);
         Route::get('locations/{location}/menu', [MenuController::class, 'show']);

@@ -133,9 +133,9 @@ useSetupEditorGuard(
             </section>
             <section v-if="!editorSection || editorSection === 'hours'" class="panel">
                 <h2 class="mb-5 text-xl font-semibold">{{ $t('opening_hours') }}</h2>
-                <label class="field mb-4"
+                <label v-if="permissions.tables !== 'none'" class="field mb-4"
                     >{{ $t('dining_cutoff_minutes')
-                    }}<InputNumber v-model="form.dine_in_cutoff_minutes" fluid :min="0" :max="240" :step="15"
+                    }}<InputNumber v-model="form.dine_in_cutoff_minutes" :disabled="permissions.tables !== 'manage'" fluid :min="0" :max="240" :step="15"
                 /></label>
                 <p class="muted mb-4 text-sm">{{ $t('dining_cutoff_hint') }}</p>
                 <p class="muted mb-4">

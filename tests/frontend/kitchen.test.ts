@@ -15,3 +15,12 @@ it('applies confirmed API transitions immediately and rejects a stale in-flight 
     kitchen.apply({ ...order, status: 'accepted', version: 2 }); expect(kitchen.orders).toEqual([]);
     kitchen.apply({ ...order, public_id: 'another-order', status: 'accepted', version: 2 }); expect(kitchen.orders[0].version).toBe(2);
 });
+
+it('clears previously visible queue data when feature access is revoked', async () => {
+    const kitchen = useKitchen();
+    kitchen.apply(order);
+    vi.mocked(api).mockRejectedValueOnce(Object.assign(new Error('Forbidden'), { status: 403 }));
+    await kitchen.sync('location');
+    expect(kitchen.orders).toEqual([]);
+    expect(kitchen.error).toBe('Forbidden');
+});

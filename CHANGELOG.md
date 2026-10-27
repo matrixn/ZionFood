@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.16 — 2026-10-27
+
+- Per-employee none/view/manage permissions for orders, reservations, tables/QR, kitchen and menu, with hidden navigation, read-only controls and server/domain/policy checks.
+- Permission editing on invitations and memberships, owner protection, delegation ceilings and shared-menu location checks; separate active kitchen API from order history.
+- Atomic table/room bulk activation and closure with permanent QR preservation, session invalidation and green/red effective availability borders.
+- Explain schedule/cutoff restrictions consistently to staff and QR guests; preserve the configured ordering window and refresh table availability automatically.
+
 ## 0.0.15 — 2026-10-27
 
 - Use `/restaurant/{slug}` public menus with legacy-link redirects, scoped location selection for multi-location restaurants and verified-host isolation.

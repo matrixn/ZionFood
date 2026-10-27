@@ -2,7 +2,7 @@
 import { useSetupEditorGuard } from '@/lib/useSetupEditorGuard';
 import { tr as t } from '@/i18n';
 
-import { useId, ref, computed } from 'vue';
+import { useId, ref, computed, watch } from 'vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import ZFPageHeader from '@/components/ui/ZFPageHeader.vue';
@@ -13,13 +13,15 @@ import Select from 'primevue/select';
 import MultiSelect from 'primevue/multiselect';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
-import type { WorkspaceProps } from '@/types';
+import StaffPermissionEditor from '@/components/restaurant/StaffPermissionEditor.vue';
+import type { FeaturePermissions, WorkspaceProps } from '@/types';
 interface Member {
     id: number;
     role: string;
     user_id: number;
     user: { name: string; email: string };
     location_ids: number[];
+    effective_permissions: FeaturePermissions;
 }
 interface Invitation {
     public_id: string;
@@ -37,8 +39,25 @@ const roles = computed(() => [
     { label: t('staff'), value: 'staff' },
     ...(props.actorRole === 'owner' ? [{ label: t('manager'), value: 'manager' }] : []),
 ]);
-const invite = useForm({ email: '', role: 'staff', location_ids: [props.location.id] as number[] });
-const edit = useForm({ role: 'staff', location_ids: [] as number[] });
+function defaults(role = 'staff'): FeaturePermissions {
+    return Object.fromEntries(
+        Object.entries(props.permissions).map(([feature, level]) => [
+            feature,
+            role === 'staff' && feature === 'menu' && level === 'manage' ? 'view' : level,
+        ]),
+    ) as FeaturePermissions;
+}
+const invite = useForm({
+    email: '',
+    role: 'staff',
+    location_ids: [props.location.id] as number[],
+    permissions: defaults(),
+});
+const edit = useForm({ role: 'staff', location_ids: [] as number[], permissions: defaults() });
+watch(
+    () => invite.role,
+    (role) => (invite.permissions = defaults(role)),
+);
 const base = `/app/locations/${props.location.public_id}/staff`;
 function editable(member: Member) {
     return member.role !== 'owner' && (props.actorRole === 'owner' || member.role === 'staff');
@@ -46,6 +65,7 @@ function editable(member: Member) {
 function open(member: Member) {
     editing.value = member;
     edit.role = member.role;
+    edit.permissions = { ...member.effective_permissions };
     edit.location_ids = [...member.location_ids];
     edit.clearErrors();
     visible.value = true;
@@ -92,13 +112,13 @@ useSetupEditorGuard(
                     })
                 "
             >
-                <label class="field"
+                <label class="field min-w-0"
                     >{{ $t('email')
-                    }}<InputText v-model="invite.email" type="email" required autocomplete="off" /></label
-                ><label class="field"
+                    }}<InputText v-model="invite.email" class="w-full min-w-0" type="email" required autocomplete="off" /></label
+                ><label class="field min-w-0"
                     >{{ $t('role')
                     }}<Select v-model="invite.role" :options="roles" option-label="label" option-value="value" /></label
-                ><label class="field"
+                ><label class="field min-w-0"
                     >{{ $t('assigned_locations')
                     }}<MultiSelect
                         v-model="invite.location_ids"
@@ -107,6 +127,11 @@ useSetupEditorGuard(
                         option-value="id"
                         :disabled="invite.role === 'manager'" /></label
                 ><Button :label="$t('send_invitation')" type="submit" :loading="invite.processing" />
+                <StaffPermissionEditor
+                    v-model="invite.permissions"
+                    :ceiling="permissions"
+                    :class="embedded ? 'md:col-span-2' : 'lg:col-span-4'"
+                />
             </form>
             <p v-for="(message, key) in invite.errors" :key="key" role="alert" class="mt-3 text-red-600">
                 {{ message }}
@@ -201,6 +226,7 @@ useSetupEditorGuard(
                         option-value="id"
                         :disabled="edit.role === 'manager'"
                 /></label>
+                <StaffPermissionEditor v-model="edit.permissions" :ceiling="permissions" />
                 <p v-for="(message, key) in edit.errors" :key="key" role="alert" class="text-red-600">{{ message }}</p>
             </form>
             <template #footer

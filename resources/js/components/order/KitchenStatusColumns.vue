@@ -4,7 +4,7 @@ import { tr as t } from '@/i18n';
 import { computed } from 'vue';
 import KitchenOrderCard from './KitchenOrderCard.vue';
 import type { Order } from '@/types';
-defineProps<{ orders: Order[]; now: number }>();
+defineProps<{ orders: Order[]; now: number; canWrite: boolean }>();
 const emit = defineEmits<{ changed: [order?: Order]; details: [order: Order] }>();
 const columns = computed(() => [
     { title: t('incoming'), statuses: ['pending'] },
@@ -27,6 +27,7 @@ const columns = computed(() => [
                     :key="order.public_id"
                     :order="order"
                     :now="now"
+                    :can-write="canWrite"
                     @changed="emit('changed', $event)"
                     @details="emit('details', $event)"
                 />

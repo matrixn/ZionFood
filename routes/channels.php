@@ -8,5 +8,5 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('organization.{organization}.location.{location}.orders', function (User $user, int $organization, int $location) {
     $context = RestaurantLocation::whereKey($location)->where('organization_id', $organization)->first();
 
-    return $context && app(TenantAccess::class)->canOperate($user, $context);
+    return $context && (app(TenantAccess::class)->canFeature($user, $context, 'orders') || app(TenantAccess::class)->canFeature($user, $context, 'kitchen'));
 });

@@ -14,10 +14,36 @@ use Illuminate\Validation\ValidationException;
 
 class TableSessions
 {
+    public function bulk(User $actor, RestaurantLocation $context, string $operation, ?string $area = null): int
+    {
+        app(TenantAccess::class)->requireFeature($actor, $context, 'tables', true);
+        abort_unless(in_array($operation, ['open', 'close'], true), 422);
+
+        return DB::transaction(function () use ($actor, $context, $operation, $area) {
+            $location = RestaurantLocation::whereKey($context->id)->lockForUpdate()->firstOrFail();
+            if ($operation === 'open' && ! $location->fulfillment?->dine_in_enabled) {
+                throw ValidationException::withMessages(['tables' => __('Table ordering is disabled at this location. Please contact the restaurant team.')]);
+            }
+            $tables = DiningTable::where('location_id', $location->id)->where('is_active', true)->when($area !== null, fn ($q) => $q->where('area', $area))->orderBy('id')->get();
+            if ($tables->isEmpty()) {
+                throw ValidationException::withMessages(['tables' => __('No active tables match the selected area.')]);
+            }
+            foreach ($tables as $table) {
+                if ($operation === 'open') {
+                    $this->open($table, $actor);
+                } else {
+                    $this->close($actor, $table);
+                }
+            }
+
+            return $tables->count();
+        }, 3);
+    }
+
     public function open(DiningTable $context, ?User $actor = null, ?string $qrToken = null): DiningSession
     {
         if ($actor) {
-            app(TenantAccess::class)->requireOperate($actor, $context->location);
+            app(TenantAccess::class)->requireFeature($actor, $context->location, 'tables', true);
         }
 
         return DB::transaction(function () use ($context, $actor, $qrToken) {
@@ -50,7 +76,7 @@ class TableSessions
 
     public function close(User $actor, DiningTable $context): void
     {
-        app(TenantAccess::class)->requireOperate($actor, $context->location);
+        app(TenantAccess::class)->requireFeature($actor, $context->location, 'tables', true);
         DB::transaction(function () use ($context) {
             RestaurantLocation::whereKey($context->location_id)->lockForUpdate()->firstOrFail();
             DiningTable::whereKey($context->id)->update(['ordering_paused' => true]);
@@ -60,7 +86,7 @@ class TableSessions
 
     public function rotate(User $actor, DiningTable $context): void
     {
-        app(TenantAccess::class)->requireManage($actor, $context->organization_id);
+        app(TenantAccess::class)->requireFeature($actor, $context->location, 'tables', true);
         DB::transaction(function () use ($context) {
             RestaurantLocation::whereKey($context->location_id)->lockForUpdate()->firstOrFail();
             $token = Str::random(64);

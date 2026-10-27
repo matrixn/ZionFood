@@ -44,6 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/admin/cuisines', [CuisineController::class, 'save']);
     Route::post('/admin/cuisines/{cuisine}', [CuisineController::class, 'save']);
     Route::get('/app/locations/{location}/reservations', [ReservationController::class, 'manage']);
+    Route::post('/app/locations/{location}/tables/bulk', [DiningController::class, 'bulk'])->middleware('throttle:table-operations');
     Route::get('/app/locations/{location}/tables', [DiningController::class, 'manage']);
     Route::post('/app/reservations/{reservation}/status', [ReservationController::class, 'transition']);
     Route::post('/app/tables/{table}/{operation}', [DiningController::class, 'operation'])->middleware('throttle:table-operations');

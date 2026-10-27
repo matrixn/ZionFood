@@ -2,6 +2,7 @@
 
 namespace App\Domain\Tenancy\Actions;
 
+use App\Domain\Tenancy\StaffPermissions;
 use App\Domain\Tenancy\TenantAccess;
 use App\Models\LocationStaff;
 use App\Models\Organization;
@@ -32,17 +33,19 @@ class ManageStaff
         return $role === 'staff' ? $ids : [];
     }
 
-    public function update(User $actor, int $organization, int $membershipId, string $role, array $locations): void
+    public function update(User $actor, int $organization, int $membershipId, string $role, array $locations, ?array $permissions = null): void
     {
         $this->authorize($actor, $organization, $role);
-        DB::transaction(function () use ($actor, $organization, $membershipId, $role, $locations) {
+        DB::transaction(function () use ($actor, $organization, $membershipId, $role, $locations, $permissions) {
             Organization::whereKey($organization)->lockForUpdate()->firstOrFail();
             $membership = OrganizationMembership::where('organization_id', $organization)->findOrFail($membershipId);
             abort_if($membership->role === 'owner', 403, __('Owner access cannot be changed here.'));
             $this->authorize($actor, $organization, $membership->role);
+            $this->authorize($actor, $organization, $role);
             $ids = $this->locations($organization, $role, $locations);
             LocationStaff::where('organization_id', $organization)->where('user_id', $membership->user_id)->delete();
-            $membership->update(['role' => $role]);
+            $matrix = StaffPermissions::grant($actor, $organization, $role, $permissions ?? ($membership->role === $role ? $membership->permissions : null));
+            $membership->update(['role' => $role, 'permissions' => $matrix]);
             foreach ($ids as $id) {
                 LocationStaff::create(['organization_id' => $organization, 'location_id' => $id, 'user_id' => $membership->user_id]);
             }

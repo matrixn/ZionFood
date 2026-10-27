@@ -59,6 +59,7 @@ class IngredientController extends Controller
     {
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
         app(TenantAccess::class)->requireManage($request->user(), $context->organization_id);
+        app(TenantAccess::class)->requireFeature($request->user(), $context, 'menu', ! $request->isMethod('GET'));
 
         return $context;
     }

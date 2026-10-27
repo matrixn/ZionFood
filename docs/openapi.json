@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ZionFood API",
-    "version": "0.0.15",
+    "version": "0.0.16",
     "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session."
   },
   "servers": [
@@ -1440,6 +1440,157 @@
           }
         }
       }
+    },
+    "/locations/{location}/kitchen-orders": {
+      "get": {
+        "summary": "Active kitchen queue",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Order"
+                      }
+                    },
+                    "links": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sanctum": []
+          },
+          {
+            "session": []
+          }
+        ],
+        "description": "Requires kitchen view/manage permission and assigned location plus existing orders:read token ability. Always excludes terminal orders; active=0 does not expose history."
+      }
+    },
+    "/kitchen-orders/{order}/status": {
+      "patch": {
+        "summary": "Transition a kitchen order",
+        "parameters": [
+          {
+            "name": "order",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Order"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale order version"
+          }
+        },
+        "security": [
+          {
+            "sanctum": []
+          },
+          {
+            "session": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Transition"
+              }
+            }
+          }
+        },
+        "description": "Requires kitchen manage permission, assigned location and existing orders:manage token ability; does not grant order history access."
+      }
     }
   },
   "components": {
@@ -2375,6 +2526,60 @@
             "format": "date-time"
           }
         }
+      },
+      "StaffPermissions": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "orders",
+          "reservations",
+          "tables",
+          "kitchen",
+          "menu"
+        ],
+        "properties": {
+          "orders": {
+            "type": "string",
+            "enum": [
+              "none",
+              "view",
+              "manage"
+            ]
+          },
+          "reservations": {
+            "type": "string",
+            "enum": [
+              "none",
+              "view",
+              "manage"
+            ]
+          },
+          "tables": {
+            "type": "string",
+            "enum": [
+              "none",
+              "view",
+              "manage"
+            ]
+          },
+          "kitchen": {
+            "type": "string",
+            "enum": [
+              "none",
+              "view",
+              "manage"
+            ]
+          },
+          "menu": {
+            "type": "string",
+            "enum": [
+              "none",
+              "view",
+              "manage"
+            ]
+          }
+        },
+        "description": "Per-organization membership capabilities, constrained by assigned locations. Owner remains full. Null legacy matrices use manager full; staff operations manage and menu view. Manage implies view. Invitations snapshot the matrix and revalidate inviter authority on acceptance."
       }
     }
   },
