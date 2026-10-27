@@ -1,4 +1,11 @@
-# ZionFood progress — 0.0.20
+# ZionFood progress — 0.0.21
+
+
+## Version 0.0.21 - Linux CI formatting correction (October 27)
+
+Reproduced the reported `method_argument_space` failure in `RestaurantOverviewTest.php` with a fresh private Pint cache: the previous local cache masked missing spaces between three assertion arguments. Applied Pint's one-line correction without changing assertions or application behavior. Release instructions now require a fresh-cache Linux audit in addition to the exact CI command. Release metadata and current documentation headings are synchronized to 0.0.21; dependency versions and historical notes remain unchanged.
+
+Validation: 225 SQLite PHP/Pest tests / 2147 assertions, 21 Vitest tests, ESLint and TypeScript/Vite production build passed. Fresh-cache Linux Pint and the exact CI command `php vendor/bin/pint --test` both passed across all 226 PHP files. Composer validation passed with the existing explicit-version advisory. Build retains the existing approximately 600 kB app-chunk warning. No new browser or MariaDB run is needed for this formatting/metadata-only correction; earlier release checks remain historical. No tag or manual deployment performed. Remaining functional work is unchanged from 0.0.20.
 
 ## Version 0.0.20 - real Groq verification, contextual help, tables and analytics (October 27)
 

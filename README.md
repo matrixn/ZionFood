@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.20** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.21** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,11 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 27 octombrie 2026 — corecție Pint în CI · 0.0.21
+
+- [x] Corectate spațiile argumentelor din testul statisticilor restaurantului, conform verificării Linux din GitHub Actions.
+- [x] Verificare suplimentară cu un cache Pint nou, pentru a evita rezultate locale mascate de cache.
 
 ### 27 octombrie 2026 — statistici, explicații și control compact · 0.0.20
 

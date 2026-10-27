@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.21 — 2026-10-27
+
+- Fixed Linux Pint method_argument_space failure in RestaurantOverviewTest.
+- Required an additional fresh-cache Linux Pint audit before the exact CI check; runtime behavior is unchanged.
+
 ## 0.0.20 — 2026-10-27
 
 - Added permission-scoped restaurant analytics for local-calendar 7/30/90-day periods, daily charts/tables, product and table rankings, reservations, capacity and menu reach.

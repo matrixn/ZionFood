@@ -1,6 +1,6 @@
 # ZionFood
 
-Version 0.0.20. Follow docs/ARCHITECTURE.md and docs/MVP_SCOPE.md. Laravel 12 / PHP 8.4, MariaDB 10.11+, Vue 3 / Inertia 3 / PrimeVue 4 / Tailwind 4. Keep business rules in domain Actions, explicit organization/location authorization, integer money and immutable order snapshots. Never use client prices. Never add React, Filament, Nova or MoonShine. Use platform admin separately from tenant roles.
+Version 0.0.21. Follow docs/ARCHITECTURE.md and docs/MVP_SCOPE.md. Laravel 12 / PHP 8.4, MariaDB 10.11+, Vue 3 / Inertia 3 / PrimeVue 4 / Tailwind 4. Keep business rules in domain Actions, explicit organization/location authorization, integer money and immutable order snapshots. Never use client prices. Never add React, Filament, Nova or MoonShine. Use platform admin separately from tenant roles.
 
 Validate with PHP/Pest, Pint, TypeScript, ESLint, Vitest, build and relevant Playwright tests. Record executed checks and remaining work honestly in docs/CODEX_PROGRESS.md. Do not commit secrets or generated dependencies. The user has authorized automatic version increments, validation, commits and pushes for all subsequent ZionFood changes, until revoked. Tags and deployments still require an explicit request. Preserve unrelated changes.
 
@@ -9,3 +9,5 @@ Romanian is the default UI language; English is optional. Keep matching Vue I18n
 For every new commit, increment the application patch version and synchronize config/zionfood.php, composer.json, its composer.lock content hash, package.json, the root package-lock.json entries, docs/openapi.json and current README/changelog/version headings. Preserve dependency versions and historical release notes. Do not rewrite already-pushed commits to add version bumps.
 
 Pair every new form field with FieldHelp or ZFFormField explanatory help, preserve an explicit accessible input name when labels contain icons, and keep matching RO/EN help text. Dashboard analytics must respect each feature and location permission and distinguish completed order value, approximate menu visits and active QR sessions from actual receipts, unique people or physical occupancy.
+
+Before release, also run Linux Pint with a new private --cache-file path to detect issues masked by a previous local/platform cache, then run the exact CI command php vendor/bin/pint --test. Do not treat an existing cached pass as a fresh full formatting audit.

@@ -60,6 +60,6 @@ it('counts approximate public visits without cookies or identifiable database re
     $this->withHeaders(['User-Agent' => 'WhatsApp preview bot'])->postJson($url)->assertNoContent();
     expect((int) DB::table('menu_visit_stats')->sum('visits'))->toBe(2);
     $columns = DB::getSchemaBuilder()->getColumnListing('menu_visit_stats');
-    expect($columns)->not->toContain('ip','user_agent','visitor_id');
+    expect($columns)->not->toContain('ip', 'user_agent', 'visitor_id');
     $this->postJson('/api/v1/public/locations/unknown/visit')->assertNotFound();
 });

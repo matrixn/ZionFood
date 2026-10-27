@@ -1,4 +1,4 @@
-# ZionFood 0.0.20
+# ZionFood 0.0.21
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; full Migration Center remains future work. See [MENU_CONTENT.md](MENU_CONTENT.md).
 

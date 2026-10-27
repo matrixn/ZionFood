@@ -1,4 +1,4 @@
-# Scope at 0.0.20
+# Scope at 0.0.21
 
 0.0.19 introduces a dish-first automatic generation workspace, combined AI tasks, approximate one-portion nutrition and durable live review notifications. It replaces the earlier manual reference calculator and retires the manual GloriaFood JSON metadata workflow. Published data remains local and requires review. Full automated whole-menu migration, reimport and rollback remain future work in MENU_CONTENT.md; provider/estimation quality must be validated with a real authorized restaurant.
 
