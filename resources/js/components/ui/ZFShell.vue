@@ -24,6 +24,7 @@ const featurePaths: Record<string, StaffFeature> = {
     '/kitchen': 'kitchen',
     '/menu': 'menu',
     '/ingredients': 'menu',
+    '/menu-content': 'menu',
 };
 const mobile = ref(false);
 const dark = ref(document.documentElement.classList.contains('dark'));
@@ -52,6 +53,7 @@ const navGroups = computed(() =>
                       title: t('nav_administration'),
                       items: [
                           { name: t('menu_studio'), icon: 'pi-book', path: '/menu' },
+                          { name: t('mc_title'), icon: 'pi-sparkles', path: '/menu-content' },
                           { name: t('ingredients_title'), icon: 'pi-list', path: '/ingredients' },
                           { name: t('staff'), icon: 'pi-users', path: '/staff' },
                           { name: t('nav_locations'), icon: 'pi-map-marker', path: '/locations' },
@@ -73,7 +75,10 @@ const navGroups = computed(() =>
                     {
                         id: 'administration',
                         title: t('nav_administration'),
-                        items: [{ name: t('menu_studio'), icon: 'pi-book', path: '/menu' }],
+                        items: [
+                            { name: t('menu_studio'), icon: 'pi-book', path: '/menu' },
+                            { name: t('mc_title'), icon: 'pi-sparkles', path: '/menu-content' },
+                        ],
                     },
                 ]
               : []),
@@ -222,6 +227,7 @@ function switchLocation(id: string) {
                         <Link href="/admin/ingredients" class="block p-3 text-brand">{{
                             $t('ingredients_title')
                         }}</Link>
+                        <Link href="/admin/menu-ai" class="block p-3 text-brand">{{ $t('mc_ai_settings') }}</Link>
                         <Link href="/admin/cuisines" class="block p-3 text-brand">{{ $t('cuisine_admin_title') }}</Link>
                     </template>
                 </nav>

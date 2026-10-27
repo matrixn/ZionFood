@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch, provide } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import StorefrontLayout from '@/layouts/StorefrontLayout.vue';
+import { i18n } from '@/i18n';
+import { localizeMenus } from '@/lib/menuContent';
+import MenuLanguageSelector from '@/components/storefront/MenuLanguageSelector.vue';
+import ProductFoodData from '@/components/storefront/ProductFoodData.vue';
 import AllergenNotice from '@/components/storefront/AllergenNotice.vue';
 import ProductPhoto from '@/components/storefront/ProductPhoto.vue';
 import ProductIngredients from '@/components/storefront/ProductIngredients.vue';
@@ -62,7 +66,33 @@ async function connectTable() {
 onMounted(() => {
     if (props.tableContext) void connectTable();
 });
-const categories = computed(() => (menuPaused.value ? [] : props.menus.flatMap((m) => m.categories)));
+const menuLanguage = ref<string>(i18n.global.locale.value);
+provide('menu-content-language', menuLanguage);
+const availableLanguages = computed(() => [
+    ...new Set(
+        props.menus.flatMap((m) =>
+            m.categories.flatMap((c) => c.items.flatMap((p) => Object.keys(p.content?.translations ?? {}))),
+        ),
+    ),
+]);
+onMounted(() => {
+    try {
+        const stored = localStorage.getItem('zf-menu-language:' + props.restaurant.slug);
+        if (stored && ['ro', 'en', ...availableLanguages.value].includes(stored)) menuLanguage.value = stored;
+    } catch {
+        /* Browser storage can be disabled. */
+    }
+});
+watch(menuLanguage, (value) => {
+    try {
+        localStorage.setItem('zf-menu-language:' + props.restaurant.slug, value);
+    } catch {
+        /* Preference only. */
+    }
+});
+const categories = computed(() =>
+    menuPaused.value ? [] : localizeMenus(props.menus, menuLanguage.value).flatMap((m) => m.categories),
+);
 const product = ref<Product | null>(null);
 const configure = ref(false);
 const drawer = ref(false);
@@ -71,11 +101,7 @@ const checkout = ref(false);
 <template>
     <StorefrontLayout :name="restaurant.name" :brand="restaurant"
         ><Head :title="restaurant.name + ' ' + $t('digital_menu')">
-            <meta
-                head-key="store-description"
-                name="description"
-                :content="$t('storefront_share_cta')"
-            />
+            <meta head-key="store-description" name="description" :content="$t('storefront_share_cta')" />
             <meta head-key="og-title" property="og:title" :content="restaurant.name + ' ' + $t('digital_menu')" />
             <meta head-key="og-name" property="og:site_name" :content="restaurant.name" />
             <meta head-key="og-type" property="og:type" content="website" />
@@ -101,6 +127,7 @@ const checkout = ref(false);
                 property="og:image:alt"
                 :content="restaurant.name"
             /> </Head
+        ><template #language><MenuLanguageSelector v-model="menuLanguage" :available="availableLanguages" /></template
         ><template #actions
             ><Button
                 :label="$t('cart_count', { count: cart.lines.length })"
@@ -186,7 +213,7 @@ const checkout = ref(false);
                         <p v-if="p.description" class="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                             {{ p.description }}
                         </p>
-                        <ProductIngredients :product="p" />
+                        <ProductIngredients :product="p" /><ProductFoodData :product="p" compact />
                         <div class="mt-auto flex items-end justify-between gap-2 pt-2">
                             <div>
                                 <strong class="text-lg font-semibold">{{ money(p.price) }}</strong

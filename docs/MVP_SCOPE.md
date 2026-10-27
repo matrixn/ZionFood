@@ -1,4 +1,6 @@
-# Scope at 0.0.16
+# Scope at 0.0.17
+
+0.0.17 adds the reviewed menu-content editor, persistent menu translations, scoped food-metadata import adapter, recipe-based nutrition arithmetic and encrypted platform-configured Groq/OpenAI processing. AI nutrition estimation is explicitly excluded by user choice. Full GloriaFood API fetching, complete variant/modifier compatibility, inactive-version publication, reimport and rollback remain planned as documented in MENU_CONTENT.md. The AI provider must be configured before real generation; validation fixtures do not perform live provider calls.
 
 ## Implemented
 
@@ -36,7 +38,7 @@
 - Implement the separate WordPress plugin; provision custom domains and SSL after operational verification.
 - Harden billing/subscription lifecycle beyond local trial entitlement. No payment collection.
 - Define privacy retention, idempotency cleanup, outbox archival, backup/restore and incident procedures.
-- Persist carts across full refresh if desired and add a portable customer tracking flow. Interface languages are Romanian/English; owner-authored menu content is not automatically translated.
+- Persist carts across full refresh if desired and add a portable customer tracking flow. Interface languages remain Romanian/English; optional menu-content translations are persisted and reviewed through the 0.0.17 editor.
 - Extend browser coverage of reset/verification emails, delivery flows, dark mode, touch sound/fullscreen and accessibility; real SMTP remains unverified.
 - Validate capacity on the intended production runtime. Local load results must be read with their precise test conditions; notification p95 and sustained outage recovery are not production guarantees.
 

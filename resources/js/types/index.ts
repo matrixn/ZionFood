@@ -1,3 +1,30 @@
+export interface MenuTranslation {
+    name: string;
+    description: string;
+    ingredients_text: string;
+    portion_size: string;
+    category_name: string;
+    menu_name: string;
+    variants: Record<string, string>;
+    groups: Record<string, { name: string; options: Record<string, string> }>;
+    source_hash?: string;
+}
+export interface Nutrition {
+    basis: string;
+    values: Record<string, number | null>;
+    reference?: string;
+    estimated: boolean;
+}
+export interface MenuContent {
+    allergens: string[];
+    may_contain: string[];
+    labels: string[];
+    nutrition: Nutrition | null;
+    translations: Record<string, MenuTranslation>;
+    recipe: { name: string; grams: number; reference: string; values: Record<string, number | null> }[];
+    yield_grams: number | null;
+    servings: number | null;
+}
 export interface Ingredient {
     id: number;
     name: string;
@@ -29,6 +56,8 @@ export interface ModifierGroup {
     options: ModifierOption[];
 }
 export interface Product {
+    content?: Pick<MenuContent, 'allergens' | 'may_contain' | 'labels' | 'nutrition' | 'translations'>;
+    translated_ingredients?: string;
     portion_size?: string | null;
     contains_allergens?: boolean;
     from_frozen?: boolean;

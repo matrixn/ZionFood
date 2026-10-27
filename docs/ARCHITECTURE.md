@@ -1,4 +1,6 @@
-# ZionFood 0.0.16
+# ZionFood 0.0.17
+
+Menu-content metadata uses the shared validated v1 representation described in [MENU_CONTENT.md](MENU_CONTENT.md). Tenant-scoped encrypted drafts separate import/AI/calculation from reviewed publication; content/source hashes prevent stale writes. Nutrition is deterministic recipe/reference arithmetic, with no AI estimates. Platform-only encrypted provider settings and a global quota/paced queue serve all restaurants. PublicMenuTree exposes only reviewed fields and current translations, with source-language fallback. The full GloriaFood price/modifier migration remains a separate planned compatibility/publication workflow.
 
 The restaurant shell groups operations, administration and connection links, with Setup below the location selector. Setup embeds existing editors and loads selected editor props through WorkspaceController's shared authorization/data builder. Standalone routes and save endpoints remain; saves return to the wizard referer. See ADMIN_NAVIGATION.md for scope, unsaved guards and location selection.
 

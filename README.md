@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.16** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.17** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,16 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 27 octombrie 2026 — conținut alimentar, traduceri și AI · 0.0.17
+
+- [x] Editor pentru grupele de alergeni, urme posibile și etichete alimentare, cu verificarea combinațiilor contradictorii.
+- [x] Traduceri locale, editabile, pentru preparate, categorii, meniuri, ingrediente, variante și opțiuni; româna rămâne sursa, iar traducerile învechite nu se publică.
+- [x] Rețete cu cantități, referințe nutriționale la 100 g, randament și porții; calcul determinist, fără estimări AI și fără înlocuirea datelor lipsă cu zero.
+- [x] AI configurabil din administrarea generală: Groq implicit sau OpenAI ales explicit, cheie criptată, cotă comună pe 24 h și coadă. Propunerile necesită verificare și aprobare.
+- [x] Importul datelor alimentare din JSON GloriaFood Fetch Menu v2 pentru produsul ales, cu raport, proveniență și păstrarea informațiilor fără corespondență sigură.
+- [x] Selector public cu steaguri și limbi disponibile, vocabular alimentar/nutrițional local și prețuri/reguli de comandă păstrate.
+- [ ] Migration Center complet: client API, import integral al prețurilor/regulilor, toppinguri pe variante, reimport, publicare controlată și rollback. [Configurare și limite](docs/MENU_CONTENT.md).
 
 ### 27 octombrie 2026 — drepturi pe angajat și controlul meselor · 0.0.16
 
@@ -206,7 +216,7 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [ ] Ciclu complet de billing și abonamente după trial.
 - [ ] Geocodare/căutare de adrese pentru client la checkout și extinderi pentru poligoane cu goluri sau MultiPolygon. Momentan pinul este autoritar, iar adresa textuală nu este verificată automat.
 - [ ] Persistența coșului la reîncărcare completă și urmărirea portabilă a comenzii între dispozitive.
-- [ ] Traducerea conținutului introdus de restaurant; RO/EN se aplică interfeței, nu traduce automat produsele.
+- [x] Traduceri ale conținutului meniului, salvate local ca propuneri editabile și publicate după verificare; furnizorul AI se configurează separat.
 
 ### Operare și verificări de producție
 

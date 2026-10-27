@@ -18,7 +18,7 @@ useStorefrontBrand(() => props.brand);
                         class="h-12 w-12 rounded-xl bg-white object-contain p-1"
                     /><span class="text-xl font-bold">{{ name ?? $t('your_order') }}</span>
                 </div>
-                <div class="ml-auto flex items-center gap-3"><slot name="actions" /><LanguageSelector /></div>
+                <div class="ml-auto flex items-center gap-3"><slot name="actions" /><slot name="language"><LanguageSelector /></slot></div>
             </div>
         </header>
         <main class="mx-auto max-w-6xl p-5 md:p-8"><slot /></main>

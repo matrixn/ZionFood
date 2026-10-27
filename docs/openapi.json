@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ZionFood API",
-    "version": "0.0.16",
+    "version": "0.0.17",
     "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session."
   },
   "servers": [
@@ -2580,6 +2580,87 @@
           }
         },
         "description": "Per-organization membership capabilities, constrained by assigned locations. Owner remains full. Null legacy matrices use manager full; staff operations manage and menu view. Manage implies view. Invitations snapshot the matrix and revalidate inviter authority on acceptance."
+      },
+      "MenuFoodContent": {
+        "type": "object",
+        "description": "Reviewed local menu metadata, schema version 1. Imported and AI-proposed values remain private drafts until explicit approval. Nutrition uses recipe reference arithmetic, never AI estimates. Public responses omit recipes and supplier references.",
+        "properties": {
+          "allergens": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "gluten",
+                "crustaceans",
+                "eggs",
+                "fish",
+                "peanuts",
+                "soy",
+                "milk",
+                "nuts",
+                "celery",
+                "mustard",
+                "sesame",
+                "sulphites",
+                "lupin",
+                "molluscs"
+              ]
+            }
+          },
+          "may_contain": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "vegetarian",
+                "vegan",
+                "gluten_free",
+                "halal",
+                "nut_free",
+                "dairy_free",
+                "hot",
+                "raw"
+              ]
+            }
+          },
+          "translations": {
+            "type": "object",
+            "description": "Persisted language maps with dish/category/menu/variant/modifier text; stale source hashes are omitted publicly."
+          },
+          "nutrition": {
+            "type": "object",
+            "properties": {
+              "basis": {
+                "type": "string",
+                "enum": [
+                  "per_100g",
+                  "per_100ml",
+                  "per_serving"
+                ]
+              },
+              "values": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number",
+                  "nullable": true
+                }
+              },
+              "estimated": {
+                "type": "boolean",
+                "enum": [
+                  false
+                ]
+              }
+            },
+            "nullable": true
+          }
+        }
       }
     }
   },

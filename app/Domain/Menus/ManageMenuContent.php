@@ -1,0 +1,124 @@
+<?php
+
+namespace App\Domain\Menus;
+
+use App\Domain\Tenancy\TenantAccess;
+use App\Jobs\GenerateMenuContent;
+use App\Models\MenuAiSetting;
+use App\Models\MenuContentDraft;
+use App\Models\MenuItem;
+use App\Models\Organization;
+use App\Models\RestaurantLocation;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+
+class ManageMenuContent
+{
+    public function authorize(User $actor, RestaurantLocation $location, MenuItem $item, bool $write = true): void
+    {
+        app(TenantAccess::class)->requireFeature($actor, $location, 'menu', $write);
+        abort_unless($item->organization_id === $location->organization_id && $location->menus()->where('menus.id', $item->category->menu_id)->exists(), 404);
+        app(TenantAccess::class)->requireMenu($actor, $location->organization_id, $item->category->menu_id, $write);
+    }
+
+    public function save(User $actor, RestaurantLocation $location, MenuItem $context, array $data, string $hash): MenuItem
+    {
+        $this->authorize($actor, $location, $context);
+
+        return DB::transaction(function () use ($actor, $location, $context, $data, $hash) {
+            $item = MenuItem::whereKey($context->id)->lockForUpdate()->firstOrFail();
+            $this->authorize($actor, $location, $item);
+            $schema = app(MenuContent::class);
+            abort_unless(hash_equals($schema->hash($item), $hash), 409, __('The menu changed. Refresh and review the latest content.'));
+            $content = $schema->validate($data);
+            $old = $item->content ?? $schema->empty();
+            if ([$content['recipe'], $content['yield_grams'] ?? null, $content['servings'] ?? null] !== [$old['recipe'] ?? [], $old['yield_grams'] ?? null, $old['servings'] ?? null] && ($content['nutrition'] ?? null) === ($old['nutrition'] ?? null)) {
+                $content['nutrition'] = null;
+            }
+            foreach ($content['translations'] as $language => &$row) {
+                $previous = $item->content['translations'][$language] ?? [];
+                $clean = fn ($value) => array_diff_key($value, ['source_hash' => true]);
+                $row['source_hash'] = $clean($row) === $clean($previous) ? ($previous['source_hash'] ?? $schema->translationHash($item)) : $schema->translationHash($item);
+            }
+            unset($row);
+            $item->update(['content' => $content, 'content_revision' => $item->content_revision + 1]);
+            app(RecordMenuChange::class)->execute($item->organization_id, $item->category->menu_id, ['item_id' => $item->public_id]);
+
+            return $item;
+        }, 3);
+    }
+
+    public function draft(User $actor, RestaurantLocation $location, MenuItem $item, string $kind, array $languages = [], ?array $import = null): MenuContentDraft
+    {
+        Validator::make(['kind' => $kind, 'languages' => $languages], ['kind' => ['required', Rule::in(['translate', 'suggest', 'rewrite', 'calculation', 'gloriafood'])], 'languages' => ['array', 'max:3'], 'languages.*' => ['string', 'distinct', Rule::in(array_keys(config('menu-content.languages')))]])->validate();
+        abort_if($kind === 'translate' && ! $languages, 422);
+        $this->authorize($actor, $location, $item);
+        $schema = app(MenuContent::class);
+
+        return DB::transaction(function () use ($actor, $location, $item, $kind, $languages, $import, $schema) {
+            // Serialize the platform-wide budget, including batches from different tenants.
+            if ($kind !== 'gloriafood' && $kind !== 'calculation') {
+                MenuAiSetting::whereKey(1)->lockForUpdate()->first();
+            }
+            Organization::whereKey($location->organization_id)->lockForUpdate()->firstOrFail();
+            if ($kind !== 'gloriafood' && $kind !== 'calculation') {
+                abort_unless(app(MenuAi::class)->ready(), 422, __('Menu AI is not configured by the platform administrator.'));
+                $limit = MenuAiSetting::findOrFail(1)->daily_limit;
+                // Global provider budget shared by every restaurant; no per-tenant bypass.
+                if (MenuContentDraft::whereNotIn('kind', ['gloriafood', 'calculation'])->where('created_at', '>=', now()->subDay())->count() >= $limit) {
+                    throw ValidationException::withMessages(['ai' => __('The platform AI daily limit has been reached.')]);
+                }
+            }
+            $hash = $schema->hash($item);
+            $input = ['source' => $schema->source($item), 'content' => $item->content ?? $schema->empty(), 'languages' => $languages];
+            abort_if(! in_array($kind, ['gloriafood', 'calculation'], true) && strlen(json_encode($input['source'], JSON_THROW_ON_ERROR)) > 12000, 422, __('This product is too large for the configured AI request budget.'));
+            $proposal = $import['proposal'] ?? null;
+            $report = ['schema_version' => MenuContent::SCHEMA_VERSION, ...($import['report'] ?? [])];
+            if ($kind === 'calculation') {
+                $calculated = app(CalculateNutrition::class)->calculate($input['content']);
+                $report = ['per_serving' => $calculated['per_serving'], 'method' => 'recipe_reference_arithmetic'];
+                unset($calculated['per_serving']);
+                $proposal = ['nutrition' => $calculated];
+            }
+            $draft = MenuContentDraft::create(['organization_id' => $location->organization_id, 'location_id' => $location->id, 'item_id' => $item->id, 'requested_by' => $actor->id, 'kind' => $kind, 'source_hash' => $hash, 'input' => $input, 'proposal' => $proposal, 'report' => $report, 'status' => $proposal !== null ? 'ready' : 'queued']);
+            if ($proposal === null) {
+                GenerateMenuContent::dispatch($draft->id)->afterCommit();
+            }
+
+            return $draft;
+        }, 3);
+    }
+
+    public function approve(User $actor, RestaurantLocation $location, MenuContentDraft $context): void
+    {
+        DB::transaction(function () use ($actor, $location, $context) {
+            $draft = MenuContentDraft::whereKey($context->id)->lockForUpdate()->firstOrFail();
+            abort_unless($draft->location_id === $location->id && $draft->organization_id === $location->organization_id && $draft->status === 'ready', 409);
+            $item = MenuItem::whereKey($draft->item_id)->lockForUpdate()->firstOrFail();
+            $this->authorize($actor, $location, $item);
+            $schema = app(MenuContent::class);
+            abort_unless(hash_equals($draft->source_hash, $schema->hash($item)), 409, __('The menu changed. Refresh and review the latest content.'));
+            $proposal = $draft->proposal;
+            if ($draft->kind === 'gloriafood' && (! empty($draft->report['unmapped_allergens']) || ! empty($draft->report['legacy_allergen_ids_unmapped']))) {
+                throw ValidationException::withMessages(['import' => __('Resolve unmapped allergens in the editor before publishing source information.')]);
+            }
+            if (isset($proposal['description'])) {
+                $item->update(['description' => $proposal['description']]);
+                unset($proposal['description']);
+            }
+            $content = array_replace($item->content ?? $schema->empty(), $proposal);
+            if (isset($proposal['translations'])) {
+                $content['translations'] = array_replace($item->content['translations'] ?? [], $proposal['translations']);
+                foreach (array_keys($proposal['translations']) as $language) {
+                    $content['translations'][$language]['source_hash'] = $schema->translationHash($item);
+                }
+            }
+            $item->update(['content' => $schema->validate($content), 'content_revision' => $item->content_revision + 1]);
+            $draft->update(['status' => 'approved', 'reviewed_by' => $actor->id, 'reviewed_at' => now()]);
+            app(RecordMenuChange::class)->execute($item->organization_id, $item->category->menu_id, ['item_id' => $item->public_id]);
+        }, 3);
+    }
+}

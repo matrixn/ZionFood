@@ -13,5 +13,20 @@
     "Company lookup is busy. Wait a few seconds and try again.": "Company lookup is busy. Wait a few seconds and try again.",
     "Table ordering is disabled at this location. Please contact the restaurant team.": "Table ordering is disabled at this location. Please contact the restaurant team.",
     "Use the email address from your restaurant invitation.": "Use the email address from your restaurant invitation.",
-    "No active tables match the selected area.": "No active tables match the selected area."
+    "No active tables match the selected area.": "No active tables match the selected area.",
+    "Enter recipe quantities, cooked yield and servings before calculating nutrition.": "Enter recipe quantities, cooked yield and servings before calculating nutrition.",
+    "No nutrient has complete reference data for every ingredient.": "No nutrient has complete reference data for every ingredient.",
+    "Calculated from saved ingredient references and cooked yield.": "Calculated from saved ingredient references and cooked yield.",
+    "AI nutrition estimates are disabled. Use recipe reference data.": "AI nutrition estimates are disabled. Use recipe reference data.",
+    "A dietary label conflicts with the declared allergens.": "A dietary label conflicts with the declared allergens.",
+    "The menu changed. Refresh and review the latest content.": "The menu changed. Refresh and review the latest content.",
+    "Menu AI is not configured by the platform administrator.": "Menu AI is not configured by the platform administrator.",
+    "The platform AI daily limit has been reached.": "The platform AI daily limit has been reached.",
+    "This product is too large for the configured AI request budget.": "This product is too large for the configured AI request budget.",
+    "Resolve unmapped allergens in the editor before publishing source information.": "Resolve unmapped allergens in the editor before publishing source information.",
+    "Select at least one language.": "Select at least one language.",
+    "Select a menu with between 1 and 200 products.": "Select a menu with between 1 and 200 products.",
+    "Invalid GloriaFood content.": "Invalid GloriaFood content.",
+    "Choose a supported structured-output model.": "Choose a supported structured-output model.",
+    "Configure an API key before enabling menu AI.": "Configure an API key before enabling menu AI."
 }

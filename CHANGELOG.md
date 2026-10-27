@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.17 — 2026-10-27
+
+- Add reviewed structured allergens, trace declarations, dietary labels and recipe-based nutrition with explicit units, source references, cooked yield and unknown-value handling; disable AI nutrition estimation.
+- Persist editable multilingual menu text locally, including variants/modifiers; hide stale translations and retain authoritative IDs, prices and checkout rules.
+- Add encrypted, platform-admin-configured Groq/OpenAI credentials, global queue pacing/budget and guarded AI translation/rewrite/suggestion drafts with explicit publication.
+- Stage GloriaFood Fetch Menu v2 food metadata with named mappings, source evidence and unresolved-field reports; preserve the full Migration Center compatibility/reimport/publication plan separately.
+
 ## 0.0.16 — 2026-10-27
 
 - Per-employee none/view/manage permissions for orders, reservations, tables/QR, kitchen and menu, with hidden navigation, read-only controls and server/domain/policy checks.

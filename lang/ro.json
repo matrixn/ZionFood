@@ -433,5 +433,20 @@
   "Company lookup is busy. Wait a few seconds and try again.": "Căutarea firmei este ocupată. Așteaptă câteva secunde și încearcă din nou.",
   "Table ordering is disabled at this location. Please contact the restaurant team.": "Comenzile la masă sunt dezactivate în această locație. Te rugăm să contactezi personalul restaurantului.",
   "Use the email address from your restaurant invitation.": "Folosește adresa de email din invitația restaurantului.",
-  "No active tables match the selected area.": "Nu există mese active în sala selectată."
+  "No active tables match the selected area.": "Nu există mese active în sala selectată.",
+  "Enter recipe quantities, cooked yield and servings before calculating nutrition.": "Completează cantitățile rețetei, randamentul după preparare și numărul de porții înainte de calcul.",
+  "No nutrient has complete reference data for every ingredient.": "Niciun nutrient nu are date de referință complete pentru toate ingredientele.",
+  "Calculated from saved ingredient references and cooked yield.": "Calculat din referințele ingredientelor și randamentul după preparare.",
+  "AI nutrition estimates are disabled. Use recipe reference data.": "Estimările nutriționale AI sunt dezactivate. Folosește date de referință pentru rețetă.",
+  "A dietary label conflicts with the declared allergens.": "O etichetă alimentară este incompatibilă cu alergenii declarați.",
+  "The menu changed. Refresh and review the latest content.": "Meniul s-a modificat. Reîmprospătează și verifică datele actuale.",
+  "Menu AI is not configured by the platform administrator.": "AI pentru meniu nu este configurat de administratorul general.",
+  "The platform AI daily limit has been reached.": "Limita AI a platformei pentru 24 de ore a fost atinsă.",
+  "This product is too large for the configured AI request budget.": "Acest preparat depășește volumul permis pentru o cerere AI.",
+  "Resolve unmapped allergens in the editor before publishing source information.": "Completează alergenii fără corespondență în editor înainte de publicarea informațiilor importate.",
+  "Select at least one language.": "Selectează cel puțin o limbă.",
+  "Select a menu with between 1 and 200 products.": "Selectează un meniu cu 1–200 de produse.",
+  "Invalid GloriaFood content.": "Conținut GloriaFood invalid.",
+  "Choose a supported structured-output model.": "Alege un model acceptat pentru răspunsuri structurate.",
+  "Configure an API key before enabling menu AI.": "Configurează o cheie API înainte de activarea asistentului pentru meniuri."
 }

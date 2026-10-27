@@ -22,5 +22,5 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->statefulApi();
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->dontFlash(['secret', 'token', 'qr_token', 'table_session_token']);
+        $exceptions->dontFlash(['secret', 'token', 'qr_token', 'table_session_token', 'api_key']);
     })->create();

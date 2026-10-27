@@ -28,7 +28,7 @@ Romanian is the default even when a browser advertises English. Every applicatio
 
 Selection posts to `/locale`, validates `ro` or `en`, sets an encrypted HttpOnly SameSite=Lax preference cookie for that host and updates a signed-in user's `locale`. The interface switches reactively without a full reload. On subsequent browser requests preference order is cookie, account locale, then Romanian. Stateless API callers may explicitly send `Accept-Language: ro` or `en`; schema keys, IDs, enums and API event names never change language.
 
-Vue I18n catalogues contain over 400 keys per language, with matching-key and encoding checks. PrimeVue labels/ARIA, currency/date presentation, order statuses and primary Laravel validation/auth/password emails are localized. Business content such as restaurant names, menus and product descriptions remains owner-authored; automatic menu-content translation is not implemented.
+Vue I18n catalogues contain over 400 keys per language, with matching-key and encoding checks. PrimeVue labels/ARIA, currency/date presentation, order statuses and primary Laravel validation/auth/password emails are localized. Romanian business content remains owner-authored. The 0.0.17 menu-content module adds optional AI translation/rewrite proposals, locally persisted corrections and explicit publication, independently of the RO/EN interface. See MENU_CONTENT.md.
 
 The API and Echo authorization clients read the current XSRF cookie for each request. They avoid using an obsolete page meta token after an Inertia login rotates the session.
 

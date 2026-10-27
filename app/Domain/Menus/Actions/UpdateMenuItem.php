@@ -33,6 +33,7 @@ class UpdateMenuItem
         $oldMenuId = $item?->category?->menu_id;
 
         return DB::transaction(function () use ($data, $organizationId, $item, $ids, $category, $oldMenuId) {
+            $nutritionNeedsReview = $item && array_key_exists('portion_size', $data) && $item->portion_size !== $data['portion_size'];
             $fields = array_intersect_key($data, array_flip(['category_id', 'name', 'description', 'price', 'tax_basis_points', 'is_available', 'image_path', 'portion_size', 'contains_allergens', 'from_frozen']));
             if ($item) {
                 $item->update($fields);
@@ -48,6 +49,7 @@ class UpdateMenuItem
             if (array_key_exists('ingredient_ids', $data)) {
                 $ingredientIds = $data['ingredient_ids'];
                 $previous = $item->ingredients()->pluck('ingredients.id');
+                $nutritionNeedsReview = $nutritionNeedsReview || $previous->map(fn ($id) => (int) $id)->all() !== array_map('intval', array_values($ingredientIds));
                 $ingredients = Ingredient::withTrashed()->whereIn('id', $ingredientIds)->lockForUpdate()->get();
                 if ($ingredients->count() !== count($ingredientIds) || $ingredients->contains(fn ($i) => ($i->restaurant_id !== null && $i->restaurant_id !== $category->menu->restaurant_id) || ((! $i->is_active || $i->trashed()) && ! $previous->contains($i->id)))) {
                     throw ValidationException::withMessages(['ingredient_ids' => __('Choose available ingredients for this restaurant.')]);
@@ -55,6 +57,11 @@ class UpdateMenuItem
                 $item->ingredients()->sync(collect($ingredientIds)->mapWithKeys(fn ($id, $position) => [$id => ['organization_id' => $organizationId, 'position' => $position]])->all());
             }
             $item->modifierGroups()->sync(collect($ids)->mapWithKeys(fn ($id) => [$id => ['organization_id' => $organizationId]])->all());
+            if ($nutritionNeedsReview && isset($item->content['nutrition'])) {
+                $content = $item->content;
+                $content['nutrition'] = null;
+                $item->update(['content' => $content, 'content_revision' => $item->content_revision + 1]);
+            }
             app(RecordMenuChange::class)->execute($organizationId, $category->menu_id, ['item_id' => $item->public_id]);
             if ($oldMenuId && $oldMenuId !== $category->menu_id) {
                 app(RecordMenuChange::class)->execute($organizationId, $oldMenuId, ['item_id' => $item->public_id, 'removed' => true]);

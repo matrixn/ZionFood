@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ProductPhoto from './ProductPhoto.vue';
+import ProductFoodData from './ProductFoodData.vue';
 import ProductIngredients from '@/components/storefront/ProductIngredients.vue';
 import { computed, ref, watch } from 'vue';
 import Dialog from 'primevue/dialog';
@@ -87,6 +88,7 @@ function add() {
                 {{ product.description }}
             </p>
             <ProductIngredients :product="product" />
+            <ProductFoodData :product="product" />
             <label v-if="product.variants.length" class="field"
                 >{{ $t('size_variant')
                 }}<Select

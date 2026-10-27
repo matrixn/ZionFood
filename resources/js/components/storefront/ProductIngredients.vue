@@ -9,11 +9,11 @@ defineProps<{ product: Product; showPortion?: boolean }>();
             {{ $t('product_serving') }} · {{ product.portion_size }}
         </p>
         <p
-            v-if="product.ingredients?.length"
+            v-if="product.translated_ingredients || product.ingredients?.length"
             :aria-label="$t('ingredients_title')"
             class="text-xs font-normal leading-relaxed text-slate-500 dark:text-slate-400"
         >
-            ({{ product.ingredients.map(ingredientName).join(', ') }})
+            ({{ product.translated_ingredients || product.ingredients?.map(ingredientName).join(', ') }})
         </p>
     </div>
 </template>

@@ -24,7 +24,7 @@ class MenuItem extends Model
 
     use SoftDeletes;
 
-    protected $casts = ['is_available' => 'boolean', 'contains_allergens' => 'boolean', 'from_frozen' => 'boolean'];
+    protected $casts = ['is_available' => 'boolean', 'contains_allergens' => 'boolean', 'from_frozen' => 'boolean', 'content' => 'array', 'content_revision' => 'integer'];
 
     public function ingredients()
     {
