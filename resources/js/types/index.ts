@@ -9,13 +9,23 @@ export interface MenuTranslation {
     groups: Record<string, { name: string; options: Record<string, string> }>;
     source_hash?: string;
 }
+export interface NutritionInputs {
+    portion_grams: number | null;
+    ingredients_text: string;
+    preparation: string;
+}
 export interface Nutrition {
+    method?: string;
+    portion_grams?: number;
+    per_serving?: Record<string, number | null>;
+    assumptions?: string[];
     basis: string;
     values: Record<string, number | null>;
     reference?: string;
     estimated: boolean;
 }
 export interface MenuContent {
+    nutrition_inputs?: NutritionInputs;
     allergens: string[];
     may_contain: string[];
     labels: string[];

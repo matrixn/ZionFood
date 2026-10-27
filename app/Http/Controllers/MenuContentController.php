@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Menus\GloriaFoodContent;
 use App\Domain\Menus\ManageMenuContent;
 use App\Domain\Menus\MenuAi;
 use App\Domain\Menus\MenuContent;
+use App\Domain\Menus\NutritionEstimate;
 use App\Domain\Tenancy\TenantAccess;
 use App\Models\MenuAiSetting;
 use App\Models\MenuContentDraft;
 use App\Models\MenuItem;
 use App\Models\RestaurantLocation;
+use App\Models\WorkspaceNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -26,30 +27,59 @@ class MenuContentController extends Controller
         return $context;
     }
 
-    private function item(Request $request, RestaurantLocation $location, string $item): MenuItem
+    private function item(Request $request, RestaurantLocation $location, string $item, bool $write = true): MenuItem
     {
         $model = MenuItem::where('public_id', $item)->firstOrFail();
-        app(ManageMenuContent::class)->authorize($request->user(), $location, $model);
+        app(ManageMenuContent::class)->authorize($request->user(), $location, $model, $write);
 
         return $model;
+    }
+
+    private function current(Request $request, RestaurantLocation $location, MenuItem $item): array
+    {
+        $schema = app(MenuContent::class);
+        $item->loadMissing('variants', 'modifierGroups.options', 'ingredients', 'category.menu');
+
+        return [...$item->only('public_id', 'name', 'description', 'image_path', 'portion_size'),
+            'product' => $item, 'content' => $item->content ?? $schema->empty(), 'hash' => $schema->hash($item),
+            'nutrition_inputs' => app(NutritionEstimate::class)->inputs($item),
+            'writable' => app(TenantAccess::class)->canMenu($request->user(), $location->organization_id, $item->category->menu_id),
+            'drafts' => MenuContentDraft::where('location_id', $location->id)->where('item_id', $item->id)->latest()->limit(30)->get(['public_id', 'kind', 'status', 'created_at'])];
     }
 
     public function index(Request $request, string $location)
     {
         $context = $this->location($request, $location);
-        $items = MenuItem::where('organization_id', $context->organization_id)->whereHas('category', fn ($q) => $q->whereIn('menu_id', $context->menus()->pluck('menus.id')))->orderBy('id')->get();
+        $items = MenuItem::where('organization_id', $context->organization_id)->whereHas('category', fn ($q) => $q->whereIn('menu_id', $context->menus()->pluck('menus.id')))->with('category')->orderBy('id')->get();
         $current = $request->query('item') ? $items->firstWhere('public_id', $request->query('item')) : $items->first();
         abort_if($request->query('item') && ! $current, 404);
-        $schema = app(MenuContent::class);
-        $canWrite = $current && app(TenantAccess::class)->canMenu($request->user(), $context->organization_id, $current->category->menu_id);
 
         return Inertia::render('restaurant/MenuContent', [
             ...app(WorkspaceController::class)->workspaceProps($request, $location, 'menu'),
-            'items' => $items->map(fn ($item) => $item->only('public_id', 'name')),
-            'current' => $current ? [...$current->only('public_id', 'name', 'description'), 'content' => $current->content ?? $schema->empty(), 'hash' => $schema->hash($current), 'translationHash' => $schema->translationHash($current), 'source' => $schema->source($current)] : null,
-            'drafts' => $current ? MenuContentDraft::where('location_id', $context->id)->where('organization_id', $context->organization_id)->where('item_id', $current->id)->latest()->limit(30)->get() : [],
-            'contentWritable' => (bool) $canWrite, 'languages' => config('menu-content.languages'), 'allergenCodes' => MenuContent::ALLERGENS, 'labelCodes' => MenuContent::LABELS, 'nutrientCodes' => MenuContent::NUTRIENTS, 'aiReady' => app(MenuAi::class)->ready(),
+            'items' => $items->map(fn ($item) => [...$item->only('public_id', 'name', 'image_path', 'portion_size'), 'category' => $item->category->name, 'has_nutrition' => isset($item->content['nutrition']), 'translation_count' => count($item->content['translations'] ?? [])]),
+            'current' => $current ? $this->current($request, $context, $current) : null,
+            'languages' => config('menu-content.languages'), 'aiReady' => app(MenuAi::class)->ready(),
         ]);
+    }
+
+    public function itemData(Request $request, string $location, string $item)
+    {
+        $context = $this->location($request, $location);
+
+        return response()->json($this->current($request, $context, $this->item($request, $context, $item, false)));
+    }
+
+    public function detail(Request $request, string $location, string $draft)
+    {
+        $context = $this->location($request, $location);
+        $model = MenuContentDraft::where('public_id', $draft)->where('location_id', $context->id)->where('organization_id', $context->organization_id)->firstOrFail();
+        $item = MenuItem::findOrFail($model->item_id);
+        app(ManageMenuContent::class)->authorize($request->user(), $context, $item, false);
+
+        return response()->json([...$model->only('public_id', 'kind', 'status', 'proposal', 'report', 'error_code', 'created_at'),
+            'item_name' => $item->name, 'location' => $context->public_id, 'item' => $item->public_id,
+            'source_current' => hash_equals($model->source_hash, app(MenuContent::class)->hash($item)),
+            'can_write' => app(TenantAccess::class)->canMenu($request->user(), $context->organization_id, $item->category->menu_id)]);
     }
 
     public function save(Request $request, string $location, string $item)
@@ -65,45 +95,31 @@ class MenuContentController extends Controller
     public function generate(Request $request, string $location)
     {
         $context = $this->location($request, $location, true);
-        $data = $request->validate(['item' => ['nullable', 'string'], 'kind' => ['required', Rule::in(['translate', 'suggest', 'rewrite', 'calculation'])], 'languages' => ['present', 'array', 'max:3'], 'languages.*' => ['string', 'distinct', Rule::in(array_keys(config('menu-content.languages')))]]);
+        $data = $request->validate(['item' => ['nullable', 'string'], 'kind' => ['required', Rule::in(['translate', 'suggest', 'rewrite', 'nutrition', 'analyze'])], 'options' => ['sometimes', 'array', 'max:4'], 'options.*' => ['string', 'distinct', Rule::in(['nutrition', 'food', 'rewrite', 'translate'])], 'languages' => ['present', 'array', 'max:3'], 'languages.*' => ['string', 'distinct', Rule::in(array_keys(config('menu-content.languages')))]]);
         abort_if($data['kind'] === 'translate' && ! $data['languages'], 422, __('Select at least one language.'));
         abort_if(! ($data['item'] ?? null) && $data['kind'] !== 'translate', 422);
         $items = $data['item'] ?? null ? collect([$this->item($request, $context, $data['item'])]) : MenuItem::where('organization_id', $context->organization_id)->whereHas('category', fn ($q) => $q->whereIn('menu_id', $context->menus()->pluck('menus.id')))->get();
         abort_if($items->isEmpty() || $items->count() > 200, 422, __('Select a menu with between 1 and 200 products.'));
         $drafts = DB::transaction(function () use ($items, $request, $context, $data) {
-            return $items->map(fn ($item) => app(ManageMenuContent::class)->draft($request->user(), $context, $item, $data['kind'], $data['kind'] === 'translate' ? $data['languages'] : []));
+            return $items->map(fn ($item) => app(ManageMenuContent::class)->draft($request->user(), $context, $item, $data['kind'], $data['languages'], $data['options'] ?? []));
         });
 
         return response()->json(['queued' => $drafts->count()], 202);
-    }
-
-    public function import(Request $request, string $location, string $item)
-    {
-        $context = $this->location($request, $location, true);
-        $model = $this->item($request, $context, $item);
-        $data = $request->validate(['source_item' => ['required', 'array']]);
-        abort_if(strlen(json_encode($data['source_item'], JSON_THROW_ON_ERROR)) > 131072, 422);
-        try {
-            $import = app(GloriaFoodContent::class)->read($data['source_item']);
-        } catch (\TypeError|\ValueError $e) {
-            abort(422, __('Invalid GloriaFood content.'));
-        }
-        app(ManageMenuContent::class)->draft($request->user(), $context, $model, 'gloriafood', [], $import);
-
-        return response()->json(['staged' => true], 201);
     }
 
     public function review(Request $request, string $location, string $draft)
     {
         $context = $this->location($request, $location, true);
         $model = MenuContentDraft::where('public_id', $draft)->where('location_id', $context->id)->where('organization_id', $context->organization_id)->firstOrFail();
-        $data = $request->validate(['action' => ['required', Rule::in(['approve', 'reject'])]]);
+        $data = $request->validate(['action' => ['required', Rule::in(['approve', 'reject'])], 'changes' => ['sometimes', 'array:allergens,may_contain,labels,description,translations'], 'sections' => ['sometimes', 'array', 'min:1'], 'sections.*' => ['string', 'distinct']]);
         if ($data['action'] === 'approve') {
-            app(ManageMenuContent::class)->approve($request->user(), $context, $model);
+            app(ManageMenuContent::class)->approve($request->user(), $context, $model, $data['sections'] ?? null, $data['changes'] ?? []);
         } else {
             app(ManageMenuContent::class)->authorize($request->user(), $context, MenuItem::findOrFail($model->item_id));
             abort_unless(MenuContentDraft::whereKey($model->id)->where('status', 'ready')->update(['status' => 'rejected', 'reviewed_by' => $request->user()->id, 'reviewed_at' => now()]), 409);
         }
+
+        WorkspaceNotification::where('user_id', $request->user()->id)->where('draft_id', $model->id)->update(['read_at' => now()]);
 
         return response()->json(['reviewed' => true]);
     }

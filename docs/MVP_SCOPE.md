@@ -1,6 +1,6 @@
-# Scope at 0.0.18
+# Scope at 0.0.19
 
-0.0.17 adds the reviewed menu-content editor, persistent menu translations, scoped food-metadata import adapter, recipe-based nutrition arithmetic and encrypted platform-configured Groq/OpenAI processing. AI nutrition estimation is explicitly excluded by user choice. Full GloriaFood API fetching, complete variant/modifier compatibility, inactive-version publication, reimport and rollback remain planned as documented in MENU_CONTENT.md. The AI provider must be configured before real generation; validation fixtures do not perform live provider calls.
+0.0.19 introduces a dish-first automatic generation workspace, combined AI tasks, approximate one-portion nutrition and durable live review notifications. It replaces the earlier manual reference calculator and retires the manual GloriaFood JSON metadata workflow. Published data remains local and requires review. Full automated whole-menu migration, reimport and rollback remain future work in MENU_CONTENT.md; provider/estimation quality must be validated with a real authorized restaurant.
 
 ## Implemented
 

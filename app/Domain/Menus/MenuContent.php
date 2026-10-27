@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 
 class MenuContent
 {
-    public const SCHEMA_VERSION = 1;
+    public const SCHEMA_VERSION = 2;
 
     public const ALLERGENS = ['gluten', 'crustaceans', 'eggs', 'fish', 'peanuts', 'soy', 'milk', 'nuts', 'celery', 'mustard', 'sesame', 'sulphites', 'lupin', 'molluscs'];
 
@@ -23,7 +23,15 @@ class MenuContent
             'allergens' => ['present', 'array', 'max:14'], 'allergens.*' => ['string', 'distinct', Rule::in(self::ALLERGENS)],
             'may_contain' => ['present', 'array', 'max:14'], 'may_contain.*' => ['string', 'distinct', Rule::in(self::ALLERGENS)],
             'labels' => ['present', 'array', 'max:8'], 'labels.*' => ['string', 'distinct', Rule::in(self::LABELS)],
-            'nutrition' => ['nullable', 'array:basis,values,reference,estimated'],
+            'nutrition' => ['nullable', 'array:basis,values,reference,estimated,method,portion_grams,per_serving,assumptions'],
+            'nutrition.method' => ['sometimes', 'in:ai_estimate'],
+            'nutrition.portion_grams' => ['nullable', 'numeric', 'min:1', 'max:10000'],
+            'nutrition.per_serving' => ['sometimes', 'array:'.implode(',', self::NUTRIENTS)],
+            'nutrition.assumptions' => ['sometimes', 'array', 'max:8'], 'nutrition.assumptions.*' => ['string', 'max:500'],
+            'nutrition_inputs' => ['sometimes', 'array:portion_grams,ingredients_text,preparation'],
+            'nutrition_inputs.portion_grams' => ['nullable', 'numeric', 'min:1', 'max:10000'],
+            'nutrition_inputs.ingredients_text' => ['nullable', 'string', 'max:3000'],
+            'nutrition_inputs.preparation' => ['nullable', 'string', 'max:500'],
             'nutrition.basis' => ['required_with:nutrition', Rule::in(['per_100g', 'per_100ml', 'per_serving'])],
             'nutrition.reference' => ['required_with:nutrition', 'string', 'max:500'], 'nutrition.estimated' => ['required_with:nutrition', 'boolean'],
             'nutrition.values' => ['required_with:nutrition', 'array:'.implode(',', self::NUTRIENTS)],
@@ -40,6 +48,7 @@ class MenuContent
             $max = str_starts_with($key, 'energy_') ? 10000 : 100;
             $rules['nutrition.values.'.$key] = ['nullable', 'numeric', 'min:0', 'max:'.(in_array($data['nutrition']['basis'] ?? null, ['per_100g', 'per_100ml'], true) ? $max : $max * 100)];
             $rules['recipe.*.values.'.$key] = ['nullable', 'numeric', 'min:0', 'max:'.$max];
+            $rules['nutrition.per_serving.'.$key] = ['nullable', 'numeric', 'min:0', 'max:1000000'];
         }
         foreach (array_keys(config('menu-content.languages')) as $language) {
             $rules['translations.'.$language] = ['sometimes', 'array:name,description,ingredients_text,portion_size,category_name,menu_name,variants,groups,source_hash'];
@@ -56,8 +65,8 @@ class MenuContent
             $rules["translations.$language.groups.*.options.*"] = ['string', 'max:100'];
         }
         $validated = Validator::make($data, $rules)->validate();
-        if ($validated['nutrition']['estimated'] ?? false) {
-            throw ValidationException::withMessages(['nutrition' => __('AI nutrition estimates are disabled. Use recipe reference data.')]);
+        if (($validated['nutrition']['method'] ?? null) === 'ai_estimate' && ! ($validated['nutrition']['estimated'] ?? false)) {
+            throw ValidationException::withMessages(['nutrition' => __('AI nutritional values must remain labelled as estimates.')]);
         }
         $allergens = $validated['allergens'];
         $conflicts = ['gluten_free' => ['gluten'], 'dairy_free' => ['milk'], 'nut_free' => ['nuts', 'peanuts'], 'vegan' => ['milk', 'eggs', 'fish', 'crustaceans', 'molluscs'], 'vegetarian' => ['fish', 'crustaceans', 'molluscs']];
@@ -98,6 +107,6 @@ class MenuContent
         $hash = $this->translationHash($item);
         $translations = array_filter($content['translations'] ?? [], fn ($row) => ($row['source_hash'] ?? null) === $hash);
 
-        return ['allergens' => $content['allergens'] ?? [], 'may_contain' => $content['may_contain'] ?? [], 'labels' => $content['labels'] ?? [], 'nutrition' => isset($content['nutrition']) ? array_intersect_key($content['nutrition'], array_flip(['basis', 'values', 'estimated'])) : null, 'translations' => $translations];
+        return ['allergens' => $content['allergens'] ?? [], 'may_contain' => $content['may_contain'] ?? [], 'labels' => $content['labels'] ?? [], 'nutrition' => isset($content['nutrition']) ? array_intersect_key($content['nutrition'], array_flip(['basis', 'values', 'estimated', 'portion_grams', 'per_serving'])) : null, 'translations' => $translations];
     }
 }

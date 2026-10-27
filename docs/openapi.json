@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ZionFood API",
-    "version": "0.0.18",
+    "version": "0.0.19",
     "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session."
   },
   "servers": [
@@ -2583,7 +2583,7 @@
       },
       "MenuFoodContent": {
         "type": "object",
-        "description": "Reviewed local menu metadata, schema version 1. Imported and AI-proposed values remain private drafts until explicit approval. Nutrition uses recipe reference arithmetic, never AI estimates. Public responses omit recipes and supplier references.",
+        "description": "Reviewed local menu metadata, canonical version 2. AI proposals remain private until explicit approval. Nutritional estimates are clearly labelled and normalized to one portion and per 100 g. Legacy declared values remain compatible. Public responses omit analysis inputs, recipes, references and private reports.",
         "properties": {
           "allergens": {
             "type": "array",
@@ -2653,9 +2653,21 @@
               },
               "estimated": {
                 "type": "boolean",
-                "enum": [
-                  false
-                ]
+                "description": "True for AI estimates; clients must display an explicit estimate label."
+              },
+              "portion_grams": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 10000,
+                "description": "Finished weight of one portion, when known."
+              },
+              "per_serving": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number",
+                  "nullable": true
+                },
+                "description": "Same nutrient keys as values, for exactly one portion."
               }
             },
             "nullable": true

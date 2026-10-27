@@ -57,9 +57,10 @@ class UpdateMenuItem
                 $item->ingredients()->sync(collect($ingredientIds)->mapWithKeys(fn ($id, $position) => [$id => ['organization_id' => $organizationId, 'position' => $position]])->all());
             }
             $item->modifierGroups()->sync(collect($ids)->mapWithKeys(fn ($id) => [$id => ['organization_id' => $organizationId]])->all());
-            if ($nutritionNeedsReview && isset($item->content['nutrition'])) {
+            if ($nutritionNeedsReview && $item->content) {
                 $content = $item->content;
                 $content['nutrition'] = null;
+                unset($content['nutrition_inputs']);
                 $item->update(['content' => $content, 'content_revision' => $item->content_revision + 1]);
             }
             app(RecordMenuChange::class)->execute($organizationId, $category->menu_id, ['item_id' => $item->public_id]);

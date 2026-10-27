@@ -1,8 +1,5 @@
 <?php
 
-use App\Domain\Menus\Actions\UpdateMenuItem;
-use App\Domain\Menus\CalculateNutrition;
-use App\Domain\Menus\GloriaFoodContent;
 use App\Domain\Menus\ManageMenuContent;
 use App\Domain\Menus\MenuAi;
 use App\Domain\Menus\MenuContent;
@@ -79,15 +76,6 @@ function menuRecipe(): array
     ]];
 }
 
-it('calculates from recipe references and cooked yield without inventing missing nutrients', function () {
-    $result = app(CalculateNutrition::class)->calculate(menuRecipe());
-    expect($result['values']['energy_kcal'])->toBe(208.333)->and($result['per_serving']['energy_kcal'])->toBe(250.0)->and($result['values']['protein_g'])->toBe(20.833)->and($result['values']['salt_g'])->toBeNull()->and($result['estimated'])->toBeFalse();
-    expect(fn () => app(CalculateNutrition::class)->calculate(app(MenuContent::class)->empty()))->toThrow(ValidationException::class);
-    $content = menuRecipe();
-    $content['recipe'][0]['reference'] = '';
-    expect(fn () => app(CalculateNutrition::class)->calculate($content))->toThrow(ValidationException::class);
-});
-
 it('saves food information and manual translations with stale write protection and public field filtering', function () {
     [$owner, $location, $item] = tenantFixture('content-save');
     $schema = app(MenuContent::class);
@@ -103,47 +91,11 @@ it('saves food information and manual translations with stale write protection a
     $this->get('/restaurant/'.$location->restaurant->slug)->assertOk();
 });
 
-it('rejects unknown allergen codes contradictory labels and AI nutritional estimates', function () {
+it('rejects unknown allergen codes contradictory labels and unlabelled AI nutritional estimates', function () {
     $schema = app(MenuContent::class);
     expect(fn () => $schema->validate([...$schema->empty(), 'allergens' => ['999']]))->toThrow(ValidationException::class);
     expect(fn () => $schema->validate([...$schema->empty(), 'allergens' => ['milk'], 'labels' => ['vegan']]))->toThrow(ValidationException::class);
-    expect(fn () => $schema->validate([...$schema->empty(), 'nutrition' => ['basis' => 'per_100g', 'values' => ['protein_g' => 5], 'estimated' => true, 'reference' => 'An unsupported AI estimate']]))->toThrow(ValidationException::class);
-});
-
-it('stages GloriaFood food data without guessing internal allergen or nutrient identifiers', function () {
-    $source = ['id' => 58426, 'name' => 'Source dish', 'tags' => ['VEGETARIAN', 'UNKNOWN'], 'extras' => ['menu_item_allergens_values' => [['id' => 1, 'name' => 'Milk'], ['id' => 7, 'name' => 'Shellfish']], 'menu_item_nutritional_values' => [['id' => 9, 'value' => '123']], 'menu_item_nutritional_values_size' => 'per_100g']];
-    $import = app(GloriaFoodContent::class)->read($source);
-    expect($import['proposal']['allergens'])->toBe(['milk'])->and($import['proposal']['labels'])->toBe(['vegetarian'])->and($import['proposal'])->not->toHaveKey('nutrition')->and($import['report']['unmapped_allergens'][0]['name'])->toBe('Shellfish')->and($import['report']['unmapped_nutrition'][0]['id'])->toBe(9);
-    [$owner, $location, $item] = tenantFixture('content-gloria');
-    $base = '/app/locations/'.$location->public_id.'/menu-content';
-    $this->actingAs($owner)->postJson($base.'/items/'.$item->public_id.'/gloriafood', ['source_item' => $source])->assertCreated();
-    $draft = MenuContentDraft::firstOrFail();
-    expect($item->fresh()->content)->toBeNull()->and($draft->getRawOriginal('input'))->not->toContain('Source dish')->and($draft->getRawOriginal('proposal'))->not->toContain('milk');
-    $this->postJson($base.'/drafts/'.$draft->public_id, ['action' => 'approve'])->assertUnprocessable();
-    $this->postJson($base.'/drafts/'.$draft->public_id, ['action' => 'reject'])->assertOk();
-    expect($item->fresh()->content)->toBeNull();
-});
-
-it('publishes a reviewed recipe calculation and invalidates it when its recipe changes', function () {
-    [$owner, $location, $item] = tenantFixture('content-calculation');
-    $schema = app(MenuContent::class);
-    $manager = app(ManageMenuContent::class);
-    $item = $manager->save($owner, $location, $item, menuRecipe(), $schema->hash($item));
-    $draft = $manager->draft($owner, $location, $item, 'calculation');
-    expect($item->fresh()->content['nutrition'])->toBeNull()->and($draft->proposal['nutrition']['values']['energy_kcal'])->toBe(208.333);
-    $manager->approve($owner, $location, $draft);
-    expect($item->fresh()->content['nutrition']['values']['energy_kcal'])->toBe(208.333)->and($draft->fresh()->reviewed_by)->toBe($owner->id);
-    $item = $item->fresh();
-    $content = $item->content;
-    $content['yield_grams'] = 400;
-    $manager->save($owner, $location, $item, $content, $schema->hash($item));
-    expect($item->fresh()->content['nutrition'])->toBeNull();
-    $item = $item->fresh();
-    $calculation = $manager->draft($owner, $location, $item, 'calculation');
-    $manager->approve($owner, $location, $calculation);
-    $item = $item->fresh();
-    app(UpdateMenuItem::class)->execute($owner, $location->organization_id, ['category_id' => $item->category_id, 'name' => $item->name, 'price' => $item->price, 'portion_size' => 'A changed serving', 'is_available' => true], $item);
-    expect($item->fresh()->content['nutrition'])->toBeNull();
+    expect(fn () => $schema->validate([...$schema->empty(), 'nutrition' => ['basis' => 'per_100g', 'values' => ['protein_g' => 5], 'estimated' => false, 'method' => 'ai_estimate', 'reference' => 'AI estimate']]))->toThrow(ValidationException::class);
 });
 
 it('enforces location and feature access for content drafts reads saves and review', function () {

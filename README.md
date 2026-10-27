@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.18** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.19** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,16 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 27 octombrie 2026 — generare automată și notificări · 0.0.19
+
+- [x] Pagină refăcută în jurul preparatului: căutare, fotografie, categorie, date preluate automat și doi pași simpli, cu acțiunea principală mereu la îndemână.
+- [x] Nutriție estimativă din ingrediente și gramajul final pentru **o singură porție**, cu conversie automată la 100 g; fără introducerea manuală a valorilor pe ingredient.
+- [x] O singură cerere pentru nutriție, alergeni/etichete, rescriere și limbile alese; rezultat local, corectabil și publicat numai după aprobare.
+- [x] Notificări în dreapta sus, inbox persistent și modal cu rezultate, corecturi și aprobare pe secțiuni; actualizare în fundal prin Reverb sau verificare automată, fără refresh manual.
+- [x] Eliminat importul manual JSON „Date alimentare din GloriaFood” și vechiul calculator manual. Datele deja publicate sunt păstrate; propunerile de import retrase sunt eliminate la migrare.
+- [x] Etichetă explicită de estimare AI pe meniul public; verificări pentru valori imposibile, sursă modificată și accesul angajaților.
+- [ ] Verificarea calității estimărilor cu un meniu real și furnizorul configurat; valorile sunt aproximative, nu măsurători de laborator. [Detalii](docs/MENU_CONTENT.md).
 
 ### 27 octombrie 2026 — corecție schemă Groq · 0.0.18
 

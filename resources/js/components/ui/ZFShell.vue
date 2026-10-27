@@ -5,7 +5,7 @@ import { computed, ref } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
-import Toast from 'primevue/toast';
+import WorkspaceNotifications from '@/components/ui/WorkspaceNotifications.vue';
 import LanguageSelector from '@/components/ui/LanguageSelector.vue';
 import type { Location, FeaturePermissions, StaffFeature } from '@/types';
 const props = defineProps<{
@@ -107,7 +107,6 @@ function switchLocation(id: string) {
 </script>
 <template>
     <div class="min-h-screen">
-        <Toast />
         <header
             class="flex min-h-20 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 py-4 dark:border-slate-700 dark:bg-slate-900 md:px-8"
         >
@@ -133,6 +132,7 @@ function switchLocation(id: string) {
                 }}</span>
             </div>
             <div class="flex items-center gap-1.5">
+                <WorkspaceNotifications />
                 <Button
                     :icon="dark ? 'pi pi-sun' : 'pi pi-moon'"
                     text
@@ -241,13 +241,6 @@ function switchLocation(id: string) {
                 <p class="muted mt-8 text-xs">ZionFood v{{ page.props.version }}</p>
             </aside>
             <main class="min-w-0 flex-1 p-5 md:p-9">
-                <div
-                    v-if="(page.props.flash as { success?: string })?.success"
-                    role="status"
-                    class="mb-5 rounded-xl bg-emerald-50 p-4 text-emerald-800"
-                >
-                    {{ (page.props.flash as { success: string }).success }}
-                </div>
                 <slot />
             </main>
         </div>

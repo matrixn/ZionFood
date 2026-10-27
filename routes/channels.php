@@ -10,3 +10,5 @@ Broadcast::channel('organization.{organization}.location.{location}.orders', fun
 
     return $context && (app(TenantAccess::class)->canFeature($user, $context, 'orders') || app(TenantAccess::class)->canFeature($user, $context, 'kitchen'));
 });
+
+Broadcast::channel('user.{recipient}.notifications', fn (User $user, int $recipient) => $user->id === $recipient);

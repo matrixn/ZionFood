@@ -17,4 +17,14 @@ class MenuContentDraft extends Model
     {
         static::creating(fn ($record) => $record->public_id ??= (string) Str::ulid());
     }
+
+    public function item()
+    {
+        return $this->belongsTo(MenuItem::class, 'item_id');
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(RestaurantLocation::class, 'location_id');
+    }
 }

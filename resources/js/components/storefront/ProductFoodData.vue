@@ -33,6 +33,12 @@ defineProps<{ product: Product; compact?: boolean }>();
             <summary class="cursor-pointer font-medium">
                 {{ label('mc_nutrition') }} · {{ label('mc_' + product.content.nutrition.basis) }}
             </summary>
+            <p v-if="product.content.nutrition.estimated" class="mt-2 text-xs text-amber-700">
+                {{ label('auto_estimated_short') }}
+            </p>
+            <p v-if="product.content.nutrition.portion_grams" class="mt-2 text-xs">
+                {{ label('mc_per_serving') }}: {{ product.content.nutrition.portion_grams }} g
+            </p>
             <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
                 <template v-for="(value, key) in product.content.nutrition.values" :key="key"
                     ><dt>{{ label('mc_nutrient_' + key) }}</dt>

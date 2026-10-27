@@ -407,8 +407,6 @@ tests/load/ordering.js
 tsconfig.json
 vite.config.ts
 vitest.config.ts
-app/Domain/Menus/CalculateNutrition.php
-app/Domain/Menus/GloriaFoodContent.php
 app/Domain/Menus/ManageMenuContent.php
 app/Domain/Menus/MenuAi.php
 app/Domain/Menus/MenuContent.php
@@ -438,3 +436,14 @@ resources/js/pages/restaurant/MenuContent.vue
 tests/Feature/MenuContentTest.php
 tests/e2e/menu-content.spec.ts
 tests/frontend/menuContent.test.ts
+
+app/Domain/Menus/CompleteMenuContent.php
+app/Domain/Menus/NutritionEstimate.php
+app/Events/WorkspaceNotificationChanged.php
+app/Http/Controllers/WorkspaceNotificationController.php
+app/Models/WorkspaceNotification.php
+database/migrations/2026_10_27_001000_add_workspace_notifications.php
+resources/js/components/ui/WorkspaceNotifications.vue
+resources/js/lib/menuNotifications.ts
+tests/Feature/MenuAutomationTest.php
+tests/frontend/menuNotifications.test.ts

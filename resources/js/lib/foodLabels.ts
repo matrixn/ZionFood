@@ -96,6 +96,22 @@ export const foodVocabularies = Object.fromEntries(
     ]),
 ) as Record<string, Record<string, string>>;
 export function foodLabel(language: string, key: string, fallback: (key: string) => string): string {
+    if (key === 'auto_estimated_short')
+        return (
+            (
+                {
+                    de: 'Geschätzte Werte · KI',
+                    fr: 'Valeurs estimées · IA',
+                    it: 'Valori stimati · IA',
+                    es: 'Valores estimados · IA',
+                    hu: 'Becsült értékek · MI',
+                    uk: 'Орієнтовні значення · ШІ',
+                    bg: 'Приблизителни стойности · ИИ',
+                    tr: 'Tahmini değerler · YZ',
+                    pl: 'Wartości szacunkowe · AI',
+                } as Record<string, string>
+            )[language] ?? fallback(key)
+        );
     return foodVocabularies[language]?.[key] ?? fallback(key);
 }
 export { allergenCodes };

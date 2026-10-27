@@ -1,652 +1,752 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { Head, router, Link } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
+import { Head } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import Textarea from 'primevue/textarea';
-import Select from 'primevue/select';
 import MultiSelect from 'primevue/multiselect';
+import Checkbox from 'primevue/checkbox';
+import Dialog from 'primevue/dialog';
+import { useToast } from 'primevue/usetoast';
+import MenuItemEditor from '@/components/menu/MenuItemEditor.vue';
+import ProductFoodData from '@/components/storefront/ProductFoodData.vue';
 import { tr as t } from '@/i18n';
 import { api } from '@/lib/http';
 import { normalizeMenuContent } from '@/lib/menuContent';
 import { useSetupEditorGuard } from '@/lib/useSetupEditorGuard';
-import type { WorkspaceProps, MenuContent, MenuTranslation } from '@/types';
-interface Draft {
+import { useMenuNotifications } from '@/lib/menuNotifications';
+import { allergenCodes } from '@/lib/foodLabels';
+import type { WorkspaceProps, MenuContent, NutritionInputs, Product, Menu, ModifierGroup, Ingredient } from '@/types';
+interface Choice {
     public_id: string;
-    kind: string;
-    status: string;
-    source_hash: string;
-    error_code: string | null;
-    proposal: Partial<MenuContent> & { description?: string };
-    report: Record<string, unknown> | null;
+    name: string;
+    category: string;
+    image_path: string | null;
+    portion_size: string | null;
+    has_nutrition: boolean;
+    translation_count: number;
+}
+interface Current {
+    public_id: string;
+    name: string;
+    description: string | null;
+    image_path: string | null;
+    product: Product;
+    content: MenuContent;
+    hash: string;
+    nutrition_inputs: NutritionInputs;
+    writable: boolean;
+    drafts: { public_id: string; kind: string; status: string; created_at: string }[];
 }
 const props = defineProps<
     WorkspaceProps & {
-        items: { public_id: string; name: string }[];
-        current: {
-            public_id: string;
-            name: string;
-            content: MenuContent;
-            hash: string;
-            translationHash: string;
-            source: {
-                variants: { id: number; name: string }[];
-                groups: { id: number; name: string; options: { id: number; name: string }[] }[];
-            };
-        } | null;
-        contentWritable: boolean;
+        items: Choice[];
+        current: Current | null;
+        menus: Menu[];
+        groups: ModifierGroup[];
+        ingredients: Ingredient[];
         languages: Record<string, string>;
-        allergenCodes: string[];
-        labelCodes: string[];
-        nutrientCodes: string[];
-        drafts: Draft[];
         aiReady: boolean;
     }
 >();
-function clone<T>(value: T): T {
-    return JSON.parse(JSON.stringify(value));
-}
-const selected = ref(props.current?.public_id);
-const content = ref<MenuContent>(
-    normalizeMenuContent(
-        props.current?.content ?? {
-            allergens: [],
-            may_contain: [],
-            labels: [],
-            nutrition: null,
-            translations: {},
-            recipe: [],
-            yield_grams: null,
-            servings: null,
-        },
+const current = ref<Current | null>(props.current);
+const inputs = ref<NutritionInputs>({
+    ...(props.current?.nutrition_inputs ?? { portion_grams: null, ingredients_text: '', preparation: '' }),
+});
+const initial = ref(JSON.stringify(inputs.value));
+const dirty = computed(() => JSON.stringify(inputs.value) !== initial.value);
+const search = ref('');
+const choices = ref(props.items);
+const filtered = computed(() =>
+    choices.value.filter((item) =>
+        (item.name + ' ' + item.category).toLocaleLowerCase().includes(search.value.toLocaleLowerCase()),
     ),
 );
-const initial = ref(JSON.stringify(content.value));
-const editingHash = ref(props.current?.hash);
-const dirty = computed(() => JSON.stringify(content.value) !== initial.value);
+const options = ref(['nutrition', 'food']);
 const targetLanguages = ref<string[]>([]);
-const language = ref('en');
-const busy = ref(false);
-const error = ref('');
-const importItems = ref<{ id: number; name: string; tags?: string[]; extras?: unknown; sizes?: unknown[] }[]>([]);
-const importId = ref<number>();
-const base = `/app/locations/${props.location.public_id}/menu-content`;
 const languageOptions = computed(() => Object.entries(props.languages).map(([code, name]) => ({ code, name })));
+const tasks = computed(() => [
+    { code: 'nutrition', icon: 'pi-chart-bar', name: t('mc_nutrition'), hint: t('auto_nutrition_hint') },
+    { code: 'food', icon: 'pi-shield', name: t('auto_food'), hint: t('auto_food_hint') },
+    { code: 'rewrite', icon: 'pi-pencil', name: t('auto_rewrite'), hint: t('auto_rewrite_hint') },
+    { code: 'translate', icon: 'pi-language', name: t('mc_translations'), hint: t('auto_translate_hint') },
+]);
+const busy = ref(false);
+const loading = ref(false);
+const error = ref('');
+const history = ref(false);
+const published = ref(false);
+const editor = ref(false);
+const queued = ref(false);
+const bulk = ref(false);
+const bulkLanguages = ref<string[]>([]);
+const publishedContent = ref<MenuContent | null>(null);
+const publishedHash = ref('');
+const publishedError = ref('');
+const manualLanguage = ref('en');
 const allergenOptions = computed(() =>
-    props.allergenCodes.map((code, i) => ({ code, name: t('allergen_group_' + (i + 1)) })),
+    allergenCodes.map((code, index) => ({ code, name: t('allergen_group_' + (index + 1)) })),
 );
-const labelOptions = computed(() => props.labelCodes.map((code) => ({ code, name: t('mc_label_' + code) })));
-async function run(task: () => Promise<unknown>) {
-    busy.value = true;
-    error.value = '';
-    try {
-        await task();
-        initial.value = JSON.stringify(content.value);
-        router.reload({ onSuccess: sync });
-    } catch (e) {
-        error.value = (e as Error).message;
-    } finally {
-        busy.value = false;
-    }
-}
-function sync() {
-    if (props.current) {
-        content.value = normalizeMenuContent(props.current.content);
-        initial.value = JSON.stringify(content.value);
-        editingHash.value = props.current.hash;
-    }
-}
-function refresh() {
-    if (dirty.value && !confirm(t('mc_discard'))) return;
-    router.reload({ onSuccess: sync });
-}
-useSetupEditorGuard(
-    () => true,
-    () => dirty.value && !busy.value,
+const foodOptions = computed(() =>
+    ['vegetarian', 'vegan', 'gluten_free', 'halal', 'nut_free', 'dairy_free', 'hot', 'raw'].map((code) => ({
+        code,
+        name: t('mc_label_' + code),
+    })),
 );
-function choose(id: string) {
-    if (dirty.value && !confirm(t('mc_discard'))) return;
-    router.get(base, { item: id });
+function openPublished() {
+    if (!current.value) return;
+    publishedContent.value = normalizeMenuContent(current.value.content);
+    publishedHash.value = current.value.hash;
+    publishedError.value = '';
+    published.value = true;
 }
-function save() {
-    if (props.current)
-        void run(() =>
-            api(`${base}/items/${props.current!.public_id}`, 'PUT', {
-                content: content.value,
-                hash: editingHash.value,
-            }),
-        );
-}
-function generate(kind: string, all = false) {
-    if (dirty.value) {
-        error.value = t('mc_save_first');
-        return;
-    }
-    void run(() =>
-        api(`${base}/generate`, 'POST', {
-            item: all ? null : props.current?.public_id,
-            kind,
-            languages: targetLanguages.value,
-        }),
-    );
-}
-function addLanguage() {
-    if (content.value.translations[language.value]) return;
-    content.value.translations[language.value] = {
-        name: '',
-        description: '',
-        ingredients_text: '',
-        portion_size: '',
+function addManualLanguage() {
+    if (!publishedContent.value || !current.value || publishedContent.value.translations[manualLanguage.value]) return;
+    const product = current.value.product;
+    publishedContent.value.translations[manualLanguage.value] = {
+        name: product.name,
+        description: product.description ?? '',
+        ingredients_text: product.ingredients?.map((i) => i.name).join(', ') ?? '',
+        portion_size: product.portion_size ?? '',
         category_name: '',
         menu_name: '',
-        variants: Object.fromEntries((props.current?.source.variants ?? []).map((v) => [v.id, v.name])),
+        variants: Object.fromEntries(product.variants.map((v) => [v.id, v.name])),
         groups: Object.fromEntries(
-            (props.current?.source.groups ?? []).map((g) => [
+            product.modifier_groups.map((g) => [
                 g.id,
                 { name: g.name, options: Object.fromEntries(g.options.map((o) => [o.id, o.name])) },
             ]),
         ),
     };
 }
-function addIngredient() {
-    content.value.recipe.push({
-        name: '',
-        grams: 0,
-        reference: '',
-        values: Object.fromEntries(props.nutrientCodes.map((key) => [key, null])),
-    });
-}
-async function readFile(event: Event) {
-    error.value = '';
-    importItems.value = [];
-    importId.value = undefined;
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-        error.value = t('mc_invalid_file');
-        return;
-    }
+async function savePublished() {
+    if (!current.value || !publishedContent.value) return;
+    busy.value = true;
+    publishedError.value = '';
     try {
-        const source = JSON.parse(await file.text());
-        const rows = Array.isArray(source.categories)
-            ? source.categories.flatMap((c: { items?: unknown[] }) => c.items ?? [])
-            : [source];
-        importItems.value = rows
-            .map((row: Record<string, unknown>) => ({ ...row, source_restaurant_id: source.restaurant_id ?? null }))
-            .filter((v: { id?: number; name?: string }) => Number.isInteger(v.id) && typeof v.name === 'string');
-        if (!importItems.value.length || importItems.value.length > 1000) throw new Error();
-        importId.value = importItems.value[0].id;
-    } catch {
-        error.value = t('mc_invalid_file');
+        await api(`${base}/items/${current.value.public_id}`, 'PUT', {
+            content: publishedContent.value,
+            hash: publishedHash.value,
+        });
+        const preserved = { ...inputs.value };
+        const wasDirty = dirty.value;
+        const baseline = initial.value;
+        sync(await api<Current>(`${base}/items/${current.value.public_id}`));
+        if (wasDirty) {
+            inputs.value = preserved;
+            initial.value = baseline;
+        }
+        published.value = false;
+        toast.add({ severity: 'success', summary: t('mc_saved'), life: 5000 });
+    } catch (e) {
+        publishedError.value = (e as Error).message;
+    } finally {
+        busy.value = false;
     }
 }
-function importContent() {
-    if (dirty.value) {
-        error.value = t('mc_save_first');
-        return;
+async function translateMenu() {
+    busy.value = true;
+    error.value = '';
+    try {
+        await api(`${base}/generate`, 'POST', { item: null, kind: 'translate', languages: bulkLanguages.value });
+        bulk.value = false;
+        toast.add({ severity: 'info', summary: t('auto_queued'), detail: t('auto_background'), life: 7000 });
+    } catch (e) {
+        error.value = (e as Error).message;
+    } finally {
+        busy.value = false;
     }
-    const source = importItems.value.find((i) => i.id === importId.value);
-    if (source && props.current)
-        void run(() => api(`${base}/items/${props.current!.public_id}/gloriafood`, 'POST', { source_item: source }));
 }
-function review(draft: Draft, action: string) {
-    if (dirty.value) {
-        error.value = t('mc_save_first');
-        return;
-    }
-    void run(() => api(`${base}/drafts/${draft.public_id}`, 'POST', { action }));
+
+const notices = useMenuNotifications();
+const toast = useToast();
+const base = `/app/locations/${props.location.public_id}/menu-content`;
+const missing = computed(() => {
+    if (!options.value.length) return t('auto_pick_task');
+    if (
+        options.value.includes('nutrition') &&
+        (!inputs.value.portion_grams || inputs.value.ingredients_text.trim().length < 3)
+    )
+        return t('auto_missing');
+    if (options.value.includes('translate') && !targetLanguages.value.length) return t('auto_pick_language');
+    return '';
+});
+const pending = computed(() => current.value?.drafts.filter((d) => ['queued', 'processing'].includes(d.status)) ?? []);
+function sync(row: Current) {
+    if (!row.drafts.some((d) => ['queued', 'processing'].includes(d.status))) queued.value = false;
+    current.value = row;
+    inputs.value = { ...row.nutrition_inputs };
+    initial.value = JSON.stringify(inputs.value);
+    const choice = choices.value.find((item) => item.public_id === row.public_id);
+    if (choice)
+        Object.assign(choice, {
+            name: row.name,
+            image_path: row.image_path,
+            portion_size: row.product.portion_size,
+            has_nutrition: !!row.content.nutrition,
+            translation_count: Object.keys(row.content.translations).length,
+        });
 }
-function loadDraft(draft: Draft) {
+async function load(id: string) {
+    if (busy.value || loading.value) return;
     if (dirty.value && !confirm(t('mc_discard'))) return;
-    const proposal = clone(draft.proposal);
-    if (proposal.description !== undefined) {
-        error.value = t('mc_rewrite_review');
-        return;
+    loading.value = true;
+    error.value = '';
+    queued.value = false;
+    try {
+        sync(await api<Current>(`${base}/items/${id}`));
+    } catch (e) {
+        error.value = (e as Error).message;
+    } finally {
+        loading.value = false;
     }
-    content.value = {
-        ...content.value,
-        ...proposal,
-        translations: { ...content.value.translations, ...proposal.translations },
-    };
 }
-function download(draft: Draft) {
-    const url = URL.createObjectURL(
-        new Blob(
-            [
-                JSON.stringify(
-                    { kind: draft.kind, status: draft.status, proposal: draft.proposal, report: draft.report },
-                    null,
-                    2,
-                ),
-            ],
-            { type: 'application/json' },
-        ),
-    );
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `menu-content-${draft.public_id}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+async function savedProduct() {
+    if (current.value) {
+        initial.value = JSON.stringify(inputs.value);
+        await load(current.value.public_id);
+    }
 }
-function translated(draft: Draft): Record<string, MenuTranslation> {
-    return draft.proposal?.translations ?? {};
+async function generate() {
+    if (!current.value || missing.value || busy.value) return;
+    busy.value = true;
+    error.value = '';
+    try {
+        if (dirty.value) {
+            const content = normalizeMenuContent(current.value.content);
+            content.nutrition_inputs = { ...inputs.value };
+            await api(`${base}/items/${current.value.public_id}`, 'PUT', { content, hash: current.value.hash });
+            sync(await api<Current>(`${base}/items/${current.value.public_id}`));
+        }
+        await api(`${base}/generate`, 'POST', {
+            item: current.value.public_id,
+            kind: 'analyze',
+            options: options.value,
+            languages: options.value.includes('translate') ? targetLanguages.value : [],
+        });
+        queued.value = true;
+        sync(await api<Current>(`${base}/items/${current.value.public_id}`));
+        toast.add({ severity: 'info', summary: t('auto_queued'), detail: t('auto_background'), life: 7000 });
+    } catch (e) {
+        error.value = (e as Error).message;
+    } finally {
+        busy.value = false;
+    }
 }
+watch(
+    () => notices.reviewed,
+    async () => {
+        if (!current.value || dirty.value || busy.value) return;
+        try {
+            sync(await api<Current>(`${base}/items/${current.value.public_id}`));
+        } catch {
+            /* Preserve the current editor on connectivity errors. */
+        }
+    },
+);
+watch(
+    () => notices.records,
+    async () => {
+        if (!current.value || dirty.value || busy.value || !pending.value.length) return;
+        if (
+            notices.records.some(
+                (n) =>
+                    n.location === props.location.public_id &&
+                    current.value?.drafts.some((d) => d.public_id === n.draft && d.status !== n.status),
+            )
+        ) {
+            try {
+                sync(await api<Current>(`${base}/items/${current.value.public_id}`));
+            } catch {
+                /* Retry on the next notification. */
+            }
+        }
+    },
+);
+useSetupEditorGuard(
+    () => true,
+    () => dirty.value && !busy.value,
+);
 </script>
 <template>
-    <RestaurantLayout v-bind="$props"
+    <RestaurantLayout v-bind="props"
         ><Head :title="$t('mc_title')" />
-        <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <Link :href="`/app/locations/${location.public_id}/menu`" class="text-sm text-brand"
-                    >← {{ $t('menu_studio') }}</Link
+        <div class="mx-auto max-w-[1440px] space-y-6">
+            <header class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand">
+                        {{ $t('auto_eyebrow') }}
+                    </p>
+                    <h1 class="text-3xl font-semibold tracking-tight md:text-4xl">{{ $t('auto_title') }}</h1>
+                    <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-500">{{ $t('auto_intro') }}</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <Button
+                        :label="$t('auto_translate_menu')"
+                        icon="pi pi-language"
+                        severity="secondary"
+                        outlined
+                        :disabled="!aiReady || !current?.writable || busy"
+                        @click="bulk = true"
+                    />
+                    <Button
+                        :label="$t('auto_history')"
+                        icon="pi pi-history"
+                        severity="secondary"
+                        outlined
+                        :disabled="!current"
+                        @click="history = true"
+                    />
+                </div>
+            </header>
+            <p v-if="!aiReady" class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                {{ $t('mc_ai_unavailable') }}
+            </p>
+            <p v-if="error" role="alert" class="rounded-xl bg-red-50 p-4 text-sm text-red-700">{{ error }}</p>
+            <div v-if="items.length" class="grid items-start gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
+                <aside
+                    class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900 xl:sticky xl:top-5"
                 >
-                <h1 class="mt-3 text-3xl font-semibold">{{ $t('mc_title') }}</h1>
-                <p class="muted mt-2">{{ $t('mc_intro') }}</p>
-            </div>
-            <Button :label="$t('refresh')" icon="pi pi-refresh" outlined @click="refresh" />
-        </div>
-        <p v-if="error" role="alert" class="mb-5 rounded-xl bg-red-50 p-4 text-red-800">{{ error }}</p>
-        <label class="field mb-6 max-w-xl"
-            >{{ $t('mc_product')
-            }}<Select
-                :model-value="selected"
-                :options="items"
-                option-label="name"
-                option-value="public_id"
-                :aria-label="$t('mc_product')"
-                filter
-                @update:model-value="choose"
-        /></label>
-        <template v-if="current">
-            <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)]">
-                <form id="menu-content-form" class="min-w-0 space-y-6" @submit.prevent="save">
-                    <fieldset :disabled="!contentWritable || busy" class="panel min-w-0 space-y-5">
-                        <legend class="px-2 text-lg font-semibold">{{ $t('mc_food_data') }}</legend>
-                        <p class="muted">{{ $t('mc_food_hint') }}</p>
-                        <label class="field"
-                            >{{ $t('mc_allergens')
-                            }}<MultiSelect v-model="content.allergens"
-                                :disabled="!contentWritable || busy"
-                                :options="allergenOptions"
-                                option-label="name"
-                                option-value="code"
-                                :aria-label="$t('mc_allergens')"
-                                class="w-full"
-                        /></label>
-                        <label class="field"
-                            >{{ $t('mc_may_contain')
-                            }}<MultiSelect v-model="content.may_contain"
-                                :disabled="!contentWritable || busy"
-                                :options="allergenOptions"
-                                option-label="name"
-                                option-value="code"
-                                :aria-label="$t('mc_may_contain')"
-                                class="w-full"
-                        /></label>
-                        <label class="field"
-                            >{{ $t('mc_labels')
-                            }}<MultiSelect v-model="content.labels"
-                                :disabled="!contentWritable || busy"
-                                :options="labelOptions"
-                                option-label="name"
-                                option-value="code"
-                                :aria-label="$t('mc_labels')"
-                                class="w-full"
-                        /></label>
-                    </fieldset>
-                    <fieldset :disabled="!contentWritable || busy" class="panel min-w-0 space-y-5">
-                        <legend class="px-2 text-lg font-semibold">{{ $t('mc_recipe') }}</legend>
-                        <p class="muted">{{ $t('mc_recipe_hint') }}</p>
-                        <div class="grid gap-4 sm:grid-cols-2">
-                            <label class="field"
-                                >{{ $t('mc_yield')
-                                }}<InputNumber v-model="content.yield_grams"
-                                    :disabled="!contentWritable || busy"
-                                    class="w-full min-w-0"
-                                    input-class="w-full min-w-0"
-                                    :min="1"
-                                    :max="100000"
-                                    :max-fraction-digits="3" /></label
-                            ><label class="field"
-                                >{{ $t('mc_servings')
-                                }}<InputNumber v-model="content.servings"
-                                    :disabled="!contentWritable || busy"
-                                    class="w-full min-w-0"
-                                    input-class="w-full min-w-0"
-                                    :min="1"
-                                    :max="1000"
-                                    :max-fraction-digits="3"
-                            /></label>
-                        </div>
-                        <details
-                            v-for="(row, index) in content.recipe"
-                            :key="index"
-                            class="rounded-xl border border-slate-200 p-4"
-                            open
+                    <div class="mb-3 flex items-center justify-between">
+                        <h2 class="text-sm font-semibold">{{ $t('auto_pick_dish') }}</h2>
+                        <span class="text-xs text-slate-400">{{ choices.length }}</span>
+                    </div>
+                    <InputText
+                        v-model="search"
+                        :placeholder="$t('auto_search')"
+                        :aria-label="$t('auto_search')"
+                        class="mb-3 w-full"
+                    />
+                    <div class="flex max-h-56 gap-2 overflow-auto xl:max-h-[62vh] xl:flex-col">
+                        <button
+                            v-for="item in filtered"
+                            :key="item.public_id"
+                            :disabled="busy || loading"
+                            :aria-pressed="current?.public_id === item.public_id"
+                            class="flex min-w-52 items-center gap-3 rounded-xl border p-3 text-left transition xl:min-w-0"
+                            :class="
+                                current?.public_id === item.public_id
+                                    ? 'border-violet-300 bg-violet-50 dark:bg-violet-950'
+                                    : 'border-transparent hover:bg-slate-50 dark:hover:bg-slate-800'
+                            "
+                            @click="load(item.public_id)"
                         >
-                            <summary class="cursor-pointer font-medium">
-                                {{ row.name || $t('mc_ingredient') }} · {{ row.grams }} g
-                            </summary>
-                            <div class="mt-4 grid min-w-0 gap-4 sm:grid-cols-2">
-                                <label class="field min-w-0"
-                                    >{{ $t('name')
-                                    }}<InputText v-model="row.name" :disabled="!contentWritable || busy" required class="w-full min-w-0" /></label
-                                ><label class="field"
-                                    >{{ $t('mc_grams')
-                                    }}<InputNumber v-model="row.grams"
-                                        :disabled="!contentWritable || busy"
-                                        class="w-full min-w-0"
-                                        input-class="w-full min-w-0"
-                                        :min="0.001"
-                                        :max="100000"
-                                        :max-fraction-digits="3" /></label
-                                ><label class="field min-w-0 sm:col-span-2"
-                                    >{{ $t('mc_reference')
-                                    }}<InputText v-model="row.reference" :disabled="!contentWritable || busy" required class="w-full min-w-0" /></label
-                                ><label v-for="key in nutrientCodes" :key="key" class="field min-w-0"
-                                    >{{ $t('mc_nutrient_' + key)
-                                    }}<InputNumber v-model="row.values[key]"
-                                        :disabled="!contentWritable || busy"
-                                        class="w-full min-w-0"
-                                        input-class="w-full min-w-0"
-                                        :min="0"
-                                        :max="key.startsWith('energy_') ? 10000 : 100"
-                                        :max-fraction-digits="3"
-                                /></label>
+                            <img
+                                v-if="item.image_path"
+                                :src="'/storage/' + item.image_path"
+                                alt=""
+                                class="h-11 w-11 shrink-0 rounded-lg object-cover"
+                            /><span
+                                v-else
+                                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400 dark:bg-slate-800"
+                                ><i class="pi pi-shop" /></span
+                            ><span class="min-w-0 flex-1"
+                                ><strong class="block text-sm leading-snug">{{ item.name }}</strong
+                                ><span class="mt-1 block text-[11px] text-slate-500">{{ item.category }}</span
+                                ><span
+                                    v-if="item.has_nutrition || item.translation_count"
+                                    class="mt-1 block text-[10px] text-emerald-700"
+                                    >{{ item.has_nutrition ? $t('auto_nutrition_ready') : ''
+                                    }}{{
+                                        item.translation_count
+                                            ? (item.has_nutrition ? ' · ' : '') +
+                                              item.translation_count +
+                                              ' ' +
+                                              $t(
+                                                  item.translation_count === 1
+                                                      ? 'auto_language_short'
+                                                      : 'auto_languages_short',
+                                              )
+                                            : ''
+                                    }}</span
+                                ></span
+                            >
+                        </button>
+                    </div>
+                    <p v-if="!filtered.length" class="py-6 text-center text-sm text-slate-400">
+                        {{ $t('auto_no_match') }}
+                    </p>
+                </aside>
+                <div v-if="current" class="min-w-0 space-y-5" :class="{ 'opacity-60': loading }">
+                    <div
+                        class="sticky top-3 z-10 rounded-2xl border border-violet-200 bg-white/95 p-4 shadow-lg backdrop-blur dark:border-slate-700 dark:bg-slate-900/95"
+                    >
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="hidden min-w-0 flex-1 text-xs leading-relaxed text-slate-500 lg:block">
+                                <p v-if="!current.writable">{{ $t('auto_read_only') }}</p>
+                                <p v-else-if="missing" class="text-amber-700">{{ missing }}</p>
+                                <p v-else><i class="pi pi-lock mr-1" />{{ $t('auto_review_first') }}</p>
                             </div>
                             <Button
-                                :label="$t('remove')"
-                                severity="danger"
-                                text
-                                class="mt-3"
-                                @click="content.recipe.splice(index, 1)"
-                            />
-                        </details>
-                        <Button :label="$t('mc_add_ingredient')" icon="pi pi-plus" outlined @click="addIngredient" />
-                    </fieldset>
-                    <fieldset :disabled="!contentWritable || busy" class="panel min-w-0 space-y-5">
-                        <legend class="px-2 text-lg font-semibold">{{ $t('mc_nutrition') }}</legend>
-                        <p class="muted">{{ $t('mc_nutrition_hint') }}</p>
-                        <div class="flex flex-wrap gap-3">
-                            <Button :label="$t('mc_calculate')" outlined @click="generate('calculation')" /><Button
-                                v-if="!content.nutrition"
-                                :label="$t('mc_declared_values')"
-                                text
-                                @click="
-                                    content.nutrition = {
-                                        basis: 'per_100g',
-                                        values: {},
-                                        reference: '',
-                                        estimated: false,
-                                    }
+                                :label="$t('auto_generate')"
+                                class="w-full shrink-0 lg:w-auto"
+                                icon="pi pi-sparkles"
+                                :loading="busy"
+                                :disabled="
+                                    busy || loading || !aiReady || !current.writable || !!missing || !!pending.length
                                 "
+                                @click="generate"
                             />
                         </div>
-                        <template v-if="content.nutrition"
-                            ><label class="field"
-                                >{{ $t('mc_basis')
-                                }}<Select v-model="content.nutrition.basis"
-                                    :disabled="!contentWritable || busy"
-                                    :options="
-                                        ['per_100g', 'per_100ml', 'per_serving'].map((code) => ({
-                                            code,
-                                            name: $t('mc_' + code),
-                                        }))
-                                    "
-                                    option-label="name"
-                                    option-value="code" /></label
-                            ><label class="field"
-                                >{{ $t('mc_reference')
-                                }}<InputText v-model="content.nutrition.reference" :disabled="!contentWritable || busy" class="w-full min-w-0"
-                            /></label>
-                            <div class="grid gap-4 sm:grid-cols-2">
-                                <label v-for="key in nutrientCodes" :key="key" class="field min-w-0"
-                                    >{{ $t('mc_nutrient_' + key)
-                                    }}<InputNumber v-model="content.nutrition.values[key]"
-                                        :disabled="!contentWritable || busy"
-                                        class="w-full min-w-0"
-                                        input-class="w-full min-w-0"
-                                        :min="0"
-                                        :max-fraction-digits="3"
-                                /></label>
+                    </div>
+                    <section class="overflow-hidden rounded-2xl bg-slate-950 text-white">
+                        <div class="flex items-center gap-5 p-6 md:p-7">
+                            <img
+                                v-if="current.image_path"
+                                :src="'/storage/' + current.image_path"
+                                :alt="current.name"
+                                class="h-24 w-24 shrink-0 rounded-2xl object-cover md:h-28 md:w-28"
+                            />
+                            <div class="min-w-0 flex-1">
+                                <p class="mb-2 text-xs text-violet-300">{{ $t('auto_selected_dish') }}</p>
+                                <h2 class="text-2xl font-semibold tracking-tight">{{ current.name }}</h2>
+                                <p class="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-300">
+                                    {{ current.description || $t('auto_no_description') }}
+                                </p>
                             </div>
-                            <Button :label="$t('remove')" severity="danger" text @click="content.nutrition = null"
-                        /></template>
-                    </fieldset>
-                    <fieldset :disabled="!contentWritable || busy" class="panel min-w-0 space-y-5">
-                        <legend class="px-2 text-lg font-semibold">{{ $t('mc_translations') }}</legend>
-                        <p class="muted">{{ $t('mc_translation_hint') }}</p>
-                        <div class="flex flex-wrap gap-3">
-                            <Select v-model="language"
-                                :disabled="!contentWritable || busy"
+                        </div>
+                        <div
+                            class="flex flex-wrap items-center justify-between gap-2 border-t border-white/10 px-6 py-3"
+                        >
+                            <span class="text-xs text-slate-400"
+                                ><i class="pi pi-check-circle mr-1 text-emerald-400" />{{
+                                    $t('auto_source_hint')
+                                }}</span
+                            >
+                            <div class="flex gap-2">
+                                <Button
+                                    :label="$t('auto_published')"
+                                    icon="pi pi-eye"
+                                    text
+                                    size="small"
+                                    class="!text-violet-200"
+                                    @click="openPublished"
+                                /><Button
+                                    :label="$t('auto_edit_product')"
+                                    icon="pi pi-pencil"
+                                    text
+                                    size="small"
+                                    class="!text-violet-200"
+                                    :disabled="!current.writable || busy"
+                                    @click="editor = true"
+                                />
+                            </div>
+                        </div>
+                    </section>
+                    <div
+                        v-if="queued || pending.length"
+                        role="status"
+                        class="flex gap-3 rounded-2xl border border-violet-200 bg-violet-50 p-4 text-sm dark:bg-violet-950"
+                    >
+                        <i class="pi pi-spin pi-spinner mt-1 text-brand" />
+                        <div>
+                            <strong>{{ $t('auto_queued') }}</strong>
+                            <p class="mt-1 text-xs leading-relaxed text-slate-500">{{ $t('auto_background') }}</p>
+                        </div>
+                    </div>
+                    <section
+                        class="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-900 md:p-7"
+                    >
+                        <div class="mb-5 flex items-center gap-3">
+                            <span
+                                class="flex h-8 w-8 items-center justify-center rounded-full bg-violet-50 text-sm font-semibold text-brand"
+                                >1</span
+                            >
+                            <div>
+                                <h2 class="font-semibold">{{ $t('auto_inputs_title') }}</h2>
+                                <p class="mt-1 text-xs text-slate-500">{{ $t('auto_inputs_hint') }}</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-5 md:grid-cols-[190px_minmax(0,1fr)]">
+                            <label class="grid content-start gap-2 text-sm font-medium"
+                                >{{ $t('auto_portion_weight')
+                                }}<InputNumber
+                                    v-model="inputs.portion_grams"
+                                    :min="1"
+                                    :max="10000"
+                                    :max-fraction-digits="1"
+                                    suffix=" g"
+                                    :disabled="!current.writable || busy"
+                                    class="w-full min-w-0"
+                                    input-class="w-full min-w-0"
+                                    :aria-label="$t('auto_portion_weight')"
+                                /><span class="text-xs font-normal leading-relaxed text-slate-400">{{
+                                    $t('auto_one_portion_hint')
+                                }}</span></label
+                            ><label class="grid gap-2 text-sm font-medium"
+                                >{{ $t('auto_ingredients')
+                                }}<Textarea
+                                    v-model="inputs.ingredients_text"
+                                    :aria-label="$t('auto_ingredients')"
+                                    rows="3"
+                                    maxlength="3000"
+                                    :disabled="!current.writable || busy"
+                                    class="w-full"
+                                    :placeholder="$t('auto_ingredients_example')"
+                                /><span class="text-xs font-normal leading-relaxed text-slate-400">{{
+                                    $t('auto_ingredients_hint')
+                                }}</span></label
+                            >
+                        </div>
+                        <details class="mt-5 text-sm">
+                            <summary class="cursor-pointer text-slate-500">
+                                {{ $t('auto_preparation_optional') }}
+                            </summary>
+                            <Textarea
+                                v-model="inputs.preparation"
+                                rows="2"
+                                maxlength="500"
+                                :disabled="!current.writable || busy"
+                                :aria-label="$t('auto_preparation_optional')"
+                                :placeholder="$t('auto_preparation_example')"
+                                class="mt-3 w-full"
+                            />
+                        </details>
+                    </section>
+                    <section
+                        class="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-900 md:p-7"
+                    >
+                        <div class="mb-5 flex items-center gap-3">
+                            <span
+                                class="flex h-8 w-8 items-center justify-center rounded-full bg-violet-50 text-sm font-semibold text-brand"
+                                >2</span
+                            >
+                            <div>
+                                <h2 class="font-semibold">{{ $t('auto_tasks_title') }}</h2>
+                                <p class="mt-1 text-xs text-slate-500">{{ $t('auto_tasks_hint') }}</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-3 md:grid-cols-2">
+                            <label
+                                v-for="task in tasks"
+                                :key="task.code"
+                                class="flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition"
+                                :class="
+                                    options.includes(task.code)
+                                        ? 'border-violet-300 bg-violet-50/60 dark:bg-violet-950'
+                                        : 'border-slate-200 dark:border-slate-700'
+                                "
+                                ><Checkbox
+                                    v-model="options"
+                                    :value="task.code"
+                                    :disabled="!current.writable || busy"
+                                    :aria-label="task.name"
+                                /><span
+                                    ><span class="block text-sm font-semibold"
+                                        ><i :class="['pi', task.icon, 'mr-2 text-brand']" />{{ task.name }}</span
+                                    ><span class="mt-1 block text-xs leading-relaxed text-slate-500">{{
+                                        task.hint
+                                    }}</span></span
+                                ></label
+                            >
+                        </div>
+                        <div
+                            v-if="options.includes('translate')"
+                            class="mt-4 rounded-xl bg-slate-50 p-4 dark:bg-slate-800"
+                        >
+                            <label for="auto-languages" class="mb-2 block text-sm font-medium">{{
+                                $t('auto_target_languages')
+                            }}</label
+                            ><MultiSelect
+                                v-model="targetLanguages"
+                                input-id="auto-languages"
                                 :options="languageOptions"
                                 option-label="name"
                                 option-value="code"
-                                :aria-label="$t('mc_language')"
-                            /><Button :label="$t('mc_add_language')" outlined @click="addLanguage" />
-                        </div>
-                        <details
-                            v-for="(row, code) in content.translations"
-                            :key="code"
-                            open
-                            class="rounded-xl border border-slate-200 p-4"
-                        >
-                            <summary class="font-semibold">
-                                {{ props.languages[code] }}
-                                <span
-                                    v-if="row.source_hash && row.source_hash !== current.translationHash"
-                                    class="text-sm text-amber-700"
-                                    >· {{ $t('mc_stale_translation') }}</span
-                                >
-                            </summary>
-                            <div class="mt-4 grid min-w-0 gap-4">
-                                <label
-                                    v-for="field in [
-                                        'name',
-                                        'description',
-                                        'ingredients_text',
-                                        'portion_size',
-                                        'category_name',
-                                        'menu_name',
-                                    ] as const"
-                                    :key="field"
-                                    class="field min-w-0"
-                                    >{{ $t('mc_translation_' + field)
-                                    }}<Textarea v-model="row[field]"
-                                        :disabled="!contentWritable || busy"
-                                        :rows="field === 'description' || field === 'ingredients_text' ? 3 : 1"
-                                        class="w-full min-w-0"
-                                /></label>
-                                <label v-for="(_, id) in row.variants" :key="id" class="field"
-                                    >{{ current.source.variants.find((v) => String(v.id) === String(id))?.name
-                                    }}<InputText v-model="row.variants[id]" :disabled="!contentWritable || busy" class="w-full min-w-0"
-                                /></label>
-                                <div
-                                    v-for="(group, id) in row.groups"
-                                    :key="id"
-                                    class="grid gap-3 rounded-lg bg-slate-50 p-3"
-                                >
-                                    <label class="field"
-                                        >{{ $t('mc_translation_group')
-                                        }}<InputText v-model="group.name" :disabled="!contentWritable || busy" class="w-full min-w-0" /></label
-                                    ><label v-for="(_, option) in group.options" :key="option" class="field"
-                                        >{{
-                                            current.source.groups
-                                                .find((g) => String(g.id) === String(id))
-                                                ?.options.find((o) => String(o.id) === String(option))?.name
-                                        }}<InputText v-model="group.options[option]" :disabled="!contentWritable || busy" class="w-full min-w-0"
-                                    /></label>
-                                </div>
-                            </div>
-                            <Button
-                                :label="$t('remove')"
-                                severity="danger"
-                                text
-                                class="mt-3"
-                                @click="delete content.translations[code]"
+                                display="chip"
+                                :selection-limit="3"
+                                :disabled="!current.writable || busy"
+                                :placeholder="$t('auto_pick_language')"
+                                class="w-full"
                             />
-                        </details>
-                    </fieldset>
-                    <div
-                        v-if="contentWritable"
-                        class="sticky bottom-4 z-10 flex items-center justify-between gap-4 rounded-2xl border border-violet-100 bg-white/95 p-4 shadow-xl backdrop-blur dark:bg-slate-900"
-                    >
-                        <span class="text-sm">{{ dirty ? $t('mc_unsaved') : $t('mc_saved_content') }}</span
+                            <p class="mt-2 text-xs text-slate-400">{{ $t('auto_language_hint') }}</p>
+                        </div>
+                    </section>
+                    <p v-if="missing || !current.writable" class="px-1 text-xs leading-relaxed text-amber-700">
+                        {{ !current.writable ? $t('auto_read_only') : missing }}
+                    </p>
+                </div>
+            </div>
+            <div v-else class="panel py-16 text-center">
+                <i class="pi pi-book mb-4 text-4xl text-violet-300" />
+                <h2 class="text-xl font-semibold">{{ $t('auto_empty_title') }}</h2>
+                <p class="muted mt-2">{{ $t('auto_empty_hint') }}</p>
+                <a :href="'/app/locations/' + location.public_id + '/menu'" class="mt-5 inline-block text-brand"
+                    >{{ $t('menu_studio') }} →</a
+                >
+            </div>
+        </div>
+        <Dialog
+            v-model:visible="history"
+            modal
+            :header="$t('auto_history')"
+            :style="{ width: '36rem', maxWidth: 'calc(100vw - 2rem)' }"
+            ><p v-if="!current?.drafts.length" class="muted py-8 text-center">{{ $t('auto_no_history') }}</p>
+            <button
+                v-for="draft in current?.drafts"
+                :key="draft.public_id"
+                class="mb-2 flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left text-sm dark:border-slate-700"
+                @click="
+                    history = false;
+                    notices.open(location.public_id, draft.public_id);
+                "
+            >
+                <span
+                    >{{ $t('mc_status_' + draft.status)
+                    }}<span class="mt-1 block text-xs text-slate-400">{{
+                        new Date(draft.created_at).toLocaleString()
+                    }}</span></span
+                ><i class="pi pi-arrow-right text-brand" /></button
+        ></Dialog>
+        <Dialog
+            v-model:visible="bulk"
+            modal
+            :header="$t('auto_translate_menu')"
+            :style="{ width: '32rem', maxWidth: 'calc(100vw - 2rem)' }"
+        >
+            <p class="mb-5 text-sm leading-relaxed text-slate-500">{{ $t('auto_bulk_hint') }}</p>
+            <p v-if="error" role="alert" class="mb-3 text-sm text-red-700">{{ error }}</p>
+            <MultiSelect
+                v-model="bulkLanguages"
+                :options="languageOptions"
+                option-label="name"
+                option-value="code"
+                display="chip"
+                :selection-limit="3"
+                :aria-label="$t('auto_target_languages')"
+                :disabled="busy"
+                class="w-full"
+            />
+            <template #footer
+                ><Button
+                    :label="$t('auto_translate_menu')"
+                    icon="pi pi-language"
+                    :loading="busy"
+                    :disabled="busy || !bulkLanguages.length"
+                    @click="translateMenu"
+            /></template>
+        </Dialog>
+        <Dialog
+            v-model:visible="published"
+            modal
+            :header="$t('auto_published')"
+            :style="{ width: '42rem', maxWidth: 'calc(100vw - 2rem)' }"
+        >
+            <div v-if="current && publishedContent" class="space-y-5">
+                <p class="text-xs leading-relaxed text-slate-500">{{ $t('auto_manual_hint') }}</p>
+                <p v-if="publishedError" role="alert" class="rounded-xl bg-red-50 p-4 text-sm text-red-700">
+                    {{ publishedError }}
+                </p>
+                <label
+                    v-for="field in ['allergens', 'may_contain', 'labels'] as const"
+                    :key="field"
+                    class="grid gap-2 text-sm"
+                    >{{ $t('mc_' + field)
+                    }}<MultiSelect
+                        v-model="publishedContent[field]"
+                        :options="field === 'labels' ? foodOptions : allergenOptions"
+                        option-label="name"
+                        option-value="code"
+                        display="chip"
+                        :disabled="!current.writable || busy"
+                /></label>
+                <ProductFoodData
+                    :product="{
+                        ...current.product,
+                        content: { ...publishedContent, allergens: [], may_contain: [], labels: [] },
+                    }"
+                />
+                <div class="border-t border-slate-200 pt-5 dark:border-slate-700">
+                    <h3 class="mb-3 font-semibold">{{ $t('mc_translations') }}</h3>
+                    <div v-if="current.writable" class="mb-4 flex gap-2">
+                        <select
+                            v-model="manualLanguage"
+                            :aria-label="$t('mc_language')"
+                            class="min-w-0 flex-1 rounded-lg border border-slate-200 bg-transparent p-2"
+                        >
+                            <option v-for="(name, code) in props.languages" :key="code" :value="code">
+                                {{ name }}
+                            </option></select
                         ><Button
-                            type="submit"
-                            :label="$t('mc_save_content')"
-                            :loading="busy"
-                            :disabled="busy || !dirty"
+                            :label="$t('mc_add_language')"
+                            icon="pi pi-plus"
+                            outlined
+                            size="small"
+                            :disabled="busy || !!publishedContent.translations[manualLanguage]"
+                            @click="addManualLanguage"
                         />
                     </div>
-                </form>
-                <aside class="min-w-0 space-y-6">
-                    <section v-if="contentWritable" class="panel space-y-4">
-                        <h2 class="text-lg font-semibold">{{ $t('mc_ai_assistant') }}</h2>
-                        <p class="muted">{{ $t('mc_ai_hint') }}</p>
-                        <p v-if="!aiReady" class="text-sm text-amber-700">{{ $t('mc_ai_unconfigured') }}</p>
-                        <MultiSelect
-                            v-model="targetLanguages"
-                            :options="languageOptions"
-                            option-label="name"
-                            option-value="code"
-                            :aria-label="$t('mc_target_languages')"
-                            class="w-full"
-                        />
-                        <p class="muted">{{ $t('mc_three_languages') }}</p>
-                        <div class="grid gap-3">
-                            <Button
-                                :label="$t('mc_translate_product')"
-                                :disabled="busy || !aiReady || !targetLanguages.length || targetLanguages.length > 3"
-                                @click="generate('translate')"
-                            /><Button
-                                :label="$t('mc_translate_menu')"
-                                outlined
-                                :disabled="busy || !aiReady || !targetLanguages.length || targetLanguages.length > 3"
-                                @click="generate('translate', true)"
-                            /><Button
-                                :label="$t('mc_suggest')"
-                                outlined
-                                :disabled="busy || !aiReady"
-                                @click="generate('suggest')"
-                            /><Button
-                                :label="$t('mc_rewrite')"
-                                text
-                                :disabled="busy || !aiReady"
-                                @click="generate('rewrite')"
-                            />
-                        </div>
-                        <p class="muted">{{ $t('mc_data_sent') }}</p>
-                    </section>
-                    <section v-if="contentWritable" class="panel space-y-4">
-                        <h2 class="text-lg font-semibold">{{ $t('mc_gloriafood') }}</h2>
-                        <p class="muted">{{ $t('mc_gloria_hint') }}</p>
-                        <input
-                            type="file"
-                            accept=".json,application/json"
-                            class="w-full min-w-0 text-sm"
-                            :aria-label="$t('mc_gloriafood')"
-                            @change="readFile"
-                        /><Select
-                            v-if="importItems.length"
-                            v-model="importId"
-                            :options="importItems"
-                            option-label="name"
-                            option-value="id"
-                            filter
-                            class="w-full"
-                            :aria-label="$t('mc_source_product')"
-                        />
-                        <p v-if="importId" class="muted">GloriaFood #{{ importId }} → {{ current.name }}</p>
-                        <Button
-                            :label="$t('mc_import_preview')"
-                            outlined
-                            :disabled="busy || !importId"
-                            @click="importContent"
-                        />
-                    </section>
-                    <section class="space-y-4">
-                        <h2 class="text-lg font-semibold">{{ $t('mc_drafts') }}</h2>
-                        <p v-if="!drafts.length" class="muted">{{ $t('mc_no_drafts') }}</p>
-                        <article v-for="draft in drafts" :key="draft.public_id" class="panel min-w-0 space-y-3">
-                            <div class="flex flex-wrap justify-between gap-2">
-                                <strong>{{ $t('mc_kind_' + draft.kind) }}</strong
-                                ><span class="text-sm text-brand">{{ $t('mc_status_' + draft.status) }}</span>
-                            </div>
-                            <p v-if="draft.status === 'queued' || draft.status === 'processing'" class="muted">
-                                {{ $t('mc_queue_hint') }}
-                            </p>
-                            <p v-if="draft.error_code" class="text-sm text-red-700">
-                                {{ $t('mc_error_' + draft.error_code) }}
-                            </p>
-                            <p
-                                v-if="draft.source_hash !== current.hash && draft.status === 'ready'"
-                                class="text-sm text-amber-700"
-                            >
-                                {{ $t('mc_stale_draft') }}
-                            </p>
-                            <template v-if="draft.proposal"
-                                ><div
-                                    v-for="(row, code) in translated(draft)"
-                                    :key="code"
-                                    class="rounded-xl bg-violet-50 p-3 text-sm"
-                                >
-                                    <strong>{{ props.languages[code] }} · {{ row.name }}</strong>
-                                    <p class="mt-2 whitespace-pre-wrap">{{ row.description }}</p>
-                                    <p class="muted mt-2">({{ row.ingredients_text }})</p>
-                                </div>
-                                <p v-if="draft.proposal.description" class="whitespace-pre-wrap text-sm">
-                                    {{ draft.proposal.description }}
-                                </p>
-                                <p v-if="draft.proposal.allergens" class="text-sm">
-                                    {{ $t('mc_allergens') }}:
-                                    {{
-                                        draft.proposal.allergens
-                                            .map((code) => allergenOptions.find((a) => a.code === code)?.name)
-                                            .join(', ') || '—'
-                                    }}
-                                </p>
-                                <p v-if="draft.proposal.labels" class="text-sm">
-                                    {{ $t('mc_labels') }}:
-                                    {{ draft.proposal.labels.map((code) => $t('mc_label_' + code)).join(', ') || '—' }}
-                                </p>
-                                <div v-if="draft.proposal.nutrition" class="text-sm">
-                                    <strong>{{ $t('mc_' + draft.proposal.nutrition.basis) }}</strong>
-                                    <p v-for="(value, key) in draft.proposal.nutrition.values" :key="key">
-                                        {{ $t('mc_nutrient_' + key) }}: {{ value ?? '—' }}
-                                    </p>
-                                </div></template
-                            >
-                            <p v-if="draft.report?.notes" class="muted">{{ draft.report.notes }}</p>
-                            <p v-if="draft.kind === 'gloriafood'" class="text-sm text-amber-700">
-                                {{ $t('mc_import_review') }}
-                            </p>
-                            <Button :label="$t('mc_download_report')" text size="small" @click="download(draft)" />
-                            <div v-if="contentWritable && draft.status === 'ready'" class="grid gap-2">
-                                <Button
-                                    :label="$t('mc_approve')"
-                                    :disabled="busy || draft.source_hash !== current.hash"
-                                    @click="review(draft, 'approve')"
-                                /><Button
-                                    :label="$t('mc_edit_proposal')"
-                                    outlined
-                                    :disabled="busy || draft.source_hash !== current.hash"
-                                    @click="loadDraft(draft)"
-                                /><Button
-                                    :label="$t('mc_reject')"
-                                    severity="secondary"
-                                    text
-                                    :disabled="busy"
-                                    @click="review(draft, 'reject')"
+                    <details
+                        v-for="(row, language) in publishedContent.translations"
+                        :key="language"
+                        class="mb-3 rounded-xl border border-slate-200 p-4 dark:border-slate-700"
+                    >
+                        <summary class="cursor-pointer text-sm font-semibold">
+                            {{ props.languages[language] ?? language }} · {{ row.name }}
+                        </summary>
+                        <div class="mt-4 grid gap-3">
+                            <label
+                                v-for="field in [
+                                    'name',
+                                    'description',
+                                    'ingredients_text',
+                                    'portion_size',
+                                    'category_name',
+                                    'menu_name',
+                                ] as const"
+                                :key="field"
+                                class="grid gap-1 text-xs text-slate-500"
+                                >{{ $t('mc_translation_' + field)
+                                }}<Textarea
+                                    v-if="field === 'description' || field === 'ingredients_text'"
+                                    v-model="row[field]"
+                                    rows="3"
+                                    :disabled="!current.writable || busy" /><InputText
+                                    v-else
+                                    v-model="row[field]"
+                                    :disabled="!current.writable || busy" /></label
+                            ><label v-for="(_, id) in row.variants" :key="id" class="grid gap-1 text-xs"
+                                >{{ $t('variants')
+                                }}<InputText v-model="row.variants[id]" :disabled="!current.writable || busy"
+                            /></label>
+                            <div v-for="(group, id) in row.groups" :key="id" class="grid gap-2">
+                                <InputText
+                                    v-model="group.name"
+                                    :aria-label="$t('mc_translation_group')"
+                                    :disabled="!current.writable || busy"
+                                /><InputText
+                                    v-for="(_, option) in group.options"
+                                    :key="option"
+                                    v-model="group.options[option]"
+                                    :aria-label="$t('mc_translation_group')"
+                                    :disabled="!current.writable || busy"
                                 />
                             </div>
-                        </article>
-                    </section>
-                </aside>
+                        </div>
+                    </details>
+                </div>
             </div>
-        </template>
-        <p v-else class="panel muted">{{ $t('mc_no_products') }}</p>
+            <template #footer
+                ><Button :label="$t('close')" text :disabled="busy" @click="published = false" /><Button
+                    v-if="current?.writable"
+                    :label="$t('mc_save_content')"
+                    icon="pi pi-check"
+                    :loading="busy"
+                    :disabled="busy"
+                    @click="savePublished"
+            /></template>
+        </Dialog>
+        <MenuItemEditor
+            v-if="current"
+            v-model:visible="editor"
+            :location-id="location.public_id"
+            :product="current.product"
+            :categories="menus.flatMap((menu) => menu.categories)"
+            :groups="groups"
+            :ingredients="ingredients"
+            @saved="savedProduct"
+        />
     </RestaurantLayout>
 </template>

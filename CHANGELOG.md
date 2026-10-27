@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.19 — 2026-10-27
+
+- Redesigned automatic generation around a searchable dish list, prefilled one-portion inputs, task cards and a persistent generation action.
+- Added combined AI proposals including clearly labelled nutritional estimates, per-serving/per-100g normalization and plausibility checks.
+- Added durable recipient-scoped notifications, private ID-only realtime invalidations, automatic background polling and a review modal with editable text/food labels and selective approval.
+- Retired manual GloriaFood JSON metadata import and reference-by-reference nutrition calculation. Existing published metadata is retained; retired GloriaFood drafts are removed by migration.
+- Kept tenant/shared-menu authorization, encrypted drafts/provider keys, global quotas, source hashes and unchanged customer prices.
+
 ## 0.0.18 — 2026-10-27
 
 - Fix Groq strict-schema rejection of empty translation/variant/modifier maps by generating schemas specific to translation, rewrite or food suggestions and omitting empty nested maps.
