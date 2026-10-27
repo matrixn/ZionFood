@@ -1,8 +1,11 @@
 <?php
 
 use App\Domain\Integrations\Actions\DeliverOutboxMessage;
+use App\Domain\Mail\EmailLedger;
+use App\Domain\Mail\IndexQueuedEmails;
 use App\Jobs\DeliverOutbox;
 use App\Jobs\DeliverWebhook;
+use App\Models\EmailDelivery;
 use App\Models\ImportBatch;
 use App\Models\OutboxMessage;
 use App\Models\Reservation;
@@ -102,3 +105,15 @@ Artisan::command('zionfood:imports-prune', function () {
     $this->info('Expired import credentials and unapproved snapshots cleared.');
 });
 Schedule::command('zionfood:imports-prune')->hourly()->withoutOverlapping();
+
+Artisan::command('zionfood:mail-index {--limit=10000}', function () {
+    $limit = max(1, min(10000, (int) $this->option('limit')));
+    $result = app(IndexQueuedEmails::class)->execute($limit);
+    $this->info(json_encode($result));
+});
+Schedule::command('zionfood:mail-index')->everyMinute()->withoutOverlapping();
+Artisan::command('zionfood:mail-prune', function () {
+    EmailDelivery::whereIn('state', EmailLedger::TERMINAL)->where('updated_at', '<', now()->subDays(config('email_delivery.ledger_retention_days')))->delete();
+    $this->info('Expired terminal email metadata removed.');
+});
+Schedule::command('zionfood:mail-prune')->daily()->withoutOverlapping();

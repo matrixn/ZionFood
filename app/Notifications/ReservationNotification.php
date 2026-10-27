@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Domain\Mail\EmailLedger;
 use App\Models\Reservation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
@@ -29,7 +30,17 @@ class ReservationNotification extends Notification implements ShouldBeEncrypted,
     {
         $booking = Reservation::find($this->reservationId);
 
-        return $booking && $booking->version === $this->version && ! ($booking->status === 'pending' && $booking->hold_expires_at?->isPast());
+        $send = $booking && $booking->version === $this->version && ! ($booking->status === 'pending' && $booking->hold_expires_at?->isPast());
+        if (! $send) {
+            app(EmailLedger::class)->notificationFinished($this->id, 'superseded');
+        }
+
+        return $send;
+    }
+
+    public function failed(?\Throwable $error): void
+    {
+        app(EmailLedger::class)->notificationFinished($this->id, 'failed');
     }
 
     public function toMail(object $notifiable): MailMessage

@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.25** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.26** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,17 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 27 octombrie 2026 — emailuri în administrarea platformei și cota Resend · 0.0.26
+
+- [x] **Admin → Emailuri și coadă**: evidență paginată, actualizată automat, cu destinatari, subiect, sursă, inițiator, stare, motiv, încercări și următoarea încercare.
+- [x] Filtre pentru erori sistem, creare/validare cont, resetare parolă, invitații personal, rezervări și emailuri de test; filtrare și după stare, inițiator, transport, destinatar și interval calendaristic.
+- [x] Pauză comună pentru Resend la cota zilnică, lunară sau limita de cereri; emailurile rămân în coadă. Cota zilnică se reia după resetarea UTC, cu verificarea separată a celorlalte limite.
+- [x] Prag local Resend de 100 destinatari/zi UTC, configurabil în admin, plus verificarea consumului contului prin API. Limita existentă de 140/24h și suspendarea alertelor după cinci/oră rămân separate.
+- [x] Indexarea sigură a emailurilor existente în cozile configurate, metadate private criptate, expirarea linkurilor noi de autentificare și omiterea notificărilor devenite neactuale.
+- [x] Confirmarea din interfață înseamnă **acceptat de furnizor**; mesajele locale de dezvoltare au stare separată. [Comportament și limite](docs/EMAIL_DELIVERY.md).
+- [ ] Verificarea cu Resend real și cu backlogul Forge după actualizarea normală; istoricul mesajelor trimise anterior activării evidenței nu poate fi reconstruit complet.
+- [ ] Confirmări de livrare în inbox, bounce și complaint prin webhooks Resend dedicate.
 
 ### 27 octombrie 2026 — recuperare Reverb și retry outbox limitat · 0.0.25
 
@@ -34,7 +45,7 @@ Bifele nu certifică automat un deployment în producție. Rezultatele și limit
 - [x] Întoarcere la meniul restaurantului din confirmarea rezervării, inclusiv pe domenii personalizate.
 - [x] Maximum 5 alerte distincte/încercări de trimitere într-o oră; depășirea suspendă alertele până la reactivare în **Platformă → Alerte de erori prin email**. Starea persistă în baza de date; alertele vechi nu sunt retrimise după reactivare. Celelalte emailuri păstrează limita globală 140/24h.
 - [x] Diagnostic de broadcast fără secrete și endpoint intern Reverb configurabil separat de conexiunea browserului.
-- [ ] Confirmarea și remedierea cauzei transportului Reverb pe Forge: logul vizibil a confirmat amânări pentru cota de email, dar nu cauza inițială a excepției de broadcast.
+- [x] Cauza Reverb a fost identificată ulterior: DNS pentru `ws.food.zion3d.ro`, independent de cota Resend. După corectarea configurației de către proprietar și repornirea controlată Horizon, un eveniment reîncercat a fost confirmat ca livrat. DNS/WSS pentru conexiunile publice ale browserelor rămâne de verificat separat.
 
 ### 27 octombrie 2026 — comenzile active în meniul QR · 0.0.23
 

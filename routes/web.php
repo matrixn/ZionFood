@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminEmailsController;
 use App\Http\Controllers\BrandingController;
 use App\Http\Controllers\CuisineController;
 use App\Http\Controllers\DiningController;
@@ -45,6 +46,11 @@ Route::post('/invitations/{invitation}', [StaffController::class, 'accept'])->mi
 Route::get('/test-email', [TestEmailController::class, 'show']);
 Route::post('/test-email', [TestEmailController::class, 'send'])->middleware('throttle:admin-mail-test');
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/emails', [AdminEmailsController::class, 'index']);
+    Route::get('/admin/emails/data', [AdminEmailsController::class, 'data']);
+    Route::put('/admin/emails/provider', [AdminEmailsController::class, 'configure']);
+    Route::post('/admin/emails/provider/usage', [AdminEmailsController::class, 'usage'])->middleware('throttle:admin-email-operations');
+    Route::post('/admin/emails/index-queue', [AdminEmailsController::class, 'scan'])->middleware('throttle:admin-email-operations');
     Route::get('/admin/email-alerts', [EmailAlertSettingsController::class, 'show']);
     Route::put('/admin/email-alerts', [EmailAlertSettingsController::class, 'update']);
     Route::get('/admin/cuisines', [CuisineController::class, 'index']);

@@ -121,3 +121,8 @@ Verified browser session/CSRF routes (central host, outside /api/v1):
 Reservation tracking now returns a server-derived same-site `menu_url` and safe `display_settings`; the existing bearer/host checks apply to the full response. Public menu/tracking payloads apply hidden contact/display flags. Times remain ISO on the wire and monetary values remain integer minor units.
 
 0.0.25 changes no HTTP schema. Outbox invalidations now have a persistent five-attempt delivery budget and controlled CLI recovery. Kitchen/customer polling continues to fetch authoritative order state when realtime transport is unavailable; failures do not roll back an already-committed order. See DEPLOYMENT.md for DNS/internal publisher remediation.
+
+
+## Platform email administration (0.0.26)
+
+Verified platform-admin session only; separate from restaurant API and token abilities. GET /admin/emails renders the page; GET /admin/emails/data returns paginated metadata/summary/provider state with source, state, initiator, mailer, exact recipient, from/to and page filters. PUT /admin/emails/provider accepts daily_limit and revision (409 stale). POST /admin/emails/provider/usage queries read-only provider account usage; POST /admin/emails/index-queue indexes existing encrypted jobs. Mutations require CSRF and usage/index share a three/minute admin throttle. No body/token/credential is exposed. See [EMAIL_DELIVERY.md](EMAIL_DELIVERY.md) for states, semantics and historical limits.

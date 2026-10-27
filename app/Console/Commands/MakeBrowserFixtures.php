@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Domain\Mail\EmailLedger;
 use App\Domain\Orders\Actions\PlaceOrderAction;
 use App\Domain\Restaurants\SyncDiningTables;
 use App\Domain\Tenancy\Actions\OnboardOrganization;
+use App\Models\EmailDelivery;
 use App\Models\Ingredient;
 use App\Models\LocationStaff;
 use App\Models\MenuCategory;
@@ -22,7 +24,7 @@ use Illuminate\Support\Str;
 
 class MakeBrowserFixtures extends Command
 {
-    protected $signature = 'zionfood:browser-fixtures {--admin : Create a separate local platform-admin browser fixture} {--services : Prepare a separate restaurant for reservation and QR browser tests} {--storefront : Prepare a photo menu and polygon for storefront UX tests} {--invitation : Prepare a separate unaccepted staff invitation without sending email} {--permissions : Prepare staff permissions and table-room browser fixtures} {--overview : Prepare isolated analytics samples without notifications} {--closed-window : Prepare an empty ordering schedule for availability tests}';
+    protected $signature = 'zionfood:browser-fixtures {--email-ledger : Prepare local outgoing-email metadata without sending email} {--admin : Create a separate local platform-admin browser fixture} {--services : Prepare a separate restaurant for reservation and QR browser tests} {--storefront : Prepare a photo menu and polygon for storefront UX tests} {--invitation : Prepare a separate unaccepted staff invitation without sending email} {--permissions : Prepare staff permissions and table-room browser fixtures} {--overview : Prepare isolated analytics samples without notifications} {--closed-window : Prepare an empty ordering schedule for availability tests}';
 
     protected $description = 'Create a private local-only browser test account without changing existing users';
 
@@ -70,6 +72,11 @@ class MakeBrowserFixtures extends Command
                 app(SyncDiningTables::class)->execute($location, $profile['seating']);
             }
 
+            if ($this->option('email-ledger')) {
+                foreach (['deferred', 'accepted', 'notification_queued'] as $index => $state) {
+                    EmailDelivery::create(['public_id' => (string) Str::ulid(), 'source' => ['reservation', 'password_reset', 'staff_invitation'][$index], 'state' => $state, 'mailer' => 'resend', 'initiator_kind' => 'system', 'recipients' => ['to' => ['ledger-fixture@example.test'], 'cc' => [], 'bcc' => []], 'recipient_hashes' => [app(EmailLedger::class)->hashRecipient('ledger-fixture@example.test')], 'subject' => 'Local email fixture '.$state, 'reason' => $state === 'deferred' ? 'daily_quota_exceeded' : null, 'available_at' => $state === 'deferred' ? now()->addHour() : null]);
+                }
+            }
             $account = ['email' => $user->email, 'password' => $password, 'location' => $location->public_id];
             if ($this->option('invitation')) {
                 $token = Str::random(64);

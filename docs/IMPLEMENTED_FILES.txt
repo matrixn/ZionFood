@@ -507,3 +507,14 @@ app/Console/Commands/CheckRealtime.php
 database/migrations/2026_10_27_120000_bound_outbox_retries.php
 tests/Feature/OutboxDeliveryTest.php
 tests/Feature/RealtimeCheckTest.php
+app/Domain/Mail/EmailLedger.php
+app/Domain/Mail/IndexQueuedEmails.php
+app/Domain/Mail/MailSource.php
+app/Domain/Mail/ResendQuota.php
+app/Http/Controllers/AdminEmailsController.php
+app/Models/EmailDelivery.php
+database/migrations/2026_10_27_130000_create_email_ledger.php
+resources/js/pages/admin/Emails.vue
+tests/Feature/EmailLedgerTest.php
+tests/e2e/email-ledger.spec.ts
+docs/EMAIL_DELIVERY.md

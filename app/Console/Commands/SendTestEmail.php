@@ -38,6 +38,7 @@ class SendTestEmail extends Command
         try {
             Mail::raw('Acesta este un email de test ZionFood. / This is a ZionFood test email.', function ($message) use ($email) {
                 $message->to($email)->subject('ZionFood — Email de test / Test email');
+                $message->getSymfonyMessage()->getHeaders()->addTextHeader('X-ZionFood-Mail-Source', 'email_test');
             });
         } catch (Throwable) {
             $this->error('Email could not be queued. Check mailer configuration and queue health.');

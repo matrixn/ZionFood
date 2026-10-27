@@ -233,3 +233,10 @@ php artisan zionfood:outbox-retry EVENT_ULID
 ```
 
 Use an actual event_id from the safe diagnostic line. This resets only the per-cycle attempt budget and exhaustion/due state, preserves lifetime attempts and payload, and schedules after commit. It rejects missing, already-delivered or non-exhausted events. Verify delivery and browser reconciliation before selectively retrying other retained events. No automatic bulk replay is added. Reverb transport exceptions now propagate only a safe classification/hint without chaining the raw signed URL; existing historical logs are not rewritten. The five-per-hour error-email circuit remains separate from the five-attempt per-event publication budget. No Forge environment/service/DNS change is implied by this source release.
+
+
+## Email ledger and Resend quota (0.0.26)
+
+Apply additive migration 130000, build assets/config and gracefully restart Horizon through the normal deployment. Keep Redis-backed shared locks and the minute scheduler running. RESEND_DAILY_LIMIT=100 initializes the persistent guard once; admin edits then take precedence. In platform Admin → Emails and queue, index the existing configured backlog and check provider usage (no emails sent by either action). New metadata appears on enqueue. See [EMAIL_DELIVERY.md](EMAIL_DELIVERY.md) for reset semantics, key-permission errors, legacy/custom-queue limits, expired auth links and 90-day pruning. No new dependency or Resend webhook configuration is required. No live quota/backlog verification is implied by local tests.
+
+Operational follow-up to the Reverb incident: after the owner corrected their environment values, a graceful Horizon refresh and one explicit event retry were confirmed successful (event delivered with one cycle attempt). This was internal backend publication. Public browser websocket DNS/TLS/VITE configuration remains a separate check; provider email quota never explained the original cURL-6 broadcaster failure.

@@ -56,3 +56,8 @@ Migration 001200 adds category/variant group pivots, nullable product order_type
 ## 0.0.25 outbox retry state
 
 `outbox_messages` adds unsigned delivery_attempts, nullable next_attempt_at and failed_at, and a due index. Historical lifetime attempts and event/payload rows are retained. Existing undelivered attempts >=5 are quarantined during backfill; delivered rows are untouched. Only explicit per-event recovery resets the delivery cycle.
+
+
+## 0.0.26 outgoing email metadata
+
+email_deliveries holds unique public_id and optional unique notification_id, source/state/mailer/initiator, encrypted recipients/subject/context, HMAC recipient hashes, attempts, safe reason/provider ID and lease/due/expiry/acceptance timestamps. Nullable initiating user uses null-on-delete. mail_provider_limits has the singleton Resend UTC day, local guard/reservations, provider pause/reset, optimistic revision and validated usage snapshot/check/error. Additive migration 130000 changes no existing email payload or order data. Terminal metadata expires after 90 days; active metadata remains.

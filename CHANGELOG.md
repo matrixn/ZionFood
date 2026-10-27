@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.26 — 2026-10-27
+
+- Added a platform-admin outgoing-email ledger with source/initiator/status/recipient/date filters, live polling, metadata details and encrypted private fields.
+- Added UTC Resend daily guards, typed provider daily/monthly/rate pauses and read-only account usage synchronization; retained mail stays queued without repeated provider quota exceptions.
+- Indexed existing encrypted jobs without sending or modifying queues; protected expired new auth links and outdated invitation/reservation messages, with 90-day terminal metadata retention.
+- Documented the separately confirmed Reverb DNS cause and internal-publisher recovery, keeping public browser WSS verification open.
+
 ## 0.0.25 — 2026-10-27
 
 - Bounded outbox delivery across scheduler/worker duplicates using persistent per-cycle attempts, due times and exhaustion state; legacy exhausted rows are retained and quarantined.

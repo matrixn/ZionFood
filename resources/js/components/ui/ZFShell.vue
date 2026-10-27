@@ -233,6 +233,7 @@ function switchLocation(id: string) {
                         <Link href="/admin/ingredients" class="block p-3 text-brand">{{
                             $t('ingredients_title')
                         }}</Link>
+                        <Link href="/admin/emails" class="block p-3 text-brand">{{ $t('mail_admin_title') }}</Link>
                         <Link href="/admin/email-alerts" class="block p-3 text-brand">{{ $t('alerts_title') }}</Link>
                         <Link href="/admin/menu-ai" class="block p-3 text-brand">{{ $t('mc_ai_settings') }}</Link>
                         <Link href="/admin/cuisines" class="block p-3 text-brand">{{ $t('cuisine_admin_title') }}</Link>

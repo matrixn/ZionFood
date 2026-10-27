@@ -26,6 +26,7 @@ class TestEmailController extends Controller
         try {
             Mail::raw(__('ZionFood test email. The configured mail service is working.'), function ($message) {
                 $message->to(config('email_delivery.admin_email'))->subject('ZionFood — Email de test / Test email');
+                $message->getSymfonyMessage()->getHeaders()->addTextHeader('X-ZionFood-Mail-Source', 'email_test');
             });
         } catch (Throwable) {
             throw ValidationException::withMessages(['email' => __('Email could not be queued. Check delivery configuration and queue health.')]);

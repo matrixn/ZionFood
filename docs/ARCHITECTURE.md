@@ -1,4 +1,4 @@
-# ZionFood 0.0.25
+# ZionFood 0.0.26
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; whole-menu Migration Center is implemented separately with encrypted staging, approved version publication and guarded rollback (see MIGRATION_CENTER.md). See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -125,3 +125,8 @@ Broadcast retries retain durable outbox semantics. Additional logs contain only 
 DeliverOutboxMessage owns the locked delivery state. `attempts` remains the lifetime count; `delivery_attempts` counts a manually resettable cycle capped at five. `next_attempt_at` makes both queue retries and scheduler duplicates respect the same 5/15/60/120-second delays. `failed_at` latches exhausted events without deleting payloads or marking them delivered. A successful delivery clears the due/error fields. Due queries exclude delivered, future and exhausted rows; jobs repeat those guards under the row lock. Explicit CLI recovery requires an exhausted undelivered event, retains its identity/lifetime history and dispatches after commit. Publication stays at least once if a process dies after sending and before recording success; consumer invalidations must remain idempotent.
 
 Webhook fanout stays in the transaction and precedes broadcasting, so a broadcast failure preserves already-created idempotent webhook deliveries. Known BroadcastException messages are replaced by a safe classification/hint without a previous exception, preventing signed query strings from reaching default Laravel/Horizon exception serialization. Generic non-broadcast errors retain their exception identity. Reverb endpoint fallback semantics are unchanged; realtime-check is a read-only DNS/configuration aid, not a transport or end-to-end health guarantee.
+
+
+## Outgoing mail ledger and provider pause (0.0.26)
+
+EmailLedger captures queued notification intent and rendered transport metadata; DeliverEmail correlates by notification ID/public ULID and leases records before provider work. ResendQuota holds persistent UTC counters and shared daily/monthly/rate pauses under database row locks, with a cache provider lock around usage/sending. Existing rolling application quotas and the error-alert circuit remain separate. IndexQueuedEmails reads authenticated encrypted configured queue payloads without executing them. AdminEmailsController is platform-only and returns explicit safe metadata fields. See [EMAIL_DELIVERY.md](EMAIL_DELIVERY.md).

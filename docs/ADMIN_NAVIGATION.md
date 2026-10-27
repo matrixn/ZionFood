@@ -27,3 +27,8 @@ Backend tests cover editor data, standalone compatibility, foreign/staff denials
 Restaurant management now includes Ingredients. Platform administration also links the shared ingredient catalogue. Menu has an inline Manage ingredients dialog, including within setup/menu, so product and custom ingredient preparation remain inside the guide. Standalone ingredient administration remains available. See INGREDIENTS.md.
 
 0.0.24 adds Setări generale beside the location schedule/delivery controls and embeds it in setup/general. Platform admin has Alerte de erori prin email for the global circuit state and manual resume. Mese și QR order-summary controls appear only with independent orders/kitchen read capability; serving additionally needs manage capability.
+
+
+## Platform administration email navigation
+
+The platform-admin shell adds **Emails and queue** above **Error email alerts**. This is not a restaurant-management menu. The ledger covers all platform mail sources, with filters, live polling, bounded metadata detail modal and provider quota controls. Tenant users cannot access these routes even by URL.

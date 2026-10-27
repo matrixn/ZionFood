@@ -5,6 +5,7 @@ namespace App\Domain\Mail;
 use App\Jobs\DeliverEmail;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Throwable;
 
@@ -15,6 +16,9 @@ class QueueOutgoingEmail
         $mailer = $event->data['mailer'] ?? config('mail.default');
         $transport = config('mail.mailers.'.$mailer.'.transport');
         if (in_array($transport, ['array', 'log'], true)) {
+            $record = app(EmailLedger::class)->message((string) Str::ulid(), $event->message, $mailer, $event->data);
+            $event->message->getHeaders()->addTextHeader('X-ZionFood-Delivery-ID', $record->public_id);
+
             return null;
         }
         // Do not permit fallback-to-log transports to claim real delivery.
@@ -27,9 +31,12 @@ class QueueOutgoingEmail
         }
 
         $job = (new DeliverEmail(clone $event->message, $mailer))->onConnection($connection)->afterCommit();
+        $record = app(EmailLedger::class)->message($job->deliveryId, $event->message, $mailer, $event->data);
+        $job->deliveryId = $record->public_id;
         try {
             Bus::dispatch($job);
         } catch (Throwable $error) {
+            $record->update(['state' => 'failed', 'reason' => 'queue_failed']);
             EmailDeliveryLog::write('queue_failed', ['delivery_id' => $job->deliveryId, 'mailer' => $mailer, ...EmailDeliveryLog::failure($error)], 'error');
             throw $error;
         }

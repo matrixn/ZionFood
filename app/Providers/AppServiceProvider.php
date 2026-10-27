@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Domain\Mail\EmailDeliveryLog;
 use App\Domain\Mail\EmailErrorAlert;
+use App\Domain\Mail\EmailLedger;
 use App\Domain\Mail\QueueOutgoingEmail;
 use App\Domain\Menus\MenuCache;
 use App\Jobs\DeliverEmail;
+use App\Models\EmailDelivery;
 use App\Models\Menu;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
@@ -15,6 +17,8 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Queue\Events\JobQueued;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -40,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('menu-import', fn (Request $r) => [Limit::perMinute(3)->by('import-user:'.$r->user()?->id), Limit::perHour(15)->by('import-location:'.$r->route('location'))]);
         RateLimiter::for('menu-content', fn (Request $r) => Limit::perMinute(10)->by((string) $r->user()?->id));
         RateLimiter::for('menu-ai-provider', fn () => Limit::perMinute(1)->by('menu-ai-global'));
+        RateLimiter::for('admin-email-operations', fn (Request $r) => Limit::perMinute(3)->by('email-admin:'.$r->user()?->id));
         RateLimiter::for('admin-mail-test', fn () => Limit::perHour(3)->by('admin-mail-test'));
         RateLimiter::for('reservations', fn (Request $r) => [Limit::perHour(10)->by($r->ip()), Limit::perMinute(60)->by('reservation-location:'.$r->route('location'))]);
         RateLimiter::for('reservation-slots', fn (Request $r) => Limit::perMinute(10)->by($r->ip()));
@@ -52,7 +57,20 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('table-operations', fn (Request $r) => Limit::perMinute(30)->by((string) $r->user()?->id));
         Event::listen(MessageSending::class, [QueueOutgoingEmail::class, 'handle']);
         Event::listen(MessageLogged::class, [EmailErrorAlert::class, 'handle']);
+        Event::listen(MessageSent::class, function ($event) {
+            $id = $event->message->getHeaders()->get('X-ZionFood-Delivery-ID')?->getBodyAsString();
+            if ($id) {
+                EmailDelivery::where('public_id', $id)->update(['state' => 'local', 'reason' => 'development_transport']);
+            }
+        });
         Event::listen(JobQueued::class, function (JobQueued $event) {
+            if ($event->job instanceof SendQueuedNotifications) {
+                try {
+                    app(EmailLedger::class)->queuedNotification($event->job);
+                } catch (\Throwable) {
+                    EmailDeliveryLog::write('notification_index_failed', [], 'warning');
+                }
+            }
             if ($event->job instanceof DeliverEmail) {
                 EmailDeliveryLog::write('queued', ['delivery_id' => $event->job->deliveryId, 'mailer' => $event->job->mailer, 'connection' => $event->connectionName, 'queue' => $event->queue]);
             }

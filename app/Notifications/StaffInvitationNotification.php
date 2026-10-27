@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Domain\Mail\EmailLedger;
 use App\Models\Organization;
 use App\Models\StaffInvitation;
 use Illuminate\Bus\Queueable;
@@ -28,7 +29,17 @@ class StaffInvitationNotification extends Notification implements ShouldBeEncryp
     {
         $invitation = StaffInvitation::where('public_id', $this->invitationId)->where('organization_id', $this->organizationId)->first();
 
-        return $invitation && ! $invitation->revoked_at && ! $invitation->accepted_at && $invitation->expires_at->isFuture() && hash_equals($invitation->token_hash, hash('sha256', $this->token));
+        $send = $invitation && ! $invitation->revoked_at && ! $invitation->accepted_at && $invitation->expires_at->isFuture() && hash_equals($invitation->token_hash, hash('sha256', $this->token));
+        if (! $send) {
+            app(EmailLedger::class)->notificationFinished($this->id, 'superseded');
+        }
+
+        return $send;
+    }
+
+    public function failed(?\Throwable $error): void
+    {
+        app(EmailLedger::class)->notificationFinished($this->id, 'failed');
     }
 
     public function toMail(object $notifiable): MailMessage
