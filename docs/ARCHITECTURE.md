@@ -1,4 +1,4 @@
-# ZionFood 0.0.24
+# ZionFood 0.0.25
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; whole-menu Migration Center is implemented separately with encrypted staging, approved version publication and guarded rollback (see MIGRATION_CENTER.md). See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -32,7 +32,7 @@ Status changes lock the order and require the expected version. Allowed transiti
 
 An outbox row schedules `DeliverOutbox` only after commit. The job publishes a small `order.changed` invalidation over `organization.{organization}.location.{location}.orders`, then marks delivery. Private channel authorization checks both organization and location. Payloads contain event/order public IDs, event type and version, without customer data. Delivery is at least once: if publication succeeds but recording delivery fails, an event can be repeated. KDS refetches authoritative state, so duplicates are harmless.
 
-Failures retain the outbox row, increment attempts, and record only the exception class. Queue backoff and the scheduled `zionfood:outbox` command provide retry/reconciliation. KDS also synchronizes after reconnect, focus, visibility changes, network restoration, manual refresh, and every 15 seconds. Active order pagination is fully traversed. Customer tracking polls every five seconds using a token in the Authorization header; tokens stay in session storage, outside URLs.
+Failures retain the outbox row, increment attempts, and record only the exception class. Queue backoff and the scheduled `zionfood:outbox` command provide retry/reconciliation, subject to the persistent per-event budget and due time described below. KDS also synchronizes after reconnect, focus, visibility changes, network restoration, manual refresh, and every 15 seconds. Active order pagination is fully traversed. Customer tracking polls every five seconds using a token in the Authorization header; tokens stay in session storage, outside URLs.
 
 ## Hostnames and future work
 
@@ -119,3 +119,9 @@ StaffTableOrders scopes both orders and sessions to organization/location/table.
 ErrorAlertCircuit stores a singleton locked database row: enable switch, latched suspension, counters, generation and version. Deduplicated admissions and actual provider attempts each have a rolling-hour budget of five. A sixth attempt latches suspension; elapsed time/restart does not clear it. SMTP/Resend alert jobs carry a generation header and check the latch before quota/provider access. Manual admin resume clears windows and advances generation, invalidating backlog; ordinary emails bypass this alert-only gate but still use EmailQuota. Provider acceptance is recorded separately and is not inbox delivery. Failure attempts count conservatively. MAIL_ERROR_ALERTS remains a server master switch.
 
 Broadcast retries retain durable outbox semantics. Additional logs contain only an error classification/hint/event ID/attempt, never raw request URLs or credentials. Optional REVERB_PUBLISH_* values separate server publishing from browser websocket routing.
+
+## Durable outbox attempt budget (0.0.25)
+
+DeliverOutboxMessage owns the locked delivery state. `attempts` remains the lifetime count; `delivery_attempts` counts a manually resettable cycle capped at five. `next_attempt_at` makes both queue retries and scheduler duplicates respect the same 5/15/60/120-second delays. `failed_at` latches exhausted events without deleting payloads or marking them delivered. A successful delivery clears the due/error fields. Due queries exclude delivered, future and exhausted rows; jobs repeat those guards under the row lock. Explicit CLI recovery requires an exhausted undelivered event, retains its identity/lifetime history and dispatches after commit. Publication stays at least once if a process dies after sending and before recording success; consumer invalidations must remain idempotent.
+
+Webhook fanout stays in the transaction and precedes broadcasting, so a broadcast failure preserves already-created idempotent webhook deliveries. Known BroadcastException messages are replaced by a safe classification/hint without a previous exception, preventing signed query strings from reaching default Laravel/Horizon exception serialization. Generic non-broadcast errors retain their exception identity. Reverb endpoint fallback semantics are unchanged; realtime-check is a read-only DNS/configuration aid, not a transport or end-to-end health guarantee.

@@ -207,3 +207,29 @@ Run additive migration 2026_10_27_001200 and build frontend assets. Horizon/defa
 Run additive migrations `2026_10_27_110000_create_email_alert_settings` and `2026_10_27_110100_add_location_preferences`, build assets, refresh normal caches and gracefully reload long-lived workers through the existing deployment process. No data reset or package changes. Platform administrators manage `/admin/email-alerts`; the shared DB lock coordinates all alert producers/workers. Keep MAIL_ERROR_ALERTS enabled and ADMIN_EMAIL configured privately. The sixth distinct alert admission or provider attempt within a rolling hour latches suspension; a clock-hour change/restart does not clear it. Manual resume clears the hour windows and advances a generation, discarding previous-generation/legacy alert jobs when processed. Pausing does not erase the original application logs. Normal invitation/reservation/auth mail remains subject to 140 recipients/24h; deferred messages do not bypass that quota. Transport failure attempts are counted because acceptance can be uncertain. Provider acceptance is logged separately; no inbox-delivery guarantee is implied.
 
 Forge observation during this change showed repeated `email quota_deferred` logs. The original BroadcastException message was absent from the visible log tail, so no specific Reverb cause or live fix is asserted. New `ZionFood broadcast delivery failed` entries contain safe classifications (DNS/refused/TLS/timeout/auth/endpoint) and hints; the original durable retry/error still occurs. If the publisher currently loops through a public proxy, optional `REVERB_PUBLISH_HOST/PORT/SCHEME` may address the internal Reverb listener while `REVERB_*`/`VITE_REVERB_*` browser settings remain public. Determine the actual listener/process topology first; do not disable TLS verification or expose credentials. These optional settings have unchanged fallback behavior when absent. No manual Forge deploy/restart/configuration change was performed for this work.
+
+## Reverb DNS and outbox recovery (0.0.25)
+
+The supplied Forge log records cURL error 6 resolving `ws.food.zion3d.ro` at 2026-10-27 10:31 UTC (12:31 Europe/Bucharest). That is a DNS failure before a Reverb HTTP connection. The same events reached 458–463 lifetime attempts because the old minute reconciler kept creating new jobs after queue retries exhausted. Application orders stay stored; the live websocket invalidation failed. Do not clear Redis queues, delete outbox rows or mark them delivered to hide this error.
+
+During the normal upgrade run `2026_10_27_120000_bound_outbox_retries` and gracefully restart Horizon through the existing deployment process so already-running workers use the new job code. The migration preserves event identity/payload/lifetime attempts, initializes the per-cycle counter from historical attempts and marks undelivered rows with at least five attempts exhausted. Queued duplicates then skip those rows. Fresh attempts use persistent 5/15/60/120-second delays and stop after the fifth failure, independently of queue job identities. The minute reconciler only queues due, non-exhausted rows. Webhook deliveries already fanned out remain independently retryable/idempotent.
+
+Verify the actual topology before changing environment values. If Reverb runs on the SAME server at loopback port 8080, the existing supported internal publishing settings are:
+
+```dotenv
+REVERB_PUBLISH_HOST=127.0.0.1
+REVERB_PUBLISH_PORT=8080
+REVERB_PUBLISH_SCHEME=http
+```
+
+For the site inspected during this incident, Forge showed Reverb Running with `--port=8080`, and the owner confirmed it is on the same server. Use the actual supervised Reverb listener port on other installations, which may differ. If Reverb runs on another server, use its reachable authenticated TLS endpoint; do not replace it with local loopback. Internal publishing does not repair public browser DNS. For the current public hostname, create/correct its A/AAAA or CNAME record pointing to the intended server, configure the matching TLS certificate and websocket reverse proxy, and use the appropriate `REVERB_HOST`, `REVERB_PORT`, `REVERB_SCHEME` and public `VITE_REVERB_*` build values. Keep the same app ID/key/secret on both sides and keep the secret out of VITE variables. Do not disable TLS verification or change BROADCAST_CONNECTION to null/log as a substitute for fixing realtime.
+
+After an authorized server configuration update, rebuild the configuration cache and gracefully restart Horizon; rebuild frontend assets when VITE values change. Restart the supervised Reverb process when its own listener/app configuration changes. `php artisan zionfood:realtime-check` reads the EFFECTIVE cached configuration, checks publisher and public REVERB_HOST DNS and reports missing configuration without printing credentials. It publishes no event and does not verify TCP reachability, TLS, credential matching or separately overridden VITE assets. Localhost/IP values need no external DNS. A successful DNS check alone does not prove end-to-end delivery.
+
+After resolving the actual endpoint, explicitly retry ONE exhausted event first:
+
+```sh
+php artisan zionfood:outbox-retry EVENT_ULID
+```
+
+Use an actual event_id from the safe diagnostic line. This resets only the per-cycle attempt budget and exhaustion/due state, preserves lifetime attempts and payload, and schedules after commit. It rejects missing, already-delivered or non-exhausted events. Verify delivery and browser reconciliation before selectively retrying other retained events. No automatic bulk replay is added. Reverb transport exceptions now propagate only a safe classification/hint without chaining the raw signed URL; existing historical logs are not rewritten. The five-per-hour error-email circuit remains separate from the five-attempt per-event publication budget. No Forge environment/service/DNS change is implied by this source release.

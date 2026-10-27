@@ -119,3 +119,5 @@ Verified browser session/CSRF routes (central host, outside /api/v1):
 - GET/PUT `/admin/email-alerts`: platform administrators only. PUT `enabled`, `resume`, `version`; returns safe settings/counter state, conflicts 409. Tenant managers and platform admins without tenant membership do not gain tenant access.
 
 Reservation tracking now returns a server-derived same-site `menu_url` and safe `display_settings`; the existing bearer/host checks apply to the full response. Public menu/tracking payloads apply hidden contact/display flags. Times remain ISO on the wire and monetary values remain integer minor units.
+
+0.0.25 changes no HTTP schema. Outbox invalidations now have a persistent five-attempt delivery budget and controlled CLI recovery. Kitchen/customer polling continues to fetch authoritative order state when realtime transport is unavailable; failures do not roll back an already-committed order. See DEPLOYMENT.md for DNS/internal publisher remediation.

@@ -1,4 +1,4 @@
-# GloriaFood Migration Center — 0.0.24
+# GloriaFood Migration Center — 0.0.25
 
 Access: restaurant dashboard → Connections → Migration Center. Requires a verified owner/manager with menu management permission. Platform administration alone is insufficient. Each import belongs to one organization and location.
 

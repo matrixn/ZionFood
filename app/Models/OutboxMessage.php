@@ -22,5 +22,5 @@ class OutboxMessage extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = ['payload' => 'array', 'delivered_at' => 'datetime'];
+    protected $casts = ['payload' => 'array', 'delivered_at' => 'datetime', 'failed_at' => 'datetime', 'next_attempt_at' => 'datetime', 'delivery_attempts' => 'integer', 'attempts' => 'integer'];
 }

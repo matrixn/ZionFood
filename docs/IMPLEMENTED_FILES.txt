@@ -502,3 +502,8 @@ tests/Feature/BroadcastDiagnosticsTest.php
 tests/frontend/locationDates.test.ts
 tests/e2e/general-settings.spec.ts
 tests/e2e/error-alert-settings.spec.ts
+app/Domain/Integrations/Actions/DeliverOutboxMessage.php
+app/Console/Commands/CheckRealtime.php
+database/migrations/2026_10_27_120000_bound_outbox_retries.php
+tests/Feature/OutboxDeliveryTest.php
+tests/Feature/RealtimeCheckTest.php

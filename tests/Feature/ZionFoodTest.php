@@ -172,6 +172,7 @@ it('retries failed outbox deliveries and safely skips delivered messages', funct
     expect($message->fresh()->attempts)->toBe(1);
     expect($message->fresh()->delivered_at)->toBeNull();
     Event::fake([OrderChanged::class]);
+    $this->travel(5)->seconds();
     (new DeliverOutbox($message->id))->handle();
     (new DeliverOutbox($message->id))->handle();
     Event::assertDispatchedTimes(OrderChanged::class, 1);

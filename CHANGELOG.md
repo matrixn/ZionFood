@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.25 — 2026-10-27
+
+- Bounded outbox delivery across scheduler/worker duplicates using persistent per-cycle attempts, due times and exhaustion state; legacy exhausted rows are retained and quarantined.
+- Added explicit per-event retry preserving lifetime history, plus a credential-free Reverb DNS/configuration check.
+- Removed signed transport URLs from propagated Reverb exceptions while retaining safe diagnostics and webhook fanout.
+
 ## 0.0.24 — 2026-10-27
 
 - Added persistent, platform-admin-controlled error-alert suspension at the sixth alert/attempt in a rolling hour; queued old generations are discarded on manual resume, ordinary mail keeps its global quota.

@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.24** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.25** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,15 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 27 octombrie 2026 — recuperare Reverb și retry outbox limitat · 0.0.25
+
+- [x] Limită persistentă de cinci încercări per eveniment, cu pauze între încercări; schedulerul și joburile duplicate respectă aceeași limită.
+- [x] Evenimentele vechi cu sute de încercări sunt oprite la migrare, fără ștergerea datelor sau declararea lor ca livrate.
+- [x] Reluare controlată prin `php artisan zionfood:outbox-retry EVENT_ULID`, păstrând identificatorul, conținutul și numărul total de încercări.
+- [x] `php artisan zionfood:realtime-check` verifică DNS-ul endpointurilor configurate fără publicarea unui eveniment și fără afișarea cheilor.
+- [x] Excepțiile Reverb propagate către Laravel/Horizon conțin doar motivul și indicația de diagnostic, fără URL-uri semnate.
+- [ ] Pe Forge: aplicarea endpointului intern pregătit `127.0.0.1:8080` și corectarea DNS-ului/proxy-ului pentru `ws.food.zion3d.ro`, după confirmarea modificărilor live. [Instrucțiuni](docs/DEPLOYMENT.md#reverb-dns-and-outbox-recovery-0025).
 
 ### 27 octombrie 2026 — mese, afișare și protecția alertelor · 0.0.24
 

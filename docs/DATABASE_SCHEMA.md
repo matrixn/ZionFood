@@ -52,3 +52,7 @@ Migration 001200 adds category/variant group pivots, nullable product order_type
 
 - `restaurant_locations.preferences` nullable JSON and `preferences_revision` default 0: whitelisted presentation/date settings, independent of setup_profile/setup_revision; raw preferences are hidden from model serialization, normalized safe display_settings is exposed.
 - `email_alert_settings` singleton ID 1: enabled, nullable suspended_at/reason, generation/version, bounded JSON admission timestamps and delivery attempt entries. Global platform setting, not tenant-owned. Runtime insert-or-ignore and row-lock transactions coordinate workers; one rolling hour, at most five entries per window. Suspension survives expiration/restart; manual resume clears windows and invalidates queued generations. Provider acceptance updates attempt metadata without re-sending accepted messages on bookkeeping failure. It contains no email bodies, addresses, exception messages or provider keys.
+
+## 0.0.25 outbox retry state
+
+`outbox_messages` adds unsigned delivery_attempts, nullable next_attempt_at and failed_at, and a due index. Historical lifetime attempts and event/payload rows are retained. Existing undelivered attempts >=5 are quarantined during backfill; delivered rows are untouched. Only explicit per-event recovery resets the delivery cycle.

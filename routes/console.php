@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Integrations\Actions\DeliverOutboxMessage;
 use App\Jobs\DeliverOutbox;
 use App\Jobs\DeliverWebhook;
 use App\Models\ImportBatch;
@@ -14,14 +15,34 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('zionfood:outbox', function () {
-    OutboxMessage::whereNull('delivered_at')->orderBy('id')->chunkById(100, function ($messages) {
+    app(DeliverOutboxMessage::class)->due()->orderBy('id')->chunkById(100, function ($messages) {
         foreach ($messages as $message) {
             DeliverOutbox::dispatch($message->id);
         }
     });
-    $this->info('Undelivered events queued.');
+    $this->info('Due, non-exhausted events queued.');
 });
 Schedule::command('zionfood:outbox')->everyMinute()->withoutOverlapping();
+Artisan::command('zionfood:outbox-retry {event}', function () {
+    $event = strtoupper($this->argument('event'));
+    if (! preg_match('/^[0-9A-HJKMNP-TV-Z]{26}$/', $event)) {
+        $this->error('Provide one valid event ULID.');
+
+        return 1;
+    }
+    if (! OutboxMessage::where('event_id', $event)->exists()) {
+        $this->error('Event not found.');
+
+        return 1;
+    }
+    if (! app(DeliverOutboxMessage::class)->retry($event)) {
+        $this->error('Only an exhausted, undelivered event can be retried.');
+
+        return 1;
+    }
+    $this->info('Event retry queued; lifetime attempts and payload preserved.');
+});
+
 Artisan::command('zionfood:reservations-expire', function () {
     Reservation::where('status', 'pending')->where('hold_expires_at', '<=', now())->chunkById(100, function ($bookings) {
         foreach ($bookings as $context) {
