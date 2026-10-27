@@ -10,6 +10,7 @@ import AllergenNotice from '@/components/storefront/AllergenNotice.vue';
 import ProductPhoto from '@/components/storefront/ProductPhoto.vue';
 import ProductIngredients from '@/components/storefront/ProductIngredients.vue';
 import { productMarks } from '@/lib/ingredients';
+import TableOrders from '@/components/storefront/TableOrders.vue';
 import ProductConfigurator from '@/components/storefront/ProductConfigurator.vue';
 import CartDrawer from '@/components/storefront/CartDrawer.vue';
 import CheckoutForm from '@/components/storefront/CheckoutForm.vue';
@@ -43,9 +44,14 @@ async function connectTable() {
     if (!props.tableContext) return;
     const id = props.tableContext.public_id;
     const fragment = new URLSearchParams(window.location.hash.slice(1)).get('token');
-    if (fragment?.length === 64) sessionStorage.setItem(`zf-table-qr-${id}`, fragment);
+    let proof = fragment?.length === 64 ? fragment : null;
+    try {
+        if (proof) sessionStorage.setItem(`zf-table-qr-${id}`, proof);
+        else proof = sessionStorage.getItem(`zf-table-qr-${id}`);
+    } catch {
+        /* The scanned proof remains available in memory for this visit. */
+    }
     history.replaceState(null, '', window.location.pathname);
-    const proof = sessionStorage.getItem(`zf-table-qr-${id}`);
     if (!proof) {
         tableError.value = 'dining_scan_again';
         return;
@@ -100,6 +106,14 @@ const product = ref<Product | null>(null);
 const configure = ref(false);
 const drawer = ref(false);
 const checkout = ref(false);
+const tableOrdersRefresh = ref(0);
+const tableOrdersAnchor = ref<HTMLElement>();
+const orderSent = ref(false);
+function placedAtTable() {
+    tableOrdersRefresh.value++;
+    orderSent.value = true;
+    tableOrdersAnchor.value?.scrollIntoView({ block: 'start' });
+}
 </script>
 <template>
     <StorefrontLayout :name="restaurant.name" :brand="restaurant"
@@ -149,6 +163,17 @@ const checkout = ref(false);
             <p v-if="sessionToken" class="font-medium text-brand">{{ $t('dining_session_ready') }}</p>
             <Button v-else :label="$t('dining_connect')" :loading="tableBusy" @click="connectTable" />
         </section>
+        <div v-if="tableContext" ref="tableOrdersAnchor" class="scroll-mt-4">
+            <p v-if="orderSent" role="status" class="mb-3 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-900">
+                {{ $t('table_order_sent') }}
+            </p>
+            <TableOrders
+                :key="tableContext.public_id"
+                :table-id="tableContext.public_id"
+                :session-token="sessionToken"
+                :refresh-key="tableOrdersRefresh"
+            />
+        </div>
         <Link
             v-if="fulfillment.reservations_enabled && !tableContext"
             :href="`/reserve/${location.public_id}`"
@@ -247,5 +272,6 @@ const checkout = ref(false);
             :table-session-token="sessionToken"
             :map-config="mapConfig"
             :map-center="mapCenter"
+            @placed="placedAtTable"
     /></StorefrontLayout>
 </template>

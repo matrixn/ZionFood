@@ -1,4 +1,4 @@
-# Scope at 0.0.22
+# Scope at 0.0.23
 
 0.0.19 introduces a dish-first automatic generation workspace, combined AI tasks, approximate one-portion nutrition and durable live review notifications. It replaces the earlier manual reference calculator and retires the manual GloriaFood JSON metadata workflow. Published data remains local and requires review. Whole-menu GloriaFood migration, approved publication, reimport decisions and guarded rollback are implemented in 0.0.22; see MIGRATION_CENTER.md. Provider fidelity and estimation quality still require validation with a real authorized restaurant.
 
@@ -62,3 +62,5 @@ Implemented storefront polish: restaurant-specific share metadata, product/servi
 0.0.20 adds feature/location-scoped RestaurantOverview analytics, approximate daily menu-visit aggregates, compact effective table-state controls and reusable FieldHelp across forms. Definitions deliberately distinguish order value, reservations, QR sessions and approximate visits from receipts, physical occupancy and unique people. Successful generation review closes automatically; failed writes remain open. See [RESTAURANT_ANALYTICS.md](RESTAURANT_ANALYTICS.md).
 
 0.0.22 completes the documented compatibility matrix: category/variant groups, quantity/default semantics, structured food metadata and product service restrictions. The Migration Center imports full menus, not the retired single-product manual food JSON workflow. Currency conversion, XML/CSV/XLSX/PDF extraction, customer/order-history import and remote photo downloads are outside this GloriaFood API-focused increment.
+
+0.0.23 adds shared active table-session receipts inside the QR menu, automatic status refresh, reload recovery and stay-on-menu dine-in checkout. Ready orders stay visible until completed; terminal orders are removed individually. Existing read-only receipt capabilities survive stopped ordering without allowing new orders or exposing earlier sessions to new guests.

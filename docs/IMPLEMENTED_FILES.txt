@@ -17,6 +17,7 @@ app/Domain/Analytics/RecordMenuVisit.php
 app/Domain/Analytics/RestaurantOverview.php
 app/Domain/Companies/ResolveCompany.php
 app/Domain/Delivery/Polygon.php
+app/Domain/Dining/ActiveTableOrders.php
 app/Domain/Dining/OrderingWindow.php
 app/Domain/Dining/TableSessions.php
 app/Domain/Imports/GloriaFoodAdapter.php
@@ -323,6 +324,7 @@ resources/js/components/storefront/ProductConfigurator.vue
 resources/js/components/storefront/ProductFoodData.vue
 resources/js/components/storefront/ProductIngredients.vue
 resources/js/components/storefront/ProductPhoto.vue
+resources/js/components/storefront/TableOrders.vue
 resources/js/components/ui/FieldHelp.vue
 resources/js/components/ui/LanguageSelector.vue
 resources/js/components/ui/WorkspaceNotifications.vue
@@ -352,6 +354,7 @@ resources/js/lib/http.ts
 resources/js/lib/ingredients.ts
 resources/js/lib/menuContent.ts
 resources/js/lib/menuNotifications.ts
+resources/js/lib/tableReceipts.ts
 resources/js/lib/useSetupEditorGuard.ts
 resources/js/pages/Onboarding.vue
 resources/js/pages/Welcome.vue
@@ -436,6 +439,7 @@ tests/Feature/StaffPermissionsTest.php
 tests/Feature/StorefrontExperienceTest.php
 tests/Feature/StorefrontShareImageTest.php
 tests/Feature/TableAvailabilityBulkTest.php
+tests/Feature/TableOrdersTest.php
 tests/Feature/TestEmailPageTest.php
 tests/Feature/WebhooksTest.php
 tests/Feature/ZionFoodTest.php
@@ -460,6 +464,7 @@ tests/e2e/restaurant-location.spec.ts
 tests/e2e/setup.spec.ts
 tests/e2e/staff-permissions-tables.spec.ts
 tests/e2e/storefront-experience.spec.ts
+tests/e2e/table-orders.spec.ts
 tests/e2e/venue-services.spec.ts
 tests/e2e/wizard-workspace.spec.ts
 tests/frontend/cart.test.ts
@@ -471,6 +476,7 @@ tests/frontend/kitchen.test.ts
 tests/frontend/localization.test.ts
 tests/frontend/menuContent.test.ts
 tests/frontend/menuNotifications.test.ts
+tests/frontend/tableReceipts.test.ts
 tests/integration/order-concurrency.php
 tests/integration/reservation-concurrency.php
 tests/load/ordering.js

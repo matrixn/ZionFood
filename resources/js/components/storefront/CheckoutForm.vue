@@ -21,6 +21,7 @@ const props = defineProps<{
     mapConfig: MapConfig;
     mapCenter: number[];
 }>();
+const emit = defineEmits<{ placed: [] }>();
 const formId = useId();
 const visible = defineModel<boolean>('visible', { required: true });
 const cart = useCart();
@@ -175,10 +176,19 @@ async function submit() {
             payload,
             { 'Idempotency-Key': key.value },
         );
-        sessionStorage.setItem(`zf-order-${result.order_id}`, result.tracking_token);
+        if (props.tableSessionToken) {
+            try {
+                sessionStorage.setItem(`zf-order-${result.order_id}`, result.tracking_token);
+            } catch {
+                /* The table receipt is already available through the in-memory session. */
+            }
+        } else sessionStorage.setItem(`zf-order-${result.order_id}`, result.tracking_token);
         cart.clear();
+        key.value = cart.checkoutKey;
+        payloadKey.value = '';
         visible.value = false;
-        router.visit(`/track/${result.order_id}`);
+        if (props.tableSessionToken) emit('placed');
+        else router.visit(`/track/${result.order_id}`);
     } catch (e) {
         error.value = (e as Error).message;
     } finally {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Dining\ActiveTableOrders;
 use App\Domain\Dining\OrderingWindow;
 use App\Domain\Dining\TableSessions;
 use App\Domain\Tenancy\TenantAccess;
@@ -60,10 +61,20 @@ class DiningController extends Controller
 
         $window = app(OrderingWindow::class)->status($context->location);
         if (! $context->location->fulfillment?->dine_in_enabled || $context->ordering_paused || ! $window['is_open']) {
-            return Inertia::render('storefront/TableUnavailable', ['restaurant' => $context->location->restaurant->only('name', 'slug', 'primary_color', 'logo_path'), 'orderingWindow' => $window, 'reason' => ! $context->location->fulfillment?->dine_in_enabled ? 'service_disabled' : ($context->ordering_paused ? 'table_closed' : $window['reason']), 'menuUrl' => $request->attributes->get('storefront_location') ? '/' : $context->location->storefront_path])->toResponse($request)->header('Cache-Control', 'no-store');
+            return Inertia::render('storefront/TableUnavailable', ['restaurant' => $context->location->restaurant->only('name', 'slug', 'primary_color', 'logo_path'), 'orderingWindow' => $window, 'reason' => ! $context->location->fulfillment?->dine_in_enabled ? 'service_disabled' : ($context->ordering_paused ? 'table_closed' : $window['reason']), 'tableId' => $context->public_id, 'menuUrl' => $request->attributes->get('storefront_location') ? '/' : $context->location->storefront_path])->toResponse($request)->header('Cache-Control', 'no-store');
         }
 
         return Inertia::render('storefront/Menu', [...$ordering->data($context->location), 'tableContext' => $context->only('public_id', 'code', 'area', 'ordering_paused')]);
+    }
+
+    public function orders(Request $request, string $table, ActiveTableOrders $action)
+    {
+        $context = DiningTable::where('public_id', $table)->firstOrFail();
+        $mapped = $request->attributes->get('storefront_location');
+        abort_if($mapped && (int) $mapped !== $context->location_id, 404);
+        $request->validate(['cursor' => 'nullable|string|max:512']);
+
+        return response()->json($action->execute($context, $request->bearerToken()))->header('Cache-Control', 'private, no-store')->header('Vary', 'Authorization');
     }
 
     public function connect(Request $request, string $table, TableSessions $sessions)

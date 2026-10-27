@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.23 — 2026-10-27
+
+- Added session-authorized active table receipts, snapshot products/options/quantities/totals, automatic polling and refresh recovery.
+- Dine-in checkout stays in the QR menu; repeat identical orders receive fresh idempotency keys. Pickup/delivery retain the tracking-page flow.
+- Ready orders remain visible until completed; terminal orders disappear individually. Existing receipt access survives stopped ordering while new sessions cannot read previous parties.
+
 ## 0.0.22 — 2026-10-27
 
 - Added GloriaFood Migration Center: fixed-endpoint Fetch Menu client, encrypted staging, preview, field/rule issues, nutrient-ID resolution, source diff, reference baskets and JSON/printable PDF reports.

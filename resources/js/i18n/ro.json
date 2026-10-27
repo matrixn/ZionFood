@@ -1304,5 +1304,12 @@
     "mig_issue_nutrition_range": "Valori nutriționale în afara limitelor",
     "mig_issue_photos": "Fotografiile se încarcă separat",
     "mig_issue_allergen_ids": "Alergeni fără denumiri de verificat în sursă",
-    "mig_service_conflict": "Unele produse nu sunt disponibile pentru serviciul ales"
+    "mig_service_conflict": "Unele produse nu sunt disponibile pentru serviciul ales",
+    "table_orders_title": "Comenzile mesei",
+    "table_orders_help": "Vezi preparatele comandate și starea lor. Comenzile pregătite rămân aici până sunt finalizate de personal.",
+    "table_orders_refresh": "Actualizează comenzile mesei",
+    "table_orders_error": "Nu am putut actualiza comenzile. Datele afișate pot fi mai vechi; încercăm din nou automat.",
+    "table_order_number": "Comanda #{number}",
+    "table_orders_total": "Total comenzi în curs",
+    "table_order_sent": "Comanda a fost trimisă. O poți urmări mai jos, în timp ce continui să răsfoiești meniul."
 }

@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ZionFood API",
-    "version": "0.0.22",
+    "version": "0.0.23",
     "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session. Migration Center uses separate verified browser/CSRF routes documented in MIGRATION_CENTER.md."
   },
   "servers": [
@@ -1619,6 +1619,46 @@
         },
         "security": []
       }
+    },
+    "/public/tables/{table}/orders": {
+      "get": {
+        "summary": "Active orders for the exact dining session",
+        "description": "Read-only receipt access survives session closure/expiry; it never permits new checkout. Completed/rejected/cancelled orders and customer contacts are excluded.",
+        "security": [
+          {
+            "tableReceipt": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 512
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Snapshot order list and nullable next_cursor; private no-store; 30 orders per page"
+          },
+          "404": {
+            "description": "Unknown table, mismatched host/session or invalid bearer"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1643,6 +1683,11 @@
         "type": "http",
         "scheme": "bearer",
         "description": "64-character private reservation capability"
+      },
+      "tableReceipt": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Dining-session capability for read-only receipts, scoped to one table and session; not the QR token."
       }
     },
     "schemas": {

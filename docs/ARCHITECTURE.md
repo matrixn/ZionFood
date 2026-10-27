@@ -1,4 +1,4 @@
-# ZionFood 0.0.22
+# ZionFood 0.0.23
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; whole-menu Migration Center is implemented separately with encrypted staging, approved version publication and guarded rollback (see MIGRATION_CENTER.md). See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -105,3 +105,7 @@ OrderingWindow now supplies a status snapshot with distinct outside-hours/cutoff
 ## Migration Center (0.0.22)
 
 The Imports domain adapts fixed-endpoint GloriaFood Fetch Menu v2 into a provider-independent canonical menu array. ProcessImport keeps encrypted source/canonical snapshots and verification evidence; PublishImport serializes on location and batch, replaces only that location’s menu assignment, and preserves previous menu versions. MenuGraph fingerprints protect preview/publication/rollback. Source mappings are namespaced by provider, restaurant, location, type and publication batch. EffectiveModifiers is shared by public serialization and authoritative checkout. See [MIGRATION_CENTER.md](MIGRATION_CENTER.md).
+
+## Guest table receipts (0.0.23)
+
+ActiveTableOrders resolves a read-only bearer capability for the exact organization/location/table/session, selects only nonterminal dine-in orders and serializes snapshot-only guest fields. Receipt access is independent of ordering availability; closed/expired sessions retain active receipts for existing capability holders. Public menu caches remain receipt-free. Vue TableOrders polls the paginated endpoint, handles stale responses and restores per-tab capabilities. See RESERVATIONS_DINING_DELIVERY.md.

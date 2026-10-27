@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
+import TableOrders from '@/components/storefront/TableOrders.vue';
 import StorefrontLayout from '@/layouts/StorefrontLayout.vue';
 import type { RestaurantBrand } from '@/types';
 defineProps<{
     restaurant: RestaurantBrand;
     reason: 'service_disabled' | 'table_closed' | 'outside_hours' | 'cutoff';
     menuUrl: string;
+    tableId?: string;
     orderingWindow?: { opens_at: string | null; closes_at: string | null; cutoff_at: string | null; timezone: string };
 }>();
 </script>
@@ -34,5 +36,6 @@ defineProps<{
                 $t('store_view_menu')
             }}</Link>
         </section>
+        <TableOrders v-if="tableId" :key="tableId" :table-id="tableId" />
     </StorefrontLayout>
 </template>

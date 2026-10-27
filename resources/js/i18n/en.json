@@ -1304,5 +1304,12 @@
     "mig_issue_nutrition_range": "Nutrition range",
     "mig_issue_photos": "Photos",
     "mig_issue_allergen_ids": "Allergen ids",
-    "mig_service_conflict": "Some products are unavailable for the selected service"
+    "mig_service_conflict": "Some products are unavailable for the selected service",
+    "table_orders_title": "Table orders",
+    "table_orders_help": "See your ordered dishes and their status. Ready orders stay here until the team marks them completed.",
+    "table_orders_refresh": "Refresh table orders",
+    "table_orders_error": "Orders could not be refreshed. Displayed data may be older; we will retry automatically.",
+    "table_order_number": "Order #{number}",
+    "table_orders_total": "Active orders total",
+    "table_order_sent": "Your order was sent. Follow it below while you continue browsing the menu."
 }

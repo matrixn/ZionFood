@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.22** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.23** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,13 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 27 octombrie 2026 — comenzile active în meniul QR · 0.0.23
+
+- [x] După comanda la masă, clientul rămâne în meniul QR și vede preparatele, cantitățile, opțiunile, totalurile și starea comenzilor.
+- [x] Comenzile aceleiași sesiuni sunt comune invitaților mesei, se actualizează automat și rămân vizibile după reîncărcare.
+- [x] Comenzile pregătite rămân în listă până sunt finalizate/servite de personal; finalizate, anulate și refuzate dispar individual.
+- [x] Oprirea comenzilor/programul închis nu ascund comenzile în curs pentru clienții care au deja acces la sesiune; noii clienți nu primesc istoricul altor sesiuni.
 
 ### 27 octombrie 2026 — GloriaFood Migration Center · 0.0.22
 

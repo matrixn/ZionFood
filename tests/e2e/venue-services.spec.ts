@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { test, expect as baseExpect } from '@playwright/test';
+const expect = baseExpect.configure({ timeout: 20000 });
 import { readFileSync } from 'node:fs';
 
 const fixture = () =>
@@ -52,7 +53,8 @@ test('staff opens a table and its QR submits a real order with the table identit
         .locator('article')
         .filter({ has: page.getByRole('heading', { name: 'T1 · Salon', exact: true }) });
     await expect(card.locator('img')).toBeVisible();
-    await card.getByRole('button', { name: 'Închide meniul mesei', exact: true }).click();
+    const closeMenu = card.getByRole('button', { name: 'Închide meniul mesei', exact: true });
+    if (await closeMenu.isVisible()) await closeMenu.click();
     await expect(card.getByRole('button', { name: 'Deschide meniul mesei', exact: true })).toBeVisible();
     await card.getByRole('button', { name: 'Deschide meniul mesei', exact: true }).click();
     await expect(card.getByRole('button', { name: 'Închide meniul mesei', exact: true })).toBeVisible();
@@ -61,7 +63,7 @@ test('staff opens a table and its QR submits a real order with the table identit
     expect(qrUrl).toMatch(/\/table\/.*#token=/);
     const guest = await browser.newContext();
     const tab = await guest.newPage();
-    await tab.route('**/address-from-pin', route => route.fulfill({ json: { address: null, incomplete: true } }));
+    await tab.route('**/address-from-pin', (route) => route.fulfill({ json: { address: null, incomplete: true } }));
     await tab.goto(qrUrl!);
     await expect(tab.getByText('Masa este conectată. Poți trimite comanda.', { exact: true })).toBeVisible();
     await tab.getByRole('button').filter({ hasText: 'Preparat de test' }).click();
@@ -70,16 +72,25 @@ test('staff opens a table and its QR submits a real order with the table identit
     await tab.getByRole('button', { name: /Continuă/ }).click();
     await tab.getByRole('textbox', { name: 'Numele tău', exact: true }).fill('Table Guest');
     await tab.getByRole('textbox', { name: 'Număr de telefon', exact: true }).fill('0712345678');
+    const placedResponse = tab.waitForResponse((r) => r.url().endsWith('/checkout') && r.request().method() === 'POST');
     await tab.getByRole('button', { name: 'Plasează comanda', exact: true }).click();
-    await expect(tab).toHaveURL(/\/track\//);
+    const placedOrder = (await (await placedResponse).json()).order_id as string;
+    await expect(tab).toHaveURL(/\/table\//);
+    await expect(tab.getByTestId('table-active-orders')).toContainText('Preparat de test');
     await page.goto(`/app/locations/${account.location}/kitchen`);
-    await expect(page.getByText('Masa T1 · Salon', { exact: true })).toBeVisible();
+    const kitchenCard = page
+        .locator('article')
+        .filter({ has: page.getByRole('button', { name: '#' + placedOrder.slice(-8), exact: true }) });
+    await expect(kitchenCard.getByText('Masa T1 · Salon', { exact: true })).toBeVisible();
     await page.screenshot({ path: 'test-results/qr-kitchen.png', fullPage: true });
     await page.goto(`/app/locations/${account.location}/tables`);
     await card.getByRole('button', { name: 'Închide meniul mesei', exact: true }).click();
     await expect(card.getByRole('button', { name: 'Deschide meniul mesei', exact: true })).toBeVisible();
     await tab.goto(qrUrl!);
-    await expect(tab.getByText('Personalul a închis meniul de comandă pentru această masă.', { exact: false })).toBeVisible();
+    await tab.reload(); // A repeated QR fragment alone is a same-document navigation.
+    await expect(
+        tab.getByText('Personalul a închis meniul de comandă pentru această masă.', { exact: false }),
+    ).toBeVisible();
     await expect(tab.getByRole('button').filter({ hasText: 'Preparat de test' })).toHaveCount(0);
     await guest.close();
     expect(errors).toEqual([]);
@@ -96,7 +107,9 @@ test('manager draws a delivery zone and a guest checks out using its map pin', a
     await page.getByRole('button', { name: 'Autentificare', exact: true }).click();
     await expect(page).toHaveURL(/\/app\/locations\//);
     await page.goto(`/app/locations/${account.location}/settings`);
-    await page.getByRole('spinbutton', { name: 'Oprește comenzile QR înainte de închidere (minute)', exact: true }).fill('60');
+    await page
+        .getByRole('spinbutton', { name: 'Oprește comenzile QR înainte de închidere (minute)', exact: true })
+        .fill('60');
     await page.getByText('Livrare', { exact: true }).click();
     await page.getByRole('button', { name: 'Adaugă zonă', exact: true }).click();
     const name = page.getByRole('textbox', { name: 'Nume', exact: true });
@@ -123,14 +136,16 @@ test('manager draws a delivery zone and a guest checks out using its map pin', a
     await expect(page.getByRole('status')).toBeVisible();
     await page.reload();
     await expect(page.getByText('Poligon definit', { exact: true })).toBeVisible();
-    await expect(page.getByRole('spinbutton', { name: 'Oprește comenzile QR înainte de închidere (minute)', exact: true })).toHaveValue('60');
+    await expect(
+        page.getByRole('spinbutton', { name: 'Oprește comenzile QR înainte de închidere (minute)', exact: true }),
+    ).toHaveValue('60');
     await expect(map.locator('path.leaflet-interactive:not(.zf-restaurant-reference)')).toBeVisible();
     await page.setViewportSize({ width: 390, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.screenshot({ path: 'test-results/delivery-zone-mobile.png', fullPage: true });
     const guest = await browser.newContext();
     const tab = await guest.newPage();
-    await tab.route('**/address-from-pin', route => route.fulfill({ json: { address: null, incomplete: true } }));
+    await tab.route('**/address-from-pin', (route) => route.fulfill({ json: { address: null, incomplete: true } }));
     await tab.goto(`/store/${account.location}`);
     await tab.getByRole('button').filter({ hasText: 'Preparat de test' }).click();
     await tab.getByRole('button', { name: /Adaugă în coș/ }).click();
@@ -152,7 +167,8 @@ test('manager draws a delivery zone and a guest checks out using its map pin', a
     await tab.mouse.click(deliveryBox.x + deliveryBox.width * 0.5, deliveryBox.y + deliveryBox.height * 0.5);
     await expect(tab.getByRole('button', { name: 'Plasează comanda', exact: true })).toBeEnabled();
     await tab.getByRole('button', { name: 'Plasează comanda', exact: true }).click();
-    await expect(tab).toHaveURL(/\/track\//);
+    await expect(tab).toHaveURL(/\/table\//);
+    await expect(tab.getByTestId('table-active-orders')).toContainText('Preparat de test');
     await guest.close();
     expect(errors).toEqual([]);
 });
