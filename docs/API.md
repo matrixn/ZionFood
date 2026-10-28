@@ -126,3 +126,8 @@ Reservation tracking now returns a server-derived same-site `menu_url` and safe 
 ## Platform email administration (0.0.26)
 
 Verified platform-admin session only; separate from restaurant API and token abilities. GET /admin/emails renders the page; GET /admin/emails/data returns paginated metadata/summary/provider state with source, state, initiator, mailer, exact recipient, from/to and page filters. PUT /admin/emails/provider accepts daily_limit and revision (409 stale). POST /admin/emails/provider/usage queries read-only provider account usage; POST /admin/emails/index-queue indexes existing encrypted jobs. Mutations require CSRF and usage/index share a three/minute admin throttle. No body/token/credential is exposed. See [EMAIL_DELIVERY.md](EMAIL_DELIVERY.md) for states, semantics and historical limits.
+
+
+## Marketing discovery routes (0.0.27)
+
+Outside /api/v1: GET / and GET /en render deterministic public marketing languages on central hosts. GET /sitemap.xml returns the configured canonical RO/EN URLs and reciprocal alternates only when indexing/build readiness permits; GET /robots.txt returns per-host policy/sitemap text. Verified restaurant roots keep their storefronts and do not serve /en or the marketing sitemap. Private app/account/tracking/API responses carry noindex headers; authorization is unchanged.

@@ -2,7 +2,22 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import LanguageSelector from '@/components/ui/LanguageSelector.vue';
-const page = usePage<{ auth: { user: unknown }; version: string }>();
+interface Seo {
+    title: string;
+    description: string;
+    url: string;
+    home: string;
+    alternates: Record<string, string>;
+    locale: string;
+    image: string;
+    image_alt: string;
+    robots: string;
+    schema: Record<string, unknown>;
+}
+const page = usePage<{ auth: { user: unknown }; version: string; seo: Seo }>();
+const seo = computed(() => page.props.seo);
+const schema = computed(() => JSON.stringify(seo.value.schema).replaceAll('<', '\\u003c'));
+
 const signedIn = computed(() => !!page.props.auth?.user);
 const mobileOpen = ref(false);
 const active = ref(0);
@@ -11,6 +26,7 @@ const root = ref<HTMLElement | null>(null);
 const tabs = ref<HTMLElement | null>(null);
 const progress = ref<HTMLElement | null>(null);
 const ready = ref(false);
+const enhanced = ref(false);
 const features = [
     { key: 'menu', icon: 'pi-book' },
     { key: 'reservations', icon: 'pi-calendar' },
@@ -18,7 +34,7 @@ const features = [
     { key: 'delivery', icon: 'pi-map-marker' },
 ];
 const orderStates = ['new', 'preparing', 'ready'];
-const faqs = ['services', 'website', 'qr', 'payments', 'start'];
+const faqs = ['migration', 'services', 'website', 'qr', 'payments', 'start'];
 let observer: IntersectionObserver | null = null;
 let frame = 0;
 function scroll() {
@@ -42,6 +58,7 @@ function tabKey(event: KeyboardEvent) {
     tabs.value?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus();
 }
 onMounted(() => {
+    enhanced.value = true;
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
         ready.value = true;
         observer = new IntersectionObserver(
@@ -67,26 +84,72 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <Head :title="$t('landing_meta_title')"><meta name="description" :content="$t('landing_meta_description')" /></Head>
-    <div ref="root" class="landing" :class="{ 'motion-ready': ready }">
+    <Head :title="$t('landing_meta_title')">
+        <meta head-key="description" name="description" :content="seo.description" />
+        <meta head-key="robots" name="robots" :content="seo.robots" />
+        <link head-key="canonical" rel="canonical" :href="seo.url" />
+        <link
+            v-for="(url, locale) in seo.alternates"
+            :key="locale"
+            :head-key="'alternate-' + locale"
+            rel="alternate"
+            :hreflang="locale"
+            :href="url"
+        />
+        <link head-key="alternate-default" rel="alternate" hreflang="x-default" :href="seo.alternates.ro" />
+        <meta
+            v-for="key in ['title', 'description', 'url', 'locale', 'image'] as const"
+            :key="key"
+            :head-key="'og-' + key"
+            :property="'og:' + key"
+            :content="seo[key]"
+        />
+        <meta head-key="og-type" property="og:type" content="website" /><meta
+            head-key="og-site"
+            property="og:site_name"
+            content="ZionFood"
+        />
+        <meta head-key="og-width" property="og:image:width" content="1440" /><meta
+            head-key="og-height"
+            property="og:image:height"
+            content="1080"
+        />
+        <meta head-key="og-image-type" property="og:image:type" content="image/webp" /><meta
+            head-key="og-alt"
+            property="og:image:alt"
+            :content="seo.image_alt"
+        />
+        <meta head-key="twitter-card" name="twitter:card" content="summary_large_image" />
+        <meta
+            v-for="key in ['title', 'description', 'image'] as const"
+            :key="'twitter-' + key"
+            :head-key="'twitter-' + key"
+            :name="'twitter:' + key"
+            :content="seo[key]"
+        />
+        <meta head-key="twitter-alt" name="twitter:image:alt" :content="seo.image_alt" />
+        <component :is="'script'" head-key="schema" type="application/ld+json">{{ schema }}</component>
+    </Head>
+    <div ref="root" :data-enhanced="enhanced" class="landing" :class="{ 'motion-ready': ready }">
         <a href="#main" class="skip-link">{{ $t('landing_skip') }}</a>
         <div ref="progress" class="reading-progress" aria-hidden="true" />
         <header class="site-header">
             <nav class="nav-wrap" :aria-label="$t('landing_navigation')">
-                <Link href="/" class="wordmark" aria-label="ZionFood"
+                <Link :href="seo.home" class="wordmark" aria-label="ZionFood"
                     ><span class="brand-mark" aria-hidden="true">z</span>Zion<span>Food</span
                     ><span class="brand-period">.</span></Link
                 >
                 <div class="desktop-links">
                     <a href="#platform">{{ $t('landing_nav_platform') }}</a
                     ><a href="#workflow">{{ $t('landing_nav_workflow') }}</a
+                    ><a href="#migration">{{ $t('landing_nav_migration') }}</a
                     ><a href="#questions">{{ $t('landing_nav_faq') }}</a>
                 </div>
                 <div class="nav-actions">
                     <Link :href="signedIn ? '/app' : '/login'" class="nav-login"
                         >{{ signedIn ? $t('landing_dashboard') : $t('sign_in') }}
                         <i class="pi pi-arrow-up-right" aria-hidden="true" /></Link
-                    ><LanguageSelector /><button
+                    ><LanguageSelector :urls="seo.alternates" /><button
                         type="button"
                         class="mobile-toggle"
                         :aria-expanded="mobileOpen"
@@ -100,6 +163,7 @@ onBeforeUnmount(() => {
                 <div v-if="mobileOpen" id="mobile-navigation" class="mobile-navigation">
                     <a href="#platform" @click="mobileOpen = false">{{ $t('landing_nav_platform') }}</a
                     ><a href="#workflow" @click="mobileOpen = false">{{ $t('landing_nav_workflow') }}</a
+                    ><a href="#migration" @click="mobileOpen = false">{{ $t('landing_nav_migration') }}</a
                     ><a href="#questions" @click="mobileOpen = false">{{ $t('landing_nav_faq') }}</a
                     ><Link :href="signedIn ? '/app' : '/login'">{{
                         signedIn ? $t('landing_dashboard') : $t('sign_in')
@@ -156,7 +220,9 @@ onBeforeUnmount(() => {
                     <div class="orbit orbit-two" aria-hidden="true" />
                     <div class="hero-photo">
                         <img
-                            :src="'/images/marketing/restaurant-table-ai.png'"
+                            :src="'/images/marketing/restaurant-table-1440.webp'"
+                            :srcset="'/images/marketing/restaurant-table-640.webp 640w, /images/marketing/restaurant-table-960.webp 960w, /images/marketing/restaurant-table-1440.webp 1440w'"
+                            sizes="(max-width: 700px) 100vw, 55vw"
                             :alt="$t('landing_hero_image_alt')"
                             width="1448"
                             height="1086"
@@ -471,7 +537,9 @@ onBeforeUnmount(() => {
             <section class="kitchen-section section-wrap" data-reveal>
                 <div class="kitchen-story">
                     <img
-                        :src="'/images/marketing/kitchen-service-ai.png'"
+                        :src="'/images/marketing/kitchen-service-1440.webp'"
+                        :srcset="'/images/marketing/kitchen-service-640.webp 640w, /images/marketing/kitchen-service-960.webp 960w, /images/marketing/kitchen-service-1440.webp 1440w'"
+                        sizes="(max-width: 700px) 100vw, 90vw"
                         :alt="$t('landing_kitchen_image_alt')"
                         width="1672"
                         height="941"
@@ -500,6 +568,40 @@ onBeforeUnmount(() => {
                     <div class="story-corner">
                         <i class="pi pi-sparkles" aria-hidden="true" /><span>{{ $t('landing_kitchen_corner') }}</span>
                     </div>
+                </div>
+            </section>
+
+            <section
+                id="migration"
+                class="migration-section section-wrap"
+                data-reveal
+                aria-labelledby="migration-title"
+            >
+                <div class="migration-intro">
+                    <p class="eyebrow">{{ $t('landing_migration_eyebrow') }}</p>
+                    <h2 id="migration-title">{{ $t('landing_migration_title') }}</h2>
+                    <p>{{ $t('landing_migration_description') }}</p>
+                    <Link :href="signedIn ? '/app' : '/register'" class="button button-primary"
+                        >{{ $t('landing_migration_cta') }}<i class="pi pi-arrow-up-right" aria-hidden="true"
+                    /></Link>
+                </div>
+                <div class="migration-steps">
+                    <article v-for="(step, index) in ['connect', 'verify', 'publish']" :key="step">
+                        <span class="migration-number">0{{ index + 1 }}</span>
+                        <div>
+                            <h3>{{ $t('landing_migration_' + step) }}</h3>
+                            <p>{{ $t('landing_migration_' + step + '_description') }}</p>
+                        </div>
+                    </article>
+                    <p class="migration-note">
+                        <i class="pi pi-info-circle" aria-hidden="true" />{{ $t('landing_migration_limits') }}
+                    </p>
+                    <a
+                        href="https://github.com/GlobalFood/integration_docs/blob/master/fetch_menu/README.md"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        >{{ $t('landing_migration_source') }} ↗</a
+                    >
                 </div>
             </section>
 
@@ -537,7 +639,7 @@ onBeforeUnmount(() => {
         </main>
         <footer class="site-footer section-wrap">
             <div>
-                <Link href="/" class="wordmark" aria-label="ZionFood"
+                <Link :href="seo.home" class="wordmark" aria-label="ZionFood"
                     ><span class="brand-mark" aria-hidden="true">z</span>Zion<span>Food</span
                     ><span class="brand-period">.</span></Link
                 >
@@ -548,6 +650,10 @@ onBeforeUnmount(() => {
                 ><a href="#questions">{{ $t('landing_nav_faq') }}</a
                 ><Link href="/login">{{ $t('sign_in') }}</Link>
             </div>
+            <div class="footer-languages" aria-label="Language">
+                <a :href="seo.alternates.ro" hreflang="ro" lang="ro">🇷🇴 Română</a
+                ><a :href="seo.alternates.en" hreflang="en" lang="en">🇬🇧 English</a>
+            </div>
             <div class="footer-bottom">
                 <span>ZionFood · v{{ page.props.version }}</span
                 ><span>{{ $t('landing_ai_note') }}</span>
@@ -557,6 +663,73 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+#migration {
+    scroll-margin-top: 112px;
+}
+.migration-section {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 70px;
+    padding-block: 90px;
+}
+.migration-section h2 {
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: 1.1;
+    letter-spacing: -1.8px;
+}
+.migration-intro > p:not(.eyebrow) {
+    margin-block: 24px;
+    color: #52635a;
+    line-height: 1.75;
+}
+.migration-steps article {
+    display: flex;
+    gap: 20px;
+    padding: 24px 0;
+    border-bottom: 1px solid #dfe5dd;
+}
+.migration-number {
+    color: #635bff;
+    font-weight: 700;
+    font-size: 24px;
+}
+.migration-steps h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+.migration-steps p {
+    font-size: 14px;
+    line-height: 1.75;
+    color: #52635a;
+}
+.migration-steps .migration-note {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    background: #eeece5;
+    border-radius: 16px;
+    margin-block: 20px;
+    font-size: 13px;
+}
+.migration-steps > a {
+    color: #5146e5;
+    font-size: 13px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+.footer-languages {
+    display: flex;
+    gap: 24px;
+    padding-block: 20px;
+    font-size: 13px;
+}
+@media (max-width: 800px) {
+    .migration-section {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding-block: 60px;
+    }
+}
 .landing {
     --ink: #1c2723;
     --purple: #635bff;

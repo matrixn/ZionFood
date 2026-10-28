@@ -1,0 +1,31 @@
+{
+  "release": "0.0.27",
+  "date": "2026-10-28",
+  "category": "seo",
+  "reports": {
+    "ro": {
+      "score": 100,
+      "url": "http://localhost:8008/",
+      "audited_at": "2026-10-28T14:06:30.044Z",
+      "tool_version": "13.6.0",
+      "form_factor": "mobile"
+    },
+    "en": {
+      "score": 100,
+      "url": "http://localhost:8008/en",
+      "audited_at": "2026-10-28T14:06:46.671Z",
+      "tool_version": "13.6.0",
+      "form_factor": "mobile"
+    }
+  },
+  "conditions": [
+    "Local PHP server on port 8008 with production-style SEO settings and completed generated HTML.",
+    "Configured canonical origin https://food.zion3d.ro; the live public host was not audited.",
+    "Guest session/cache isolation; no account, order, reservation, payment or email sends.",
+    "Only the SEO category was scored. This is not a production Core Web Vitals or indexation guarantee."
+  ],
+  "remaining": [
+    "Verify live Forge robots.txt/sitemap forwarding, public HTTPS/DNS and crawler response.",
+    "Verify webmaster property and submit sitemap to Google Search Console and Bing Webmaster Tools."
+  ]
+}

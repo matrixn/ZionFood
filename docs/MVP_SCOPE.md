@@ -1,4 +1,4 @@
-# Scope at 0.0.26
+# Scope at 0.0.27
 
 0.0.19 introduces a dish-first automatic generation workspace, combined AI tasks, approximate one-portion nutrition and durable live review notifications. It replaces the earlier manual reference calculator and retires the manual GloriaFood JSON metadata workflow. Published data remains local and requires review. Whole-menu GloriaFood migration, approved publication, reimport decisions and guarded rollback are implemented in 0.0.22; see MIGRATION_CENTER.md. Provider fidelity and estimation quality still require validation with a real authorized restaurant.
 
@@ -71,3 +71,6 @@ Implemented storefront polish: restaurant-specific share metadata, product/servi
 
 
 0.0.26 adds platform-admin outgoing-email metadata, source/initiator/status filters, automatic refresh, existing encrypted configured-queue indexing and provider UTC quotas/usage controls. It retains the 140/24h rolling guard and independent error-alert suspension. Sent-history reconstruction, Resend delivery/bounce webhooks and exactly-once delivery remain outside this increment. See EMAIL_DELIVERY.md.
+
+
+0.0.27 adds raw-HTML marketing content without a runtime Node service, deterministic RO/EN URLs, canonical/hreflang/social/structured metadata, sitemap/robots routes, private noindex headers, WebP assets and documented GloriaFood migration marketing. Public-host Nginx forwarding, DNS/TLS checks, webmaster-property verification/submission and indexation/ranking remain external launch work.

@@ -1,34 +1,56 @@
-# Public ZionFood presentation page
+# Public ZionFood presentation and SEO — 0.0.27
 
-The central-host `/` page uses `resources/js/pages/Welcome.vue`. Verified storefront hosts still serve their restaurant menu at `/`; marketing does not replace a restaurant's storefront. No new routes, subscriptions, payments or ordering actions were added.
+The central-host presentation uses Welcome.vue, with Romanian `/` and English `/en`. A language URL always renders its declared language, independently of cookies, browser language or crawler user agent. It sets the matching preference cookie; the flag/name selector also preserves the existing preference endpoint and navigates to the language URL. Footer language links work without JavaScript. Verified restaurant domains still serve their own restaurant at `/` and do not expose `/en` or the marketing sitemap.
 
-## Content and interaction
+## HTML available before JavaScript
 
-- Romanian by default, English through the existing persistent flag/name selector. Both catalogues include the same landing keys; title, description, alternate text, navigation, FAQ and previews change reactively.
-- Editorial hero with a generated restaurant-table image, branded typography and illustrative reservation/table cards.
-- Feature tabs for menu, reservations, QR and mapped delivery. Native Vue/CSS/SVG preview interfaces use illustrative data, not live restaurant data. Tabs support click, arrow keys, Home and End.
-- Interactive kitchen/order sequence. Its controls only change local display state: no orders, reservations, notifications or payment requests are created.
-- Generated kitchen-service image, operational story, native details/summary FAQ and repeated primary calls to action.
-- Guest primary CTA goes to `/register`, sign-in to `/login`. Signed-in visitors receive `/app` links instead of registration CTAs. Section links target real sections on the page. No fabricated customer testimonials, adoption counts, pricing or payment availability claims are used.
-- The 27 cuisine choices, four optional services and RO/EN indicators describe implemented functionality. Online payments are explicitly described as unavailable in the FAQ; the trial copy reflects existing 14-day onboarding.
+`npm run build` performs the existing type check/client Vite build, builds the small SEO renderer and runs scripts/build-seo.mjs. Vue's existing server renderer generates four HTML fragments (RO/EN × guest/member) from the **same Welcome component and translations** under public/build/seo, with a release-version manifest written last. No new JavaScript dependency or persistent Node SSR daemon is required. Intermediate renderer code is ignored under .bootstrap/seo-renderer. Node is a build-time requirement as before.
 
-## Animation and accessibility
+LandingGateway returns that trusted build HTML through Inertia's SSR gateway only for Welcome. It embeds the current request's properly escaped Inertia JSON, never a cached user's session data. Runtime Vue enhances the document using the existing application setup; it does not depend on a runtime SSR service. Other pages retain the framework's existing HTTP gateway behavior. Guest/member fragments select the right CTA, contain no personal account values and are immutable per build. `data-enhanced` indicates that browser interactions have mounted; content is visible beforehand, including with JavaScript disabled. Missing/stale fragments fall back to the existing client-rendered UI **with noindex**, rather than advertising an empty page as indexable. Activate releases only after a successful full build.
 
-CSS float/orbit/pulse effects, path animation, hover feedback, preview transitions, a scroll-progress indicator and one-time viewport reveals. IntersectionObserver is disconnected and scroll animation frames/listeners are removed on unmount. No animation library or external font/image service was introduced.
+## Canonical URLs and metadata
 
-`prefers-reduced-motion: reduce` disables animations/transitions and leaves revealed content visible. The page includes a skip link, semantic headings/navigation, focus styles, keyboard-operable tabs, live order-status feedback, an expanded-state mobile menu and localized image alternatives. Native browser/assistive-technology validation beyond the recorded Chromium checks remains open.
+LandingSeo produces metadata once for both Blade's initial HTML head and the Vue Head component: descriptive localized title/description, a single absolute canonical, reciprocal RO/EN/x-default hreflang, Open Graph, large Twitter card and JSON-LD Organization/WebSite/WebPage/Service. The graph describes the implemented service and contains no fabricated ratings, prices, adoption statistics or affiliation. FAQs are visible native details/summary content; no FAQ rich-result eligibility is promised. Head keys use Inertia 3's data-inertia markers so metadata updates without duplicates and is removed when navigating into account pages.
 
-The hero has fixed image dimensions and high fetch priority; the secondary image uses native lazy loading. PNGs remain unchanged generated originals; next-generation encodings/performance audits may be evaluated separately. The page is responsive down to the tested 320px width. Global application styling and restaurant layouts are not replaced.
+The canonical origin comes from `ZF_PUBLIC_URL` (default APP_URL), not the request Host header, path query or tracking parameters. It must be an HTTP(S) root URL on a configured central ZF_APP_HOSTS host, without credentials/query/fragment. Deployment example:
 
-## Generated assets
+```dotenv
+APP_URL=https://food.zion3d.ro
+ZF_PUBLIC_URL=https://food.zion3d.ro
+ZF_SEO_INDEXABLE=true
+# Keep this hostname in the existing comma-separated ZF_APP_HOSTS list.
+```
 
-Created with built-in image_gen using the imagegen skill, copied into the workspace:
+Set ZF_SEO_INDEXABLE=false on staging. HTTP/localhost/IP/test/invalid origins and missing/current-version-mismatched SEO fragments are nonindexable even when the flag is true. APP_ENV is not used as an indexing switch because Forge deployments may use a custom environment name. Validate the actual public HTTPS origin, DNS and certificate separately.
 
-- `public/images/marketing/restaurant-table-ai.png`
-- `public/images/marketing/kitchen-service-ai.png`
+`/sitemap.xml` contains only the two indexable marketing URLs with reciprocal language alternates; no private pages, tenant IDs or fabricated lastmod timestamps. If indexing is disabled or the generated build is absent, the sitemap contains no locations. `/robots.txt` advertises the configured canonical sitemap when ready; staging/API hosts disallow crawling, while verified restaurant-domain public-menu behavior remains allowed. Private/account/tracking/reservation/table/API/diagnostic responses use X-Robots-Tag noindex; robots.txt is not an access-control mechanism. Tenant authorization remains unchanged.
 
-Prompts and provenance: [landing-images.prompt.md](assets/landing-images.prompt.md). They are AI illustrations rather than images of an actual venue or product screenshots. The public footer and alternate descriptions identify them accordingly. The earlier README banner remains separate.
+The former static public/robots.txt is intentionally replaced by the Laravel route. **Forge/Nginx must forward a missing robots.txt to Laravel.** If the site has the common exact static-only robots location, adapt it during an explicitly authorized deployment, for example:
 
-## Verification
+```nginx
+location = /robots.txt {
+    try_files $uri /index.php?$query_string;
+    access_log off;
+    log_not_found off;
+}
+```
 
-`tests/e2e/landing.spec.ts` checks RO/EN persistence, actual registration/login targets, feature tabs and keyboard navigation, order-demo state transitions, the payments FAQ, image decoding, absence of ordering mutation requests, mobile navigation, 320px/390px overflow and reduced motion. PHP route checks distinguish Welcome on the central host from Menu on a storefront host. Exact executed results are recorded in CODEX_PROGRESS.md; production browser/performance/deployment results are not inferred from local checks.
+Use the existing site's PHP/front-controller configuration; do not create a second site or bypass TLS. Before submitting the sitemap, verify that the public `/robots.txt` and `/sitemap.xml` actually return 200 and the intended content. Source changes alone do not certify the live Forge proxy configuration.
+
+`php artisan zionfood:seo-check` prints the configured public origin, RO/EN render readiness, indexing policy and sitemap URL without sending requests. It exits nonzero for a disabled/local/missing build. It does not prove DNS/TLS, crawler access or indexation. After deployment, verify the property in Google Search Console/Bing Webmaster Tools, submit the sitemap and inspect `/` and `/en`. Search engines decide crawling/indexing/ranking; neither a Lighthouse score nor valid JSON-LD guarantees inclusion or rich results.
+
+## GloriaFood migration content
+
+Navigation, a dedicated three-step section and FAQ describe the implemented Migration Center: Fetch Menu key or JSON upload, staged preview, verification report, explicit publication and reimport conflict review. The copy explains that photos, hours, delivery zones and historical orders are not automatically transferred by this menu importer; restaurant review of prices and food declarations is required. It links the official Fetch Menu documentation, never requests the GloriaFood password and states that ZionFood is independent. No unverified shutdown date, transfer-time promise or lossless migration guarantee is advertised. See MIGRATION_CENTER.md for the actual import contract and real-provider acceptance still needed.
+
+## Visuals, interaction and accessibility
+
+Existing generated artworks remain unchanged source PNGs with provenance in assets/landing-images.prompt.md. scripts/build-marketing-images.php creates committed 640/960/1440 WebP encodings from those originals, without new imagery. Responsive srcset/sizes and reserved aspect ratios avoid unnecessary image transfer/layout shifts; the hero has high fetch priority and the kitchen image lazy loads. Largest WebP hero/kitchen files are about 259/101 kB versus 2.84/2.05 MB source PNGs. The favicon is the existing Z mark expressed as an SVG.
+
+Feature tabs and the local order demo remain illustrative and create no real orders, reservations, email or payment mutations. Reduced-motion behavior, skip link, native headings, mobile navigation, image alternatives and actual registration/login/dashboard CTAs remain. Payments are explicitly unavailable. The 14-day trial reflects current onboarding. Detailed screenshots remain private test artifacts rather than product claims.
+
+## Validation boundaries
+
+PHP tests check raw text outside the Inertia JSON, language/cookie determinism, canonical host/query isolation, reciprocal sitemap/hreflang, safe structured data, readiness/noindex behavior, personalized CTA separation, invalid configuration and tenant-domain preservation. Playwright checks JavaScript-disabled content and language navigation, client metadata uniqueness/removal, existing interactions, RO/EN persistence, responsive overflow and reduced motion. Exact run results and Lighthouse conditions are in CODEX_PROGRESS.md. Live Forge/Nginx/DNS/TLS, Search Console/Bing ownership/submission, actual indexation, production Core Web Vitals and assistive-technology coverage are not inferred from local results.
+
+Primary references: [Google JavaScript SEO](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics), [localized versions](https://developers.google.com/search/docs/specialty/international/localized-versions), [robots.txt](https://developers.google.com/search/docs/crawling-indexing/robots/intro), [official GloriaFood Fetch Menu API](https://github.com/GlobalFood/integration_docs/blob/master/fetch_menu/README.md).

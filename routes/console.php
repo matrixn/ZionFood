@@ -3,6 +3,7 @@
 use App\Domain\Integrations\Actions\DeliverOutboxMessage;
 use App\Domain\Mail\EmailLedger;
 use App\Domain\Mail\IndexQueuedEmails;
+use App\Domain\Marketing\LandingSeo;
 use App\Jobs\DeliverOutbox;
 use App\Jobs\DeliverWebhook;
 use App\Models\EmailDelivery;
@@ -117,3 +118,16 @@ Artisan::command('zionfood:mail-prune', function () {
     $this->info('Expired terminal email metadata removed.');
 });
 Schedule::command('zionfood:mail-prune')->daily()->withoutOverlapping();
+
+Artisan::command('zionfood:seo-check', function () {
+    $seo = app(LandingSeo::class);
+    $ro = $seo->meta('ro');
+    $en = $seo->meta('en');
+    $this->info('Canonical origin: '.$seo->baseUrl());
+    $this->info('Romanian rendered: '.($ro['ready'] ? 'yes' : 'no'));
+    $this->info('English rendered: '.($en['ready'] ? 'yes' : 'no'));
+    $this->info('Indexing: '.$ro['robots']);
+    $this->info('Sitemap: '.$seo->baseUrl().'/sitemap.xml');
+
+    return $ro['ready'] && $en['ready'] && str_starts_with($ro['robots'], 'index') ? 0 : 1;
+});

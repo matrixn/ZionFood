@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.27 — 2026-10-28
+
+- Added build-rendered public landing content, deterministic Romanian/English URLs, canonical/hreflang metadata, JSON-LD and social sharing tags available without JavaScript.
+- Added canonical-host sitemap/robots routing, private-route noindex headers, SEO readiness checks and safeguards for local/disabled/missing-build indexing.
+- Added GloriaFood migration content, verification/publication steps and explicit transfer limitations, plus responsive WebP presentation assets and ZionFood favicon.
+
 ## 0.0.26 — 2026-10-27
 
 - Added a platform-admin outgoing-email ledger with source/initiator/status/recipient/date filters, live polling, metadata details and encrypted private fields.

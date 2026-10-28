@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Marketing\LandingSeo;
 use App\Http\Controllers\AdminEmailsController;
 use App\Http\Controllers\BrandingController;
 use App\Http\Controllers\CuisineController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\DiningController;
 use App\Http\Controllers\EmailAlertSettingsController;
 use App\Http\Controllers\GeneralSettingsController;
 use App\Http\Controllers\IngredientController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MenuContentController;
 use App\Http\Controllers\MenuController;
@@ -28,8 +30,11 @@ Route::get('/', function (Request $request, PublicOrderingController $controller
         return $controller->page($request, RestaurantLocation::findOrFail($id));
     }
 
-    return Inertia::render('Welcome');
+    return app(LandingController::class)->show($request, app(LandingSeo::class));
 });
+Route::get('/en', [LandingController::class, 'show']);
+Route::get('/robots.txt', [LandingController::class, 'robots']);
+Route::get('/sitemap.xml', [LandingController::class, 'sitemap']);
 Route::get('/store/{location}', function (Request $r, string $location, PublicOrderingController $c) {
     return redirect($c->resolve($r, $location)->storefront_path, 301);
 });

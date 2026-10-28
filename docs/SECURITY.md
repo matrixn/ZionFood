@@ -70,3 +70,6 @@ Error-alert administration requires is_platform_admin and a verified browser ses
 
 
 0.0.26 restricts all email metadata/provider/index endpoints to verified platform admins and uses explicit serializers excluding bodies/tokens/credentials/context. Private metadata fields are encrypted, exact recipient search is keyed, and only authenticated encrypted application queue payloads may be indexed. Backend usage requests have a fixed HTTPS endpoint, bounded time/body, no redirects/proxy and no raw error logging. Database locks/shared cache locks coordinate provider quota pauses; no browser input may bypass a confirmed provider quota. See EMAIL_DELIVERY.md for history/retention and at-least-once limitations.
+
+
+0.0.27 uses configured/allowlisted canonical origins, safe escaped per-request Inertia JSON, fixed build-owned HTML fragment paths and metadata generation independent of user-agent detection. Build fragments contain no personal user/session data. Stage/local/incomplete builds are nonindexable and private-route noindex is an additional discovery policy, never a substitute for authentication or tenant boundaries. No search-provider credentials, tracking scripts or external migration requests are introduced by the landing page.

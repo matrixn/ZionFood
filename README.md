@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.26** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.27** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,19 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 28 octombrie 2026 — prima pagină pregătită pentru căutare și migrare GloriaFood · 0.0.27
+
+- [x] Conținutul primei pagini este livrat direct în HTML, inclusiv fără JavaScript, din aceeași componentă Vue; buildul generează variante RO/EN pentru vizitatori și utilizatori autentificați.
+- [x] Adrese stabile `/` în română și `/en` în engleză, canonical, hreflang reciproc și selector cu preferință persistentă; metadate disponibile înainte de JavaScript și sincronizate după încărcare.
+- [x] Titluri și descrieri pentru motoarele de căutare, Open Graph/Twitter, date structurate Organization/WebSite/WebPage/Service și favicon ZionFood.
+- [x] Sitemap XML cu ambele limbi și robots.txt din configurarea domeniului public; paginile private/de diagnostic au antet noindex. Localhost, staging dezactivat și buildurile SEO lipsă/vechi nu sunt indexabile.
+- [x] Secțiune și FAQ despre migrarea GloriaFood: import API/JSON, previzualizare, raport de verificare, publicare controlată și limitele transferului explicate.
+- [x] Lighthouse SEO **100/100 pentru RO și EN** în laborator local cu configurare de domeniu public; [condițiile auditului](docs/benchmarks/seo-lighthouse.json).
+- [x] Imagini WebP responsive, cu dimensiuni rezervate, prioritate pentru imaginea principală și încărcare întârziată pentru imaginea secundară.
+- [ ] Verificarea domeniului public în Google Search Console/Bing Webmaster Tools, trimiterea sitemap-ului și inspecția URL-urilor după deployment; indexarea și clasarea aparțin motoarelor de căutare.
+
+[Configurare SEO și verificări de lansare](docs/LANDING_PAGE.md).
 
 ### 27 octombrie 2026 — emailuri în administrarea platformei și cota Resend · 0.0.26
 

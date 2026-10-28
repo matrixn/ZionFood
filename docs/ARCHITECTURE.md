@@ -1,4 +1,4 @@
-# ZionFood 0.0.26
+# ZionFood 0.0.27
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; whole-menu Migration Center is implemented separately with encrypted staging, approved version publication and guarded rollback (see MIGRATION_CENTER.md). See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -130,3 +130,8 @@ Webhook fanout stays in the transaction and precedes broadcasting, so a broadcas
 ## Outgoing mail ledger and provider pause (0.0.26)
 
 EmailLedger captures queued notification intent and rendered transport metadata; DeliverEmail correlates by notification ID/public ULID and leases records before provider work. ResendQuota holds persistent UTC counters and shared daily/monthly/rate pauses under database row locks, with a cache provider lock around usage/sending. Existing rolling application quotas and the error-alert circuit remain separate. IndexQueuedEmails reads authenticated encrypted configured queue payloads without executing them. AdminEmailsController is platform-only and returns explicit safe metadata fields. See [EMAIL_DELIVERY.md](EMAIL_DELIVERY.md).
+
+
+## 0.0.27 marketing rendering and search metadata
+
+LandingController/LandingSeo keep canonical-host metadata and language URLs independent of request cookies/Host input. LandingPrerender and LandingGateway serve version-checked build-time Vue HTML with live request page JSON only on Welcome; other Inertia pages retain their existing gateway behavior. The same Vue source is enhanced in the browser. SearchIndexing sets private-route and readiness-aware landing policies without changing tenant authorization. See LANDING_PAGE.md.

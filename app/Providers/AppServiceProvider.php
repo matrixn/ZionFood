@@ -6,6 +6,7 @@ use App\Domain\Mail\EmailDeliveryLog;
 use App\Domain\Mail\EmailErrorAlert;
 use App\Domain\Mail\EmailLedger;
 use App\Domain\Mail\QueueOutgoingEmail;
+use App\Domain\Marketing\LandingGateway;
 use App\Domain\Menus\MenuCache;
 use App\Jobs\DeliverEmail;
 use App\Models\EmailDelivery;
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Inertia\Ssr\Gateway;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(EmailErrorAlert::class);
+        $this->app->bind(Gateway::class, LandingGateway::class);
     }
 
     /**

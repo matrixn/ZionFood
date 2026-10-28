@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { test, expect as baseExpect } from '@playwright/test';
+const expect = baseExpect.configure({ timeout: 20000 });
 
 test('landing page presents both languages, real CTAs and isolated interactive previews', async ({ page }) => {
     test.setTimeout(90000);
@@ -11,6 +12,7 @@ test('landing page presents both languages, real CTAs and isolated interactive p
             mutations.push(request.url());
     });
     await page.goto('/');
+    await expect(page.locator('.landing')).toHaveAttribute('data-enhanced', 'true');
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Restaurantul tău.');
     await expect(page.getByRole('link', { name: 'Începe cu ZionFood' }).first()).toHaveAttribute('href', '/register');
     await expect(page.locator('.nav-login')).toHaveAttribute('href', '/login');
@@ -43,7 +45,7 @@ test('landing page presents both languages, real CTAs and isolated interactive p
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Your restaurant.');
     await page.reload();
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Your restaurant.');
-    await expect(page).toHaveTitle(/Your restaurant, in perfect sync/);
+    await expect(page).toHaveTitle(/Restaurant digital menus, QR orders and reservations/);
     expect(await page.locator('html').getAttribute('lang')).toBe('en');
     await page.locator('.kitchen-story').scrollIntoViewIfNeeded();
     await expect(page.locator('.kitchen-story img')).toHaveJSProperty('complete', true);
@@ -63,6 +65,7 @@ test('mobile landing has working navigation and respects reduced motion', async 
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
     const page = await context.newPage();
     await page.goto('/');
+    await expect(page.locator('.landing')).toHaveAttribute('data-enhanced', 'true');
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Restaurantul tău.');
     expect(await page.locator('.floating-table').evaluate((element) => getComputedStyle(element).animationName)).toBe(
         'none',

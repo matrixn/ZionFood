@@ -4,6 +4,7 @@ import Select from 'primevue/select';
 import { usePrimeVue } from 'primevue/config';
 import { i18n, primeLocale, type Locale } from '@/i18n';
 import { api } from '@/lib/http';
+const props = defineProps<{ urls?: Record<string, string> }>();
 const prime = usePrimeVue();
 const selection = ref<Locale>(i18n.global.locale.value);
 const busy = ref(false);
@@ -16,7 +17,7 @@ watch(
     i18n.global.locale,
     (locale) => {
         selection.value = locale;
-        document.documentElement.lang = locale;
+        if (typeof document !== 'undefined') document.documentElement.lang = locale;
         Object.assign(prime.config.locale!, primeLocale(locale), {
             aria: { ...prime.config.locale?.aria, ...primeLocale(locale).aria },
         });
@@ -30,6 +31,7 @@ async function change(locale: Locale) {
     try {
         await api('/locale', 'POST', { locale });
         i18n.global.locale.value = locale;
+        if (props.urls?.[locale]) window.location.assign(props.urls[locale]);
     } catch {
         selection.value = i18n.global.locale.value;
         error.value = i18n.global.t('language_change_failed');
