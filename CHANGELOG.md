@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.29 — 2026-10-29
+
+- Display saved kitchen rejection reasons beside the orders status in an accessible tooltip and directly below the status in order details.
+- Reuse authorized order history and existing RO/EN labels, with no schema or API changes.
+
 ## 0.0.28 — 2026-10-29
 
 - Added public opening/closure/next-opening banners and final-hour ordering notices for online and QR menus, using the location timezone and actual QR cutoff.

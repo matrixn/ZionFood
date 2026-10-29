@@ -1,4 +1,4 @@
-# Scope at 0.0.28
+# Scope at 0.0.29
 
 0.0.19 introduces a dish-first automatic generation workspace, combined AI tasks, approximate one-portion nutrition and durable live review notifications. It replaces the earlier manual reference calculator and retires the manual GloriaFood JSON metadata workflow. Published data remains local and requires review. Whole-menu GloriaFood migration, approved publication, reimport decisions and guarded rollback are implemented in 0.0.22; see MIGRATION_CENTER.md. Provider fidelity and estimation quality still require validation with a real authorized restaurant.
 
@@ -7,7 +7,7 @@
 - Fortify registration/login/logout, verification and password-reset pages with PrimeVue.
 - Onboarding creates organization, owner membership, restaurant, location, hours, fulfillment defaults, main menu, subdomain mapping and 14-day trial.
 - Explicit organization/location authorization, Policies and composite tenant foreign keys.
-- Restaurant dashboard, location switcher, orders/history/detail drawer, categories, item create/edit/soft deletion, image uploads, variants and modifier groups.
+- Restaurant dashboard, location switcher, orders/history/detail drawer including saved rejection reasons in status tooltips and details, categories, item create/edit/soft deletion, image uploads, variants and modifier groups.
 - Same-day opening hours, pickup and polygon/postal-prefix delivery zones with authoritative fees and minimums.
 - Public menu, product customization, cart, checkout, server pricing, snapshots, idempotency and secure polling-based tracking.
 - KDS accept/reject/prepare/ready/dispatch/complete/cancel workflow, optimistic concurrency, private realtime invalidations, sound after user activation, polling/reconnect recovery and fullscreen control.

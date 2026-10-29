@@ -546,3 +546,6 @@ resources/js/lib/orderingAvailability.ts
 tests/Feature/OrderingAvailabilityTest.php
 tests/frontend/orderingAvailability.test.ts
 tests/e2e/ordering-availability.spec.ts
+resources/js/lib/orderRejection.ts
+tests/frontend/orderRejection.test.ts
+tests/e2e/order-rejection.spec.ts

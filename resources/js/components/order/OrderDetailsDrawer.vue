@@ -4,7 +4,8 @@ import ZFStatusBadge from '@/components/ui/ZFStatusBadge.vue';
 import OrderTrackingTimeline from './OrderTrackingTimeline.vue';
 import { money } from '@/lib/http';
 import type { Order } from '@/types';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { orderRejectionReason } from '@/lib/orderRejection';
 import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
@@ -15,6 +16,7 @@ const next = ref<string | null>(null);
 const reason = ref('');
 const error = ref('');
 const busy = ref(false);
+const rejectionReason = computed(() => (props.order ? orderRejectionReason(props.order) : null));
 watch(
     () => [props.order?.public_id, props.order?.version],
     () => {
@@ -49,6 +51,16 @@ const visible = defineModel<boolean>('visible', { required: true });
                 <strong>#{{ order.public_id.slice(-8) }}</strong
                 ><ZFStatusBadge :status="order.status" />
             </div>
+            <section
+                v-if="rejectionReason"
+                :aria-label="$t('reason_for_rejection')"
+                class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-950 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-100"
+            >
+                <h3 class="flex items-center gap-2 font-semibold">
+                    <i class="pi pi-times-circle" aria-hidden="true" />{{ $t('reason_for_rejection') }}
+                </h3>
+                <p class="mt-2 whitespace-pre-wrap break-words text-sm leading-relaxed">{{ rejectionReason }}</p>
+            </section>
             <div>
                 <h3 class="font-semibold">{{ order.customer_name }}</h3>
                 <p v-if="order.table_code" class="my-2 font-semibold text-brand">

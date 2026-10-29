@@ -1,4 +1,4 @@
-# ZionFood 0.0.28
+# ZionFood 0.0.29
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; whole-menu Migration Center is implemented separately with encrypted staging, approved version publication and guarded rollback (see MIGRATION_CENTER.md). See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -26,7 +26,7 @@ Checkout locks the location row, checks idempotency, verifies availability, open
 
 The order, item/modifier snapshots, initial history, idempotency key and outbox message are committed together. Requests with the same key and canonical validated payload return the same order and tracking token; changed payloads return 409. Idempotency records currently have no automatic expiry. Location serialization prioritizes correctness over maximum per-location throughput. Database deadlock retries are enabled.
 
-Status changes lock the order and require the expected version. Allowed transitions are defined in `OrderStatus`; a stale version returns 409. Rejection requires a reason. History cannot be updated or deleted through its Eloquent model. A database administrator can still modify rows directly; this is not cryptographic or database-trigger immutability.
+Status changes lock the order and require the expected version. Allowed transitions are defined in `OrderStatus`; a stale version returns 409. Rejection requires a reason. Authorized order lists already include chronological history. The frontend derives the current rejection reason from its latest rejected history entry; the orders table exposes it through the shared accessible help tooltip, and order details show it below the status. Only currently rejected orders show this reason; missing/blank reasons produce no invented fallback. Plain text interpolation preserves escaping. History cannot be updated or deleted through its Eloquent model. A database administrator can still modify rows directly; this is not cryptographic or database-trigger immutability.
 
 ## Realtime and recovery
 

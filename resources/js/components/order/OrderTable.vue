@@ -7,6 +7,7 @@ import ZFDataTable from '@/components/ui/ZFDataTable.vue';
 import ZFStatusBadge from '@/components/ui/ZFStatusBadge.vue';
 import { money } from '@/lib/http';
 import type { Order } from '@/types';
+import { orderRejectionReason } from '@/lib/orderRejection';
 defineProps<{ orders: Order[]; loading: boolean }>();
 const emit = defineEmits<{ select: [order: Order] }>();
 </script>
@@ -17,7 +18,12 @@ const emit = defineEmits<{ select: [order: Order] }>();
                 ><strong>#{{ (data as Order).public_id.slice(-8) }}</strong></template
             ></Column
         ><Column field="customer_name" :header="$t('customer')" /><Column :header="$t('status')"
-            ><template #body="{ data }"><ZFStatusBadge :status="(data as Order).status" /></template></Column
+            ><template #body="{ data }"
+                ><span class="inline-flex items-center gap-2"
+                    ><ZFStatusBadge :status="(data as Order).status" /><FieldHelp
+                        v-if="orderRejectionReason(data as Order)"
+                        :label="$t('reason_for_rejection')"
+                        :text="orderRejectionReason(data as Order)!" /></span></template></Column
         ><Column :header="$t('method')"
             ><template #body="{ data }">{{ $t('fulfillment_' + (data as Order).fulfillment) }}</template></Column
         ><Column :header="$t('total')"
