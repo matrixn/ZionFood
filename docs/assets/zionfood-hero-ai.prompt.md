@@ -1,5 +1,15 @@
 # ZionFood README illustration
 
+## Current image — 2026-10-29
+
+Regenerated with the built-in `image_gen` tool using the imagegen skill, with the previous `docs/assets/zionfood-hero-ai.png` as edit target and `public/images/logo/food.zion3d.ro_icons-256x256.png` as the supporting official-logo reference. The output `exec-d13b1a69-58c5-4583-b4e8-c1b3900065d8.png` was copied unchanged to `docs/assets/zionfood-hero-ai.png`, replacing the previous image at the user's request. No CLI fallback was used. Logo identity/colors, the exact ZionFood spelling and the Romanian CTA “Dă gust afacerii tale!” were visually checked. The banner is conceptual promotional artwork, not an actual application screenshot; its abstract tabletop symbol is not a QR credential. The original standalone logo assets are unchanged.
+
+### Prompt used
+
+Use case: compositing / ads-marketing. Asset type: replacement wide 16:9 GitHub README banner for ZionFood. Image 1 is the existing banner to regenerate; image 2 is the official ZionFood logo to insert, preserving its distinctive green smartphone, orange location pin and green serving cloche as faithfully as possible. Create a fresh polished version of the existing warm restaurant scene, appetizing pizza/burger/coffee, simple menu phone and abstract reservation/kitchen/delivery symbols. Prominently place the supplied official logo next to the beautifully typeset exact wordmark 'ZionFood', with breathing room and clear visual hierarchy. Add the short energetic Romanian call to action exactly: 'Dă gust afacerii tale!' Make that sentence prominent, clearly readable, with correct Romanian diacritics. Keep the wordmark and CTA in the open upper-left area, food and software scene balancing it on the right and below. Refined tactile 3D/editorial advertising style, warm ivory, deep navy and existing violet accents; keep the official logo's green/orange colors unchanged. Opaque background. Only visible text: 'ZionFood' and 'Dă gust afacerii tale!'. No fake metrics, no extra slogans, no watermark, no third-party branding, no payment promises, no real or scannable QR credentials. This is a conceptual promotional illustration, not an actual application screenshot.
+
+## Historical original image
+
 Generated on 2026-10-26 with the built-in `image_gen` tool, using the imagegen skill. No CLI fallback or reference images were used. The selected PNG is `zionfood-hero-ai.png` in this directory, copied unchanged into the project from the generated output. It is a conceptual brand illustration, not an application screenshot. The tabletop symbol is illustrative, not a usable QR credential.
 
 ## Final prompt

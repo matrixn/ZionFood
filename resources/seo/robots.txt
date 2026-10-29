@@ -1,0 +1,50 @@
+# ZionFood - public site and rendering resources
+# Authentication protects private data; robots.txt only controls crawling.
+User-agent: *
+Allow: /
+Allow: /build/
+Allow: /images/
+Allow: /storage/
+Allow: /fonts/
+Allow: /flags/
+
+# Read-only data needed to render the public restaurant menu.
+Allow: /api/v1/public/locations/*/menu$
+Allow: /api/v1/public/locations/*/menu?
+Allow: /api/v1/public/locations/*/availability$
+Allow: /api/v1/public/locations/*/availability?
+
+# Protected operations and integration endpoints are not search content.
+Disallow: /app$
+Disallow: /app/
+Disallow: /app?
+Disallow: /admin$
+Disallow: /admin/
+Disallow: /admin?
+Disallow: /kitchen$
+Disallow: /kitchen/
+Disallow: /kitchen?
+Disallow: /horizon$
+Disallow: /horizon/
+Disallow: /horizon?
+Disallow: /telescope$
+Disallow: /telescope/
+Disallow: /telescope?
+Disallow: /pulse$
+Disallow: /pulse/
+Disallow: /pulse?
+Disallow: /broadcasting$
+Disallow: /broadcasting/
+Disallow: /broadcasting?
+Disallow: /sanctum$
+Disallow: /sanctum/
+Disallow: /sanctum?
+Disallow: /api$
+Disallow: /api/
+Disallow: /api?
+Disallow: /up$
+Disallow: /up?
+
+# Public account/booking/QR/receipt pages stay crawlable so their noindex
+# response headers can be read. Query canonicalization remains page-level.
+# The application adds the canonical sitemap only on marketing hosts.

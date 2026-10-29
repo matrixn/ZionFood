@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Marketing\Actions\BuildRobotsTxt;
 use App\Domain\Marketing\LandingSeo;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,20 +20,13 @@ class LandingController extends Controller
         return $response->cookie('zf_locale', $locale, 525600, '/', null, $request->isSecure(), true, false, 'lax');
     }
 
-    public function robots(Request $request, LandingSeo $seo)
+    public function robots(Request $request, LandingSeo $seo, BuildRobotsTxt $robots)
     {
         $central = ! $request->attributes->has('storefront_location') && in_array($request->getHost(), config('zionfood.app_hosts'), true);
-        $text = "User-agent: *\n";
-        if ($central && str_starts_with($seo->meta('ro')['robots'], 'index')) {
-            $text .= "Allow: /\nSitemap: ".$seo->baseUrl()."/sitemap.xml\n";
-        } elseif ($central || in_array($request->getHost(), config('zionfood.api_hosts'), true)) {
-            $text .= "Disallow: /\n";
-        } else {
-            // Restaurant domains keep their existing public-menu indexing policy.
-            $text .= "Allow: /\n";
-        }
+        $crawlable = config('seo.indexable') && ($request->attributes->has('storefront_location') || ($central && str_starts_with($seo->meta('ro')['robots'], 'index')));
+        $text = $robots->execute($crawlable, $crawlable && $central ? $seo->baseUrl().'/sitemap.xml' : null);
 
-        return response($text)->header('Content-Type', 'text/plain; charset=UTF-8');
+        return response($text)->header('Content-Type', 'text/plain; charset=UTF-8')->header('Cache-Control', 'no-store, private');
     }
 
     public function sitemap(Request $request, LandingSeo $seo)

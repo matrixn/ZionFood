@@ -1,4 +1,4 @@
-# ZionFood 0.0.30
+# ZionFood 0.0.31
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; whole-menu Migration Center is implemented separately with encrypted staging, approved version publication and guarded rollback (see MIGRATION_CENTER.md). See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -145,3 +145,7 @@ Availability is computed outside the cached product tree and exposed through rea
 ## Shared platform identity (0.0.30)
 
 ZFLogo uses the supplied PNG sizes with a responsive source set and reserved square dimensions. Platform surfaces, auth, shells and storefront attribution share it; tenant branding stays independent. The Blade gateway supplies favicon/touch links, notification HTML mail overrides only its shared header, and migration reports/Organization JSON-LD reference the appropriate mark. See PLATFORM_BRANDING.md.
+
+## Host-aware crawl policy (0.0.31)
+
+BuildRobotsTxt combines a reviewed UTF-8 text source with host/readiness policy from LandingController. Only indexable central hosts append the validated canonical sitemap; verified tenant domains receive the public policy without that sitemap, and dedicated API/disabled/non-ready central contexts disallow all. Public resource and read-only menu API exceptions coexist with operational/API crawl exclusions. Existing public noindex pages remain crawlable. This changes neither tenant authorization nor public page canonical metadata. See ROBOTS_POLICY.md.

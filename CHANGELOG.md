@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.31 — 2026-10-29
+
+- Added a reviewable robots.txt source and host-aware policy for public pages, render assets, public-menu API exceptions and protected operations; noindex public pages remain crawlable.
+- Preserved canonical sitemap/readiness controls, blocked dedicated API/disabled-indexing hosts and prevented shared caching of host-specific policies.
+- Regenerated the README banner with the repository logo and Romanian CTA, linked the banner to ZionFood and recorded image-generation provenance.
+
 ## 0.0.30 — 2026-10-29
 
 - Integrated the supplied ZionFood PNG icon set through a shared responsive logo across presentation, authentication, restaurant/platform/kitchen shells and storefront attribution.

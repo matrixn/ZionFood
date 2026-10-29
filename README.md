@@ -1,8 +1,8 @@
 # ZionFood
 
-![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
+[![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.30** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.31** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,13 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 29 octombrie 2026 — reguli robots.txt și banner GitHub · 0.0.31
+
+- [x] Politică robots.txt comună pentru paginile publice și resursele necesare randării; sitemap canonic pe domeniul prezentării și restricții pentru operațiuni/API private.
+- [x] Excepții pentru datele publice ale meniului și disponibilității; paginile publice cu `noindex` rămân accesibile crawlerelor ca să poată citi antetele.
+- [x] Indexarea dezactivată, domeniile API și prezentarea fără build complet primesc `Disallow: /`; domeniile restaurantelor primesc reguli proprii fără sitemap-ul platformei.
+- [x] Imagine README regenerată cu AI folosind logo-ul din repository și mesajul „Dă gust afacerii tale!”, cu link spre site.
 
 ### 29 octombrie 2026 — identitate ZionFood unificată · 0.0.30
 

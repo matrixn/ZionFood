@@ -563,3 +563,8 @@ public/images/logo/food.zion3d.ro_icons-96x96.png
 tests/Feature/PlatformLogoTest.php
 tests/e2e/platform-logo.spec.ts
 docs/PLATFORM_BRANDING.md
+app/Domain/Marketing/Actions/BuildRobotsTxt.php
+resources/seo/robots.txt
+tests/Feature/RobotsPolicyTest.php
+tests/e2e/robots.spec.ts
+docs/ROBOTS_POLICY.md
