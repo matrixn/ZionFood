@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Domain\Mail\AccountMailBudget;
 use App\Domain\Mail\EmailDeliveryLog;
 use App\Domain\Mail\EmailLedger;
 use App\Domain\Mail\EmailQuota;
@@ -97,6 +98,14 @@ class DeliverEmail implements ShouldBeEncrypted, ShouldQueue
             }
             $envelope = Envelope::create($this->email);
             $recipients = count($envelope->getRecipients());
+            $wait = app(AccountMailBudget::class)->reserveDelivery($record->source, $recipients);
+            if ($wait > 0) {
+                $ledger->defer($record, 'account_mail_quota', $wait);
+                EmailDeliveryLog::write('account_quota_deferred', [...$context, 'retry_after_seconds' => $wait], 'warning');
+                $this->release($wait + random_int(1, 30));
+
+                return;
+            }
             $wait = $quota->reserve($recipients);
             if ($wait > 0) {
                 $ledger->defer($record, 'application_quota', $wait);

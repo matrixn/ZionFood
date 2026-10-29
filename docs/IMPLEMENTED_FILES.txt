@@ -571,3 +571,11 @@ docs/ROBOTS_POLICY.md
 resources/views/marketing/first-paint.blade.php
 tests/Feature/LandingFirstPaintTest.php
 tests/e2e/landing-first-paint.spec.ts
+app/Domain/Imports/ImportComplexityException.php
+app/Domain/Mail/AccountMailBudget.php
+app/Domain/Restaurants/Actions/SaveLocationSettings.php
+app/Domain/Restaurants/AuthorizeOrderingChanges.php
+app/Http/Middleware/AccountRequestAdmission.php
+tests/Feature/SecurityRegressionTest.php
+tests/e2e/security-regression.spec.ts
+docs/security/2026-10-29-local-audit.md

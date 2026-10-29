@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Domain\Imports\GloriaFoodClient;
+use App\Domain\Imports\ImportComplexityException;
 use App\Domain\Imports\ProcessImport;
 use App\Models\ImportBatch;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,6 +28,8 @@ class FetchGloriaFoodMenu implements ShouldQueue
         }
         try {
             app(ProcessImport::class)->execute($batch, app(GloriaFoodClient::class)->fetch($batch->credential));
+        } catch (ImportComplexityException) {
+            $batch->update(['status' => 'failed', 'failure_code' => 'import_complexity_limit']);
         } catch (\Throwable $e) {
             $batch->update(['status' => 'failed', 'failure_code' => 'fetch_or_validation_failed']);
             Log::warning('GloriaFood import failed', ['batch_id' => $batch->public_id, 'exception_class' => $e::class]);

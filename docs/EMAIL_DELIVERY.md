@@ -1,4 +1,4 @@
-# Outgoing email administration — 0.0.26
+# Outgoing email administration — 0.0.33
 
 The platform administrator opens **Admin → Emails and queue** (`/admin/emails`). Restaurant owners, managers and staff have no access, including direct JSON and mutation requests. The list refreshes every 15 seconds and preserves applied filters/pagination. Details show recipients, encrypted-at-rest subject, source/initiator, state, actual transport attempts, provider ID, expiry and next-attempt time. No message body, attachment, reset token or invitation URL is exposed by the ledger.
 
@@ -43,3 +43,11 @@ Use **Check Resend usage** after rollout so the account's current external consu
 The separately supplied broadcast log identified cURL error 6 resolving `ws.food.zion3d.ro`: a DNS failure before reaching Reverb. Resend quota errors cannot cause that broadcaster DNS error. In the subsequent authorized operational follow-up, the owner corrected their environment, Horizon was gracefully refreshed and one explicitly retried exhausted event was confirmed delivered in one attempt. This confirmed internal backend publication only; public browser DNS/WSS and the separation of REVERB_PUBLISH_* from public/VITE values still need independent verification. This email-ledger increment performed no new Forge mutation or production email send.
 
 Sources: [Resend usage limits](https://resend.com/docs/api-reference/rate-limit), [Retrieve Usage](https://resend.com/docs/api-reference/usage/retrieve-usage), [error types](https://resend.com/docs/api-reference/errors).
+
+## 0.0.33 account-workflow protection
+
+Registration, password-reset requests and verification resends share admission controls before account/notification/job creation: default 10 requests/hour/IP and 30 requests/rolling24h across IPs. Invalid or non-sending admitted requests count conservatively. Excess returns429 and Retry-After. Queue delivery of account registration/verification/reset and unknown historical legacy sources has a separate30-recipient rolling24h allowance. Staff invitations, reservations, system alerts and explicitly classified other sources do not consume it. Both daily allowances are capped to half the smallest known daily application/provider capacity, using the admin local guard and synchronized provider daily limit when available; zero available account capacity blocks admission. These are daily controls, not a monthly fairness scheduler. Other apps/provider usage can still consume shared provider capacity.
+
+Configure MAIL_ACCOUNT_DAILY_LIMIT (default30) and MAIL_ACCOUNT_REQUESTS_PER_HOUR (default10), rebuild config through the normal release procedure and restart workers through that procedure. The existing MAIL_RATE_LIMIT_STORE must be shared Redis in production; locks serialize updates and cache failure does not admit requests. A budget-exceeded queued message retains normal expiry and is deferred with account_mail_quota, localized in platform-admin email history. Historical unknown jobs are deliberately constrained until classified; it is safer than guessing message meaning from private bodies. Existing140/24h application and Resend UTC-day quotas remain final guards.
+
+The temporary public test-email page exposes only whether ADMIN_EMAIL is valid, never its value. Its fixed server-side recipient and shared3/hour limiter are unchanged. The owner accepted anonymous consumption of that diagnostic quota. No live-provider send or quota exhaustion was performed in this audit.

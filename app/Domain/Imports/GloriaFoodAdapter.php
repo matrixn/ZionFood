@@ -19,6 +19,7 @@ class GloriaFoodAdapter
         $categories = [];
         $seen = [];
         $count = 0;
+        $evidenceBudget = [0, 0, 0];
         foreach ($source['categories'] as $ci => $c) {
             $category = ['key' => (string) $c['id'], 'name' => $c['name'], 'groups' => $this->groups($c['groups'] ?? [], "categories.$ci.groups"), 'items' => []];
             foreach ($c['items'] as $ii => $i) {
@@ -78,7 +79,9 @@ class GloriaFoodAdapter
                 if (count(array_filter($sizes, fn ($s) => $s['is_default'])) > 1) {
                     $this->issue('blocker', 'defaults', $path, 'More than one default size.');
                 }
-                $category['items'][] = ['key' => (string) $i['id'], 'name' => $i['name'], 'description' => $i['description'] ?? '', 'price' => $price, 'order_types' => $types, 'kitchen_name' => $extras['menu_item_kitchen_internal_name'] ?? null, 'content' => $content, 'variants' => $sizes, 'groups' => $this->groups($i['groups'] ?? [], "$path.groups")];
+                $item = ['key' => (string) $i['id'], 'name' => $i['name'], 'description' => $i['description'] ?? '', 'price' => $price, 'order_types' => $types, 'kitchen_name' => $extras['menu_item_kitchen_internal_name'] ?? null, 'content' => $content, 'variants' => $sizes, 'groups' => $this->groups($i['groups'] ?? [], "$path.groups")];
+                app(ImportVerification::class)->includeItemInBudget($category['groups'], $item, strtoupper($source['currency']), $evidenceBudget);
+                $category['items'][] = $item;
             }$categories[] = $category;
         }
         $this->issue('warning', 'photos', 'menu', 'Photos are not supplied by this API; upload or retain them in the menu editor.');

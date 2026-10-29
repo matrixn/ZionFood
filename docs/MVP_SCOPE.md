@@ -1,4 +1,4 @@
-# Scope at 0.0.32
+# Scope at 0.0.33
 
 0.0.19 introduces a dish-first automatic generation workspace, combined AI tasks, approximate one-portion nutrition and durable live review notifications. It replaces the earlier manual reference calculator and retires the manual GloriaFood JSON metadata workflow. Published data remains local and requires review. Whole-menu GloriaFood migration, approved publication, reimport decisions and guarded rollback are implemented in 0.0.22; see MIGRATION_CENTER.md. Provider fidelity and estimation quality still require validation with a real authorized restaurant.
 
@@ -90,3 +90,7 @@ Professional host-aware robots rules permit public pages and render assets with 
 ## Initial landing rendering at 0.0.32
 
 Initial HTML links the actual landing stylesheet, with bounded hidden-until-styled SVG decorations, intrinsic flag sizes and font-ready icons. The public text and links remain available when external CSS/JS/fonts fail. Browser coverage includes styled no-JavaScript, blocked CSS+JS and failed icon fonts.
+
+## Security assessment at0.0.33
+
+Implemented local regression-tested repairs for restricted-manager operational switches, multiplicative import verification work and public account email admission/shared delivery capacity. Kept the requested public test-email diagnostic while removing private recipient disclosure. See security/2026-10-29-local-audit.md. Full production/infrastructure/provider and exhaustive third-party package security certification remain outside this local assessment.

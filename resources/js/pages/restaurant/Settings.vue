@@ -126,19 +126,25 @@ useSetupEditorGuard(
                         >{{ $t('address') }}<FieldHelp :label="$t('address')" field="address" /></span
                     ><InputText v-model="form.address" :aria-label="$t('address')" required /></label
                 ><label class="flex items-center gap-3"
-                    ><ToggleSwitch v-model="form.accepting_orders" :aria-label="$t('accepting_online_orders')" /><span
-                        class="field-label"
+                    ><ToggleSwitch
+                        v-model="form.accepting_orders"
+                        :disabled="permissions.orders !== 'manage'"
+                        :aria-label="$t('accepting_online_orders')" /><span class="field-label"
                         >{{ $t('accepting_online_orders')
                         }}<FieldHelp :label="$t('accepting_online_orders')" field="accepting_online_orders" /></span
                 ></label>
                 <div class="flex flex-wrap gap-8">
                     <label class="flex items-center gap-3"
-                        ><ToggleSwitch v-model="form.pickup_enabled" :aria-label="$t('pickup')" /><span
-                            class="field-label"
+                        ><ToggleSwitch
+                            v-model="form.pickup_enabled"
+                            :disabled="permissions.orders !== 'manage'"
+                            :aria-label="$t('pickup')" /><span class="field-label"
                             >{{ $t('pickup') }}<FieldHelp :label="$t('pickup')" field="pickup" /></span></label
                     ><label class="flex items-center gap-3"
-                        ><ToggleSwitch v-model="form.delivery_enabled" :aria-label="$t('delivery')" /><span
-                            class="field-label"
+                        ><ToggleSwitch
+                            v-model="form.delivery_enabled"
+                            :disabled="permissions.orders !== 'manage'"
+                            :aria-label="$t('delivery')" /><span class="field-label"
                             >{{ $t('delivery') }}<FieldHelp :label="$t('delivery')" field="delivery" /></span
                     ></label>
                 </div>

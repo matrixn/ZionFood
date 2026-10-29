@@ -15,10 +15,10 @@ it('temporarily permits guests and ordinary users to test only the configured ad
     Queue::assertPushed(DeliverEmail::class, 2);
 });
 
-it('shows the configured admin recipient without sending on GET', function () {
+it('hides the private admin recipient without sending on GET', function () {
     Queue::fake();
     config(['email_delivery.admin_email' => 'admin@example.test']);
-    $this->get('/test-email')->assertInertia(fn (Assert $page) => $page->component('admin/TestEmail')->where('recipient', 'admin@example.test'));
+    $this->get('/test-email')->assertDontSee('admin@example.test')->assertInertia(fn (Assert $page) => $page->component('admin/TestEmail')->where('configured', true)->missing('recipient'));
     Queue::assertNothingPushed();
 });
 

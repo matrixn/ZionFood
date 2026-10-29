@@ -6,7 +6,8 @@ test('guest can inspect the temporary public email test page and switch language
     await page.goto('/test-email');
     await expect(page).toHaveURL(/\/test-email$/);
     await expect(page.getByRole('heading', { name: 'Testare email', exact: true })).toBeVisible();
-    await expect(page.getByText('dummy@dummy.com', { exact: false })).toBeVisible();
+    await expect(page.getByText('dummy@dummy.com', { exact: false })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Trimite email de test', exact: false })).toBeVisible();
     await page.getByTestId('language-selector').click();
     await page.getByRole('option', { name: 'English', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Test email', exact: true })).toBeVisible();

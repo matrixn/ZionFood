@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AccountRequestAdmission;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SearchIndexing;
 use App\Http\Middleware\SetLocale;
@@ -18,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(TrustedHost::class);
-        $middleware->web(append: [SearchIndexing::class, SetLocale::class, HandleInertiaRequests::class]);
+        $middleware->web(append: [SearchIndexing::class, SetLocale::class, HandleInertiaRequests::class, AccountRequestAdmission::class]);
         $middleware->api(append: [SearchIndexing::class, SetLocale::class]);
         $middleware->statefulApi();
     })

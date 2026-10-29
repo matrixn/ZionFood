@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain\Analytics\RestaurantOverview;
 use App\Domain\Menus\MenuWriteLock;
 use App\Domain\Menus\RecordMenuChange;
+use App\Domain\Restaurants\Actions\SaveLocationSettings;
 use App\Domain\Tenancy\Actions\OnboardOrganization;
 use App\Domain\Tenancy\StaffPermissions;
 use App\Domain\Tenancy\TenantAccess;
@@ -148,28 +149,7 @@ class WorkspaceController extends Controller
     public function settings(LocationSettingsRequest $request, string $location)
     {
         $context = RestaurantLocation::where('public_id', $location)->firstOrFail();
-        app(TenantAccess::class)->requireManage($request->user(), $context->organization_id);
-        $data = $request->validated();
-        if (isset($data['dine_in_cutoff_minutes']) && $data['dine_in_cutoff_minutes'] !== $context->fulfillment?->dine_in_cutoff_minutes) {
-            app(TenantAccess::class)->requireFeature($request->user(), $context, 'tables', true);
-        }
-        DB::transaction(function () use ($context, $data) {
-            RestaurantLocation::whereKey($context->id)->lockForUpdate()->firstOrFail();
-            $context->update(array_intersect_key($data, array_flip(['name', 'address', 'accepting_orders'])));
-            $context->fulfillment()->updateOrCreate(['location_id' => $context->id], array_intersect_key($data, array_flip(['pickup_enabled', 'delivery_enabled', 'dine_in_cutoff_minutes'])));
-            $context->hours()->delete();
-            foreach ($data['hours'] as $hours) {
-                $context->hours()->create(array_intersect_key($hours, array_flip(['weekday', 'opens_at', 'closes_at'])));
-            }
-            $context->zones()->delete();
-            foreach ($data['zones'] as $zone) {
-                $zone['postal_prefix'] ??= '';
-                if (isset($zone['geometry'])) {
-                    $zone['geometry'] = array_intersect_key($zone['geometry'], array_flip(['type', 'coordinates']));
-                }
-                $context->zones()->create(array_intersect_key($zone, array_flip(['name', 'postal_prefix', 'fee', 'minimum_order', 'geometry', 'priority'])));
-            }
-        });
+        app(SaveLocationSettings::class)->execute($request->user(), $context, $request->validated());
 
         return back()->with('success', __('Location settings saved.'));
     }

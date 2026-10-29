@@ -1,6 +1,6 @@
 # Security boundaries and limits
 
-TenantAccess, Policies, explicit queries, composite foreign keys and Action checks form the isolation boundary. Integration ability checks supplement membership and location access. Staff cannot manage menus or settings; platform admins cannot operate a restaurant without membership.
+TenantAccess, Policies, explicit queries, composite foreign keys and Action checks form the isolation boundary. Integration ability checks supplement membership and location access. Staff feature access follows the owner-assigned view/manage matrix; settings administration requires owner/manager role. Platform admins cannot operate a restaurant without membership.
 
 Fortify handles authentication, email verification and password resets. New passwords require at least 12 characters. Login is limited to five attempts per minute by normalized email/IP. Browser operations use session authentication and CSRF middleware; external integrations use expiring, hashed Sanctum tokens. Real SMTP delivery is not verified locally: the default mailer logs messages to private storage.
 
@@ -77,3 +77,9 @@ Error-alert administration requires is_platform_admin and a verified browser ses
 ## 0.0.28 availability boundaries
 
 Public availability is read-only, host/location scoped, bounded by its own IP limiter and returns schedule/state only. It does not expose table counts, sessions, receipt capabilities or customer details. Table scope must match both location and organization. The server ignores checkout preference flags and rechecks hours/open-table availability under the existing location row lock regardless of the cart preference. Manual pause, services, subscription, stock and all QR session/cutoff checks remain mandatory. Existing cart and receipt capabilities are never cleared by schedule changes. Browser fail-closed refresh does not substitute for backend authorization.
+
+## 0.0.33 local audit and repairs
+
+See [local assessment and remediation report](security/2026-10-29-local-audit.md) for three medium findings, evidence, verification and accepted risks. Settings/setup share changed operational-switch authorization against the locked location; unchanged flags do not prohibit ordinary administrative edits. Import evidence has cumulative basket/choice/escaped-byte bounds before allocation and snapshot writes. Public account requests have shared atomic admission before side effects, and account/unknown-legacy delivery has a separate rolling sub-budget capped to half known daily capacity. Production uses shared Redis and fails closed on infrastructure failure. This does not certify production deployment or exhaustive source/dependency coverage.
+
+`/test-email` remains deliberately public by direct owner choice, with its fixed configured recipient and global three-per-hour guard. The private admin email is no longer sent to the browser. Anonymous consumption of that diagnostic quota is an explicitly accepted residual risk.

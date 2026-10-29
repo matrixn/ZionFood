@@ -259,3 +259,7 @@ Publish the normal source/build release; there is no migration, dependency or ne
 ## 0.0.32 first-paint assets
 
 Use the full npm build and publish its client CSS/chunks and SEO manifest/HTML as one normal release. The manifest now records landing/static-dependency styles for initial server head links; do not copy only the HTML fragment. No migration, dependency or new environment key is needed. Verify first navigation with a cold cache, JavaScript disabled and font failures on the deployed host. No production deployment or CDN mutation is performed by this increment.
+
+## 0.0.33 security controls
+
+No migration or dependency update. Use the normal release process for code/assets, configuration caching and worker restart; this work does not perform a manual deployment. Shared Redis through MAIL_RATE_LIMIT_STORE is required for account-workflow admission/delivery locks. MAIL_ACCOUNT_DAILY_LIMIT defaults30 and MAIL_ACCOUNT_REQUESTS_PER_HOUR defaults10; daily account allowance cannot exceed half known daily application/provider capacity. Requests admitted without a message still count conservatively. Configure trusted proxies correctly so the per-IP control does not trust arbitrary forwarded values. Import verification excess produces a controlled failure rather than an unbounded report. The public test-email route remains by explicit owner choice; its private recipient is hidden but visitors may consume the shared diagnostic quota.

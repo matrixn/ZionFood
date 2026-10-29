@@ -1,4 +1,4 @@
-# GloriaFood Migration Center — 0.0.32
+# GloriaFood Migration Center — 0.0.33
 
 Access: restaurant dashboard → Connections → Migration Center. Requires a verified owner/manager with menu management permission. Platform administration alone is insufficient. Each import belongs to one organization and location.
 
@@ -58,3 +58,7 @@ Automated tests cover official payload ingestion, unknown-ID resolution, precise
 A real Fetch Menu request using a restaurant-authorized key and full cutover acceptance are still required. CSV/XLSX/XML/PDF/OCR adapters, bulk photo matching, customer/order-history migration, automated external source order comparison, field-level conflict merges and marketing migration landing pages are separate follow-ups. Existing AI translation does not imply translation export from Fetch Menu; the documented API provides no multilingual export schema.
 
 Sources checked 2026-10-27: [official Fetch Menu v2](https://github.com/GlobalFood/integration_docs/blob/master/fetch_menu/README.md), [official JSON fixture](https://github.com/GlobalFood/integration_docs/blob/master/fetch_menu/payload/menu.json). The attached Migration Center plan informed scope; only the implemented behaviors above are claimed.
+
+## 0.0.33 generated-evidence budget
+
+ImportVerification checks cumulative generated work incrementally during normalization and again before allocating baskets: at most10,000 baskets,50,000 selected choices including category/product/size inheritance, and8MiB conservative escaped JSON evidence bytes. ProcessImport generates accepted evidence before the snapshot transaction. Upload, provider fetch and revalidation share this boundary. Excess fails explicitly as import_complexity_limit with RO/EN guidance, without silent truncation, publication or replacing previous staged snapshots. This is an additional workload bound; existing source/cardinality limits and authorization remain. Large simple menus remain supported, while particularly complex menus must be simplified or split. The same valid1.33MB input that exhausted a256MiB isolated baseline PHP process now rejects in a controlled manner under the same ceiling.

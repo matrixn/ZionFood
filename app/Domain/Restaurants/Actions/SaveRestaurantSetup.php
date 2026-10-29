@@ -2,6 +2,7 @@
 
 namespace App\Domain\Restaurants\Actions;
 
+use App\Domain\Restaurants\AuthorizeOrderingChanges;
 use App\Domain\Restaurants\SetupProgress;
 use App\Domain\Restaurants\SyncDiningTables;
 use App\Domain\Tenancy\TenantAccess;
@@ -26,14 +27,14 @@ class SaveRestaurantSetup
             if ($step === 'reservations') {
                 app(TenantAccess::class)->requireFeature($actor, $location, 'reservations', true);
             }
-            if ($step === 'publish' && (bool) $data['accepting_orders'] !== (bool) $location->accepting_orders) {
-                app(TenantAccess::class)->requireFeature($actor, $location, 'orders', true);
+            if (in_array($step, ['publish', 'services'], true)) {
+                app(AuthorizeOrderingChanges::class)->execute($actor, $location, $data);
             }
             if ($step === 'seating') {
                 app(TenantAccess::class)->requireFeature($actor, $location, ($data['mode'] === 'tables' || ($profile['seating']['mode'] ?? '') === 'tables') ? 'tables' : 'reservations', true);
             }
             if ($step === 'services') {
-                foreach (['dine_in_enabled' => 'tables', 'reservations_enabled' => 'reservations', 'pickup_enabled' => 'orders', 'delivery_enabled' => 'orders'] as $field => $feature) {
+                foreach (['dine_in_enabled' => 'tables', 'reservations_enabled' => 'reservations'] as $field => $feature) {
                     if (array_key_exists($field, $data) && (bool) $data[$field] !== (bool) $location->fulfillment?->{$field}) {
                         app(TenantAccess::class)->requireFeature($actor, $location, $feature, true);
                     }

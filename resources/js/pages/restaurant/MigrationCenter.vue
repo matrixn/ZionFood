@@ -335,7 +335,13 @@ function open(id: string) {
                         </div>
                         <p v-if="preview.status === 'queued'" role="status" class="muted mt-3">{{ $t('mig_wait') }}</p>
                         <p v-if="preview.status === 'failed'" role="alert" class="mt-3 text-red-700">
-                            {{ $t('mig_failure') }}
+                            {{
+                                $t(
+                                    preview.failure_code === 'import_complexity_limit'
+                                        ? 'mig_complexity_limit'
+                                        : 'mig_failure',
+                                )
+                            }}
                         </p>
                         <div v-if="preview.report" class="mt-5 grid grid-cols-3 gap-3">
                             <div

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Imports\ImportComplexityException;
 use App\Domain\Imports\ProcessImport;
 use App\Domain\Imports\PublishImport;
 use App\Domain\Menus\MenuContent;
@@ -60,6 +61,8 @@ class MigrationCenterController extends Controller
                 if (! is_array($source)) {
                     throw new \RuntimeException;
                 }app(ProcessImport::class)->execute($batch, $source);
+            } catch (ImportComplexityException) {
+                $batch->update(['status' => 'failed', 'failure_code' => 'import_complexity_limit']);
             } catch (\Throwable) {
                 $batch->update(['status' => 'failed', 'failure_code' => 'invalid_source_file']);
             }

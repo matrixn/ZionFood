@@ -19,7 +19,8 @@ class ProcessImport
             }
         }
         $normalized = app(GloriaFoodAdapter::class)->normalize($source, $batch->settings);
-        DB::transaction(function () use ($batch, $source, $normalized) {
+        $evidence = app(ImportVerification::class)->evidence($normalized['menu']);
+        DB::transaction(function () use ($batch, $source, $normalized, $evidence) {
             $batch = ImportBatch::whereKey($batch->id)->lockForUpdate()->firstOrFail();
             if (! in_array($batch->status, ['queued', 'ready'], true)) {
                 return;
@@ -38,7 +39,7 @@ class ProcessImport
                 DB::table('import_issues')->insert(['batch_id' => $batch->id, ...$issue, 'created_at' => now(), 'updated_at' => now()]);
             }
             $batch->source_restaurant = $menu['source_restaurant'];
-            $report = ['adapter_version' => GloriaFoodAdapter::VERSION, 'source_restaurant' => $menu['source_restaurant'], 'source_menu' => $menu['source_menu'], 'currency' => $menu['currency'], 'settings' => $batch->settings, 'products' => array_sum(array_map(fn ($c) => count($c['items']), $menu['categories'])), 'categories' => count($menu['categories']), 'blockers' => count(array_filter($issues, fn ($i) => $i['severity'] === 'blocker')), 'source_changes' => app(ImportVerification::class)->diff($batch, $menu), 'synthetic_baskets' => app(ImportVerification::class)->evidence($menu), 'checked_at' => now()->toIso8601String(), 'checksum' => hash('sha256', json_encode($source, JSON_THROW_ON_ERROR))];
+            $report = ['adapter_version' => GloriaFoodAdapter::VERSION, 'source_restaurant' => $menu['source_restaurant'], 'source_menu' => $menu['source_menu'], 'currency' => $menu['currency'], 'settings' => $batch->settings, 'products' => array_sum(array_map(fn ($c) => count($c['items']), $menu['categories'])), 'categories' => count($menu['categories']), 'blockers' => count(array_filter($issues, fn ($i) => $i['severity'] === 'blocker')), 'source_changes' => app(ImportVerification::class)->diff($batch, $menu), 'synthetic_baskets' => $evidence, 'checked_at' => now()->toIso8601String(), 'checksum' => hash('sha256', json_encode($source, JSON_THROW_ON_ERROR))];
             DB::table('import_reports')->insert(['batch_id' => $batch->id, 'report' => json_encode($report, JSON_THROW_ON_ERROR), 'created_at' => now(), 'updated_at' => now()]);
             $batch->update(['source_restaurant' => $menu['source_restaurant'], 'status' => 'ready', 'credential' => null]);
         });

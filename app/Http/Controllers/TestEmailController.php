@@ -11,7 +11,7 @@ class TestEmailController extends Controller
 {
     public function show()
     {
-        return Inertia::render('admin/TestEmail', ['recipient' => config('email_delivery.admin_email')]);
+        return Inertia::render('admin/TestEmail', ['configured' => (bool) filter_var(config('email_delivery.admin_email'), FILTER_VALIDATE_EMAIL)]);
     }
 
     public function send()

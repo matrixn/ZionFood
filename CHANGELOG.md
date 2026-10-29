@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.33 — 2026-10-29
+
+- Fixed restricted-manager operational-switch authorization in settings/setup against the locked location state.
+- Bounded aggregate GloriaFood verification evidence before allocation/persistence, with explicit failure and complete ordinary reports.
+- Added shared account-workflow admission and account-email delivery budgets, respecting known provider caps and preserving other transactional capacity.
+- Hid the administrator recipient on the deliberately public, fixed-recipient, globally rate-limited email-test page.
+- Added isolated local security regression/browser checks and a scoped audit/remediation report.
+
 ## 0.0.32 — 2026-10-29
 
 - Linked landing-page CSS in the initial server-rendered head using current build-owned stylesheet metadata.

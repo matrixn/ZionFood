@@ -26,7 +26,7 @@ use Illuminate\Support\Str;
 
 class MakeBrowserFixtures extends Command
 {
-    protected $signature = 'zionfood:browser-fixtures {--availability : Prepare closed-location ordering fixtures without sending email} {--email-ledger : Prepare local outgoing-email metadata without sending email} {--admin : Create a separate local platform-admin browser fixture} {--services : Prepare a separate restaurant for reservation and QR browser tests} {--storefront : Prepare a photo menu and polygon for storefront UX tests} {--invitation : Prepare a separate unaccepted staff invitation without sending email} {--permissions : Prepare staff permissions and table-room browser fixtures} {--overview : Prepare isolated analytics samples without notifications} {--closed-window : Prepare an empty ordering schedule for availability tests}';
+    protected $signature = 'zionfood:browser-fixtures {--security : Prepare an owner and restricted manager without sending email} {--availability : Prepare closed-location ordering fixtures without sending email} {--email-ledger : Prepare local outgoing-email metadata without sending email} {--admin : Create a separate local platform-admin browser fixture} {--services : Prepare a separate restaurant for reservation and QR browser tests} {--storefront : Prepare a photo menu and polygon for storefront UX tests} {--invitation : Prepare a separate unaccepted staff invitation without sending email} {--permissions : Prepare staff permissions and table-room browser fixtures} {--overview : Prepare isolated analytics samples without notifications} {--closed-window : Prepare an empty ordering schedule for availability tests}';
 
     protected $description = 'Create a private local-only browser test account without changing existing users';
 
@@ -80,6 +80,13 @@ class MakeBrowserFixtures extends Command
                 }
             }
             $account = ['email' => $user->email, 'password' => $password, 'location' => $location->public_id];
+            if ($this->option('security')) {
+                $managerPassword = Str::password(32);
+                $manager = User::create(['name' => 'Restricted Security Manager', 'email' => 'security-manager-'.$suffix.'@example.test', 'password' => $managerPassword]);
+                $manager->forceFill(['email_verified_at' => now(), 'locale' => 'ro'])->save();
+                OrganizationMembership::create(['organization_id' => $location->organization_id, 'user_id' => $manager->id, 'role' => 'manager', 'permissions' => ['orders' => 'none', 'tables' => 'none', 'reservations' => 'none', 'menu' => 'none', 'kitchen' => 'none']]);
+                $account += ['owner_email' => $user->email, 'manager_email' => $manager->email, 'manager_password' => $managerPassword];
+            }
             if ($this->option('invitation')) {
                 $token = Str::random(64);
                 $email = 'new-staff-'.$suffix.'@example.test';
@@ -122,6 +129,7 @@ class MakeBrowserFixtures extends Command
             return $account;
         });
         $file = match (true) {
+            (bool) $this->option('security') => 'browser-security.json',
             (bool) $this->option('availability') => 'browser-availability.json',
             (bool) $this->option('overview') => 'browser-overview.json',
             (bool) $this->option('closed-window') => 'browser-closed-window.json',

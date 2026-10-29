@@ -1475,5 +1475,7 @@
     "ordering_outside_allowed": "Poți pregăti coșul acum. Plasarea comenzii va fi disponibilă după redeschidere.",
     "ordering_table_ready": "Masa poate primi din nou comenzi",
     "ordering_table_ready_help": "Redeschide meniul mesei pentru a te conecta și a comanda.",
-    "ordering_reopen_menu": "Deschide meniul mesei"
+    "ordering_reopen_menu": "Deschide meniul mesei",
+    "mail_reason_account_mail_quota": "Limita separată pentru emailuri de cont a fost atinsă; celelalte emailuri păstrează capacitate disponibilă.",
+    "mig_complexity_limit": "Meniul depășește bugetul de verificare: maximum 10.000 de combinații, 50.000 de opțiuni selectate cumulate sau 8 MiB de dovezi. Simplifică grupurile de opțiuni ori împarte importul în meniuri mai mici. Nimic nu a fost publicat."
 }
