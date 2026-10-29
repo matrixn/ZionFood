@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.32 — 2026-10-29
+
+- Linked landing-page CSS in the initial server-rendered head using current build-owned stylesheet metadata.
+- Bounded decorative SVG/flag sizes, hid decorations until styled and gated icon glyphs on successful font loading without hiding readable page content.
+- Added blocked CSS/JavaScript/font and no-JavaScript styled-page regression coverage.
+
 ## 0.0.31 — 2026-10-29
 
 - Added a reviewable robots.txt source and host-aware policy for public pages, render assets, public-menu API exceptions and protected operations; noindex public pages remain crawlable.

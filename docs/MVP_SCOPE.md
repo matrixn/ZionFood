@@ -1,4 +1,4 @@
-# Scope at 0.0.31
+# Scope at 0.0.32
 
 0.0.19 introduces a dish-first automatic generation workspace, combined AI tasks, approximate one-portion nutrition and durable live review notifications. It replaces the earlier manual reference calculator and retires the manual GloriaFood JSON metadata workflow. Published data remains local and requires review. Whole-menu GloriaFood migration, approved publication, reimport decisions and guarded rollback are implemented in 0.0.22; see MIGRATION_CENTER.md. Provider fidelity and estimation quality still require validation with a real authorized restaurant.
 
@@ -86,3 +86,7 @@ Supplied ZionFood multi-resolution PNG mark across public presentation, account 
 ## Search crawl policy and documentation branding at 0.0.31
 
 Professional host-aware robots rules permit public pages and render assets with specific read-only menu-data exceptions, preserve crawlable public noindex pages, append the marketing sitemap only where applicable and block dedicated API/disabled-indexing hosts. The README promotional illustration now uses the supplied ZionFood logo and the Romanian CTA “Dă gust afacerii tale!”, with a working banner link. Production robots accessibility and actual indexation require post-deployment verification.
+
+## Initial landing rendering at 0.0.32
+
+Initial HTML links the actual landing stylesheet, with bounded hidden-until-styled SVG decorations, intrinsic flag sizes and font-ready icons. The public text and links remain available when external CSS/JS/fonts fail. Browser coverage includes styled no-JavaScript, blocked CSS+JS and failed icon fonts.

@@ -27,6 +27,8 @@ const root = ref<HTMLElement | null>(null);
 const tabs = ref<HTMLElement | null>(null);
 const progress = ref<HTMLElement | null>(null);
 const ready = ref(false);
+const iconsReady = ref(false);
+let disposed = false;
 const enhanced = ref(false);
 const features = [
     { key: 'menu', icon: 'pi-book' },
@@ -60,6 +62,17 @@ function tabKey(event: KeyboardEvent) {
 }
 onMounted(() => {
     enhanced.value = true;
+    if (document.fonts) {
+        void document.fonts
+            .load('16px primeicons')
+            .then((faces) => {
+                if (!disposed && faces.length > 0 && faces.every((face) => face.status === 'loaded'))
+                    iconsReady.value = true;
+            })
+            .catch(() => {
+                /* Decorative icons stay hidden if their font fails. */
+            });
+    }
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
         ready.value = true;
         observer = new IntersectionObserver(
@@ -78,6 +91,7 @@ onMounted(() => {
     scroll();
 });
 onBeforeUnmount(() => {
+    disposed = true;
     observer?.disconnect();
     window.removeEventListener('scroll', scroll);
     cancelAnimationFrame(frame);
@@ -131,7 +145,12 @@ onBeforeUnmount(() => {
         <meta head-key="twitter-alt" name="twitter:image:alt" :content="seo.image_alt" />
         <component :is="'script'" head-key="schema" type="application/ld+json">{{ schema }}</component>
     </Head>
-    <div ref="root" :data-enhanced="enhanced" class="landing" :class="{ 'motion-ready': ready }">
+    <div
+        ref="root"
+        :data-enhanced="enhanced"
+        class="landing"
+        :class="{ 'motion-ready': ready, 'icons-ready': iconsReady }"
+    >
         <a href="#main" class="skip-link">{{ $t('landing_skip') }}</a>
         <div ref="progress" class="reading-progress" aria-hidden="true" />
         <header class="site-header">
@@ -181,7 +200,15 @@ onBeforeUnmount(() => {
                         {{ $t('landing_hero_title')
                         }}<em
                             >{{ $t('landing_hero_accent')
-                            }}<svg viewBox="0 0 420 22" fill="none" aria-hidden="true">
+                            }}<svg
+                                data-decoration
+                                width="420"
+                                height="22"
+                                style="visibility: hidden; max-width: 100%"
+                                viewBox="0 0 420 22"
+                                fill="none"
+                                aria-hidden="true"
+                            >
                                 <path
                                     d="M4 16C108 0 283 0 414 14"
                                     stroke="currentColor"
@@ -205,7 +232,14 @@ onBeforeUnmount(() => {
                     </p>
                     <div class="hero-signature">
                         <span class="signature-line" /><span>{{ $t('landing_made_for') }}</span
-                        ><svg viewBox="0 0 45 32" aria-hidden="true">
+                        ><svg
+                            data-decoration
+                            width="45"
+                            height="32"
+                            style="visibility: hidden; max-width: 100%"
+                            viewBox="0 0 45 32"
+                            aria-hidden="true"
+                        >
                             <path
                                 d="M3 6c20-8 30 4 28 17M23 18l9 8 9-10"
                                 fill="none"
@@ -250,7 +284,13 @@ onBeforeUnmount(() => {
                         <span class="table-dot" />
                     </div>
                     <div class="hero-sticker" aria-hidden="true">
-                        <svg viewBox="0 0 100 100">
+                        <svg
+                            data-decoration
+                            width="100"
+                            height="100"
+                            style="visibility: hidden; max-width: 100%"
+                            viewBox="0 0 100 100"
+                        >
                             <path
                                 d="m50 1 8 10 13-5 3 13 14 2-3 14 13 7-9 11 7 12-14 5 1 14-14-1-6 13-11-8-12 7-4-14-14-1 3-13L1 60l9-10-6-13 14-4V19l14 2 7-12 11 8Z"
                                 fill="currentColor"
@@ -381,7 +421,13 @@ onBeforeUnmount(() => {
                                         <p class="micro-label">{{ $t('landing_qr_eyebrow') }}</p>
                                         <h3>{{ $t('landing_table_label') }}</h3>
                                         <div class="qr-art" aria-hidden="true">
-                                            <svg viewBox="0 0 150 150">
+                                            <svg
+                                                data-decoration
+                                                width="150"
+                                                height="150"
+                                                style="visibility: hidden; max-width: 100%"
+                                                viewBox="0 0 150 150"
+                                            >
                                                 <g fill="currentColor">
                                                     <path
                                                         d="M10 10h45v45H10zm8 8v29h29V18zM95 10h45v45H95zm8 8v29h29v-29zM10 95h45v45H10zm8 8v29h29v-29z"
@@ -401,7 +447,15 @@ onBeforeUnmount(() => {
                                 >
                                 <template v-else
                                     ><div class="delivery-map-art">
-                                        <svg viewBox="0 0 500 330" fill="none" aria-hidden="true">
+                                        <svg
+                                            data-decoration
+                                            width="500"
+                                            height="330"
+                                            style="visibility: hidden; max-width: 100%"
+                                            viewBox="0 0 500 330"
+                                            fill="none"
+                                            aria-hidden="true"
+                                        >
                                             <defs>
                                                 <pattern
                                                     id="streets"
@@ -664,6 +718,17 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+/* Decorative SVGs are hidden inline until this render-blocking page CSS arrives. */
+.landing svg[data-decoration] {
+    visibility: visible !important;
+}
+.landing .pi::before {
+    visibility: hidden;
+}
+.landing.icons-ready .pi::before {
+    visibility: visible;
+}
+
 #migration {
     scroll-margin-top: 112px;
 }

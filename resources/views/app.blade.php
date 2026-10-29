@@ -2,6 +2,7 @@
 <html lang="{{ app()->getLocale() }}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><title data-inertia="">{{ $landingMeta['title'] ?? $storefrontMeta['title'] ?? 'ZionFood' }}</title>
 @isset($landingMeta)
 @include('marketing.head', ['meta' => $landingMeta])
+@include('marketing.first-paint')
 @endisset
 @isset($storefrontMeta)
 <meta name="description" content="{{ $storefrontMeta['description'] }}" data-storefront-meta>

@@ -1,4 +1,13 @@
-# ZionFood progress — 0.0.31
+# ZionFood progress — 0.0.32
+
+## Version 0.0.32 - bounded first paint before CSS/JavaScript/fonts (October 29)
+
+The build-rendered landing HTML was present before its asynchronous Welcome stylesheet was discovered through JavaScript, and hand-authored SVGs relied on external CSS for dimensions. Added Vite-manifest style collection to the existing SEO build, stored current stylesheet paths in release metadata and emitted validated/escaped local CSS links through LandingGateway's initial head. Common app CSS stays linked by @vite. Added a small inline readable fallback, explicit sizes and inline hidden/max-width guards for landing decorations, and intrinsic dimensions for language flags. Full page CSS reveals SVGs; successful icon-font loading reveals icon pseudo-elements. Font rejection leaves decorative icons hidden. The page/root/text are never hidden, preserving human and crawler content without JavaScript.
+
+No schema, dependency, permission or business-rule changes. Version metadata/Composer hash are synchronized to 0.0.32 and historical notes/dependency package versions preserved. Updated README/changelog, architecture/scope/landing/deployment and inventory. Executed checks: final native PHP 8.4/Pest **301 passed / 2753 assertions**, including initial-head CSS links, bounded hidden SVG markup and current-build CSS path filtering; **30 Vitest tests**; ESLint without warnings; TypeScript and complete production client/RO+EN prerender build passed. Composer validate passed with its existing explicit-version advisory; dependency package arrays are unchanged. Final Linux Pint passed **282 files** using a new private `pint-0032-final-first-paint-audit.json` cache, followed by the exact CI command `php vendor/bin/pint --test`, also **282 files passed**. The existing app chunk-size advisory remains. No production/CDN configuration, deployment, tag or provider action is performed.
+
+
+Final Chromium **5 passed**: first-paint/SEO scenarios cover styled RO/EN content with JavaScript disabled, blocked external CSS+JavaScript+fonts on mobile, and failed icon fonts while feature tabs and bounded SVG previews remain usable. They also cover font-success recovery after reload, raw bilingual search content and enhanced metadata uniqueness. Screenshots were visually inspected: no oversized arrows/flags, readable text/links and a restored styled layout without JavaScript. Initial PHP coverage had one assertion expecting spaces in inline styles; Vue SSR normalizes those declarations, so the assertion now normalizes whitespace before checking visibility. The complete suite was rerun successfully. No live browser/CDN verification is inferred from these local failure simulations.
 
 ## Version 0.0.31 - robots policy and README artwork refresh (October 29)
 

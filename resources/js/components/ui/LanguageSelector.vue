@@ -58,6 +58,8 @@ async function change(locale: Locale) {
                     ><span class="flex items-center gap-1.5 sm:gap-2.5"
                         ><img
                             :src="languages.find((l) => l.code === slot.value)?.flag"
+                            width="24"
+                            height="16"
                             alt=""
                             aria-hidden="true"
                             class="h-4 w-6 rounded-sm shadow-sm"
@@ -67,6 +69,8 @@ async function change(locale: Locale) {
                     ><span class="flex items-center gap-1.5 sm:gap-2.5"
                         ><img
                             :src="slot.option.flag"
+                            width="24"
+                            height="16"
                             alt=""
                             aria-hidden="true"
                             class="h-4 w-6 rounded-sm shadow-sm"

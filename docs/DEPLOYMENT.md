@@ -255,3 +255,7 @@ The new guard is on for existing locations with no saved preference. QR-enabled 
 ## 0.0.31 robots and README banner
 
 Publish the normal source/build release; there is no migration, dependency or new environment key. Keep robots dynamic through Laravel and preserve the Nginx fallback described in LANDING_PAGE.md. Do not install a static public/robots.txt over the per-host policy. After deployment, GET the public robots/sitemap and verify API/disabled-indexing hosts separately. The live food.zion3d.ro robots endpoint returned 404 before deployment; the source change does not establish why it returned 404 or confirm production indexability. The new README artwork is committed under docs/assets, with its exact prompt and reference provenance alongside it.
+
+## 0.0.32 first-paint assets
+
+Use the full npm build and publish its client CSS/chunks and SEO manifest/HTML as one normal release. The manifest now records landing/static-dependency styles for initial server head links; do not copy only the HTML fragment. No migration, dependency or new environment key is needed. Verify first navigation with a cold cache, JavaScript disabled and font failures on the deployed host. No production deployment or CDN mutation is performed by this increment.

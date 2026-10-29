@@ -1,4 +1,4 @@
-# ZionFood 0.0.31
+# ZionFood 0.0.32
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; whole-menu Migration Center is implemented separately with encrypted staging, approved version publication and guarded rollback (see MIGRATION_CENTER.md). See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -149,3 +149,7 @@ ZFLogo uses the supplied PNG sizes with a responsive source set and reserved squ
 ## Host-aware crawl policy (0.0.31)
 
 BuildRobotsTxt combines a reviewed UTF-8 text source with host/readiness policy from LandingController. Only indexable central hosts append the validated canonical sitemap; verified tenant domains receive the public policy without that sitemap, and dedicated API/disabled/non-ready central contexts disallow all. Public resource and read-only menu API exceptions coexist with operational/API crawl exclusions. Existing public noindex pages remain crawlable. This changes neither tenant authorization nor public page canonical metadata. See ROBOTS_POLICY.md.
+
+## Landing first paint (0.0.32)
+
+SEO build metadata includes Welcome/static-dependency CSS. LandingGateway emits validated local stylesheet links before the server-rendered body, retaining @vite for common CSS and scripts. Inline fallback styles and intrinsic SVG/flag dimensions prevent oversized raw graphics; SVG decorations reveal with page CSS, and icon-font pseudo-elements reveal only after a successful FontFaceSet load. Content stays visible without enhancement. See LANDING_PAGE.md.

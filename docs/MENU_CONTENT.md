@@ -1,4 +1,4 @@
-# Automatic menu generation — 0.0.31
+# Automatic menu generation — 0.0.32
 
 Restaurant administration → Automatic generation is a dish-first workspace. Search products by name/category, choose a dish, check prefilled ingredients and the finished weight of **one portion**, then select nutrition, food suggestions, Romanian description rewriting and/or up to three translation languages. The main action stays visible on mobile. Preparation details are optional. Public ingredient associations are edited in the existing product editor; the analysis text is a separate private input.
 

@@ -568,3 +568,6 @@ resources/seo/robots.txt
 tests/Feature/RobotsPolicyTest.php
 tests/e2e/robots.spec.ts
 docs/ROBOTS_POLICY.md
+resources/views/marketing/first-paint.blade.php
+tests/Feature/LandingFirstPaintTest.php
+tests/e2e/landing-first-paint.spec.ts

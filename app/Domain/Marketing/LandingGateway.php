@@ -20,6 +20,8 @@ class LandingGateway implements Gateway
         // The rendered content is build-owned; session/user data only comes from this request.
         $json = json_encode($page, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR);
 
-        return new Response('', '<script data-page="app" type="application/json">'.$json.'</script><div id="app">'.$markup.'</div>');
+        $styles = array_map(fn ($file) => '<link rel="stylesheet" href="'.e(asset('build/'.$file)).'" data-landing-style>', app(LandingPrerender::class)->styles());
+
+        return new Response(implode("\n", $styles), '<script data-page="app" type="application/json">'.$json.'</script><div id="app">'.$markup.'</div>');
     }
 }
