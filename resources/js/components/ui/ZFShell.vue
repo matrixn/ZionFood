@@ -7,6 +7,7 @@ import Button from 'primevue/button';
 import Select from 'primevue/select';
 import WorkspaceNotifications from '@/components/ui/WorkspaceNotifications.vue';
 import LanguageSelector from '@/components/ui/LanguageSelector.vue';
+import ZFLogo from '@/components/ui/ZFLogo.vue';
 import type { Location, FeaturePermissions, StaffFeature } from '@/types';
 const props = defineProps<{
     location?: Location;
@@ -123,9 +124,9 @@ function switchLocation(id: string) {
                 />
                 <Link
                     href="/app"
+                    aria-label="ZionFood"
                     class="flex items-center gap-2 text-2xl font-bold tracking-tight text-ink dark:text-white"
-                    ><span class="rounded-xl bg-brand px-2.5 py-1 text-white">z</span
-                    ><span class="hidden sm:inline">Zion<span class="text-brand">Food</span></span></Link
+                    ><ZFLogo /><span class="hidden sm:inline">Zion<span class="text-brand">Food</span></span></Link
                 ><span class="ml-4 hidden rounded-full bg-violet-50 px-3 py-1 text-xs text-brand lg:inline">{{
                     mode === 'Platform admin'
                         ? $t('platform_admin')

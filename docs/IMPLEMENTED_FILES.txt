@@ -532,7 +532,6 @@ vite.seo.config.ts
 tests/Feature/LandingSeoTest.php
 tests/e2e/landing-seo.spec.ts
 docs/benchmarks/seo-lighthouse.json
-public/favicon.svg
 public/images/marketing/kitchen-service-1440.webp
 public/images/marketing/kitchen-service-640.webp
 public/images/marketing/kitchen-service-960.webp
@@ -549,3 +548,18 @@ tests/e2e/ordering-availability.spec.ts
 resources/js/lib/orderRejection.ts
 tests/frontend/orderRejection.test.ts
 tests/e2e/order-rejection.spec.ts
+resources/js/components/ui/ZFLogo.vue
+resources/views/vendor/mail/html/header.blade.php
+public/images/logo/food.zion3d.ro_icons-128x128.png
+public/images/logo/food.zion3d.ro_icons-16x16.png
+public/images/logo/food.zion3d.ro_icons-20x20.png
+public/images/logo/food.zion3d.ro_icons-24x24.png
+public/images/logo/food.zion3d.ro_icons-256x256.png
+public/images/logo/food.zion3d.ro_icons-32x32.png
+public/images/logo/food.zion3d.ro_icons-40x40.png
+public/images/logo/food.zion3d.ro_icons-48x48.png
+public/images/logo/food.zion3d.ro_icons-64x64.png
+public/images/logo/food.zion3d.ro_icons-96x96.png
+tests/Feature/PlatformLogoTest.php
+tests/e2e/platform-logo.spec.ts
+docs/PLATFORM_BRANDING.md

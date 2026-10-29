@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.30 — 2026-10-29
+
+- Integrated the supplied ZionFood PNG icon set through a shared responsive logo across presentation, authentication, restaurant/platform/kitchen shells and storefront attribution.
+- Replaced the legacy favicon, added touch icons, Organization logo metadata, notification-email branding and migration-report branding; restaurant logos and public menu share previews retain restaurant identity.
+
 ## 0.0.29 — 2026-10-29
 
 - Display saved kitchen rejection reasons beside the orders status in an accessible tooltip and directly below the status in order details.

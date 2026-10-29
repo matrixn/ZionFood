@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import LanguageSelector from '@/components/ui/LanguageSelector.vue';
+import ZFLogo from '@/components/ui/ZFLogo.vue';
 import { useStorefrontBrand } from '@/lib/brand';
 import type { RestaurantBrand } from '@/types';
 const props = defineProps<{ name?: string; brand?: RestaurantBrand }>();
@@ -18,7 +19,9 @@ useStorefrontBrand(() => props.brand);
                         class="h-12 w-12 rounded-xl bg-white object-contain p-1"
                     /><span class="text-xl font-bold">{{ name ?? $t('your_order') }}</span>
                 </div>
-                <div class="ml-auto flex items-center gap-3"><slot name="actions" /><slot name="language"><LanguageSelector /></slot></div>
+                <div class="ml-auto flex items-center gap-3">
+                    <slot name="actions" /><slot name="language"><LanguageSelector /></slot>
+                </div>
             </div>
         </header>
         <main class="mx-auto max-w-6xl p-5 md:p-8"><slot /></main>
@@ -40,7 +43,13 @@ useStorefrontBrand(() => props.brand);
                 >
             </div>
             <p class="text-sm text-slate-500">
-                {{ $t('ordering_powered_by') }} <Link href="/" class="font-semibold text-brand">ZionFood</Link>
+                {{ $t('ordering_powered_by') }}
+                <Link
+                    href="/"
+                    class="inline-flex items-center gap-1 align-middle font-semibold text-brand"
+                    aria-label="ZionFood"
+                    ><ZFLogo :size="24" />ZionFood</Link
+                >
             </p>
         </footer>
     </div>

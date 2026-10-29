@@ -1,4 +1,4 @@
-# ZionFood 0.0.29
+# ZionFood 0.0.30
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; whole-menu Migration Center is implemented separately with encrypted staging, approved version publication and guarded rollback (see MIGRATION_CENTER.md). See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -141,3 +141,7 @@ LandingController/LandingSeo keep canonical-host metadata and language URLs inde
 LocationSchedule supplies one venue-timezone schedule for checkout and public availability. GetOrderingAvailability combines it with manual acceptance, enabled services and (for online ordering when QR is enabled) an active, manually open table. The default-on location preference `block_unavailable_online_orders` gates pickup/delivery cart additions only. An explicit false permits cart preparation only outside hours or with all tables closed; submission still requires opening hours and an open table where QR is enabled; manual stop, chosen service, subscription, inventory, prices and delivery validation remain authoritative. QR always retains its table/session, schedule and configured cutoff checks.
 
 Availability is computed outside the cached product tree and exposed through read-only scoped public endpoints. Checkout rechecks under the existing location row lock; table control and preference updates share that lock. Idempotent replay precedes the gate. Vue polls every 15 seconds, refreshes on return, uses server time with monotonic elapsed time at closing/cutoff and disables new cart/checkout actions if refresh fails or becomes stale. This is ordering permission, not occupancy or a promise of stock/order acceptance.
+
+## Shared platform identity (0.0.30)
+
+ZFLogo uses the supplied PNG sizes with a responsive source set and reserved square dimensions. Platform surfaces, auth, shells and storefront attribution share it; tenant branding stays independent. The Blade gateway supplies favicon/touch links, notification HTML mail overrides only its shared header, and migration reports/Organization JSON-LD reference the appropriate mark. See PLATFORM_BRANDING.md.

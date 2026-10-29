@@ -1,4 +1,13 @@
-# ZionFood progress — 0.0.29
+# ZionFood progress — 0.0.30
+
+## Version 0.0.30 - supplied ZionFood logo set across the platform (October 29)
+
+Integrated the ten user-supplied PNG assets (16 through 256px) without modifying their pixels. Shared ZFLogo renders a square object-contained image with reserved dimensions and all density choices in srcset. Replaced generated/text-only marks in Welcome header/footer/demo, desktop/mobile auth, the shared platform/restaurant/kitchen shell and public-menu platform attribution. Tenant-uploaded header/share identity remains independent. Replaced the legacy Z SVG favicon with PNG favicon/touch links, added canonical Organization logo metadata, branded the printable migration report and the shared Laravel Markdown HTML notification header using an absolute URL. Plain-text mail and photo-based marketing share cards retain their purpose. No dependency, API, schema or permission change is needed.
+
+Synchronized 0.0.30 version metadata/Composer content hash, preserved dependency package versions and historical notes, and updated README/changelog, architecture/scope, landing/branding guide and file inventory. Executed checks: native PHP 8.4/Pest **296 passed / 2701 assertions**, including exact dimensions/MIME for all supplied files, favicon/touch HTML links, canonical Organization logo metadata and locally rendered HTML email header. **30 Vitest tests**, ESLint without warnings, TypeScript and the complete production client/RO+EN prerender build passed. Composer validate passed with its existing explicit-version advisory; dependency package arrays are unchanged. Final Linux Pint passed **279 files** using a new private `pint-0030-supplied-logo-fresh-audit.json` cache, then the exact CI command `php vendor/bin/pint --test` also passed **279 files**. The existing app chunk-size advisory remains. Local rendered mail checks do not send messages; no provider inbox/cache or production deployment claim is made.
+
+
+Chromium **3 passed**: existing raw/no-JavaScript bilingual landing/metadata checks and a new logo scenario covering RO/EN presentation, login/register/forgot-password, authenticated restaurant/orders/kitchen pages and storefront attribution. Images load with real natural dimensions and responsive source sets; mobile layouts do not overflow. Auth, kitchen and landing screenshots were visually inspected, including transparent backgrounds and undistorted proportions. Platform-admin appearance shares the same ZFShell source; no separate admin browser action or real email send was needed. Tests used an existing isolated local fixture and native test server; existing Compose database/Redis volumes were started without reset. No production/browser-cache/email-client retrieval claim is made.
 
 ## Version 0.0.29 - visible order rejection reasons (October 29)
 

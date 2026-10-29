@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import LanguageSelector from '@/components/ui/LanguageSelector.vue';
+import ZFLogo from '@/components/ui/ZFLogo.vue';
 interface Seo {
     title: string;
     description: string;
@@ -136,7 +137,7 @@ onBeforeUnmount(() => {
         <header class="site-header">
             <nav class="nav-wrap" :aria-label="$t('landing_navigation')">
                 <Link :href="seo.home" class="wordmark" aria-label="ZionFood"
-                    ><span class="brand-mark" aria-hidden="true">z</span>Zion<span>Food</span
+                    ><ZFLogo class="brand-mark" :size="40" />Zion<span>Food</span
                     ><span class="brand-period">.</span></Link
                 >
                 <div class="desktop-links">
@@ -324,7 +325,7 @@ onBeforeUnmount(() => {
                             >
                                 <template v-if="active === 0"
                                     ><div class="menu-preview-heading">
-                                        <span class="mini-brand">z.</span>
+                                        <ZFLogo class="mini-brand" :size="48" />
                                         <div>
                                             <span class="micro-label">{{ $t('landing_your_brand') }}</span>
                                             <h3>{{ $t('landing_menu_title') }}</h3>
@@ -640,7 +641,7 @@ onBeforeUnmount(() => {
         <footer class="site-footer section-wrap">
             <div>
                 <Link :href="seo.home" class="wordmark" aria-label="ZionFood"
-                    ><span class="brand-mark" aria-hidden="true">z</span>Zion<span>Food</span
+                    ><ZFLogo class="brand-mark" :size="40" />Zion<span>Food</span
                     ><span class="brand-period">.</span></Link
                 >
                 <p>{{ $t('landing_footer_tagline') }}</p>
@@ -805,21 +806,12 @@ onBeforeUnmount(() => {
     color: var(--purple);
 }
 .brand-mark {
-    background: var(--purple);
-    color: #fff;
-    width: 36px;
-    height: 36px;
-    display: grid;
-    place-items: center;
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
     margin-right: 10px;
-    font-size: 30px;
-    font-weight: 700;
-    font-style: italic;
-    letter-spacing: -3px;
-    padding-right: 3px;
-    transform: rotate(-8deg);
+    object-fit: contain;
 }
+
 .brand-period {
     color: var(--purple);
 }
@@ -1342,16 +1334,11 @@ onBeforeUnmount(() => {
     gap: 12px;
 }
 .mini-brand {
-    width: 43px;
-    height: 43px;
-    display: grid;
-    place-items: center;
-    color: #fff;
-    background: var(--purple);
-    border-radius: 13px;
-    font-size: 29px;
-    font-weight: 750;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
 }
+
 .menu-preview-heading h3 {
     font-size: 17px;
     letter-spacing: -0.5px;

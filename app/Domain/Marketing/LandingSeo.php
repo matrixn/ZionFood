@@ -30,7 +30,7 @@ class LandingSeo
         $image = $base.'/images/marketing/restaurant-table-1440.webp';
 
         return ['title' => $strings['landing_meta_title'].' · ZionFood', 'description' => $description, 'url' => $url, 'home' => $alternates[$locale], 'alternates' => $alternates, 'locale' => $locale === 'en' ? 'en_GB' : 'ro_RO', 'image' => $image, 'image_alt' => $strings['landing_hero_image_alt'], 'robots' => $indexable ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' : 'noindex, nofollow', 'ready' => $ready, 'schema' => ['@context' => 'https://schema.org', '@graph' => [
-            ['@type' => 'Organization', '@id' => $base.'/#organization', 'name' => 'ZionFood', 'url' => $base.'/'],
+            ['@type' => 'Organization', '@id' => $base.'/#organization', 'name' => 'ZionFood', 'url' => $base.'/', 'logo' => ['@type' => 'ImageObject', 'url' => $base.'/images/logo/food.zion3d.ro_icons-256x256.png', 'width' => 256, 'height' => 256]],
             ['@type' => 'WebSite', '@id' => $base.'/#website', 'name' => 'ZionFood', 'url' => $base.'/', 'inLanguage' => ['ro', 'en'], 'publisher' => ['@id' => $base.'/#organization']],
             ['@type' => 'WebPage', '@id' => $url.'#webpage', 'url' => $url, 'name' => $strings['landing_meta_title'], 'description' => $description, 'inLanguage' => $locale, 'isPartOf' => ['@id' => $base.'/#website'], 'about' => ['@type' => 'Service', 'name' => 'ZionFood', 'serviceType' => $strings['landing_seo_service'], 'provider' => ['@id' => $base.'/#organization']]],
         ]]];

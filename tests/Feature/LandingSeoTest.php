@@ -31,7 +31,7 @@ it('renders localized indexable landing text and metadata in raw HTML independen
             ->and($dom->query('//link[@hreflang="en"]')->item(0)->getAttribute('href'))->toBe('https://food.zion3d.ro/en')
             ->and($dom->query('//a[@href="/register"]')->length)->toBeGreaterThan(0);
         $schema = json_decode($dom->query('//script[@type="application/ld+json"]')->item(0)->textContent, true, flags: JSON_THROW_ON_ERROR);
-        expect($schema['@graph'][2]['inLanguage'])->toBe($locale)->and(json_encode($schema))->not->toContain('aggregateRating')->not->toContain('price');
+        expect($schema['@graph'][2]['inLanguage'])->toBe($locale)->and($schema['@graph'][0]['logo']['url'])->toBe('https://food.zion3d.ro/images/logo/food.zion3d.ro_icons-256x256.png')->and(json_encode($schema))->not->toContain('aggregateRating')->not->toContain('price');
     }
     $this->withHeader('User-Agent', 'Googlebot')->get('/')->assertSee('id="migration"', false);
 });

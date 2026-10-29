@@ -23,5 +23,8 @@
 <meta name="twitter:image" content="{{ $storefrontMeta['image'] }}" data-storefront-meta>
 @endif
 @endisset
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+@foreach([16, 32, 48, 96, 256] as $iconSize)
+<link rel="icon" type="image/png" sizes="{{ $iconSize }}x{{ $iconSize }}" href="/images/logo/food.zion3d.ro_icons-{{ $iconSize }}x{{ $iconSize }}.png">
+@endforeach
+<link rel="apple-touch-icon" sizes="256x256" href="/images/logo/food.zion3d.ro_icons-256x256.png">
 @vite('resources/js/app.ts')@inertiaHead</head><body>@inertia</body></html>

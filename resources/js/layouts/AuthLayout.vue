@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import LanguageSelector from '@/components/ui/LanguageSelector.vue';
+import ZFLogo from '@/components/ui/ZFLogo.vue';
 import { Link } from '@inertiajs/vue3';
 </script>
 <template>
     <div class="relative grid min-h-screen lg:grid-cols-2">
         <div class="absolute right-6 top-6 z-10"><LanguageSelector /></div>
         <div class="hidden flex-col justify-between bg-ink p-14 text-white lg:flex">
-            <Link href="/" class="text-3xl font-bold text-white">zion<span class="text-violet-400">food.</span></Link>
+            <Link href="/" class="inline-flex items-center gap-3 text-3xl font-bold text-white" aria-label="ZionFood"
+                ><ZFLogo :size="64" /><span>Zion<span class="text-violet-400">Food</span></span></Link
+            >
             <div>
                 <span class="rounded-full border border-white/20 px-4 py-2 text-sm">{{
                     $t('built_for_the_way_you_serve')
@@ -22,7 +25,12 @@ import { Link } from '@inertiajs/vue3';
         </div>
         <div class="flex items-center justify-center px-6 pb-8 pt-24 lg:pb-12 lg:pt-24">
             <div class="w-full max-w-md">
-                <Link href="/" class="mb-10 block text-2xl font-bold text-brand lg:hidden">ZionFood</Link><slot />
+                <Link
+                    href="/"
+                    class="mb-10 inline-flex items-center gap-2 text-2xl font-bold text-brand lg:hidden"
+                    aria-label="ZionFood"
+                    ><ZFLogo :size="48" />ZionFood</Link
+                ><slot />
             </div>
         </div>
     </div>

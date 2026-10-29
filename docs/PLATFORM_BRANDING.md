@@ -1,0 +1,9 @@
+# Platform branding
+
+The user-supplied `public/images/logo/food.zion3d.ro_icons-{size}x{size}.png` files are the ZionFood platform mark. Available sizes are 16, 20, 24, 32, 40, 48, 64, 96, 128 and 256 pixels. The supplied raster files remain unchanged; no new image-generation or transformation step is required.
+
+`ZFLogo.vue` reserves square dimensions, preserves the complete image with object-contain, and offers all supplied sizes in srcset with an explicit CSS-size hint. Adjacent ZionFood text or an accessible link name identifies the brand; the image is decorative to avoid duplicate screen-reader names. The landing page, auth layouts, shared platform/restaurant/kitchen shell and storefront platform attribution use it. Restaurant-uploaded logos remain restaurant identity, including public headers and share previews. The marketing photo Open Graph card remains a photo; the Organization JSON-LD logo points to the supplied absolute 256px PNG URL on the configured canonical origin.
+
+The application document advertises PNG favicons at 16/32/48/96/256 and the 256px Apple touch icon. The previous generated Z SVG is retired. Notifications using Laravel Markdown HTML mail use a shared branded header, with an absolute 128px source rendered at 64px and the existing application-name text. This renders locally without sending an email. Plain-text diagnostics stay plain text; remote email-client image policies and old browser/link-preview caches remain outside source control.
+
+The printable Migration Center report uses the 96px source at 48px. No restaurant branding field, API contract, permission, dependency or database schema change is needed. Publish the PNG files with the normal release and rebuild the frontend and prerendered landing HTML. No manual deployment is performed by this change.
