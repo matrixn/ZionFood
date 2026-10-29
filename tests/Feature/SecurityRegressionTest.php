@@ -125,11 +125,11 @@ it('limits mixed account requests before account or email side effects', functio
     Queue::fake();
     config(['mail.default' => 'smtp', 'email_delivery.account_requests_per_hour' => 2]);
     $data = ['name' => 'Security signup', 'email' => 'safe-account@example.test', 'password' => 'StrongLocalTest!2026', 'password_confirmation' => 'StrongLocalTest!2026'];
-    $this->post('/register', $data)->assertSessionHasNoErrors();
+    $this->post('/register', [...$data, ...registrationCaptchaData($this)])->assertSessionHasNoErrors();
     auth('web')->logout();
     session()->flush();
     $this->post('/forgot-password', ['email' => $data['email']])->assertSessionHasNoErrors();
-    $this->post('/register', [...$data, 'email' => 'denied-account@example.test'])->assertTooManyRequests()->assertHeader('Retry-After');
+    $this->post('/register', [...$data, ...registrationCaptchaData($this), 'email' => 'denied-account@example.test'])->assertTooManyRequests()->assertHeader('Retry-After');
     expect(User::where('email', 'denied-account@example.test')->exists())->toBeFalse();
     $this->actingAs(User::where('email', $data['email'])->sole())->post('/email/verification-notification')->assertTooManyRequests();
     Queue::assertPushed(DeliverEmail::class, 2);

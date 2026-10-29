@@ -1,4 +1,4 @@
-# Outgoing email administration — 0.0.33
+# Outgoing email administration — 0.0.34
 
 The platform administrator opens **Admin → Emails and queue** (`/admin/emails`). Restaurant owners, managers and staff have no access, including direct JSON and mutation requests. The list refreshes every 15 seconds and preserves applied filters/pagination. Details show recipients, encrypted-at-rest subject, source/initiator, state, actual transport attempts, provider ID, expiry and next-attempt time. No message body, attachment, reset token or invitation URL is exposed by the ledger.
 
@@ -51,3 +51,7 @@ Registration, password-reset requests and verification resends share admission c
 Configure MAIL_ACCOUNT_DAILY_LIMIT (default30) and MAIL_ACCOUNT_REQUESTS_PER_HOUR (default10), rebuild config through the normal release procedure and restart workers through that procedure. The existing MAIL_RATE_LIMIT_STORE must be shared Redis in production; locks serialize updates and cache failure does not admit requests. A budget-exceeded queued message retains normal expiry and is deferred with account_mail_quota, localized in platform-admin email history. Historical unknown jobs are deliberately constrained until classified; it is safer than guessing message meaning from private bodies. Existing140/24h application and Resend UTC-day quotas remain final guards.
 
 The temporary public test-email page exposes only whether ADMIN_EMAIL is valid, never its value. Its fixed server-side recipient and shared3/hour limiter are unchanged. The owner accepted anonymous consumption of that diagnostic quota. No live-provider send or quota exhaustion was performed in this audit.
+
+## 0.0.34 registration admission order
+
+Ordinary registration first validates account fields and consumes a valid access-receipt proof, then reserves the existing account-mail admission slot before creating a user or notification. Failed fields or missing/invalid CAPTCHA no longer spend that global allowance. Proven staff invitations skip the CAPTCHA and retain normal admission. A separate registration IP attempt throttle still bounds invalid requests; reset/resend admission and all worker delivery sub-budgets remain unchanged.

@@ -579,3 +579,11 @@ app/Http/Middleware/AccountRequestAdmission.php
 tests/Feature/SecurityRegressionTest.php
 tests/e2e/security-regression.spec.ts
 docs/security/2026-10-29-local-audit.md
+app/Domain/Auth/RegistrationCaptcha.php
+app/Domain/Auth/RegistrationChallengeImage.php
+app/Http/Controllers/RegistrationCaptchaController.php
+config/registration_captcha.php
+resources/js/components/RegistrationCaptcha.vue
+tests/Feature/RegistrationCaptchaTest.php
+tests/e2e/registration-captcha.spec.ts
+docs/REGISTRATION_CAPTCHA.md

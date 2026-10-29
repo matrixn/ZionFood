@@ -263,3 +263,7 @@ Use the full npm build and publish its client CSS/chunks and SEO manifest/HTML a
 ## 0.0.33 security controls
 
 No migration or dependency update. Use the normal release process for code/assets, configuration caching and worker restart; this work does not perform a manual deployment. Shared Redis through MAIL_RATE_LIMIT_STORE is required for account-workflow admission/delivery locks. MAIL_ACCOUNT_DAILY_LIMIT defaults30 and MAIL_ACCOUNT_REQUESTS_PER_HOUR defaults10; daily account allowance cannot exceed half known daily application/provider capacity. Requests admitted without a message still count conservatively. Configure trusted proxies correctly so the per-IP control does not trust arbitrary forwarded values. Import verification excess produces a controlled failure rather than an unbounded report. The public test-email route remains by explicit owner choice; its private recipient is hidden but visitors may consume the shared diagnostic quota.
+
+## 0.0.34 registration CAPTCHA
+
+No schema migration or dependency change. GD was already required. Registration challenge state requires shared Redis; REGISTRATION_CAPTCHA_CACHE_STORE defaults to MAIL_RATE_LIMIT_STORE and then redis. Deploy code/assets and rebuild config through the normal release procedure. There is no CAPTCHA provider key or external script to configure. The accessible text alternative and visual code are a basic anti-automation layer; rate limiting, email verification and email budgets remain required. No manual deployment is performed by this change.

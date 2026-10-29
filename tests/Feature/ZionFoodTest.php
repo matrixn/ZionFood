@@ -30,7 +30,7 @@ it('renders the landing page and authentication pages', function () {
     }
 });
 it('registers users and requires verified email for onboarding', function () {
-    $this->post('/register', ['name' => 'Owner', 'email' => 'new@example.test', 'password' => 'a-long-test-password', 'password_confirmation' => 'a-long-test-password'])->assertRedirect('/app');
+    $this->post('/register', [...registrationCaptchaData($this), 'name' => 'Owner', 'email' => 'new@example.test', 'password' => 'a-long-test-password', 'password_confirmation' => 'a-long-test-password'])->assertRedirect('/app');
     $this->assertAuthenticated();
     $this->get('/onboarding')->assertRedirect('/email/verify');
     expect(User::where('email', 'new@example.test')->first()->is_platform_admin)->toBeFalse();

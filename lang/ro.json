@@ -448,5 +448,9 @@
   "AI estimate based on the supplied ingredients and portion weight.": "Estimare AI pe baza ingredientelor și gramajului porției furnizate.",
   "Wait for the current email operation to finish.": "Așteaptă finalizarea operațiunii de email în curs.",
   "Online orders are paused because no table is open at this location.": "Comenzile online sunt oprite temporar deoarece nicio masă nu este deschisă la această locație.",
-  "Too many account email requests. Please try again later.": "Prea multe solicitări pentru emailuri de cont. Te rugăm să reîncerci mai târziu."
+  "Too many account email requests. Please try again later.": "Prea multe solicitări pentru emailuri de cont. Te rugăm să reîncerci mai târziu.",
+  "For this receipt, add :left and :right.": "Pentru acest bon, adună :left și :right.",
+  "The access receipt expired or is invalid. Please complete a new one.": "Bonul de acces a expirat sau nu este valid. Completează un bon nou.",
+  "That receipt does not match. Please try a new one.": "Răspunsul nu se potrivește cu bonul. Încearcă un bon nou.",
+  "Complete the ZionFood access receipt before creating your account.": "Confirmă bonul de acces ZionFood înainte de a crea contul."
 }

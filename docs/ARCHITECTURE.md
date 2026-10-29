@@ -1,4 +1,4 @@
-# ZionFood 0.0.33
+# ZionFood 0.0.34
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; whole-menu Migration Center is implemented separately with encrypted staging, approved version publication and guarded rollback (see MIGRATION_CENTER.md). See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -157,3 +157,7 @@ SEO build metadata includes Welcome/static-dependency CSS. LandingGateway emits 
 ## Security boundary repairs (0.0.33)
 
 SaveLocationSettings owns the transactional legacy settings write. AuthorizeOrderingChanges is shared with setup and compares changed operational switches against the fresh locked location/fulfillment state. AccountRequestAdmission and AccountMailBudget bound public account work before side effects and separately restrict account/unknown-legacy delivery, using shared Redis locks in production. ImportVerification bounds aggregate generated evidence incrementally during normalization and before allocation; ProcessImport runs it before snapshot mutations. See the scoped local security report for evidence, tests and accepted public-test-email risk. No schema/dependency changes.
+
+## Registration receipt verification (0.0.34)
+
+RegistrationCaptcha owns session-bound, short-lived, one-use challenge/proof state in shared Redis, using HMAC answer storage and atomic consumption. RegistrationChallengeImage generates a bounded PNG with existing GD; no third-party service is called. CreateNewUser consumes a proof after ordinary field validation and before account-mail admission or user creation. Valid PendingStaffInvitation proof bypasses only this extra challenge. AccountRequestAdmission keeps a separate IP submission throttle; reset/resend admission is unchanged. See REGISTRATION_CAPTCHA.md for endpoints, accessibility alternatives and anti-automation limits. No dependency or schema changes.

@@ -68,7 +68,7 @@ it('accepts a valid emailed invitation for an existing unverified matching accou
 
 it('retains email verification and owner onboarding for ordinary registration', function () {
     Notification::fake();
-    $this->post('/register', ['name' => 'Normal Owner', 'email' => 'normal-owner@example.test', 'password' => 'safe-password-123!', 'password_confirmation' => 'safe-password-123!', 'invitation' => 'forged', 'email_verified_at' => now()])->assertRedirect('/app');
+    $this->post('/register', [...registrationCaptchaData($this), 'name' => 'Normal Owner', 'email' => 'normal-owner@example.test', 'password' => 'safe-password-123!', 'password_confirmation' => 'safe-password-123!', 'invitation' => 'forged', 'email_verified_at' => now()])->assertRedirect('/app');
     $user = User::where('email', 'normal-owner@example.test')->firstOrFail();
     expect($user->hasVerifiedEmail())->toBeFalse()->and(OrganizationMembership::where('user_id', $user->id)->exists())->toBeFalse();
     Notification::assertSentTo($user, VerifyEmail::class);

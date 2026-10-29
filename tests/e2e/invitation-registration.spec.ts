@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 test('emailed invitation pre-fills registration and opens assigned staff workspace directly', async ({ page }) => {
-    const account = JSON.parse(readFileSync('storage/app/private/browser-invitation.json', 'utf8'));
+    const account = JSON.parse(readFileSync(process.env.ZF_INVITATION_FIXTURE ?? 'storage/app/private/browser-invitation.json', 'utf8'));
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(`/invitations/${account.invitation}#token=${account.token}`);
@@ -11,6 +11,7 @@ test('emailed invitation pre-fills registration and opens assigned staff workspa
     await page.getByRole('link', { name: 'Creează cont', exact: true }).click();
     await expect(page.locator('#email')).toHaveValue(account.invited_email);
     await expect(page.locator('#email')).toHaveAttribute('readonly', '');
+    await expect(page.getByTestId('registration-captcha')).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Alătură-te echipei restaurantului', exact: true })).toBeVisible();
     await page.locator('#name').fill('Invited Staff Browser');
     await page.locator('#password').fill('safe-staff-password-123!');

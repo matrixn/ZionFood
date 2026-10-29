@@ -7,6 +7,7 @@ use App\Models\MenuItem;
 use App\Models\RestaurantLocation;
 use App\Models\User;
 use Illuminate\Support\Str;
+use Tests\TestCase;
 
 function tenantFixture(string $slug = 'bistro'): array
 {
@@ -26,4 +27,14 @@ function checkoutData(MenuItem $item): array
 function placeFixture(RestaurantLocation $location, MenuItem $item): array
 {
     return app(PlaceOrderAction::class)->execute($location, checkoutData($item), (string) Str::uuid());
+}
+
+function registrationCaptchaData(TestCase $test): array
+{
+    $test->get('/register')->assertOk();
+    $challenge = $test->postJson('/register/challenge', ['mode' => 'accessible'])->assertOk()->json();
+    preg_match_all('/[0-9]+/', $challenge['prompt'], $numbers);
+    $proof = $test->postJson('/register/challenge/verify', ['challenge_id' => $challenge['id'], 'captcha_answer' => (string) array_sum($numbers[0])])->assertOk()->json('proof');
+
+    return ['captcha_proof' => $proof];
 }

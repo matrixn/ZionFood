@@ -1,4 +1,4 @@
-# Restaurant overview and contextual help — 0.0.33
+# Restaurant overview and contextual help — 0.0.34
 
 The overview uses actual database records for the selected location. Its period is 7, 30 or 90 local calendar days, including today. `RestaurantOverview` checks organization/location access first, then independently gates orders, reservations, menu/visits and tables by their existing feature permissions. Hidden features return null, not their private totals. There is no platform-admin bypass of tenant membership.
 

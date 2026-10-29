@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { tr as t } from '@/i18n';
 
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import RegistrationCaptcha from '@/components/RegistrationCaptcha.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import InputText from 'primevue/inputtext';
@@ -30,12 +31,17 @@ const form = useForm({
     password_confirmation: '',
     token: props.token ?? '',
     remember: false,
+    captcha_proof: '',
 });
+const captcha = ref<InstanceType<typeof RegistrationCaptcha> | null>(null);
 function submit() {
     const url = { login: '/login', register: '/register', forgot: '/forgot-password', reset: '/reset-password' }[
         props.mode
     ];
     form.post(url, {
+        onError: (errors) => {
+            if (errors.captcha_proof) void captcha.value?.renew();
+        },
         onFinish: () => {
             form.reset('password', 'password_confirmation');
         },
@@ -86,7 +92,14 @@ function submit() {
                     type="password"
                     autocomplete="new-password"
                     required /></ZFFormField
-            ><Link v-if="mode === 'login'" href="/forgot-password" class="text-sm text-brand">{{
+            ><RegistrationCaptcha
+                v-if="mode === 'register' && !invited"
+                ref="captcha"
+                v-model="form.captcha_proof"
+                :error="form.errors.captcha_proof"
+                @verified="form.clearErrors('captcha_proof')"
+            />
+            <Link v-if="mode === 'login'" href="/forgot-password" class="text-sm text-brand">{{
                 $t('forgot_password')
             }}</Link
             ><Button
@@ -101,6 +114,7 @@ function submit() {
                             : $t('save_password')
                 "
                 :loading="form.processing"
+                :disabled="mode === 'register' && !invited && !form.captcha_proof"
             />
             <p class="muted text-center">
                 <Link :href="mode === 'login' ? '/register' : '/login'" class="text-brand">{{

@@ -1,4 +1,17 @@
-# ZionFood progress — 0.0.33
+# ZionFood progress — 0.0.34
+
+## Version 0.0.34 - local registration receipt CAPTCHA (October 29)
+
+Added a receipt-themed local registration check with a GD-generated four-digit PNG, keyboard/numeric keypad, animated confirmation, five-minute expiry and a screen-reader/keyboard-friendly text addition alternative. RO/EN catalogues and Laravel messages match; changing locale renews the challenge. Inputs retain explicit labels and FieldHelp; reduced-motion preferences are respected. Shared Redis stores HMAC answers and session-bound proofs with atomic one-use consumption and bounded outstanding records. Guest CSRF-protected endpoints are rate-limited, no-store and noindex; proof/answer input is excluded from validation flash. No provider, tracking integration, font download, dependency or migration is added.
+
+CreateNewUser validates ordinary account fields, consumes the proof, then reserves the existing account-mail admission slot before user/mail creation. Missing/bad CAPTCHA no longer consumes that global budget; registration submission has its own IP throttle. Valid server-proven staff invitations retain prefilled email/direct access and skip this extra check; client booleans cannot activate the exception. Reset/resend and transport quotas are preserved. This proprietary check is deliberately a basic anti-automation layer: OCR and automated arithmetic remain possible, so no advanced bot-proof or formal accessibility-certification claim is made.
+
+Final checks: native PHP/Pest **334 passed / 2948 assertions**, including **11 CAPTCHA tests**, invitation, account-mail and prior security regressions. Full production client + bilingual prerender build, TypeScript, ESLint max-warnings0 and **30 Vitest tests** passed. Linux Pint passed **293 files** with a new private cache (zionfood-0034-registration-fresh-0a75b2.json), followed by the exact **php vendor/bin/pint --test**, also **293 passed**. Composer validate passed with its existing explicit-version advisory; cache-only lock refresh/dependency metadata checks preserve package versions. Existing build chunk-size advisory remains.
+
+**3 Chromium scenarios passed** against an isolated SQLite/file-cache server with array mail: genuine receipt confirmation/registration, wrong-answer recovery, EN question refresh, mobile overflow and UI expiry, plus staff invitation onboarding without the widget. The actual PNG receipt was visually inspected on mobile. Initial browser harness lacked its private sessions directory and an invitation public_id; corrected those test-only fixtures before the successful rerun. A localization test initially omitted JSON credential cookies; it now uses the real persisted locale contract. The first full Pest run overlapped regeneration of SEO build metadata and hit four landing readiness checks; after build completion, all eight landing/first-paint tests and the complete suite passed. These were validation/harness ordering issues, not production relaxations.
+
+Updated 0.0.34 version metadata, README checklist/changelog, registration/security/mail/deployment/architecture/scope documentation and inventory. No real email/provider calls, production Redis concurrency or Forge behavior were tested. No tag or manual deployment is performed.
+
 
 ## Version 0.0.33 - isolated local security assessment and verified repairs (October 29)
 

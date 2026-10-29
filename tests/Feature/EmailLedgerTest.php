@@ -195,7 +195,7 @@ it('shows platform admins filtered paginated metadata only and rejects tenant us
 
 it('classifies account creation and password reset messages and keeps local development delivery distinct', function () {
     config(['mail.default' => 'array']);
-    $this->post('/register', ['name' => 'New owner', 'email' => 'new-owner@example.test', 'password' => 'Password123!long', 'password_confirmation' => 'Password123!long'])->assertSessionHasNoErrors();
+    $this->post('/register', [...registrationCaptchaData($this), 'name' => 'New owner', 'email' => 'new-owner@example.test', 'password' => 'Password123!long', 'password_confirmation' => 'Password123!long'])->assertSessionHasNoErrors();
     expect(EmailDelivery::where('source', 'account_registration')->count())->toBe(1)->and(EmailDelivery::sole()->state)->toBe('local');
     $this->post('/logout');
     $this->post('/forgot-password', ['email' => 'new-owner@example.test'])->assertSessionHasNoErrors();

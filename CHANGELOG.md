@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.34 — 2026-10-29
+
+- Added a local receipt-themed registration CAPTCHA with numeric keypad, visual confirmation and an accessible text alternative in RO/EN.
+- Enforced short-lived session-bound one-use challenges/proofs and Redis locks before registration effects; preserved proven staff-invitation onboarding.
+- Added challenge/submission throttling, private nonindexable responses and sensitive-input flash exclusions; invalid registration/captcha attempts no longer consume account-mail admission capacity.
+- Added security, localization, expiry/replay and isolated browser regression coverage; documented the limits of a proprietary anti-automation layer.
+
 ## 0.0.33 — 2026-10-29
 
 - Fixed restricted-manager operational-switch authorization in settings/setup against the locked location state.

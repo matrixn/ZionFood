@@ -2,6 +2,8 @@
 
 namespace App\Actions\Fortify;
 
+use App\Domain\Auth\RegistrationCaptcha;
+use App\Domain\Mail\AccountMailBudget;
 use App\Domain\Tenancy\Actions\AcceptStaffInvitation;
 use App\Domain\Tenancy\PendingStaffInvitation;
 use App\Models\User;
@@ -21,6 +23,13 @@ class CreateNewUser implements CreatesNewUsers
 
         if ($pending && $input['email'] !== strtolower($pending['record']->email)) {
             throw ValidationException::withMessages(['email' => __('Use the email address from your restaurant invitation.')]);
+        }
+
+        if (! $pending) {
+            app(RegistrationCaptcha::class)->consumeProof(request(), $input['captcha_proof'] ?? null);
+        }
+        if (($wait = app(AccountMailBudget::class)->admitRequest((string) request()->ip())) > 0) {
+            abort(429, __('Too many account email requests. Please try again later.'), ['Retry-After' => $wait]);
         }
 
         $user = DB::transaction(function () use ($input, $pending) {

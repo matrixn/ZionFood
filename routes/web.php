@@ -14,6 +14,7 @@ use App\Http\Controllers\MenuContentController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\MigrationCenterController;
 use App\Http\Controllers\PublicOrderingController;
+use App\Http\Controllers\RegistrationCaptchaController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RestaurantSetupController;
 use App\Http\Controllers\StaffController;
@@ -40,6 +41,10 @@ Route::get('/store/{location}', function (Request $r, string $location, PublicOr
 });
 Route::get('/restaurant/{slug}/{location?}', [PublicOrderingController::class, 'slug']);
 Route::post('/locale', [LocaleController::class, 'update']);
+Route::middleware(['guest', 'throttle:registration-captcha'])->group(function () {
+    Route::post('/register/challenge', [RegistrationCaptchaController::class, 'issue']);
+    Route::post('/register/challenge/verify', [RegistrationCaptchaController::class, 'verify']);
+});
 Route::get('/reserve/{location}', [ReservationController::class, 'form']);
 Route::get('/reservations/{reservation}', fn (string $reservation) => Inertia::render('storefront/Reservation', ['reservationId' => $reservation]));
 Route::get('/table/{table}', [DiningController::class, 'menu']);
