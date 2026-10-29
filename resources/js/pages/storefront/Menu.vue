@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import OrderingStatus from '@/components/storefront/OrderingStatus.vue';
+import { useOrderingAvailability, type OrderingAvailability } from '@/lib/orderingAvailability';
+import { tr as t } from '@/i18n';
 import { computed, onMounted, ref, watch, provide } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import StorefrontLayout from '@/layouts/StorefrontLayout.vue';
@@ -20,6 +23,7 @@ import { api, money } from '@/lib/http';
 import type { Menu, Product, Zone, RestaurantBrand } from '@/types';
 import type { MapConfig } from '@/lib/deliveryGeometry';
 const props = defineProps<{
+    orderingAvailability: OrderingAvailability;
     location: {
         public_id: string;
         name: string;
@@ -42,6 +46,27 @@ onMounted(() => {
 });
 const cart = useCart();
 cart.scope(props.location.public_id + (props.tableContext ? `:${props.tableContext.public_id}` : ''));
+const {
+    status: liveAvailability,
+    state: orderingState,
+    elapsed: availabilityElapsed,
+    stale: availabilityStale,
+} = useOrderingAvailability(
+    () => props.orderingAvailability,
+    () =>
+        props.tableContext
+            ? `/api/v1/public/tables/${props.tableContext.public_id}/availability`
+            : `/api/v1/public/locations/${props.location.public_id}/availability`,
+);
+const orderingBlock = computed(() =>
+    availabilityStale.value
+        ? t('ordering_status_stale')
+        : orderingState.value.canOrder
+          ? ''
+          : t('ordering_reason_' + orderingState.value.reason),
+);
+const canOrder = computed(() => orderingState.value.canOrder && (!props.tableContext || !!sessionToken.value));
+const canAdd = computed(() => orderingState.value.canAdd && (!props.tableContext || !!sessionToken.value));
 const sessionToken = ref<string | null>(null);
 const menuPaused = ref(props.tableContext?.ordering_paused ?? false);
 const tableError = ref('');
@@ -158,6 +183,7 @@ function placedAtTable() {
                 :disabled="!!tableContext && !sessionToken"
                 @click="drawer = true"
         /></template>
+        <OrderingStatus :availability="liveAvailability" :elapsed="availabilityElapsed" :stale="availabilityStale" />
         <section v-if="tableContext" class="panel mb-6 space-y-3">
             <p v-if="menuPaused" class="rounded-xl bg-amber-50 p-4 text-amber-900">{{ $t('dining_menu_paused') }}</p>
             <h2 class="text-xl font-semibold">
@@ -227,7 +253,7 @@ function placedAtTable() {
                     v-for="p in c.items"
                     :key="p.public_id"
                     class="group flex w-full gap-4 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-violet-200 hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
-                    :disabled="!location.accepting_orders"
+                    :aria-description="orderingBlock || undefined"
                     data-testid="menu-product-card"
                     @click="
                         product = p;
@@ -279,11 +305,17 @@ function placedAtTable() {
         <ProductConfigurator
             v-model:visible="configure"
             :show-images="location.display_settings?.show_product_images"
+            :can-add="canAdd"
+            :blocked-message="orderingBlock || (!!tableContext && !sessionToken ? $t('dining_scan_again') : '')"
             :product="product" /><CartDrawer
             v-model:visible="drawer"
             :show-images="location.display_settings?.show_product_images"
-            @checkout="checkout = true" /><CheckoutForm
+            :can-checkout="canOrder"
+            :blocked-message="orderingBlock"
+            @checkout="canOrder && (checkout = true)" /><CheckoutForm
             v-model:visible="checkout"
+            :can-order="canOrder"
+            :blocked-message="orderingBlock"
             :location-id="location.public_id"
             :fulfillment="fulfillment"
             :zones="zones"

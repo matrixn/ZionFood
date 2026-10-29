@@ -1,4 +1,4 @@
-# Scope at 0.0.27
+# Scope at 0.0.28
 
 0.0.19 introduces a dish-first automatic generation workspace, combined AI tasks, approximate one-portion nutrition and durable live review notifications. It replaces the earlier manual reference calculator and retires the manual GloriaFood JSON metadata workflow. Published data remains local and requires review. Whole-menu GloriaFood migration, approved publication, reimport decisions and guarded rollback are implemented in 0.0.22; see MIGRATION_CENTER.md. Provider fidelity and estimation quality still require validation with a real authorized restaurant.
 
@@ -74,3 +74,7 @@ Implemented storefront polish: restaurant-specific share metadata, product/servi
 
 
 0.0.27 adds raw-HTML marketing content without a runtime Node service, deterministic RO/EN URLs, canonical/hreflang/social/structured metadata, sitemap/robots routes, private noindex headers, WebP assets and documented GloriaFood migration marketing. Public-host Nginx forwarding, DNS/TLS checks, webmaster-property verification/submission and indexation/ranking remain external launch work.
+
+## Implemented in 0.0.28
+
+Public online and table menus show venue open/closed state, configured closing/next opening and last-hour notice. General settings, including embedded setup, expose default-on online schedule/table protection. The table condition applies only where QR ordering is enabled; disabling protection permits cart preparation only outside hours; submission, manual stop and QR rules remain enforced. Live availability, cart/footer explanations and preserved active receipts are included. Overnight schedules remain outside the existing same-day schedule model.

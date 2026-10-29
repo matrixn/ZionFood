@@ -32,3 +32,7 @@ Restaurant management now includes Ingredients. Platform administration also lin
 ## Platform administration email navigation
 
 The platform-admin shell adds **Emails and queue** above **Error email alerts**. This is not a restaurant-management menu. The ledger covers all platform mail sources, with filters, live polling, bounded metadata detail modal and provider quota controls. Tenant users cannot access these routes even by URL.
+
+## 0.0.28 general settings
+
+General settings and the embedded setup/general editor include Disponibilitatea comenzilor online, with a default-on toggle, accessible input name and RO/EN FieldHelp. It controls early cart blocking based on pickup/delivery schedule and the QR-enabled location's open-table requirement; submission always enforces both. Its explanation distinguishes manually open table menus from occupied tables and explains the cart-only opt-out. Existing location authorization and revision conflict handling apply.

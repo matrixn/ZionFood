@@ -6,6 +6,7 @@ use App\Domain\Dining\ActiveTableOrders;
 use App\Domain\Dining\OrderingWindow;
 use App\Domain\Dining\StaffTableOrders;
 use App\Domain\Dining\TableSessions;
+use App\Domain\Orders\Actions\GetOrderingAvailability;
 use App\Domain\Tenancy\TenantAccess;
 use App\Models\DiningTable;
 use App\Models\RestaurantLocation;
@@ -79,10 +80,17 @@ class DiningController extends Controller
 
         $window = app(OrderingWindow::class)->status($context->location);
         if (! $context->location->fulfillment?->dine_in_enabled || $context->ordering_paused || ! $window['is_open']) {
-            return Inertia::render('storefront/TableUnavailable', ['location' => $context->location->only('timezone', 'display_settings'), 'restaurant' => $context->location->restaurant->only('name', 'slug', 'primary_color', 'logo_path'), 'orderingWindow' => $window, 'reason' => ! $context->location->fulfillment?->dine_in_enabled ? 'service_disabled' : ($context->ordering_paused ? 'table_closed' : $window['reason']), 'tableId' => $context->public_id, 'menuUrl' => $request->attributes->get('storefront_location') ? '/' : $context->location->storefront_path])->toResponse($request)->header('Cache-Control', 'no-store');
+            return Inertia::render('storefront/TableUnavailable', ['location' => $context->location->only('timezone', 'display_settings'), 'restaurant' => $context->location->restaurant->only('name', 'slug', 'primary_color', 'logo_path'), 'orderingAvailability' => app(GetOrderingAvailability::class)->execute($context->location, $context), 'orderingWindow' => $window, 'reason' => ! $context->location->fulfillment?->dine_in_enabled ? 'service_disabled' : ($context->ordering_paused ? 'table_closed' : $window['reason']), 'tableId' => $context->public_id, 'menuUrl' => $request->attributes->get('storefront_location') ? '/' : $context->location->storefront_path])->toResponse($request)->header('Cache-Control', 'no-store');
         }
 
-        return Inertia::render('storefront/Menu', [...$ordering->data($context->location), 'tableContext' => $context->only('public_id', 'code', 'area', 'ordering_paused')]);
+        return Inertia::render('storefront/Menu', [...$ordering->data($context->location), 'orderingAvailability' => app(GetOrderingAvailability::class)->execute($context->location, $context), 'tableContext' => $context->only('public_id', 'code', 'area', 'ordering_paused')]);
+    }
+
+    public function availability(Request $request, string $table)
+    {
+        $context = $this->publicTable($request, $table);
+
+        return response()->json(app(GetOrderingAvailability::class)->execute($context->location, $context))->header('Cache-Control', 'no-store');
     }
 
     public function orders(Request $request, string $table, ActiveTableOrders $action)

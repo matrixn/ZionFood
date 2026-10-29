@@ -5,6 +5,7 @@ namespace App\Domain\Orders\Actions;
 use App\Domain\Delivery\Polygon;
 use App\Domain\Dining\OrderingWindow;
 use App\Domain\Menus\EffectiveModifiers;
+use App\Domain\Orders\LocationSchedule;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\CheckoutIdempotencyKey;
 use App\Models\DiningSession;
@@ -141,9 +142,11 @@ class PlaceOrderAction
         $this->require($location->accepting_orders, __('This location is not accepting orders.'));
         $subscription = OrganizationSubscription::with('plan')->where('organization_id', $location->organization_id)->first();
         $this->require($subscription && ($subscription->status === 'active' || ($subscription->status === 'trial' && $subscription->trial_ends_at->isFuture())) && ($subscription->plan->features['ordering'] ?? false), __('Online ordering is unavailable.'));
-        $now = now($location->timezone);
-        $hours = $location->hours()->where('weekday', $now->isoWeekday())->first();
-        $this->require($hours && $now->format('H:i:s') >= $hours->opens_at && $now->format('H:i:s') < $hours->closes_at, __('This location is closed.'));
+        if ($fulfillment === 'dine_in') {
+            $this->require(app(LocationSchedule::class)->status($location)['is_open'], __('This location is closed.'));
+        } else {
+            app(GetOrderingAvailability::class)->ensureOnlineOpen($location);
+        }
         $this->require((bool) $location->fulfillment?->getAttribute($fulfillment.'_enabled'), __('This fulfillment method is unavailable.'));
     }
 

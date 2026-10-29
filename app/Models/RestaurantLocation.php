@@ -26,7 +26,12 @@ class RestaurantLocation extends Model
 
     protected $hidden = ['setup_profile', 'preferences'];
 
-    protected $appends = ['storefront_path', 'display_settings'];
+    protected $appends = ['storefront_path', 'display_settings', 'ordering_settings'];
+
+    public function getOrderingSettingsAttribute(): array
+    {
+        return ['block_unavailable_online_orders' => (bool) ($this->preferences['block_unavailable_online_orders'] ?? true)];
+    }
 
     public function getDisplaySettingsAttribute(): array
     {

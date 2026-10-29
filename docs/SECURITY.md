@@ -73,3 +73,7 @@ Error-alert administration requires is_platform_admin and a verified browser ses
 
 
 0.0.27 uses configured/allowlisted canonical origins, safe escaped per-request Inertia JSON, fixed build-owned HTML fragment paths and metadata generation independent of user-agent detection. Build fragments contain no personal user/session data. Stage/local/incomplete builds are nonindexable and private-route noindex is an additional discovery policy, never a substitute for authentication or tenant boundaries. No search-provider credentials, tracking scripts or external migration requests are introduced by the landing page.
+
+## 0.0.28 availability boundaries
+
+Public availability is read-only, host/location scoped, bounded by its own IP limiter and returns schedule/state only. It does not expose table counts, sessions, receipt capabilities or customer details. Table scope must match both location and organization. The server ignores checkout preference flags and rechecks hours/open-table availability under the existing location row lock regardless of the cart preference. Manual pause, services, subscription, stock and all QR session/cutoff checks remain mandatory. Existing cart and receipt capabilities are never cleared by schedule changes. Browser fail-closed refresh does not substitute for backend authorization.

@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ZionFood API",
-    "version": "0.0.27",
+    "version": "0.0.28",
     "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session. Migration Center uses separate verified browser/CSRF routes documented in MIGRATION_CENTER.md. Location display settings and staff table receipts use verified browser/CSRF routes outside /api/v1; error-alert settings require platform administration. Outgoing-email ledger/provider controls are platform-admin-only browser/CSRF routes outside /api/v1; see EMAIL_DELIVERY.md."
   },
   "servers": [
@@ -1970,6 +1970,74 @@
           }
         ]
       }
+    },
+    "/public/locations/{location}/availability": {
+      "get": {
+        "summary": "Fresh ordering availability for location",
+        "description": "Public location/table scoped. No-store response. Schedule in location timezone; table mode keeps its QR cutoff. Checkout remains authoritative.",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current schedule and order gate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderingAvailability"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown/inactive table or wrong mapped location"
+          },
+          "429": {
+            "description": "Availability request rate exceeded"
+          }
+        }
+      }
+    },
+    "/public/tables/{table}/availability": {
+      "get": {
+        "summary": "Fresh ordering availability for table",
+        "description": "Public location/table scoped. No-store response. Schedule in location timezone; table mode keeps its QR cutoff. Checkout remains authoritative.",
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current schedule and order gate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderingAvailability"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown/inactive table or wrong mapped location"
+          },
+          "429": {
+            "description": "Availability request rate exceeded"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2504,6 +2572,9 @@
             "items": {
               "type": "object"
             }
+          },
+          "orderingAvailability": {
+            "$ref": "#/components/schemas/OrderingAvailability"
           }
         }
       },
@@ -3078,6 +3149,92 @@
               }
             },
             "nullable": true
+          }
+        }
+      },
+      "OrderingAvailability": {
+        "type": "object",
+        "required": [
+          "schedule",
+          "can_order",
+          "reason",
+          "guard_enabled",
+          "mode",
+          "deadline_at",
+          "can_add_to_cart"
+        ],
+        "properties": {
+          "schedule": {
+            "type": "object",
+            "required": [
+              "is_open",
+              "opens_at",
+              "closes_at",
+              "next_opens_at",
+              "checked_at",
+              "timezone"
+            ],
+            "properties": {
+              "is_open": {
+                "type": "boolean"
+              },
+              "opens_at": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "closes_at": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "next_opens_at": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "checked_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "timezone": {
+                "type": "string"
+              }
+            }
+          },
+          "can_order": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "open",
+              "outside_hours",
+              "cutoff",
+              "no_open_tables",
+              "ordering_paused",
+              "table_closed",
+              "service_disabled"
+            ]
+          },
+          "guard_enabled": {
+            "type": "boolean"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "online",
+              "table"
+            ]
+          },
+          "deadline_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "can_add_to_cart": {
+            "type": "boolean",
+            "description": "Cart preparation permission only; can_order remains authoritative for submission regardless of the preference."
           }
         }
       }

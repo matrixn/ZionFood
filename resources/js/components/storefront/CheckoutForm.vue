@@ -14,6 +14,8 @@ import type { Zone } from '@/types';
 import DeliveryMap from '@/components/maps/DeliveryMap.vue';
 import { matchingZone, type DeliveryPoint, type MapConfig } from '@/lib/deliveryGeometry';
 const props = defineProps<{
+    canOrder?: boolean;
+    blockedMessage?: string;
     locationId: string;
     fulfillment: { pickup_enabled: boolean; delivery_enabled: boolean };
     zones: Zone[];
@@ -119,6 +121,7 @@ const restrictedProducts = computed(() =>
 );
 const valid = computed(() => {
     if (
+        props.canOrder === false ||
         restrictedProducts.value.length > 0 ||
         !cart.lines.length ||
         busy.value ||
@@ -287,6 +290,9 @@ async function submit() {
             <div class="grid w-full gap-3" data-testid="checkout-footer">
                 <p v-if="restrictedProducts.length" role="alert" class="text-sm text-red-700">
                     {{ $t('mig_service_conflict') }}: {{ restrictedProducts.map((p) => p.name).join(', ') }}
+                </p>
+                <p v-if="blockedMessage" role="status" class="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+                    {{ blockedMessage }}
                 </p>
                 <div class="flex items-center justify-between gap-4 text-lg font-semibold">
                     <span>{{ fee ? $t('total_with_delivery') : $t('total') }}</span

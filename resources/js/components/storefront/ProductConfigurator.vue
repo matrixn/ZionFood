@@ -11,7 +11,12 @@ import InputNumber from 'primevue/inputnumber';
 import { useCart } from '@/stores/cart';
 import { money } from '@/lib/http';
 import type { Product } from '@/types';
-const props = defineProps<{ product: Product | null; showImages?: boolean }>();
+const props = defineProps<{
+    product: Product | null;
+    showImages?: boolean;
+    canAdd?: boolean;
+    blockedMessage?: string;
+}>();
 const visible = defineModel<boolean>('visible', { required: true });
 const variant = ref<number | null>(null);
 const choices = ref<number[]>([]);
@@ -44,6 +49,7 @@ const price = computed(
 );
 const valid = computed(
     () =>
+        props.canAdd !== false &&
         !!props.product &&
         Number.isInteger(quantity.value) &&
         quantity.value >= 1 &&
@@ -180,6 +186,9 @@ function add() {
                         <strong class="text-xl">{{ money(price * quantity) }}</strong>
                     </div>
                 </div>
+                <p v-if="blockedMessage" role="status" class="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+                    {{ blockedMessage }}
+                </p>
                 <Button
                     class="w-full"
                     :label="$t('add_to_cart_total', { total: money(price * quantity) })"

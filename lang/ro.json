@@ -446,5 +446,6 @@
   "AI nutritional values must remain labelled as estimates.": "Valorile nutriționale AI trebuie să rămână marcate ca estimări.",
   "The nutritional estimate is inconsistent. Please generate it again.": "Estimarea nutrițională este inconsistentă. Te rugăm să generezi din nou.",
   "AI estimate based on the supplied ingredients and portion weight.": "Estimare AI pe baza ingredientelor și gramajului porției furnizate.",
-  "Wait for the current email operation to finish.": "Așteaptă finalizarea operațiunii de email în curs."
+  "Wait for the current email operation to finish.": "Așteaptă finalizarea operațiunii de email în curs.",
+  "Online orders are paused because no table is open at this location.": "Comenzile online sunt oprite temporar deoarece nicio masă nu este deschisă la această locație."
 }

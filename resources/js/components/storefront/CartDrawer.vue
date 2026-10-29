@@ -4,7 +4,7 @@ import { useCart } from '@/stores/cart';
 import ZFDrawer from '@/components/ui/ZFDrawer.vue';
 import Button from 'primevue/button';
 import { money } from '@/lib/http';
-defineProps<{ showImages?: boolean }>();
+defineProps<{ showImages?: boolean; canCheckout?: boolean; blockedMessage?: string }>();
 const visible = defineModel<boolean>('visible', { required: true });
 const emit = defineEmits<{ checkout: [] }>();
 const cart = useCart();
@@ -46,7 +46,11 @@ const cart = useCart();
                     ><span>{{ money(cart.total) }}</span>
                 </div>
                 <p class="muted">{{ $t('final_availability_and_totals_are_confirmed_at_checkout') }}</p>
+                <p v-if="blockedMessage" role="status" class="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+                    {{ blockedMessage }}
+                </p>
                 <Button
+                    :disabled="canCheckout === false"
                     :label="$t('continue_to_checkout')"
                     icon="pi pi-arrow-right"
                     @click="

@@ -6,6 +6,7 @@ use App\Domain\Mail\EmailLedger;
 use App\Domain\Orders\Actions\PlaceOrderAction;
 use App\Domain\Restaurants\SyncDiningTables;
 use App\Domain\Tenancy\Actions\OnboardOrganization;
+use App\Models\DiningTable;
 use App\Models\EmailDelivery;
 use App\Models\Ingredient;
 use App\Models\LocationStaff;
@@ -18,13 +19,14 @@ use App\Models\OrganizationMembership;
 use App\Models\StaffInvitation;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class MakeBrowserFixtures extends Command
 {
-    protected $signature = 'zionfood:browser-fixtures {--email-ledger : Prepare local outgoing-email metadata without sending email} {--admin : Create a separate local platform-admin browser fixture} {--services : Prepare a separate restaurant for reservation and QR browser tests} {--storefront : Prepare a photo menu and polygon for storefront UX tests} {--invitation : Prepare a separate unaccepted staff invitation without sending email} {--permissions : Prepare staff permissions and table-room browser fixtures} {--overview : Prepare isolated analytics samples without notifications} {--closed-window : Prepare an empty ordering schedule for availability tests}';
+    protected $signature = 'zionfood:browser-fixtures {--availability : Prepare closed-location ordering fixtures without sending email} {--email-ledger : Prepare local outgoing-email metadata without sending email} {--admin : Create a separate local platform-admin browser fixture} {--services : Prepare a separate restaurant for reservation and QR browser tests} {--storefront : Prepare a photo menu and polygon for storefront UX tests} {--invitation : Prepare a separate unaccepted staff invitation without sending email} {--permissions : Prepare staff permissions and table-room browser fixtures} {--overview : Prepare isolated analytics samples without notifications} {--closed-window : Prepare an empty ordering schedule for availability tests}';
 
     protected $description = 'Create a private local-only browser test account without changing existing users';
 
@@ -65,7 +67,7 @@ class MakeBrowserFixtures extends Command
                 Storage::disk('public')->put($secondImage, file_get_contents(public_path('images/cuisines/burger.jpg')));
                 MenuItem::create(['organization_id' => $location->organization_id, 'category_id' => $category->id, 'name' => 'Burger de test', 'price' => 3200, 'portion_size' => '400 g', 'image_path' => $secondImage]);
             }
-            if ($this->option('services') || $this->option('permissions') || $this->option('overview')) {
+            if ($this->option('availability') || $this->option('services') || $this->option('permissions') || $this->option('overview')) {
                 $profile = ['basics' => ['city' => 'Râmnicu Vâlcea', 'phone' => '0712345678', 'latitude' => 45.1, 'longitude' => 24.36], 'seating' => ['mode' => 'tables', 'capacity' => 8, 'tables' => [['code' => 'T1', 'area' => 'Salon', 'seats' => 4], ['code' => 'T2', 'area' => 'Terasă', 'seats' => 4]]], 'services' => ['qr_requires_staff' => false], 'reservations' => ['planned' => true, 'confirmation' => 'automatic', 'duration_minutes' => 60, 'interval_minutes' => 30, 'minimum_notice_minutes' => 0, 'advance_days' => 30, 'min_party_size' => 1, 'max_party_size' => 4, 'cancellation_hours' => 0, 'hold_minutes' => 15]];
                 $location->update(['setup_profile' => $profile]);
                 $location->fulfillment()->update(['reservations_enabled' => true, 'dine_in_enabled' => true, 'dine_in_cutoff_minutes' => 0]);
@@ -108,6 +110,11 @@ class MakeBrowserFixtures extends Command
                     OrderItem::create(['order_id' => $order->id, 'product_public_id' => $item->public_id, 'name' => $item->name, 'quantity' => $quantity, 'unit_price' => 2500, 'tax_basis_points' => 0, 'total' => $value]);
                 }
             }
+            if ($this->option('availability')) {
+                $table = DiningTable::where('location_id', $location->id)->firstOrFail();
+                $account += ['table' => $table->public_id, 'qr_token' => Crypt::decryptString($table->qr_token_encrypted)];
+                $location->hours()->delete();
+            }
             if ($this->option('closed-window')) {
                 $location->hours()->delete();
             }
@@ -115,6 +122,7 @@ class MakeBrowserFixtures extends Command
             return $account;
         });
         $file = match (true) {
+            (bool) $this->option('availability') => 'browser-availability.json',
             (bool) $this->option('overview') => 'browser-overview.json',
             (bool) $this->option('closed-window') => 'browser-closed-window.json',
             (bool) $this->option('permissions') => 'browser-permissions.json',

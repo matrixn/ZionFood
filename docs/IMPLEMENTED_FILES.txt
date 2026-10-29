@@ -539,3 +539,10 @@ public/images/marketing/kitchen-service-960.webp
 public/images/marketing/restaurant-table-1440.webp
 public/images/marketing/restaurant-table-640.webp
 public/images/marketing/restaurant-table-960.webp
+app/Domain/Orders/LocationSchedule.php
+app/Domain/Orders/Actions/GetOrderingAvailability.php
+resources/js/components/storefront/OrderingStatus.vue
+resources/js/lib/orderingAvailability.ts
+tests/Feature/OrderingAvailabilityTest.php
+tests/frontend/orderingAvailability.test.ts
+tests/e2e/ordering-availability.spec.ts

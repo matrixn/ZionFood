@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Domain\Analytics\RecordMenuVisit;
 use App\Domain\Menus\PublicMenuTree;
+use App\Domain\Orders\Actions\GetOrderingAvailability;
 use App\Domain\Orders\Actions\PlaceOrderAction;
 use App\Domain\Restaurants\LocationPreferences;
 use App\Domain\Restaurants\StorefrontShareImage;
@@ -78,7 +79,7 @@ class PublicOrderingController extends Controller
             $publicLocation['address'] = null;
         }
 
-        return ['mapConfig' => config('maps'), 'mapCenter' => isset($location->setup_profile['basics']['latitude'], $location->setup_profile['basics']['longitude']) ? [(float) $location->setup_profile['basics']['latitude'], (float) $location->setup_profile['basics']['longitude']] : [44.4268, 26.1025], 'location' => $publicLocation, 'restaurant' => $preferences->publicBrand($location),
+        return ['orderingAvailability' => app(GetOrderingAvailability::class)->execute($location), 'mapConfig' => config('maps'), 'mapCenter' => isset($location->setup_profile['basics']['latitude'], $location->setup_profile['basics']['longitude']) ? [(float) $location->setup_profile['basics']['latitude'], (float) $location->setup_profile['basics']['longitude']] : [44.4268, 26.1025], 'location' => $publicLocation, 'restaurant' => $preferences->publicBrand($location),
             'menus' => $menus,
             'fulfillment' => $location->fulfillment ?? ['pickup_enabled' => false, 'delivery_enabled' => false, 'reservations_enabled' => false], 'zones' => $location->zones()->where('is_active', true)->get(), 'hours' => $location->hours];
     }
@@ -86,6 +87,11 @@ class PublicOrderingController extends Controller
     public function menu(Request $request, string $location)
     {
         return response()->json($this->data($this->resolve($request, $location)));
+    }
+
+    public function availability(Request $request, string $location)
+    {
+        return response()->json(app(GetOrderingAvailability::class)->execute($this->resolve($request, $location)))->header('Cache-Control', 'no-store');
     }
 
     public function visit(Request $request, string $location)

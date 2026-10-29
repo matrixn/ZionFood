@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.28 — 2026-10-29
+
+- Added public opening/closure/next-opening banners and final-hour ordering notices for online and QR menus, using the location timezone and actual QR cutoff.
+- Added default-on location ordering protection with authorized/revisioned settings; disabling protection permits cart preparation only; submission retains schedule/table checks, as do QR and other checkout rules.
+- Added fresh scoped availability polling, live cart/configurator/checkout guards and explanations without discarding carts or submitted orders.
+
 ## 0.0.27 — 2026-10-28
 
 - Added build-rendered public landing content, deterministic Romanian/English URLs, canonical/hreflang metadata, JSON-LD and social sharing tags available without JavaScript.

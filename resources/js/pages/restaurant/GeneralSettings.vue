@@ -22,6 +22,7 @@ const defaults: DisplaySettings = {
 const form = useForm({
     ...defaults,
     ...props.location.display_settings,
+    block_unavailable_online_orders: props.location.ordering_settings?.block_unavailable_online_orders ?? true,
     revision: props.location.preferences_revision ?? 0,
 });
 watch(
@@ -96,6 +97,19 @@ function save() {
                     /></label>
                 </div>
                 <p class="muted text-sm">{{ $t('general_timezone') }}: {{ location.timezone }}</p>
+                <section class="space-y-3 rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+                    <h2 class="text-lg font-semibold">{{ $t('ordering_settings_title') }}</h2>
+                    <label class="flex items-start gap-3"
+                        ><ToggleSwitch
+                            v-model="form.block_unavailable_online_orders"
+                            class="shrink-0"
+                            :aria-label="$t('ordering_block_setting')" /><span class="text-sm">{{
+                            $t('ordering_block_setting')
+                        }}</span
+                        ><FieldHelp :label="$t('ordering_block_setting')" :text="$t('ordering_block_help')"
+                    /></label>
+                    <p class="muted text-sm">{{ $t('ordering_block_explanation') }}</p>
+                </section>
                 <h2 class="text-lg font-semibold">{{ $t('general_public_display') }}</h2>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <label v-for="flag in flags" :key="flag" class="flex items-center gap-3"

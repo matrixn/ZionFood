@@ -245,3 +245,9 @@ Operational follow-up to the Reverb incident: after the owner corrected their en
 ## Public presentation SEO (0.0.27)
 
 No database migration or new dependency. Run the complete npm run build before activating the release; it now writes version-checked RO/EN guest/member HTML under public/build/seo. Preserve those generated files with the normal public/build artifacts. Configure ZF_PUBLIC_URL to the public HTTPS root in ZF_APP_HOSTS, and ZF_SEO_INDEXABLE=false on staging. Run php artisan zionfood:seo-check after config caching. The former public/robots.txt is now dynamic: an exact static-only Nginx location needs Laravel fallback (see LANDING_PAGE.md). Validate public robots/sitemap status/content and both language pages before webmaster submission. Do not infer production readiness from localhost Lighthouse.
+
+## 0.0.28 availability rollout
+
+Use the normal Composer/frontend build and worker restart procedure. No new environment key, dependency or schema migration is required. Build all client and marketing HTML variants after the version bump. Ensure the normal public API routes reach Laravel and no proxy caches the availability endpoints (responses are no-store).
+
+The new guard is on for existing locations with no saved preference. QR-enabled locations with all active table menus closed block pickup/delivery submission. Administrators can reopen a table; disabling protection in General settings only allows cart preparation, never submission while unavailable. Takeaway/delivery-only locations do not require tables. Confirm venue timezone/hours and the chosen policy after deployment. A manual order stop and QR cutoff remain effective. Local tests do not certify public proxy behavior, production timezone configuration or a live restaurant's chosen settings.

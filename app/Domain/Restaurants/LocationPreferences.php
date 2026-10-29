@@ -31,11 +31,12 @@ class LocationPreferences
                 $rules[$key] = 'required|boolean';
             }
         }
+        $rules['block_unavailable_online_orders'] = 'sometimes|boolean';
         $data = Validator::make($input, $rules)->validate();
         DB::transaction(function () use ($location, $data) {
             $locked = RestaurantLocation::whereKey($location->id)->lockForUpdate()->firstOrFail();
             abort_unless($locked->preferences_revision === $data['revision'], 409);
-            $locked->update(['preferences' => array_intersect_key($data, self::DEFAULTS), 'preferences_revision' => $locked->preferences_revision + 1]);
+            $locked->update(['preferences' => [...array_intersect_key($data, self::DEFAULTS), 'block_unavailable_online_orders' => (bool) ($data['block_unavailable_online_orders'] ?? ($locked->preferences['block_unavailable_online_orders'] ?? true))], 'preferences_revision' => $locked->preferences_revision + 1]);
         });
     }
 

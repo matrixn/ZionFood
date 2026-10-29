@@ -131,3 +131,9 @@ Verified platform-admin session only; separate from restaurant API and token abi
 ## Marketing discovery routes (0.0.27)
 
 Outside /api/v1: GET / and GET /en render deterministic public marketing languages on central hosts. GET /sitemap.xml returns the configured canonical RO/EN URLs and reciprocal alternates only when indexing/build readiness permits; GET /robots.txt returns per-host policy/sitemap text. Verified restaurant roots keep their storefronts and do not serve /en or the marketing sitemap. Private app/account/tracking/API responses carry noindex headers; authorization is unchanged.
+
+## Ordering availability (0.0.28)
+
+`GET /api/v1/public/locations/{location}/availability` and `GET /api/v1/public/tables/{table}/availability` return `schedule`, `can_order`, `can_add_to_cart`, `reason`, `guard_enabled`, `mode` and ISO `deadline_at`. Schedule timestamps carry the location offset/timezone and server `checked_at`. Both use no-store and a public-availability limit of 1200 requests/minute/IP to accommodate shared restaurant WiFi. Existing mapped-domain/location/table scoping applies. Inactive table links retain existing not-found behavior.
+
+The public menu also includes fresh `orderingAvailability` outside its cached tree. Reasons include open, outside_hours, cutoff, no_open_tables, ordering_paused, table_closed and service_disabled. The cart flag may be true while can_order is false when protection is disabled; this never permits submission. These disclose no table counts or customer data. They are advisory snapshots; authoritative checkout still validates all business rules. General preferences accept optional boolean `block_unavailable_online_orders`; omission preserves the saved/default value under revision checking. Client checkout flags cannot override it.

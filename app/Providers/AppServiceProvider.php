@@ -85,6 +85,7 @@ class AppServiceProvider extends ServiceProvider
             $model::saved($invalidate);
             $model::deleted($invalidate);
         }
+        RateLimiter::for('public-availability', fn (Request $r) => Limit::perMinute(1200)->by('public-availability:'.$r->ip()));
         RateLimiter::for('checkout', fn (Request $r) => [Limit::perMinute(config('zionfood.checkout_ip_limit'))->by($r->ip()), Limit::perMinute(120)->by((string) $r->route('location'))]);
         RateLimiter::for('tracking', fn (Request $r) => Limit::perMinute(60)->by($r->ip()));
     }

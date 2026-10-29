@@ -2,7 +2,7 @@
 
 ![ZionFood — comenzi, rezervări și administrarea restaurantului](docs/assets/zionfood-hero-ai.png)
 
-**Versiune: 0.0.27** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.28** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,16 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 29 octombrie 2026 — disponibilitate vizibilă înainte de comandă · 0.0.28
+
+- [x] Meniul restaurantului și pagina mesei afișează de la început dacă locația este deschisă, ora închiderii și următoarea deschidere disponibilă.
+- [x] Anunț în ultima oră de comandă, cu minutele rămase și ora-limită; la QR respectă limita configurată înainte de închidere, la ridicare/livrare folosește închiderea locației.
+- [x] **Setări generale → Disponibilitatea comenzilor online**: protecție activă implicit, editabilă și în pregătirea restaurantului. În afara programului blochează adăugarea în coș/plasarea; dacă serviciul mese/QR este activ, cere și o masă activă cu meniul deschis de personal.
+- [x] Protecția poate fi dezactivată pentru a permite doar pregătirea coșului în afara programului sau cu toate mesele închise. Plasarea comenzii rămâne blocată până când locația este disponibilă. Anunțul de locație închisă rămâne afișat; oprirea manuală, serviciile, abonamentul și regulile QR rămân obligatorii.
+- [x] Actualizare automată la 15 secunde și la revenirea în pagină; ora-limită este urmărită și local. Modalele explică de ce adăugarea/plasarea este blocată, iar coșul și comenzile deja trimise sunt păstrate.
+
+[Reguli, limite și operare](docs/RESERVATIONS_DINING_DELIVERY.md).
 
 ### 28 octombrie 2026 — prima pagină pregătită pentru căutare și migrare GloriaFood · 0.0.27
 

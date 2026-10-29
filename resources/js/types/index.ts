@@ -130,6 +130,7 @@ export interface DisplaySettings {
     show_product_images: boolean;
 }
 export interface Location {
+    ordering_settings?: { block_unavailable_online_orders: boolean };
     display_settings?: DisplaySettings;
     preferences_revision?: number;
     storefront_path: string;
