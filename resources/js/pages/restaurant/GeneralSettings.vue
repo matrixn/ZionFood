@@ -3,6 +3,7 @@ import { computed, watch } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import Button from 'primevue/button';
+import InputNumber from 'primevue/inputnumber';
 import Select from 'primevue/select';
 import ToggleSwitch from 'primevue/toggleswitch';
 import { dateFormats, dateTimeFormats, locationDate } from '@/lib/locationDates';
@@ -23,6 +24,13 @@ const form = useForm({
     ...defaults,
     ...props.location.display_settings,
     block_unavailable_online_orders: props.location.ordering_settings?.block_unavailable_online_orders ?? true,
+    communication_logs_enabled: props.location.restaurant.communication_logs_enabled ?? false,
+    scheduled_orders_enabled: props.location.commerce_settings?.scheduled_orders_enabled ?? false,
+    reservation_preorders_enabled: props.location.commerce_settings?.reservation_preorders_enabled ?? false,
+    scheduling_notice_minutes: props.location.commerce_settings?.scheduling_notice_minutes ?? 30,
+    scheduling_days: props.location.commerce_settings?.scheduling_days ?? 7,
+    preparation_minutes: props.location.commerce_settings?.preparation_minutes ?? 30,
+    scheduled_orders_per_slot: props.location.commerce_settings?.scheduled_orders_per_slot ?? 10,
     revision: props.location.preferences_revision ?? 0,
 });
 watch(
@@ -110,6 +118,46 @@ function save() {
                     /></label>
                     <p class="muted text-sm">{{ $t('ordering_block_explanation') }}</p>
                 </section>
+                <section class="space-y-4 rounded-xl border border-slate-200 p-4">
+                    <h2 class="text-lg font-semibold">{{ $t('commerce_title') }}</h2>
+                    <label
+                        v-for="key in ['scheduled_orders_enabled', 'reservation_preorders_enabled'] as const"
+                        :key="key"
+                        class="flex items-center gap-3"
+                        ><ToggleSwitch
+                            v-model="form[key]"
+                            :disabled="permissions?.orders !== 'manage'"
+                            :aria-label="$t(key)" /><span>{{ $t(key) }}</span
+                        ><FieldHelp :label="$t(key)" :text="$t(key + '_help')"
+                    /></label>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <label
+                            v-for="key in [
+                                'scheduling_notice_minutes',
+                                'scheduling_days',
+                                'preparation_minutes',
+                                'scheduled_orders_per_slot',
+                            ] as const"
+                            :key="key"
+                            class="field"
+                            ><span class="field-label"
+                                >{{ $t(key) }}<FieldHelp :label="$t(key)" :text="$t(key + '_help')" /></span
+                            ><InputNumber
+                                v-model="form[key]"
+                                :disabled="permissions?.orders !== 'manage'"
+                                :aria-label="$t(key)"
+                                :min="1"
+                                :max="key === 'scheduling_days' ? 90 : 1440"
+                                :use-grouping="false"
+                        /></label>
+                    </div>
+                </section>
+                <label class="flex items-center gap-3"
+                    ><ToggleSwitch v-model="form.communication_logs_enabled" :aria-label="$t('comm_enable')" /><span>{{
+                        $t('comm_enable')
+                    }}</span
+                    ><FieldHelp :label="$t('comm_enable')" :text="$t('comm_enable_help')"
+                /></label>
                 <h2 class="text-lg font-semibold">{{ $t('general_public_display') }}</h2>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <label v-for="flag in flags" :key="flag" class="flex items-center gap-3"

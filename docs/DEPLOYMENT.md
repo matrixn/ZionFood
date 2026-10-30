@@ -1,5 +1,9 @@
 # Local setup and Laravel Forge deployment
 
+## 0.0.35 WordPress commerce upgrade
+
+Run migration `2026_10_30_000100_prepare_wordpress_commerce` through the normal release. Build frontend assets, restart workers gracefully, and keep the existing minute scheduler active. It releases due scheduled orders and prunes sanitized communication logs/expired encrypted replay bodies daily. No API key is required in `.env`: restaurant credentials are generated privately from Integrations. Keep `APP_URL` on an HTTPS central/API host, Redis/Horizon and the application encryption key persistent. Never expose keys through a public WordPress script. Payments remain unavailable. See [WORDPRESS_API.md](WORDPRESS_API.md) for retention, retries, credential lifecycle and callback verification. This source release performs no manual Forge deployment.
+
 ## 0.0.19 menu-generation upgrade
 
 The normal release must run migration `2026_10_27_001000_add_workspace_notifications`, build assets and gracefully restart Horizon workers. This creates the durable notification inbox and retires only GloriaFood-import drafts, preserving published product metadata. Migration rollback cannot restore those removed drafts. No new credentials are required: existing encrypted AI settings and Reverb configuration remain valid, with automatic visible-page polling when realtime is unavailable. See [MENU_CONTENT.md](MENU_CONTENT.md). No manual Forge deployment was performed for this change.

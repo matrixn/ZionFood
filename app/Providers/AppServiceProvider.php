@@ -43,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        RateLimiter::for('wordpress', fn (Request $r) => Limit::perMinute(config('wordpress.rate_limit'))->by('wp:'.($r->attributes->get('wordpress_connection')?->id ?? $r->ip())));
         RateLimiter::for('menu-import-review', fn (Request $r) => Limit::perMinute(30)->by((string) $r->user()?->id));
         RateLimiter::for('menu-import', fn (Request $r) => [Limit::perMinute(3)->by('import-user:'.$r->user()?->id), Limit::perHour(15)->by('import-location:'.$r->route('location'))]);
         RateLimiter::for('menu-content', fn (Request $r) => Limit::perMinute(10)->by((string) $r->user()?->id));

@@ -2,8 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Domain\Integrations\CommunicationJournal;
 use App\Domain\Integrations\PublicWebhookDestination;
 use App\Domain\Integrations\UnsafeWebhookDestination;
+use App\Domain\Integrations\WordpressCallbackAccess;
 use App\Models\OutboxMessage;
 use App\Models\WebhookDelivery;
 use App\Models\WebhookEndpoint;
@@ -37,7 +39,7 @@ class DeliverWebhook implements ShouldQueue
             }
             $endpoint = WebhookEndpoint::find($delivery->endpoint_id);
             $message = OutboxMessage::find($delivery->outbox_message_id);
-            if (! $endpoint || ! $endpoint->enabled || ! $message || $endpoint->organization_id !== $message->organization_id || $endpoint->location_id !== $message->location_id || ! in_array($message->type, $endpoint->events ?? [], true)) {
+            if (! $endpoint || ! app(WordpressCallbackAccess::class)->allows($endpoint, $message?->type ?? '') || ! $endpoint->enabled || ! $message || $endpoint->organization_id !== $message->organization_id || $endpoint->location_id !== $message->location_id || ! in_array($message->type, $endpoint->events ?? [], true)) {
                 $delivery->update(['status' => 'cancelled', 'next_attempt_at' => null]);
 
                 return null;
@@ -57,6 +59,8 @@ class DeliverWebhook implements ShouldQueue
         }
         $delivery = $claim['delivery'];
         $endpoint = $claim['endpoint'];
+        $requestId = (string) Str::uuid();
+        $started = hrtime(true);
         $status = null;
         $failure = null;
         $retry = false;
@@ -74,7 +78,7 @@ class DeliverWebhook implements ShouldQueue
                 if ($downloaded > 65536) {
                     throw new \RuntimeException('Response too large.');
                 }
-            }])->withHeaders(['X-ZionFood-Event' => $delivery->payload['type'], 'X-ZionFood-Delivery' => $delivery->event_id, 'X-ZionFood-Timestamp' => $timestamp, 'X-ZionFood-Signature' => 'sha256='.hash_hmac('sha256', $timestamp.'.'.$body, Crypt::decryptString($endpoint->secret_encrypted))])->withBody($body, 'application/json')->post($endpoint->url);
+            }])->withHeaders(['X-ZionFood-Request-ID' => $requestId, 'X-ZionFood-Event' => $delivery->payload['type'], 'X-ZionFood-Delivery' => $delivery->event_id, 'X-ZionFood-Timestamp' => $timestamp, 'X-ZionFood-Signature' => 'sha256='.hash_hmac('sha256', $timestamp.'.'.$body, Crypt::decryptString($endpoint->secret_encrypted))])->withBody($body, 'application/json')->post($endpoint->url);
             $status = $response->status();
             $response->toPsrResponse()->getBody()->close();
             if (! $response->successful()) {
@@ -89,5 +93,6 @@ class DeliverWebhook implements ShouldQueue
         }
         $next = $failure === null ? 'delivered' : ($failure === 'destination_blocked' ? 'blocked' : ($retry && $delivery->attempts < 6 ? 'retrying' : 'failed'));
         WebhookDelivery::whereKey($delivery->id)->where('claim_token', $claim['token'])->where('status', 'delivering')->update(['status' => $next, 'http_status' => $status, 'failure_code' => $failure, 'delivered_at' => $next === 'delivered' ? now() : null, 'next_attempt_at' => $next === 'retrying' ? now()->addSeconds([15, 60, 300, 900, 3600][$delivery->attempts - 1]) : null, 'locked_until' => null, 'claim_token' => null]);
+        app(CommunicationJournal::class)->outbound($endpoint, $delivery, $status, $next, $failure, (int) ((hrtime(true) - $started) / 1000000), $requestId);
     }
 }

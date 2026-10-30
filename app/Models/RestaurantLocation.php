@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domain\Orders\CommerceSettings;
 use App\Domain\Restaurants\LocationPreferences;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,7 +27,12 @@ class RestaurantLocation extends Model
 
     protected $hidden = ['setup_profile', 'preferences'];
 
-    protected $appends = ['storefront_path', 'display_settings', 'ordering_settings'];
+    protected $appends = ['storefront_path', 'display_settings', 'ordering_settings', 'commerce_settings'];
+
+    public function getCommerceSettingsAttribute(): array
+    {
+        return app(CommerceSettings::class)->values($this);
+    }
 
     public function getOrderingSettingsAttribute(): array
     {

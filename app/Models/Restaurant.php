@@ -14,6 +14,8 @@ class Restaurant extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = ['communication_logs_enabled' => 'boolean'];
+
     protected static function booted(): void
     {
         static::creating(function ($model) {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import WordpressConnections from '@/components/WordpressConnections.vue';
 import { useLocationDates } from '@/lib/locationDates';
 const dates = useLocationDates();
 import { onMounted, ref } from 'vue';
@@ -57,6 +58,7 @@ onMounted(load);
             :title="$t('connect_your_tools')"
             :description="$t('organization_scoped_api_access_for_wordpress_and_other_integrations')"
         />
+        <WordpressConnections v-bind="$props" />
         <p v-if="error" role="alert" class="my-5 text-red-600">{{ error }}</p>
         <section v-if="issued" class="panel mb-6">
             <strong>{{ $t('copy_this_token_now_it_is_only_shown_once') }}</strong>

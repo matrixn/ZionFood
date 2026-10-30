@@ -28,6 +28,9 @@ class TransitionOrderStatus
             if ($next === OrderStatus::Rejected && blank($reason)) {
                 throw ValidationException::withMessages(['reason' => __('A rejection reason is required.')]);
             }
+            if ($order->preparation_at?->isFuture() && ! in_array($next, [OrderStatus::Accepted, OrderStatus::Rejected, OrderStatus::Cancelled], true)) {
+                throw ValidationException::withMessages(['status' => __('Preparation has not started for this scheduled order.')]);
+            }
             $old = $order->status;
             $order->update(['status' => $next, 'version' => $version + 1]);
             OrderStatusHistory::create(['order_id' => $order->id, 'from_status' => $old->value, 'to_status' => $next->value, 'actor_id' => $actor->id, 'reason' => $reason]);

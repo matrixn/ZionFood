@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ZionFood API",
-    "version": "0.0.34",
-    "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session. Migration Center uses separate verified browser/CSRF routes documented in MIGRATION_CENTER.md. Location display settings and staff table receipts use verified browser/CSRF routes outside /api/v1; error-alert settings require platform administration. Outgoing-email ledger/provider controls are platform-admin-only browser/CSRF routes outside /api/v1; see EMAIL_DELIVERY.md."
+    "version": "0.0.35",
+    "description": "API v1. Token abilities supplement tenant and location authorization. Browser session mutations require CSRF tokens. Money is integer minor units. Romanian is the default human-message language; explicit Accept-Language ro/en is supported without translating schema keys or enum values. Webhook operations require a verified owner/manager browser session. Migration Center uses separate verified browser/CSRF routes documented in MIGRATION_CENTER.md. Location display settings and staff table receipts use verified browser/CSRF routes outside /api/v1; error-alert settings require platform administration. Outgoing-email ledger/provider controls are platform-admin-only browser/CSRF routes outside /api/v1; see EMAIL_DELIVERY.md. Dedicated WordPress API under /wordpress uses restaurant/location-scoped bearer credentials, explicit abilities, encrypted idempotent mutation receipts and sanitized communication journals. See WORDPRESS_API.md and WORDPRESS_CAPABILITIES.md. Payments remain placeholders."
   },
   "servers": [
     {
@@ -2038,6 +2038,3450 @@
           }
         }
       }
+    },
+    "/wordpress/bootstrap": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_bootstrap",
+        "summary": "Bootstrap manifest",
+        "description": "Required ability: valid dedicated connection. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WordpressBootstrap"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/menu": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_menu",
+        "summary": "Public menu and services",
+        "description": "Required ability: storefront:read. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/availability": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_availability",
+        "summary": "Effective current availability",
+        "description": "Required ability: storefront:read. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderingAvailability"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/schedule-slots": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_schedule_slots",
+        "summary": "Discover fifteen-minute future slots",
+        "description": "Required ability: storefront:read. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "fulfillment",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pickup",
+                "delivery"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/quote": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_quote",
+        "summary": "Non-binding authoritative quote",
+        "description": "Required ability: checkout:write. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WordpressQuote"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Checkout"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/checkout": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_checkout",
+        "summary": "Place immediate or scheduled order or reservation preorder",
+        "description": "Required ability: checkout:write. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WordpressCheckoutResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WordpressCheckoutResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Checkout"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/orders/{order}/track": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_orders_order_track",
+        "summary": "Private customer order receipt",
+        "description": "Required ability: checkout:write. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WordpressTrackingInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/orders": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_orders",
+        "summary": "Paginated operational orders",
+        "description": "Required ability: orders:read. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/kitchen": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_kitchen",
+        "summary": "Due active kitchen queue",
+        "description": "Required ability: orders:read. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/orders/{order}/status": {
+      "patch": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_patch_orders_order_status",
+        "summary": "Versioned staff order transition",
+        "description": "Required ability: orders:manage. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Transition"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/reservation-slots": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_reservation_slots",
+        "summary": "Guest booking slots",
+        "description": "Required ability: storefront:read. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "party_size",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/reservations": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_reservations",
+        "summary": "Create reservation",
+        "description": "Required ability: reservations:create. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservationInput"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_reservations",
+        "summary": "Staff reservations on local date",
+        "description": "Required ability: reservations:read. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/reservations/{reservation}/track": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_reservations_reservation_track",
+        "summary": "Read guest reservation with proof",
+        "description": "Required ability: reservations:create. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reservation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationReceipt"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WordpressReservationProof"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/reservations/{reservation}/cancel": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_reservations_reservation_cancel",
+        "summary": "Cancel guest booking with proof and version",
+        "description": "Required ability: reservations:create. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reservation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationReceipt"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WordpressReservationProof"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/reservations/{reservation}/status": {
+      "patch": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_patch_reservations_reservation_status",
+        "summary": "Versioned staff booking transition",
+        "description": "Required ability: reservations:manage. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reservation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationReceipt"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WordpressReservationTransition"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/tables": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_tables",
+        "summary": "Tables with effective availability and guarded QR URLs",
+        "description": "Required ability: tables:read. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/tables/{table}/connect": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_tables_table_connect",
+        "summary": "Join QR table with public proof",
+        "description": "Required ability: checkout:write. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TableSessionResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WordpressTableConnect"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/tables/{table}/active-orders": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_tables_table_active_orders",
+        "summary": "Guest active table receipt",
+        "description": "Required ability: checkout:write. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WordpressGuestTableProof"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/tables/{table}/orders": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_tables_table_orders",
+        "summary": "Staff active orders and daily totals",
+        "description": "Required ability: tables:read + orders:read. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/tables/{table}/orders/{order}/served": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_tables_table_orders_order_served",
+        "summary": "Complete ready table order",
+        "description": "Required ability: tables:manage + orders:manage. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          },
+          "204": {
+            "description": "Updated without response body"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "version"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/tables/{table}/{operation}": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_tables_table_operation_",
+        "summary": "Open close or rotate a table",
+        "description": "Required ability: tables:manage. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "operation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "open",
+                "close",
+                "rotate"
+              ]
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          },
+          "204": {
+            "description": "Updated without response body"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/editable-menu": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_editable_menu",
+        "summary": "Editable menu structure and IDs",
+        "description": "Required ability: menu:read. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/categories": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_categories",
+        "summary": "Create or update category",
+        "description": "Required ability: menu:write. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WordpressCategory"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/modifiers": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_modifiers",
+        "summary": "Create or update organization modifier group",
+        "description": "Required ability: menu:write. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WordpressModifier"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/items": {
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_items",
+        "summary": "Create product and optional image",
+        "description": "Required ability: menu:write. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenuItemInput"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payload": {
+                    "type": "string",
+                    "description": "JSON MenuItemInput document"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Optional supported raster image; maximum4MiB"
+                  }
+                },
+                "required": [
+                  "payload"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/items/{item}": {
+      "put": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_put_items_item_",
+        "summary": "Update product and optional image",
+        "description": "Required ability: menu:write. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "item",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenuItemInput"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payload": {
+                    "type": "string",
+                    "description": "JSON MenuItemInput document"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Optional supported raster image; maximum4MiB"
+                  }
+                },
+                "required": [
+                  "payload"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_delete_items_item_",
+        "summary": "Soft delete product",
+        "description": "Required ability: menu:write. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "item",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          },
+          "204": {
+            "description": "Updated without response body"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/promotions": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_promotions",
+        "summary": "List location promotion rules",
+        "description": "Required ability: promotions:manage. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_post_promotions",
+        "summary": "Create coupon or automatic promotion",
+        "description": "Required ability: promotions:manage. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Promotion"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Promotion"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromotionInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/promotions/{promotion}": {
+      "put": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_put_promotions_promotion_",
+        "summary": "Update or disable promotion",
+        "description": "Required ability: promotions:manage. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "promotion",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Promotion"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromotionInput"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_promotion_detail",
+        "summary": "Scoped promotion detail for callback reconciliation",
+        "description": "Requires promotions:manage and current restaurant/location permissions.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "promotion",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Promotion"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/analytics": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_analytics",
+        "summary": "Feature-filtered 7 30 or 90 day analytics",
+        "description": "Required ability: analytics:read plus module read abilities. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                7,
+                30,
+                90
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/events": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_events",
+        "summary": "Cursor recovery feed filtered by feature scopes",
+        "description": "Required ability: events:read plus module read abilities. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WordpressEvents"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/callback": {
+      "put": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_put_callback",
+        "summary": "Register or disable signed public HTTPS callback",
+        "description": "Required ability: webhooks:manage plus subscribed module abilities. See WORDPRESS_API.md for current role checks and the full contract.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "description": "Reuse same key and payload after an ambiguous timeout. Retained hash conflicts return409; never blindly regenerate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpoint"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WordpressCallback"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/orders/{order}": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_order_detail",
+        "summary": "Scoped order detail for callback reconciliation",
+        "description": "Requires orders:read and current restaurant/location permissions.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
+    },
+    "/wordpress/locations/{location}/reservations/{reservation}": {
+      "get": {
+        "tags": [
+          "WordPress"
+        ],
+        "operationId": "wordpress_get_reservation_detail",
+        "summary": "Scoped reservation detail for callback reconciliation",
+        "description": "Requires reservations:read and current restaurant/location permissions.",
+        "security": [
+          {
+            "wordpress": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reservation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; lists use Laravel pagination where documented.",
+            "headers": {
+              "X-ZionFood-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "Sanitized journal correlation ID"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationReceipt"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing expired revoked or non-WordPress credentials"
+          },
+          "403": {
+            "description": "Insufficient scope/current staff permissions"
+          },
+          "404": {
+            "description": "Unknown or out-of-scope restaurant/location/resource"
+          },
+          "409": {
+            "description": "Version conflict, changed idempotent payload or expired replay receipt"
+          },
+          "422": {
+            "description": "Validation/business-rule failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; respect Retry-After"
+          },
+          "500": {
+            "description": "Server failure; retain mutation key for bounded retries"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2067,6 +5511,11 @@
         "type": "http",
         "scheme": "bearer",
         "description": "Dining-session capability for read-only receipts, scoped to one table and session; not the QR token."
+      },
+      "wordpress": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Dedicated Sanctum WordPress connection token, scoped to one restaurant and explicit locations/abilities. Browser sessions and generic tokens are rejected. HTTPS mandatory outside loopback local/testing."
       }
     },
     "schemas": {
@@ -2190,8 +5639,31 @@
             "minimum": -180,
             "maximum": 180,
             "description": "Required with active delivery polygons"
+          },
+          "scheduled_for": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reservation_id": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 26,
+            "maxLength": 26
+          },
+          "reservation_token": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 64,
+            "maxLength": 64
+          },
+          "promotion_code": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 40
           }
-        }
+        },
+        "description": "Server-priced checkout. Scheduled pickup/delivery requires opt-in. Confirmed reservation_id + reservation_token permit dine_in preorder instead of a table_session_token. ISO timestamps need seconds and timezone offsets."
       },
       "CheckoutResult": {
         "type": "object",
@@ -2492,6 +5964,24 @@
           "delivery_longitude": {
             "type": "number",
             "nullable": true
+          },
+          "scheduled_for": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "preparation_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "discount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "promotion": {
+            "type": "object",
+            "nullable": true
           }
         }
       },
@@ -2648,7 +6138,7 @@
           "events": {
             "type": "array",
             "minItems": 1,
-            "maxItems": 4,
+            "maxItems": 7,
             "uniqueItems": true,
             "items": {
               "type": "string",
@@ -2656,7 +6146,10 @@
                 "order.created",
                 "order.updated",
                 "menu.updated",
-                "item.updated"
+                "item.updated",
+                "reservation.created",
+                "reservation.updated",
+                "promotion.updated"
               ]
             }
           },
@@ -2697,7 +6190,7 @@
           "events": {
             "type": "array",
             "minItems": 1,
-            "maxItems": 4,
+            "maxItems": 7,
             "uniqueItems": true,
             "items": {
               "type": "string",
@@ -2705,7 +6198,10 @@
                 "order.created",
                 "order.updated",
                 "menu.updated",
-                "item.updated"
+                "item.updated",
+                "reservation.created",
+                "reservation.updated",
+                "promotion.updated"
               ]
             }
           },
@@ -3237,6 +6733,556 @@
             "description": "Cart preparation permission only; can_order remains authoritative for submission regardless of the preference."
           }
         }
+      },
+      "PromotionInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "code": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 3,
+            "maxLength": 40
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "percent",
+              "fixed",
+              "free_delivery",
+              "buy_x_get_y"
+            ]
+          },
+          "value": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100000000,
+            "description": "Percent: basis points (1000=10%, max10000). Fixed: currency minor units. Other kinds ignore this field."
+          },
+          "minimum_order": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "max_discount": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true
+          },
+          "fulfillments": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "pickup",
+                "delivery",
+                "dine_in"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 3,
+            "uniqueItems": true
+          },
+          "product_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 26,
+              "maxLength": 26
+            },
+            "nullable": true,
+            "maxItems": 100,
+            "uniqueItems": true
+          },
+          "buy_quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "reward_quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ends_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "usage_limit": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "value",
+          "minimum_order",
+          "fulfillments",
+          "buy_quantity",
+          "reward_quantity",
+          "active"
+        ]
+      },
+      "Promotion": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PromotionInput"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "public_id": {
+                "type": "string"
+              },
+              "used_count": {
+                "type": "integer"
+              }
+            }
+          }
+        ]
+      },
+      "WordpressBootstrap": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "type": "string"
+          },
+          "application_version": {
+            "type": "string"
+          },
+          "connection_id": {
+            "type": "string"
+          },
+          "abilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "public_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "timezone": {
+                  "type": "string"
+                },
+                "storefront_path": {
+                  "type": "string"
+                },
+                "commerce_settings": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "capabilities": {
+            "type": "object",
+            "properties": {
+              "payments": {
+                "type": "boolean"
+              },
+              "marketing_automation": {
+                "type": "boolean"
+              },
+              "mobile_apps": {
+                "type": "boolean"
+              },
+              "printing": {
+                "type": "boolean"
+              },
+              "promotions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "server_time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "WordpressQuote": {
+        "type": "object",
+        "properties": {
+          "subtotal": {
+            "type": "integer"
+          },
+          "delivery_fee": {
+            "type": "integer"
+          },
+          "discount": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "scheduled_for": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "promotion_snapshot": {
+            "type": "object",
+            "nullable": true
+          },
+          "binding": {
+            "type": "boolean"
+          }
+        }
+      },
+      "WordpressCheckoutResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CheckoutResult"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "integer"
+              },
+              "discount": {
+                "type": "integer"
+              },
+              "scheduled_for": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "WordpressTrackingInput": {
+        "type": "object",
+        "properties": {
+          "tracking_token": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "tracking_token"
+        ]
+      },
+      "WordpressReservationProof": {
+        "type": "object",
+        "properties": {
+          "reservation_token": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "reservation_token"
+        ]
+      },
+      "WordpressReservationTransition": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "rejected",
+              "cancelled",
+              "seated",
+              "completed",
+              "no_show"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "status",
+          "version"
+        ]
+      },
+      "WordpressCallback": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "order.created",
+                "order.updated",
+                "reservation.created",
+                "reservation.updated",
+                "menu.updated",
+                "item.updated",
+                "promotion.updated"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 7,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "url",
+          "enabled",
+          "events"
+        ]
+      },
+      "WordpressCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "menu_id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "modifier_group_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 20
+          }
+        },
+        "required": [
+          "menu_id",
+          "name"
+        ]
+      },
+      "WordpressModifier": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "is_required": {
+            "type": "boolean"
+          },
+          "allow_quantity": {
+            "type": "boolean"
+          },
+          "min_choices": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 20
+          },
+          "max_choices": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 20
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                "price": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "is_default": {
+                  "type": "boolean"
+                },
+                "max_quantity": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 50
+                },
+                "kitchen_name": {
+                  "type": "string",
+                  "nullable": true,
+                  "maxLength": 150
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 30
+          }
+        },
+        "required": [
+          "name",
+          "min_choices",
+          "max_choices",
+          "options"
+        ]
+      },
+      "WordpressEvents": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "event_id": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "payload": {
+                  "type": "object"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "next_cursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "delivery_semantics": {
+            "type": "string",
+            "enum": [
+              "at_least_once"
+            ]
+          }
+        }
+      },
+      "WordpressTableConnect": {
+        "type": "object",
+        "properties": {
+          "qr_token": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "qr_token"
+        ]
+      },
+      "WordpressGuestTableProof": {
+        "type": "object",
+        "properties": {
+          "table_session_token": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          },
+          "cursor": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "table_session_token"
+        ]
+      },
+      "CommunicationLog": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "inbound",
+              "outbound"
+            ]
+          },
+          "operation": {
+            "type": "string"
+          },
+          "http_status": {
+            "type": "integer",
+            "nullable": true
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "duration_ms": {
+            "type": "integer"
+          },
+          "event_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "attempt": {
+            "type": "integer"
+          },
+          "error_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
       }
     }
   },
@@ -3245,13 +7291,17 @@
       "order.created",
       "order.updated",
       "menu.updated",
-      "item.updated"
+      "item.updated",
+      "reservation.created",
+      "reservation.updated",
+      "promotion.updated"
     ],
     "headers": [
       "X-ZionFood-Event",
       "X-ZionFood-Delivery",
       "X-ZionFood-Timestamp",
-      "X-ZionFood-Signature"
+      "X-ZionFood-Signature",
+      "X-ZionFood-Request-ID"
     ],
     "signature": "sha256=HMAC_SHA256(secret, timestamp + \".\" + exact_request_body)",
     "delivery": "at least once; verify timestamp and deduplicate stable event IDs",

@@ -26,6 +26,7 @@ const featurePaths: Record<string, StaffFeature> = {
     '/menu': 'menu',
     '/ingredients': 'menu',
     '/menu-content': 'menu',
+    '/promotions': 'orders',
 };
 const mobile = ref(false);
 const dark = ref(document.documentElement.classList.contains('dark'));
@@ -60,6 +61,7 @@ const navGroups = computed(() =>
                           { name: t('nav_locations'), icon: 'pi-map-marker', path: '/locations' },
                           { name: t('restaurant_branding'), icon: 'pi-palette', path: '/branding' },
                           { name: t('general_title'), icon: 'pi-sliders-h', path: '/general-settings' },
+                          { name: t('promotions_title'), icon: 'pi-tag', path: '/promotions' },
                           { name: t('nav_schedule_delivery'), icon: 'pi-cog', path: '/settings' },
                       ],
                   },
@@ -70,6 +72,9 @@ const navGroups = computed(() =>
                           { name: t('mig_title'), icon: 'pi-file-import', path: '/migration-center' },
                           { name: t('integrations'), icon: 'pi-link', path: '/integrations' },
                           { name: t('webhooks'), icon: 'pi-send', path: '/webhooks' },
+                          ...(props.location?.restaurant.communication_logs_enabled
+                              ? [{ name: t('comm_title'), icon: 'pi-list', path: '/communication-logs' }]
+                              : []),
                       ],
                   },
               ]
@@ -90,6 +95,7 @@ const navGroups = computed(() =>
             ...group,
             items: group.items.filter(
                 (item) =>
+                    (item.path !== '/promotions' || capabilities.value?.orders === 'manage') &&
                     (item.path !== '/migration-center' || capabilities.value?.menu === 'manage') &&
                     (!featurePaths[item.path] || (capabilities.value?.[featurePaths[item.path]] ?? 'none') !== 'none'),
             ),
@@ -233,6 +239,9 @@ function switchLocation(id: string) {
                         <Link href="/admin" class="block p-3 text-brand">{{ $t('organizations') }}</Link>
                         <Link href="/admin/ingredients" class="block p-3 text-brand">{{
                             $t('ingredients_title')
+                        }}</Link>
+                        <Link href="/admin/communication-logs" class="block p-3 text-brand">{{
+                            $t('comm_title')
                         }}</Link>
                         <Link href="/admin/emails" class="block p-3 text-brand">{{ $t('mail_admin_title') }}</Link>
                         <Link href="/admin/email-alerts" class="block p-3 text-brand">{{ $t('alerts_title') }}</Link>

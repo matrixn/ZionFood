@@ -23,7 +23,7 @@ class OperationsController extends Controller
         app(TenantAccess::class)->requireFeature($request->user(), $context, $feature);
         $query = Order::where('organization_id', $context->organization_id)->where('location_id', $context->id)->with(['items.modifiers', 'history']);
         if ($feature === 'kitchen' || $request->boolean('active')) {
-            $query->whereNotIn('status', ['completed', 'rejected', 'cancelled']);
+            $query->whereNotIn('status', ['completed', 'rejected', 'cancelled'])->where(fn ($q) => $q->whereNull('scheduled_for')->orWhere('preparation_at', '<=', now()));
         }
 
         return OrderResource::collection($query->latest('id')->paginate(100));

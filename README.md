@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.34** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.35** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,18 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 30 octombrie 2026 — API pentru WordPress și operațiuni extinse · 0.0.35
+
+- [x] Chei WordPress dedicate restaurantului, cu locații/permisiuni, expirare, rotire și revocare din administrare.
+- [x] API pentru meniu, checkout, comenzi, KDS, rezervări, precomenzi, mese QR, promoții, statistici și recuperarea evenimentelor.
+- [x] Comenzi programate cu intervale/capacitate și timp de pregătire; activare separată pe locație.
+- [x] Precomandă pentru rezervare confirmată, cu dovadă privată; fără plăți.
+- [x] Promoții automate/cupoane: procent, sumă fixă, transport gratuit și buy X get Y, cu prețuri și limite validate pe server.
+- [x] Jurnal restaurant activat din setări; jurnal platformă cu filtre pentru toate restaurantele, fără chei sau datele clienților.
+- [x] Idempotency, snapshots, outbox, callbackuri semnate și retry controlat; contract [WordPress API](docs/WORDPRESS_API.md) și [raport capabilități](docs/WORDPRESS_CAPABILITIES.md).
+- [ ] Pluginul WordPress cu interfața client, shortcodes/blocuri și integrarea reală pe o instalare WordPress.
+- [ ] Plăți efective; marketing automat, aplicații mobile și imprimare în etape separate.
 
 ### 29 octombrie 2026 — bon de acces propriu la înregistrare · 0.0.34
 
@@ -350,7 +362,7 @@ Detaliile etapelor se găsesc în [CHANGELOG.md](CHANGELOG.md) și [istoricul ve
 - [ ] **Plăți efective** și onboarding la un furnizor. Meniul Plăți este momentan placeholder.
 - [ ] Politici pentru rezervări plătite: avans fix/rezervare, avans/persoană sau plata integrală a unui meniu/pachet, plus anulare/rambursare/no-show.
 - [ ] Flux complet de **catering/evenimente off-site**: dată, adresă, participanți, ofertare și execuție. Preferința opțională există deja în setup.
-- [ ] **Comenzi programate** și regulile lor de capacitate/fulfillment; există doar pregătirea preferinței.
+- [ ] Programare avansată: ore diferite pe serviciu, programe divizate/nocturne și sărbători. Comenzile programate și precomenzile simple sunt implementate prin API în 0.0.35.
 - [ ] Programe cu intervale multiple, peste miezul nopții, pe serviciu și pentru sărbători/excepții.
 - [ ] Combinarea meselor, legarea automată a rezervării de sesiunea QR și gestionarea comună a ocupării cu walk-in.
 - [ ] Alerte de rezervare pentru personal, SMS și webhooks dedicate rezervărilor.

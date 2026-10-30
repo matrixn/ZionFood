@@ -2,6 +2,7 @@
 
 namespace App\Domain\Reservations;
 
+use App\Models\OutboxMessage;
 use App\Models\Reservation;
 use App\Models\ReservationHistory;
 use App\Models\RestaurantLocation;
@@ -36,6 +37,7 @@ class CreateReservation
             $status = ($rules['confirmation'] ?? 'manual') === 'automatic' ? 'confirmed' : 'pending';
             $booking = Reservation::create([...$data, 'public_id' => (string) Str::ulid(), 'organization_id' => $location->organization_id, 'location_id' => $location->id, 'dining_table_id' => $table?->id, 'starts_at' => $start, 'ends_at' => $end, 'status' => $status, 'locale' => app()->getLocale(), 'hold_expires_at' => $status === 'pending' ? now()->addMinutes($rules['hold_minutes'] ?? 15) : null, 'cancellation_deadline' => $start->subHours($rules['cancellation_hours'] ?? 24), 'timezone' => $location->timezone, 'idempotency_key' => $key, 'request_hash' => $hash, 'token_hash' => hash('sha256', $token), 'token_encrypted' => Crypt::encryptString($token)]);
             ReservationHistory::create(['reservation_id' => $booking->id, 'to_status' => $status]);
+            OutboxMessage::create(['event_id' => (string) Str::ulid(), 'organization_id' => $booking->organization_id, 'location_id' => $booking->location_id, 'type' => 'reservation.created', 'payload' => ['reservation_id' => $booking->public_id, 'version' => $booking->version]]);
             if ($booking->guest_email) {
                 Notification::route('mail', $booking->guest_email)->notify(new ReservationNotification($booking->id, $booking->version));
             }

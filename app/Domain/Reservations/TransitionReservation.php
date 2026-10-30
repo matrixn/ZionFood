@@ -3,6 +3,7 @@
 namespace App\Domain\Reservations;
 
 use App\Domain\Tenancy\TenantAccess;
+use App\Models\OutboxMessage;
 use App\Models\Reservation;
 use App\Models\ReservationHistory;
 use App\Models\RestaurantLocation;
@@ -10,6 +11,7 @@ use App\Models\User;
 use App\Notifications\ReservationNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
 
 class TransitionReservation
 {
@@ -39,6 +41,7 @@ class TransitionReservation
             $old = $booking->status;
             $booking->update(['status' => $next, 'version' => $booking->version + 1, 'hold_expires_at' => null]);
             ReservationHistory::create(['reservation_id' => $booking->id, 'from_status' => $old, 'to_status' => $next, 'actor_id' => $actor?->id]);
+            OutboxMessage::create(['event_id' => (string) Str::ulid(), 'organization_id' => $booking->organization_id, 'location_id' => $booking->location_id, 'type' => 'reservation.updated', 'payload' => ['reservation_id' => $booking->public_id, 'version' => $booking->version]]);
             if ($booking->guest_email) {
                 Notification::route('mail', $booking->guest_email)->notify(new ReservationNotification($booking->id, $booking->version));
             }

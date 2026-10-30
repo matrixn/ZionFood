@@ -452,5 +452,19 @@
   "For this receipt, add :left and :right.": "Pentru acest bon, adună :left și :right.",
   "The access receipt expired or is invalid. Please complete a new one.": "Bonul de acces a expirat sau nu este valid. Completează un bon nou.",
   "That receipt does not match. Please try a new one.": "Răspunsul nu se potrivește cu bonul. Încearcă un bon nou.",
-  "Complete the ZionFood access receipt before creating your account.": "Confirmă bonul de acces ZionFood înainte de a crea contul."
+  "Complete the ZionFood access receipt before creating your account.": "Confirmă bonul de acces ZionFood înainte de a crea contul.",
+  "Reservation preorders are unavailable.": "Precomenzile pentru rezervări nu sunt disponibile.",
+  "Use a confirmed reservation and its private token.": "Folosește o rezervare confirmată și tokenul privat al acesteia.",
+  "This reservation already has an active preorder.": "Această rezervare are deja o precomandă neanulată sau finalizată.",
+  "The preorder time must match the reservation.": "Ora precomenzii trebuie să coincidă cu ora rezervării.",
+  "Scheduled orders are unavailable.": "Comenzile programate nu sunt disponibile.",
+  "Choose a future time within the allowed scheduling window.": "Alege o oră viitoare în intervalul permis pentru programare.",
+  "Choose a fifteen-minute scheduling slot.": "Alege un interval de programare din 15 în 15 minute.",
+  "The chosen time is outside opening hours.": "Ora aleasă este în afara programului locației.",
+  "The chosen scheduling slot is full.": "Intervalul ales a atins limita de comenzi programate.",
+  "Use a valid percentage in basis points or an integer amount. The limit is 100 percent.": "Introdu un procent valid în puncte de bază sau o sumă întreagă în bani. Limita procentuală este 100%.",
+  "This promotion is invalid, exhausted or not applicable to the basket.": "Promoția este invalidă, a atins limita de utilizări sau nu se aplică acestui coș.",
+  "Use a website address without credentials, query parameters or fragments.": "Folosește adresa site-ului fără parolă, parametri sau fragment.",
+  "Preparation has not started for this scheduled order.": "Încă nu a început intervalul de pregătire pentru această comandă programată.",
+  "HTTPS is required.": "Conexiunea HTTPS este obligatorie."
 }

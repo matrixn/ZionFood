@@ -1,4 +1,4 @@
-# Scope at 0.0.34
+# Scope at 0.0.35
 
 0.0.19 introduces a dish-first automatic generation workspace, combined AI tasks, approximate one-portion nutrition and durable live review notifications. It replaces the earlier manual reference calculator and retires the manual GloriaFood JSON metadata workflow. Published data remains local and requires review. Whole-menu GloriaFood migration, approved publication, reimport decisions and guarded rollback are implemented in 0.0.22; see MIGRATION_CENTER.md. Provider fidelity and estimation quality still require validation with a real authorized restaurant.
 
@@ -31,7 +31,7 @@
 
 ## Remaining before production launch
 
-- Implement catering/event fulfillment, scheduled fulfillment, split/overnight/per-service/holiday schedules and payment processing. Reservations and QR ordering are implemented and independently enabled per location.
+- Implement catering/event fulfillment, split/overnight/per-service/holiday schedules and payment processing. Reservations and QR ordering are implemented and independently enabled per location.
 
 - Complete Forge deployment and external DNS/TLS/mail configuration, including verified live subdomains.
 - Complete multi-restaurant/multi-location creation screens. Onboarding creates one of each; the schema and location switcher support multiple records.
@@ -98,3 +98,6 @@ Implemented local regression-tested repairs for restricted-manager operational s
 ## Registration verification at 0.0.34
 
 Implemented a local receipt CAPTCHA, numeric keypad, RO/EN feedback, accessible text alternative and server-bound expiring one-use proof. Ordinary signup requires it; proven staff invitations keep their direct flow. Existing email verification/rate/quota controls remain. This is a lightweight anti-automation layer, not proof against sophisticated bots; see REGISTRATION_CAPTCHA.md.
+
+
+0.0.35 prepares a dedicated WordPress API and restaurant-scoped credentials/logs. It adds opt-in scheduled pickup/delivery, confirmed-reservation preorders and four coupon/automatic promotion types with server pricing and capacity checks. The separate WordPress plugin, all-promotion-template parity, marketing/mobile/printing, real payments and production WordPress/network validation remain outstanding. See [WORDPRESS_CAPABILITIES.md](WORDPRESS_CAPABILITIES.md).

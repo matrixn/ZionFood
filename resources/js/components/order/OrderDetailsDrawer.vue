@@ -2,6 +2,8 @@
 import ZFDrawer from '@/components/ui/ZFDrawer.vue';
 import ZFStatusBadge from '@/components/ui/ZFStatusBadge.vue';
 import OrderTrackingTimeline from './OrderTrackingTimeline.vue';
+import { useLocationDates } from '@/lib/locationDates';
+const dates = useLocationDates();
 import { money } from '@/lib/http';
 import type { Order } from '@/types';
 import { computed, ref, watch } from 'vue';
@@ -51,6 +53,13 @@ const visible = defineModel<boolean>('visible', { required: true });
                 <strong>#{{ order.public_id.slice(-8) }}</strong
                 ><ZFStatusBadge :status="order.status" />
             </div>
+            <section v-if="order.scheduled_for" class="rounded-xl bg-violet-50 p-4 text-violet-950">
+                <strong>{{ $t('scheduled_order') }}</strong>
+                <p>{{ dates.dateTime(order.scheduled_for) }}</p>
+                <p v-if="order.preparation_at" class="text-sm">
+                    {{ $t('preparation_starts') }}: {{ dates.dateTime(order.preparation_at) }}
+                </p>
+            </section>
             <section
                 v-if="rejectionReason"
                 :aria-label="$t('reason_for_rejection')"
@@ -88,6 +97,9 @@ const visible = defineModel<boolean>('visible', { required: true });
                     + {{ mod.quantity ?? 1 }} × {{ mod.name }}
                 </p>
             </div>
+            <p v-if="order.discount" class="text-sm text-emerald-700">
+                {{ $t('promotion_discount') }}: −{{ money(order.discount, order.currency) }}
+            </p>
             <div class="flex justify-between font-semibold">
                 <span>{{ $t('total') }}</span
                 ><span>{{ money(order.total, order.currency) }}</span>

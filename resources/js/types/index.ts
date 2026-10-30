@@ -129,7 +129,16 @@ export interface DisplaySettings {
     show_description: boolean;
     show_product_images: boolean;
 }
+export interface CommerceSettings {
+    scheduled_orders_enabled: boolean;
+    reservation_preorders_enabled: boolean;
+    scheduling_notice_minutes: number;
+    scheduling_days: number;
+    preparation_minutes: number;
+    scheduled_orders_per_slot: number;
+}
 export interface Location {
+    commerce_settings?: CommerceSettings;
     ordering_settings?: { block_unavailable_online_orders: boolean };
     display_settings?: DisplaySettings;
     preferences_revision?: number;
@@ -157,6 +166,9 @@ export interface Location {
 export type OrderStatus =
     'pending' | 'accepted' | 'preparing' | 'ready' | 'out_for_delivery' | 'completed' | 'rejected' | 'cancelled';
 export interface Order {
+    scheduled_for?: string | null;
+    preparation_at?: string | null;
+    discount?: number;
     public_id: string;
     status: OrderStatus;
     version: number;
@@ -198,6 +210,7 @@ export interface WorkspaceProps {
 }
 
 export interface RestaurantBrand {
+    communication_logs_enabled?: boolean;
     name: string;
     slug: string;
     description?: string | null;

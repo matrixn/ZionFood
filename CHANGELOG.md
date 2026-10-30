@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.0.35 — 2026-10-30
+
+- Dedicated restaurant/location-scoped WordPress credentials with selectable abilities, expiry, safe rotation and revocation.
+- Versioned WordPress API for menu management, authoritative quotes/checkout, reservations, tables/QR, operations, promotions, analytics and event reconciliation.
+- Opt-in scheduled orders and confirmed-reservation preorders, slot capacity/notice/horizon and timed kitchen admission.
+- Four server-priced coupon/automatic promotion kinds with transactional usage limits and immutable discount snapshots.
+- Sanitized inbound/outbound communication journals, restaurant visibility setting and platform-wide filters; callback correlation and fresh credential/permission checks.
+- RO/EN management screens, FieldHelp, OpenAPI and explicit capability report. WordPress plugin, payments, marketing/mobile/printing remain separate.
+
 ## 0.0.34 — 2026-10-29
 
 - Added a local receipt-themed registration CAPTCHA with numeric keypad, visual confirmation and an accessible text alternative in RO/EN.

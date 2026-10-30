@@ -24,7 +24,7 @@ class IntegrationController extends Controller
     {
         $context = $this->context($request, $location);
 
-        return response()->json(['tokens' => $request->user()->tokens()->where('organization_id', $context->organization_id)->get(['id', 'name', 'abilities', 'last_used_at', 'expires_at', 'created_at'])]);
+        return response()->json(['tokens' => $request->user()->tokens()->whereNull('wordpress_connection_id')->where('organization_id', $context->organization_id)->get(['id', 'name', 'abilities', 'last_used_at', 'expires_at', 'created_at'])]);
     }
 
     public function store(Request $request, string $location)
@@ -40,7 +40,7 @@ class IntegrationController extends Controller
     public function destroy(Request $request, string $location, int $token)
     {
         $context = $this->context($request, $location);
-        $request->user()->tokens()->where('organization_id', $context->organization_id)->findOrFail($token)->delete();
+        $request->user()->tokens()->whereNull('wordpress_connection_id')->where('organization_id', $context->organization_id)->findOrFail($token)->delete();
 
         return response()->noContent();
     }

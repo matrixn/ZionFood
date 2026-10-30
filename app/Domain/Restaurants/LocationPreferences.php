@@ -2,6 +2,7 @@
 
 namespace App\Domain\Restaurants;
 
+use App\Domain\Orders\CommerceSettings;
 use App\Domain\Tenancy\TenantAccess;
 use App\Models\RestaurantLocation;
 use App\Models\User;
@@ -32,11 +33,22 @@ class LocationPreferences
             }
         }
         $rules['block_unavailable_online_orders'] = 'sometimes|boolean';
+        foreach (CommerceSettings::DEFAULTS as $key => $default) {
+            $rules[$key] = is_bool($default) ? 'sometimes|boolean' : 'sometimes|integer|between:1,1440';
+        }
+        $rules['scheduling_days'] = 'sometimes|integer|between:1,90';
+        $rules['communication_logs_enabled'] = 'sometimes|boolean';
         $data = Validator::make($input, $rules)->validate();
+        if (array_filter(array_intersect_key($data, CommerceSettings::DEFAULTS), fn ($v, $k) => $v !== ($location->commerce_settings[$k] ?? null), ARRAY_FILTER_USE_BOTH)) {
+            app(TenantAccess::class)->requireFeature($actor, $location, 'orders', true);
+        }
         DB::transaction(function () use ($location, $data) {
             $locked = RestaurantLocation::whereKey($location->id)->lockForUpdate()->firstOrFail();
             abort_unless($locked->preferences_revision === $data['revision'], 409);
-            $locked->update(['preferences' => [...array_intersect_key($data, self::DEFAULTS), 'block_unavailable_online_orders' => (bool) ($data['block_unavailable_online_orders'] ?? ($locked->preferences['block_unavailable_online_orders'] ?? true))], 'preferences_revision' => $locked->preferences_revision + 1]);
+            $locked->update(['preferences' => [...($locked->preferences ?? []), ...array_intersect_key($data, CommerceSettings::DEFAULTS), ...array_intersect_key($data, self::DEFAULTS), 'block_unavailable_online_orders' => (bool) ($data['block_unavailable_online_orders'] ?? ($locked->preferences['block_unavailable_online_orders'] ?? true))], 'preferences_revision' => $locked->preferences_revision + 1]);
+            if (array_key_exists('communication_logs_enabled', $data)) {
+                $locked->restaurant->update(['communication_logs_enabled' => $data['communication_logs_enabled']]);
+            }
         });
     }
 

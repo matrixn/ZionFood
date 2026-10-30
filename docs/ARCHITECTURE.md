@@ -1,4 +1,4 @@
-# ZionFood 0.0.34
+# ZionFood 0.0.35
 
 Menu metadata uses validated v2 content, encrypted combined AI proposals and source-hash publication guards. Automatic one-portion nutrition is explicitly estimated, normalized server-side and reviewed before publication. Durable recipient notifications plus private ID-only Reverb invalidations/background polling deliver results across workspace pages. Platform provider settings, shared-menu authorization and the global quota remain authoritative. The manual GloriaFood metadata adapter and manual recipe calculator were retired; whole-menu Migration Center is implemented separately with encrypted staging, approved version publication and guarded rollback (see MIGRATION_CENTER.md). See [MENU_CONTENT.md](MENU_CONTENT.md).
 
@@ -161,3 +161,10 @@ SaveLocationSettings owns the transactional legacy settings write. AuthorizeOrde
 ## Registration receipt verification (0.0.34)
 
 RegistrationCaptcha owns session-bound, short-lived, one-use challenge/proof state in shared Redis, using HMAC answer storage and atomic consumption. RegistrationChallengeImage generates a bounded PNG with existing GD; no third-party service is called. CreateNewUser consumes a proof after ordinary field validation and before account-mail admission or user creation. Valid PendingStaffInvitation proof bypasses only this extra challenge. AccountRequestAdmission keeps a separate IP submission throttle; reset/resend admission is unchanged. See REGISTRATION_CAPTCHA.md for endpoints, accessibility alternatives and anti-automation limits. No dependency or schema changes.
+
+
+## WordPress contract and scheduled commerce (0.0.35)
+
+Dedicated WordPress connections bind Sanctum credentials to one restaurant, explicit locations and abilities. Fresh membership/module checks supplement token scopes, including legacy API access; browser-only credential lifecycle preserves issuer/owner control. The WordPress API reuses domain checkout/reservation/table/menu actions. API mutation receipts use a connection lock, canonical hashes, encrypted bounded responses and retained conflict markers. Only metadata is journaled; restaurant visibility and platform administration are separate. See [WORDPRESS_API.md](WORDPRESS_API.md).
+
+PriceOrder centralizes authoritative basket/zone calculation. ApplyPromotion selects one eligible server-priced discount and consumes its shared limit inside the checkout transaction; orders preserve immutable discount snapshots. ResolveFulfillmentTime validates opt-in, timezone/notice/horizon/hours/capacity and confirmed reservation proof under the locked location. Future orders are omitted from active kitchen feeds until preparation time; an idempotent minute scheduler emits due invalidations. Payment processing remains absent. [Capability report](WORDPRESS_CAPABILITIES.md) records implemented and deferred behavior.

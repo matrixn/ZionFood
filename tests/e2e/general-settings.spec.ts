@@ -1,7 +1,9 @@
 import { test, expect as baseExpect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 const expect = baseExpect.configure({ timeout: 20000 });
-const account = JSON.parse(readFileSync('storage/app/private/browser-services.json', 'utf8'));
+const account = JSON.parse(
+    readFileSync(process.env.ZF_SERVICES_FIXTURE ?? 'storage/app/private/browser-services.json', 'utf8'),
+);
 test('location formats and public display settings save inside the setup wizard on mobile', async ({ page }) => {
     test.setTimeout(90000);
     const errors: string[] = [];

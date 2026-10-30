@@ -25,5 +25,19 @@
     "Configure an API key before enabling menu AI.": "Configure an API key before enabling menu AI.",
     "AI nutritional values must remain labelled as estimates.": "AI nutritional values must remain labelled as estimates.",
     "The nutritional estimate is inconsistent. Please generate it again.": "The nutritional estimate is inconsistent. Please generate it again.",
-    "AI estimate based on the supplied ingredients and portion weight.": "AI estimate based on the supplied ingredients and portion weight."
+    "AI estimate based on the supplied ingredients and portion weight.": "AI estimate based on the supplied ingredients and portion weight.",
+    "Reservation preorders are unavailable.": "Reservation preorders are unavailable.",
+    "Use a confirmed reservation and its private token.": "Use a confirmed reservation and its private token.",
+    "This reservation already has an active preorder.": "This reservation already has an active preorder.",
+    "The preorder time must match the reservation.": "The preorder time must match the reservation.",
+    "Scheduled orders are unavailable.": "Scheduled orders are unavailable.",
+    "Choose a future time within the allowed scheduling window.": "Choose a future time within the allowed scheduling window.",
+    "Choose a fifteen-minute scheduling slot.": "Choose a fifteen-minute scheduling slot.",
+    "The chosen time is outside opening hours.": "The chosen time is outside opening hours.",
+    "The chosen scheduling slot is full.": "The chosen scheduling slot is full.",
+    "Use a valid percentage in basis points or an integer amount. The limit is 100 percent.": "Use a valid percentage in basis points or an integer amount. The limit is 100 percent.",
+    "This promotion is invalid, exhausted or not applicable to the basket.": "This promotion is invalid, exhausted or not applicable to the basket.",
+    "Use a website address without credentials, query parameters or fragments.": "Use a website address without credentials, query parameters or fragments.",
+    "Preparation has not started for this scheduled order.": "Preparation has not started for this scheduled order.",
+    "HTTPS is required.": "HTTPS is required."
 }

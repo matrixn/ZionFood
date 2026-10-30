@@ -4,8 +4,10 @@ use App\Domain\Integrations\Actions\DeliverOutboxMessage;
 use App\Domain\Mail\EmailLedger;
 use App\Domain\Mail\IndexQueuedEmails;
 use App\Domain\Marketing\LandingSeo;
+use App\Domain\Orders\ReleaseScheduledOrders;
 use App\Jobs\DeliverOutbox;
 use App\Jobs\DeliverWebhook;
+use App\Models\CommunicationLog;
 use App\Models\EmailDelivery;
 use App\Models\ImportBatch;
 use App\Models\OutboxMessage;
@@ -17,6 +19,7 @@ use App\Models\WebhookDelivery;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schedule;
+use Illuminate\Support\Str;
 
 Artisan::command('zionfood:outbox', function () {
     app(DeliverOutboxMessage::class)->due()->orderBy('id')->chunkById(100, function ($messages) {
@@ -58,6 +61,7 @@ Artisan::command('zionfood:reservations-expire', function () {
                 }
                 $booking->update(['status' => 'expired', 'version' => $booking->version + 1]);
                 ReservationHistory::create(['reservation_id' => $booking->id, 'from_status' => 'pending', 'to_status' => 'expired']);
+                OutboxMessage::create(['event_id' => (string) Str::ulid(), 'organization_id' => $booking->organization_id, 'location_id' => $booking->location_id, 'type' => 'reservation.updated', 'payload' => ['reservation_id' => $booking->public_id, 'version' => $booking->version]]);
             }, 3);
         }
     });
@@ -131,3 +135,11 @@ Artisan::command('zionfood:seo-check', function () {
 
     return $ro['ready'] && $en['ready'] && str_starts_with($ro['robots'], 'index') ? 0 : 1;
 });
+
+Schedule::call(fn () => app(ReleaseScheduledOrders::class)->execute())->name('release-scheduled-orders')->everyMinute()->withoutOverlapping();
+Schedule::call(function () {
+    CommunicationLog::where('created_at', '<', now()->subDays(config('wordpress.log_retention_days')))->delete();
+    // Keep request hashes longer than encrypted response bodies so a stale retry cannot recreate a mutation.
+    DB::table('wordpress_requests')->where('expires_at', '<', now())->whereNotNull('response')->update(['response' => null]);
+    DB::table('wordpress_requests')->where('created_at', '<', now()->subDays(config('wordpress.request_retention_days')))->delete();
+})->name('prune-wordpress-communications')->daily()->withoutOverlapping();

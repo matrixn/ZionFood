@@ -8,6 +8,9 @@ use App\Http\Controllers\OperationsController;
 use App\Http\Controllers\PublicOrderingController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\WordpressApiController;
+use App\Http\Middleware\AuthenticateWordpress;
+use App\Http\Middleware\WordpressIdempotency;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -40,5 +43,41 @@ Route::prefix('v1')->group(function () {
         Route::get('locations/{location}/menu', [MenuController::class, 'show']);
         Route::post('locations/{location}/items', [MenuController::class, 'store']);
         Route::put('items/{item}', [MenuController::class, 'update']);
+    });
+});
+
+Route::prefix('v1/wordpress')->middleware(['auth:sanctum', 'verified', AuthenticateWordpress::class, 'throttle:wordpress'])->group(function () {
+    $controller = WordpressApiController::class;
+    Route::get('bootstrap', [$controller, 'bootstrap']);
+    Route::prefix('locations/{location}')->group(function () use ($controller) {
+        foreach (['menu' => 'menu', 'availability' => 'availability', 'schedule-slots' => 'slots', 'reservation-slots' => 'reservationSlots', 'orders' => 'orders', 'kitchen' => 'kitchen', 'reservations' => 'reservations', 'tables' => 'tables', 'editable-menu' => 'editableMenu', 'promotions' => 'promotions', 'analytics' => 'analytics', 'events' => 'events'] as $path => $method) {
+            Route::get($path, [$controller, $method]);
+        }
+        Route::get('orders/{order}', [$controller, 'order']);
+        Route::get('reservations/{reservation}', [$controller, 'reservation']);
+        Route::get('promotions/{promotion}', [$controller, 'promotion']);
+        Route::get('tables/{table}/orders', [$controller, 'tableOrders']);
+        Route::post('quote', [$controller, 'quote']);
+        Route::post('orders/{order}/track', [$controller, 'trackOrder']);
+        Route::post('reservations/{reservation}/track', [$controller, 'reservationTrack']);
+        Route::post('tables/{table}/active-orders', [$controller, 'guestTableOrders']);
+        Route::middleware(WordpressIdempotency::class)->group(function () use ($controller) {
+            Route::post('checkout', [$controller, 'checkout']);
+            Route::post('reservations', [$controller, 'reserve']);
+            Route::post('reservations/{reservation}/cancel', [$controller, 'reservationCancel']);
+            Route::patch('reservations/{reservation}/status', [$controller, 'reservationStatus']);
+            Route::patch('orders/{order}/status', [$controller, 'orderStatus']);
+            Route::post('tables/{table}/connect', [$controller, 'tableConnect']);
+            Route::post('tables/{table}/orders/{order}/served', [$controller, 'tableServe']);
+            Route::post('tables/{table}/{operation}', [$controller, 'tableOperation'])->whereIn('operation', ['open', 'close', 'rotate']);
+            Route::post('categories', [$controller, 'category']);
+            Route::post('modifiers', [$controller, 'modifier']);
+            Route::post('items', [$controller, 'createItem']);
+            Route::put('items/{item}', [$controller, 'updateItem']);
+            Route::delete('items/{item}', [$controller, 'deleteItem']);
+            Route::post('promotions', [$controller, 'savePromotion']);
+            Route::put('promotions/{promotion}', [$controller, 'savePromotion']);
+            Route::put('callback', [$controller, 'callback']);
+        });
     });
 });

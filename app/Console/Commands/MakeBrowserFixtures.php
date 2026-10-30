@@ -26,7 +26,7 @@ use Illuminate\Support\Str;
 
 class MakeBrowserFixtures extends Command
 {
-    protected $signature = 'zionfood:browser-fixtures {--security : Prepare an owner and restricted manager without sending email} {--availability : Prepare closed-location ordering fixtures without sending email} {--email-ledger : Prepare local outgoing-email metadata without sending email} {--admin : Create a separate local platform-admin browser fixture} {--services : Prepare a separate restaurant for reservation and QR browser tests} {--storefront : Prepare a photo menu and polygon for storefront UX tests} {--invitation : Prepare a separate unaccepted staff invitation without sending email} {--permissions : Prepare staff permissions and table-room browser fixtures} {--overview : Prepare isolated analytics samples without notifications} {--closed-window : Prepare an empty ordering schedule for availability tests}';
+    protected $signature = 'zionfood:browser-fixtures {--wordpress : Prepare WordPress integration fixtures} {--security : Prepare an owner and restricted manager without sending email} {--availability : Prepare closed-location ordering fixtures without sending email} {--email-ledger : Prepare local outgoing-email metadata without sending email} {--admin : Create a separate local platform-admin browser fixture} {--services : Prepare a separate restaurant for reservation and QR browser tests} {--storefront : Prepare a photo menu and polygon for storefront UX tests} {--invitation : Prepare a separate unaccepted staff invitation without sending email} {--permissions : Prepare staff permissions and table-room browser fixtures} {--overview : Prepare isolated analytics samples without notifications} {--closed-window : Prepare an empty ordering schedule for availability tests}';
 
     protected $description = 'Create a private local-only browser test account without changing existing users';
 
@@ -129,6 +129,7 @@ class MakeBrowserFixtures extends Command
             return $account;
         });
         $file = match (true) {
+            (bool) $this->option('wordpress') => 'browser-wordpress.json',
             (bool) $this->option('security') => 'browser-security.json',
             (bool) $this->option('availability') => 'browser-availability.json',
             (bool) $this->option('overview') => 'browser-overview.json',

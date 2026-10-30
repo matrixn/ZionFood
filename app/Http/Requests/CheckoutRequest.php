@@ -11,11 +11,14 @@ class CheckoutRequest extends FormRequest
         return true;
     }
 
-    public static function constraints(): array
+    public static function constraints(array $input = []): array
     {
         return [
             'customer_name' => ['required', 'string', 'max:150'], 'customer_phone' => ['required', 'string', 'max:30'],
-            'fulfillment' => ['required', 'in:pickup,delivery,dine_in'], 'table_session_token' => ['required_if:fulfillment,dine_in', 'nullable', 'string', 'size:64'], 'delivery_address' => ['required_if:fulfillment,delivery', 'nullable', 'string', 'max:500'],
+            'fulfillment' => ['required', 'in:pickup,delivery,dine_in'], 'table_session_token' => [empty($input['reservation_id']) ? 'required_if:fulfillment,dine_in' : 'nullable', 'nullable', 'string', 'size:64'], 'delivery_address' => ['required_if:fulfillment,delivery', 'nullable', 'string', 'max:500'],
+            'scheduled_for' => ['nullable', 'date', 'regex:/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})$/'],
+            'reservation_id' => ['nullable', 'required_with:reservation_token', 'ulid'], 'reservation_token' => ['nullable', 'required_with:reservation_id', 'string', 'size:64'],
+            'promotion_code' => ['nullable', 'string', 'max:40', 'regex:/^[A-Za-z0-9_-]+$/'],
             'postal_code' => ['nullable', 'string', 'max:20'], 'delivery_zone_id' => ['nullable', 'integer'],
             'delivery_latitude' => ['nullable', 'numeric', 'between:-85,85', 'required_with:delivery_longitude'], 'delivery_longitude' => ['nullable', 'numeric', 'between:-180,180', 'required_with:delivery_latitude'],
             'notes' => ['nullable', 'string', 'max:1000'], 'items' => ['required', 'array', 'min:1', 'max:50'],
@@ -28,6 +31,6 @@ class CheckoutRequest extends FormRequest
 
     public function rules(): array
     {
-        return self::constraints();
+        return self::constraints($this->all());
     }
 }

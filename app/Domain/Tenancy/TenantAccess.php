@@ -6,6 +6,7 @@ use App\Models\LocationStaff;
 use App\Models\OrganizationMembership;
 use App\Models\RestaurantLocation;
 use App\Models\User;
+use App\Models\WordpressConnection;
 use Illuminate\Auth\Access\AuthorizationException;
 use Laravel\Sanctum\TransientToken;
 
@@ -27,6 +28,14 @@ class TenantAccess
 
     public function canOperate(User $user, RestaurantLocation $location): bool
     {
+        $token = $user->currentAccessToken();
+        if ($token && ! $token instanceof TransientToken && $token->wordpress_connection_id) {
+            $connection = WordpressConnection::whereKey($token->wordpress_connection_id)->where('active', true)->first();
+            if (! $connection || ! $this->canManage($user, $location->organization_id) || (int) $connection->restaurant_id !== (int) $location->restaurant_id || ! in_array($location->id, $connection->location_ids, true)) {
+                return false;
+            }
+        }
+
         return $this->canManage($user, $location->organization_id) ||
             ($this->role($user, $location->organization_id) === 'staff' && LocationStaff::where('organization_id', $location->organization_id)->where('location_id', $location->id)->where('user_id', $user->id)->exists());
     }
@@ -78,6 +87,10 @@ class TenantAccess
     {
         $locations = RestaurantLocation::where('organization_id', $organization)->whereHas('menus', fn ($query) => $query->where('menus.id', $menu))->get();
         if ($locations->isEmpty()) {
+            if (($token = $user->currentAccessToken()) && ! $token instanceof TransientToken && $token->wordpress_connection_id) {
+                return false;
+            }
+
             return $this->canManage($user, $organization) && $this->canFeatureInOrganization($user, $organization, 'menu', $write);
         }
 
