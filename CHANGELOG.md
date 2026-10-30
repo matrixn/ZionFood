@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.37 — 2026-10-31
+
+- Keep authentication form help available without adding Tab stops before each field; associate persistent screen-reader descriptions with auth and CAPTCHA inputs.
+- Preserve registration passwords after validation errors and clear them after successful registration, retaining existing login/reset error cleanup and server-side password flash exclusions.
+- Add adjacent external press-and-hold password reveal controls for mouse, touch and F2 keyboard use, with immediate masking on release, pointer leave/cancellation, blur, visibility changes and submission.
+
 ## 0.0.36 — 2026-10-30
 
 - Add Romanian/English No expiry selection for WordPress credentials using expires_in_days=0 and a null Sanctum expires_at.

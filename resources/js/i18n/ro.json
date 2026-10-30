@@ -1582,5 +1582,8 @@
     "promotion_discount": "Reducere promoție",
     "locations": "Locații",
     "restaurant": "Restaurant",
-    "wp_no_expiry": "Nedeterminat"
+    "wp_no_expiry": "Nedeterminat",
+    "hold_to_reveal_password": "Ține apăsat pentru a vedea parola",
+    "hold_to_reveal_confirmation": "Ține apăsat pentru a vedea confirmarea parolei",
+    "password_reveal_help": "Ține apăsat butonul alăturat pentru a vedea parola. Se ascunde imediat când îi dai drumul sau ieși de pe buton. Cu tastatura, ține apăsat F2 în câmp."
 }

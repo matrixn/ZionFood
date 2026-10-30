@@ -77,6 +77,19 @@ it('does not burn a proof on ordinary field validation errors', function () {
     expect(User::count())->toBe(1);
 });
 
+it('lets registration correct a duplicate email with the same proof without flashing passwords', function () {
+    Notification::fake();
+    User::factory()->create(['email' => 'receipt@example.test']);
+    $proof = registrationCaptchaData($this);
+    $this->post('/register', captchaRegistration($proof))
+        ->assertSessionHasErrors('email')
+        ->assertSessionMissing('_old_input.password')
+        ->assertSessionMissing('_old_input.password_confirmation')
+        ->assertSessionMissing('_old_input.captcha_proof');
+    $this->post('/register', captchaRegistration([...$proof, 'email' => 'corrected@example.test']))->assertRedirect('/app');
+    expect(User::count())->toBe(2);
+});
+
 it('consumes a wrong answer and rejects replays even with the correct answer afterwards', function () {
     [$challenge, $answer] = accessibleReceipt($this);
     $data = ['challenge_id' => $challenge['id'], 'captcha_answer' => (string) ((int) $answer + 1)];

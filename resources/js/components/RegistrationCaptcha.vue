@@ -139,9 +139,15 @@ defineExpose({ renew });
                         draggable="false"
                     />
                     <p v-else class="receipt-question" data-testid="captcha-question">{{ challenge.prompt }}</p>
-                    <ZFFormField :label="$t('captcha_answer')" for="captcha-answer" :help="$t('captcha_help')">
+                    <ZFFormField
+                        :label="$t('captcha_answer')"
+                        for="captcha-answer"
+                        :help="$t('captcha_help')"
+                        :help-tabbable="false"
+                    >
                         <InputText
                             id="captcha-answer"
+                            aria-describedby="captcha-answer-help"
                             :model-value="answer"
                             :aria-label="$t('captcha_answer')"
                             :maxlength="challenge.max_digits"

@@ -2,7 +2,10 @@
 import { computed, ref, useId } from 'vue';
 import { fieldHelp } from '@/lib/fieldHelp';
 import { tr as t } from '@/i18n';
-const props = defineProps<{ label?: string; field?: string; text?: string; kind?: string }>();
+const props = withDefaults(
+    defineProps<{ label?: string; field?: string; text?: string; kind?: string; tabbable?: boolean }>(),
+    { label: undefined, field: undefined, text: undefined, kind: undefined, tabbable: true },
+);
 const id = useId();
 const visible = ref(false);
 const position = ref({ left: '0px', top: '0px' });
@@ -23,6 +26,7 @@ function show() {
         <button
             type="button"
             class="field-help-trigger"
+            :tabindex="tabbable === false ? -1 : undefined"
             :aria-label="t('field_info', { field: label || t('field_value') })"
             :aria-describedby="visible ? id : undefined"
             @focus="show"

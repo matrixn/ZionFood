@@ -1582,5 +1582,8 @@
     "promotion_discount": "Promotion discount",
     "locations": "Locations",
     "restaurant": "Restaurant",
-    "wp_no_expiry": "No expiry"
+    "wp_no_expiry": "No expiry",
+    "hold_to_reveal_password": "Hold to reveal password",
+    "hold_to_reveal_confirmation": "Hold to reveal password confirmation",
+    "password_reveal_help": "Hold the adjacent button to reveal the password. It is hidden as soon as you release or leave the button. With a keyboard, hold F2 while in the field."
 }

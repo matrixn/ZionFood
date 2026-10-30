@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.36** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.37** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,12 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 31 octombrie 2026 — înregistrare și afișarea temporară a parolelor · 0.0.37
+
+- [x] Navigare cu Tab/Shift+Tab direct între câmpurile de autentificare și înregistrare, inclusiv răspunsul CAPTCHA; tooltipurile rămân disponibile la hover, cu explicații asociate câmpurilor pentru cititoarele de ecran.
+- [x] Parola și confirmarea se păstrează în formular după o eroare de validare la înregistrare, inclusiv email deja folosit, pentru a corecta doar datele greșite. Parolele nu se salvează în datele vechi ale sesiunii de pe server.
+- [x] Butoane de afișare temporară alipite în exteriorul câmpurilor de parolă, cu loc separat pentru iconițele managerelor de parole. Afișare cât timp ții apăsat, inclusiv prin F2 din câmp; mascarea revine la eliberare, ieșirea de pe buton sau pierderea focalizării.
 
 ### 30 octombrie 2026 — chei WordPress fără expirare · 0.0.36
 
