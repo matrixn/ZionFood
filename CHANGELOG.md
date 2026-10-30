@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.36 — 2026-10-30
+
+- Add Romanian/English No expiry selection for WordPress credentials using expires_in_days=0 and a null Sanctum expires_at.
+- Preserve bounded rotation grace and revocation for non-expiring keys; existing finite options and schema remain unchanged.
+
 ## 0.0.35 — 2026-10-30
 
 - Dedicated restaurant/location-scoped WordPress credentials with selectable abilities, expiry, safe rotation and revocation.

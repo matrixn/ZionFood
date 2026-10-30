@@ -1,10 +1,10 @@
-# Raport capabilități WordPress API — 0.0.35
+# Raport capabilități WordPress API — 0.0.36
 
-Acest commit pregătește backendul ZionFood pentru pluginul WordPress care urmează. Comparația folosește descrierile oficiale [GloriaFood din WordPress.org](https://wordpress.org/plugins/menu-ordering-reservations/) și [pagina pluginului](https://www.gloriafood.com/wordpress-restaurant-plugin). Importul integral din GloriaFood existent rămâne documentat separat în [Migration Center](MIGRATION_CENTER.md).
+Backendul ZionFood este pregătit pentru pluginul WordPress care urmează. Comparația folosește descrierile oficiale [GloriaFood din WordPress.org](https://wordpress.org/plugins/menu-ordering-reservations/) și [pagina pluginului](https://www.gloriafood.com/wordpress-restaurant-plugin). Importul integral din GloriaFood existent rămâne documentat separat în [Migration Center](MIGRATION_CENTER.md).
 
 | Capabilitate | Livrat în API / aplicație | Limită explicită |
 | --- | --- | --- |
-| Conectare restaurant | Chei Sanctum, locații și permisiuni selectate, expirare, rotire, revocare | Cheia se păstrează exclusiv în backendul viitorului plugin |
+| Conectare restaurant | Chei Sanctum, locații și permisiuni selectate, valabilitate limitată sau nedeterminată, rotire, revocare | Cheia se păstrează exclusiv în backendul viitorului plugin |
 | Meniu digital | Branding, imagini, categorii, produse, gramaj/ingrediente, variante, alergeni/etichete/nutriție/traduceri salvate | AI și Migration Center se folosesc în panoul ZionFood; nu se pretinde o automatizare nouă în WordPress |
 | Configurare meniu | Citire structură editabilă, produse CRUD și imagini, categorii, modificatori și opțiuni | Drepturi peste toate locațiile unui meniu comun; modificatorii păstrează protecția la nivel de organizație |
 | Ridicare/livrare | Coș/quote și checkout cu prețuri server, zone poligonale/poștale, taxe și minime | UI-ul coșului în WordPress urmează; nu sunt implementate ore distincte pickup/delivery, programe de sărbători sau peste miezul nopții |

@@ -409,3 +409,27 @@ it('stops dedicated credentials on legacy routes after the issuer becomes staff'
     $this->withToken($issued['token'])->getJson('/api/v1/locations/'.$l->public_id.'/orders')->assertForbidden();
     $this->getJson(wpUrl($l, 'orders'))->assertForbidden();
 });
+
+it('issues non-expiring keys while retaining rotation grace and revocation', function () {
+    [$owner, $l] = tenantFixture();
+    $this->actingAs($owner)->postJson('/app/locations/'.$l->public_id.'/wordpress-connections', ['name' => 'Permanent WordPress', 'site_url' => 'https://restaurant.example', 'location_ids' => [$l->id], 'abilities' => ['storefront:read'], 'expires_in_days' => 0])->assertCreated()->assertJsonPath('expires_at', null);
+    $connection = WordpressConnection::firstOrFail();
+    $old = PersonalAccessToken::where('wordpress_connection_id', $connection->id)->firstOrFail();
+    expect($old->expires_at)->toBeNull()->and((int) $connection->expires_in_days)->toBe(0);
+    // Reissue through the lifecycle action to obtain a new plaintext bearer for the actual authentication checks.
+    $issued = app(ManageWordpressConnection::class)->rotate($owner, $connection);
+    expect($issued['expires_at'])->toBeNull()->and($old->fresh()->expires_at->equalTo(now()->addMinutes(15)))->toBeTrue();
+    $this->travel(10)->years();
+    $this->app['auth']->forgetGuards();
+    $this->withToken($issued['token'])->getJson('/api/v1/wordpress/bootstrap')->assertOk();
+    $rotated = app(ManageWordpressConnection::class)->rotate($owner, $connection);
+    expect($rotated['expires_at'])->toBeNull();
+    $this->travel(16)->minutes();
+    $this->app['auth']->forgetGuards();
+    $this->withToken($issued['token'])->getJson('/api/v1/wordpress/bootstrap')->assertUnauthorized();
+    $this->app['auth']->forgetGuards();
+    $this->withToken($rotated['token'])->getJson('/api/v1/wordpress/bootstrap')->assertOk();
+    app(ManageWordpressConnection::class)->revoke($owner, $connection);
+    $this->app['auth']->forgetGuards();
+    $this->getJson('/api/v1/wordpress/bootstrap')->assertUnauthorized();
+});

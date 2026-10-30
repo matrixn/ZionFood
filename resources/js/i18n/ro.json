@@ -1510,8 +1510,8 @@
     "wp_name_help": "Un nume ușor de recunoscut pentru această instalare WordPress.",
     "wp_locations_help": "Cheia are acces doar la locațiile selectate ale acestui restaurant.",
     "wp_scopes_help": "Acordă doar permisiunile necesare. storefront:read citește meniul public; checkout:write permite comenzi; celelalte module se activează explicit.",
-    "wp_expiry": "Valabilitate (zile)",
-    "wp_expiry_help": "Cheia expiră automat. Rotește cheia înainte de expirare.",
+    "wp_expiry": "Valabilitate cheie",
+    "wp_expiry_help": "Alege 30, 90, 180 sau 365 de zile ori Nedeterminat. O cheie fără expirare rămâne validă până la revocare sau rotire; la rotire, cheia veche mai funcționează maximum 15 minute.",
     "wp_generate": "Generează cheia WordPress",
     "wp_active": "Activă",
     "wp_revoked": "Dezactivată",
@@ -1581,5 +1581,6 @@
     "preparation_starts": "Pregătirea începe",
     "promotion_discount": "Reducere promoție",
     "locations": "Locații",
-    "restaurant": "Restaurant"
+    "restaurant": "Restaurant",
+    "wp_no_expiry": "Nedeterminat"
 }

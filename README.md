@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.35** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.36** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,11 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 30 octombrie 2026 — chei WordPress fără expirare · 0.0.36
+
+- [x] Opțiunea „Nedeterminat” în selectorul de valabilitate, cu explicații în română și engleză.
+- [x] Chei fără expirare automată; rotirea păstrează opțiunea și limitează cheia veche la maximum 15 minute, iar revocarea continuă să funcționeze.
 
 ### 30 octombrie 2026 — API pentru WordPress și operațiuni extinse · 0.0.35
 

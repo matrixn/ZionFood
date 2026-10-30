@@ -28,7 +28,13 @@ test('WordPress key issuance, real local API call, restaurant logs and revocatio
     await section
         .getByRole('textbox', { name: 'Adresa site-ului WordPress', exact: true })
         .fill('https://restaurant.example');
+    await section.getByRole('combobox', { name: 'Valabilitate cheie', exact: true }).click();
+    await page.getByRole('option', { name: 'Nedeterminat', exact: true }).click();
+    const issuance = page.waitForResponse(
+        (response) => response.url().endsWith('/wordpress-connections') && response.request().method() === 'POST',
+    );
     await section.getByRole('button', { name: 'Generează cheia WordPress', exact: true }).click();
+    expect((await (await issuance).json()).expires_at).toBeNull();
     const token = page.getByTestId('wp-token');
     await expect(token).toBeVisible();
     const apiKey = (await token.textContent())!.trim();
@@ -104,6 +110,14 @@ test('WordPress key issuance, real local API call, restaurant logs and revocatio
     await expect(section.getByTestId('wp-connection').filter({ hasText: connectionName })).toContainText('Dezactivată');
     const revoked = await client.get('/api/v1/wordpress/bootstrap');
     expect(revoked.status()).toBe(401);
+    await page.getByTestId('language-selector').click();
+    await page.getByRole('option', { name: 'English', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'WordPress connection', exact: true })).toBeVisible();
+    await page.getByRole('combobox', { name: 'Key validity', exact: true }).click();
+    await page.getByRole('option', { name: 'No expiry', exact: true }).click();
+    await page.getByTestId('language-selector').click();
+    await page.getByRole('option', { name: 'Română', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Conectare WordPress', exact: true })).toBeVisible();
     await client.dispose();
     expect(errors).toEqual([]);
 });

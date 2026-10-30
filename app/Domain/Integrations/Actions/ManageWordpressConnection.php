@@ -21,7 +21,7 @@ class ManageWordpressConnection
     {
         $access = app(TenantAccess::class);
         $access->requireManage($actor, $location->organization_id);
-        $d = Validator::make($input, ['name' => 'required|string|max:100', 'site_url' => 'required|url:https|max:255', 'location_ids' => 'required|array|min:1|max:100', 'location_ids.*' => 'required|integer|distinct', 'abilities' => 'required|array|min:1|max:15', 'abilities.*' => ['required', 'distinct', Rule::in(WordpressAccess::ABILITIES)], 'expires_in_days' => 'required|integer|in:30,90,180,365'])->validate();
+        $d = Validator::make($input, ['name' => 'required|string|max:100', 'site_url' => 'required|url:https|max:255', 'location_ids' => 'required|array|min:1|max:100', 'location_ids.*' => 'required|integer|distinct', 'abilities' => 'required|array|min:1|max:15', 'abilities.*' => ['required', 'distinct', Rule::in(WordpressAccess::ABILITIES)], 'expires_in_days' => 'required|integer|in:0,30,90,180,365'])->validate();
         $d['location_ids'] = array_map('intval', $d['location_ids']);
         if (array_intersect(['user', 'pass', 'query', 'fragment'], array_keys(parse_url($d['site_url'])))) {
             throw ValidationException::withMessages(['site_url' => __('Use a website address without credentials, query parameters or fragments.')]);
@@ -53,7 +53,7 @@ class ManageWordpressConnection
 
     private function issue(WordpressConnection $c): array
     {
-        $token = $c->user->createToken('WordPress: '.$c->name, $c->abilities, now()->addDays($c->expires_in_days));
+        $token = $c->user->createToken('WordPress: '.$c->name, $c->abilities, (int) $c->expires_in_days === 0 ? null : now()->addDays($c->expires_in_days));
         $token->accessToken->forceFill(['organization_id' => $c->organization_id, 'wordpress_connection_id' => $c->id])->save();
 
         return ['connection' => $c->only('public_id', 'name', 'site_url', 'abilities', 'location_ids', 'active'), 'token' => $token->plainTextToken, 'webhook_secret' => $c->webhook_secret, 'expires_at' => $token->accessToken->expires_at, 'api_url' => config('wordpress.api_url')];

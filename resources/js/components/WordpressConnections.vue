@@ -119,7 +119,15 @@ onMounted(() => run(async () => {}));
             <label class="field"
                 ><span class="field-label"
                     >{{ $t('wp_expiry') }}<FieldHelp :label="$t('wp_expiry')" :text="$t('wp_expiry_help')" /></span
-                ><Select v-model="form.expires_in_days" :aria-label="$t('wp_expiry')" :options="[30, 90, 180, 365]"
+                ><Select
+                    v-model="form.expires_in_days"
+                    :aria-label="$t('wp_expiry')"
+                    :options="[
+                        ...[30, 90, 180, 365].map((value) => ({ label: String(value), value })),
+                        { label: $t('wp_no_expiry'), value: 0 },
+                    ]"
+                    option-label="label"
+                    option-value="value"
             /></label>
             <Button
                 type="submit"

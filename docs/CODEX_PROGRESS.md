@@ -1,4 +1,10 @@
-# ZionFood progress — 0.0.35
+# ZionFood progress — 0.0.36
+
+## Version 0.0.36 - optional non-expiring WordPress credentials (October 30)
+
+Added the RO/EN Nedeterminat / No expiry option to the existing validity selector, retaining the 90-day default and all finite choices. The existing integer field uses `0` as an explicit sentinel; Sanctum receives a null expires_at, with the existing global expiration config already null. No schema migration or dependency change is needed. Rotation preserves the selected policy while limiting every previous key, including indefinite keys, to at most 15 minutes; explicit revocation remains authoritative.
+
+Added a regression exercising actual credential creation, authentication after 10 simulated years, rotation, grace expiry and revocation. The browser scenario now selects the indefinite option, verifies the issuance response expires_at=null, performs local API checkout/tracking and checks the English No expiry option. Updated README/checklist, changelog, OpenAPI expiry metadata, current capability/API documentation and synchronized 0.0.36 release metadata. Dependency lock refresh changes only version/hash metadata. Final checks: native PHP8.4/Pest **368 passed /3099 assertions** (62.23s), focused WordPress **34 passed /151 assertions**, **30 Vitest tests**, TypeScript, ESLint max-warnings0 and the production/RO-EN SEO build passed. **2 Chromium scenarios passed** (39.5s) against the isolated local SQLite server. Linux Pint passed **318 files** using a new private cache /tmp/zionfood-0036-release-private-fresh-972b4.json, followed by the exact CI command **php vendor/bin/pint --test**, also **318 files passed**. Composer validate and diff checks passed; existing explicit-version/chunk-size advisories remain. Existing finite keys were not migrated. No external WordPress installation, provider callback, production MariaDB or manual deployment was tested or changed. No tag or manual deployment.
 
 ## Version 0.0.35 - WordPress API and scheduled commerce (October 30)
 

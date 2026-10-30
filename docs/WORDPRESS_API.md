@@ -1,10 +1,10 @@
-# WordPress API — ZionFood 0.0.35
+# WordPress API — ZionFood 0.0.36
 
 Backend contract for the future WordPress plugin. The plugin itself, its blocks, shortcodes and public proxy are a separate deliverable. See [capability report](WORDPRESS_CAPABILITIES.md) and [OpenAPI](openapi.json).
 
 ## Connect
 
-In Restaurant administration → Connections → Integrations, generate a WordPress connection. Select only locations in that restaurant and the required abilities. Credentials expire after 30/90/180/365 days. The API key and webhook verification secret appear only on creation/rotation; lists never return them. Configure the future plugin **server-side** with the returned API URL, key, location public ID and signing secret. Do not put keys in HTML, JavaScript, browser storage, URLs or WordPress frontend settings responses.
+In Restaurant administration → Connections → Integrations, generate a WordPress connection. Select only locations in that restaurant and the required abilities. Choose 30, 90, 180 or 365 days, or **Nedeterminat / No expiry**. The no-expiry choice is stored as `expires_in_days=0` and issues a Sanctum token with `expires_at=null`; no database migration is required. Existing finite validity choices remain unchanged. The API key and webhook verification secret appear only on creation/rotation; lists never return them. Configure the future plugin **server-side** with the returned API URL, key, location public ID and signing secret. Do not put keys in HTML, JavaScript, browser storage, URLs or WordPress frontend settings responses.
 
 Use the configured central/API host, for example `https://food.zion3d.ro/api/v1/wordpress`. A custom tenant storefront domain accepts only public storefront endpoints. HTTPS is mandatory; loopback HTTP is allowed only in local/testing. Sanctum hashes incoming bearer tokens; callback secrets and retained idempotent response bodies are encrypted using Laravel's application key. No extra dependency is necessary: Sanctum, Laravel HTTP/cURL, Redis/Horizon and the transactional outbox are already installed.
 
@@ -93,7 +93,7 @@ Callbacks use `X-ZionFood-Delivery` (stable event ULID), `X-ZionFood-Event`, `X-
 
 Supported events: `order.created`, `order.updated`, `reservation.created`, `reservation.updated`, `menu.updated`, `item.updated`, `promotion.updated`. Callback attempts revalidate **all** DNS answers, pin cURL to a checked public IP, verify TLS, disable redirects/proxies, bound response size/time and retry transient failures at most six times. Use `/events` to reconcile missed events; persist cursor after processing, deduplicate IDs and periodically refresh resource snapshots. The current durable outbox has no automatic archival; introduce an explicit retention/recovery-window contract before archival.
 
-Rotation returns a new API key, preserving the callback secret. Previous keys get at most 15 minutes grace, never extended past an earlier expiry. Revocation is immediate for keys and callbacks; historical journals and orders remain. Only the issuer or organization owner can rotate/revoke a connection.
+Rotation returns a new API key, preserving the callback secret and validity policy, including no expiry. Previous keys get at most 15 minutes grace, never extended past an earlier expiry. Revocation is immediate for keys and callbacks; historical journals and orders remain. Only the issuer or organization owner can rotate/revoke a connection.
 
 ## Logs and operations
 

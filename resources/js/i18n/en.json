@@ -1510,8 +1510,8 @@
     "wp_name_help": "A recognisable name for this WordPress installation.",
     "wp_locations_help": "The key can access only selected locations belonging to this restaurant.",
     "wp_scopes_help": "Grant only required permissions. storefront:read reads the public menu; checkout:write allows checkout; enable other modules explicitly.",
-    "wp_expiry": "Validity (days)",
-    "wp_expiry_help": "The key expires automatically. Rotate it before expiry.",
+    "wp_expiry": "Key validity",
+    "wp_expiry_help": "Choose 30, 90, 180 or 365 days, or No expiry. A non-expiring key remains valid until revoked or rotated; rotation gives the old key at most 15 minutes of grace.",
     "wp_generate": "Generate WordPress key",
     "wp_active": "Active",
     "wp_revoked": "Disabled",
@@ -1581,5 +1581,6 @@
     "preparation_starts": "Preparation starts",
     "promotion_discount": "Promotion discount",
     "locations": "Locations",
-    "restaurant": "Restaurant"
+    "restaurant": "Restaurant",
+    "wp_no_expiry": "No expiry"
 }
