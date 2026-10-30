@@ -9,7 +9,7 @@ async function completeReceipt(page: Page) {
     const prompt = await page.getByTestId('captcha-question').innerText();
     const sum = (prompt.match(/[0-9]+/g) ?? []).reduce((total, value) => total + Number(value), 0);
     await page.getByRole('textbox', { name: 'Răspunsul tău', exact: true }).fill(String(sum));
-    await page.getByRole('button', { name: 'Confirmă bonul', exact: true }).click();
+    await page.getByRole('button', { name: 'Verifică răspunsul', exact: true }).click();
     await expect(page.getByTestId('captcha-verified')).toBeVisible();
 }
 

@@ -39,5 +39,9 @@
     "This promotion is invalid, exhausted or not applicable to the basket.": "This promotion is invalid, exhausted or not applicable to the basket.",
     "Use a website address without credentials, query parameters or fragments.": "Use a website address without credentials, query parameters or fragments.",
     "Preparation has not started for this scheduled order.": "Preparation has not started for this scheduled order.",
-    "HTTPS is required.": "HTTPS is required."
+    "HTTPS is required.": "HTTPS is required.",
+    "For this receipt, add :left and :right.": "For this check, add :left and :right.",
+    "The access receipt expired or is invalid. Please complete a new one.": "This verification has expired or is invalid. Please try a new one.",
+    "That receipt does not match. Please try a new one.": "The answer does not match. Please try a new verification.",
+    "Complete the ZionFood access receipt before creating your account.": "Complete the quick verification before creating your account."
 }

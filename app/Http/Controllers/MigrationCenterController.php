@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain\Imports\ImportComplexityException;
 use App\Domain\Imports\ProcessImport;
 use App\Domain\Imports\PublishImport;
+use App\Domain\Imports\RecordImportValidationFailure;
 use App\Domain\Menus\MenuContent;
 use App\Domain\Tenancy\TenantAccess;
 use App\Jobs\FetchGloriaFoodMenu;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class MigrationCenterController extends Controller
@@ -63,6 +65,9 @@ class MigrationCenterController extends Controller
                 }app(ProcessImport::class)->execute($batch, $source);
             } catch (ImportComplexityException) {
                 $batch->update(['status' => 'failed', 'failure_code' => 'import_complexity_limit']);
+            } catch (ValidationException $e) {
+                $details = app(RecordImportValidationFailure::class)->execute($batch, $e);
+                Log::warning('GloriaFood import validation failed', ['batch_id' => $batch->public_id, 'exception_class' => $e::class, 'stage' => 'file_validation', 'validation_failures' => $details]);
             } catch (\Throwable) {
                 $batch->update(['status' => 'failed', 'failure_code' => 'invalid_source_file']);
             }
@@ -80,7 +85,7 @@ class MigrationCenterController extends Controller
 
     private function report(ImportBatch $b): array
     {
-        $base = ['batch_id' => $b->public_id, 'status' => $b->status, 'failure_code' => $b->failure_code, 'report' => null, 'menu' => null, 'issues' => [], 'conflicts' => [], 'review_hash' => null];
+        $base = ['batch_id' => $b->public_id, 'status' => $b->status, 'failure_code' => $b->failure_code, 'report' => null, 'menu' => null, 'issues' => DB::table('import_issues')->where('batch_id', $b->id)->limit(50)->get(['severity', 'code', 'path', 'message']), 'conflicts' => [], 'review_hash' => null];
         if (! in_array($b->status, ['ready', 'published', 'reverted'], true)) {
             return $base;
         }

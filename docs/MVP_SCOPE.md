@@ -1,4 +1,6 @@
-# Scope at 0.0.37
+# Scope at 0.0.38
+
+0.0.38 applies direct field-to-field Tab navigation across shared and inline forms, retaining hover/screen-reader/F1 help and non-field keyboard explanations. Registration uses friendly quick-verification copy. GloriaFood validation failures expose bounded sanitized field/rule diagnostics for new imports; the specific cause of older production failures requires a fresh attempt because the prior payload and credential were not retained.
 
 0.0.37 improves registration retry and keyboard navigation, with external press-and-hold password controls across the shared auth form. Registration errors retain both password fields in current Vue state; passwords remain excluded from server old-input sessions. Mouse/touch/F2 revelation is temporary, with RO/EN guidance and automatic remasking.
 

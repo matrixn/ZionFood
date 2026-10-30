@@ -16,6 +16,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -193,6 +194,23 @@ it('fetches via fixed endpoint and erases encrypted credentials on success and f
     expect($failed->fresh()->credential)->toBeNull();
     expect($failed->fresh()->failure_code)->toBe('fetch_or_validation_failed');
 });
+it('reports bounded validation fields and rules without exposing source values or API keys', function () {
+    [$u, $l] = tenantFixture();
+    $source = migrationSource();
+    $source['categories'] = ['private-source-value' => [...$source['categories'][0], 'name' => str_repeat('private-source-value', 20)]];
+    Http::fake(['pos.globalfoodsoft.com/*' => Http::response($source)]);
+    Log::spy();
+    $batch = ImportBatch::create(['organization_id' => $l->organization_id, 'location_id' => $l->id, 'user_id' => $u->id, 'settings' => ['size_prices' => 'base_plus_size', 'nutrition_basis' => 'per_100g', 'tax_basis_points' => 0], 'credential' => 'private-fetch-key']);
+    $menus = Menu::count();
+    (new FetchGloriaFoodMenu($batch->id))->handle();
+    expect($batch->fresh()->failure_code)->toBe('source_validation_failed')->and($batch->fresh()->credential)->toBeNull();
+    $response = $this->actingAs($u)->getJson('/app/locations/'.$l->public_id.'/migration-center/'.$batch->public_id)->assertOk();
+    $response->assertJsonPath('issues.0.path', 'categories.*.name')->assertJsonPath('issues.0.message', 'max:100');
+    expect($response->getContent())->not->toContain('private-source-value')->not->toContain('private-fetch-key');
+    expect(Menu::count())->toBe($menus);
+    Log::shouldHaveReceived('warning')->once()->with('GloriaFood import validation failed', Mockery::on(fn ($context) => $context['stage'] === 'validation' && ! str_contains(json_encode($context), 'private-source-value') && ! str_contains(json_encode($context), 'private-fetch-key')));
+});
+
 it('accepts an exported file and rejects malformed data without live changes', function () {
     [$u,$l,$old] = tenantFixture();
     $url = '/app/locations/'.$l->public_id.'/migration-center';

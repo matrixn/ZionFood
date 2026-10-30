@@ -339,7 +339,9 @@ function open(id: string) {
                                 $t(
                                     preview.failure_code === 'import_complexity_limit'
                                         ? 'mig_complexity_limit'
-                                        : 'mig_failure',
+                                        : preview.failure_code === 'source_validation_failed'
+                                          ? 'mig_validation_failure'
+                                          : 'mig_failure',
                                 )
                             }}
                         </p>

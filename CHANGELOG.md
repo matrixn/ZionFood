@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.38 — 2026-10-31
+
+- Replace access-receipt wording with friendly quick-verification copy in Romanian/English, including backend messages.
+- Skip field-help Tab stops across all forms while preserving hover, screen-reader descriptions, F1/Escape help and keyboard access to non-field explanations.
+- Persist bounded GloriaFood validation paths/rules for failed API/file imports and expose them in authorized previews/logs without source values or credentials. Existing failed batches require a new import to collect diagnostics.
+
 ## 0.0.37 — 2026-10-31
 
 - Keep authentication form help available without adding Tab stops before each field; associate persistent screen-reader descriptions with auth and CAPTCHA inputs.

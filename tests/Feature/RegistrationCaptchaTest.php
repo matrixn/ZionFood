@@ -134,7 +134,7 @@ it('bounds outstanding challenges and throttles challenge traffic without spendi
 it('localizes the accessible question and prevents caching of verification responses', function () {
     $this->get('/register');
     $challenge = $this->withCredentials()->withCookie('zf_locale', 'en')->postJson('/register/challenge', ['mode' => 'accessible'])->assertOk()->json();
-    expect($challenge['prompt'])->toStartWith('For this receipt, add');
+    expect($challenge['prompt'])->toStartWith('For this check, add');
     preg_match_all('/[0-9]+/', $challenge['prompt'], $numbers);
     $this->postJson('/register/challenge/verify', ['challenge_id' => $challenge['id'], 'captcha_answer' => (string) array_sum($numbers[0])])->assertOk()->assertHeader('Cache-Control', 'no-store, private');
 });
