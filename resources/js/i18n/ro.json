@@ -1587,5 +1587,10 @@
     "hold_to_reveal_confirmation": "Ține apăsat pentru a vedea confirmarea parolei",
     "password_reveal_help": "Ține apăsat butonul alăturat pentru a vedea parola. Se ascunde imediat când îi dai drumul sau ieși de pe buton. Cu tastatura, ține apăsat F2 în câmp.",
     "field_help_keyboard_hint": "Apasă F1 în câmp pentru ajutor. Escape închide explicația.",
-    "mig_validation_failure": "Meniul a fost preluat, dar unele câmpuri nu respectă formatul acceptat. Mai jos găsești câmpurile și regulile care au blocat importul. Cheia nu este păstrată."
+    "mig_validation_failure": "Meniul a fost preluat, dar unele câmpuri nu respectă formatul acceptat. Mai jos găsești câmpurile și regulile care au blocat importul. Cheia nu este păstrată.",
+    "mig_issue_source_validation": "Date din sursă nevalide",
+    "mig_validation_field": "Câmp afectat",
+    "mig_validation_rules": "Reguli respinse",
+    "mig_issue_source_identity_conflict": "Identificarea sursei necesită verificare",
+    "mig_source_identity_conflict_help": "Același ID de meniu apare pentru restaurante-sursă diferite în istoricul locației. Confirmă restaurantul-sursă înainte de publicare."
 }

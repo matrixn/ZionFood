@@ -12,13 +12,21 @@ class ProcessImport
     public function execute(ImportBatch $batch, array $source): void
     {
         $batch->refresh();
-        if ($batch->status === 'queued' && empty($batch->settings['nutrition_map']) && isset($source['restaurant_id']) && is_int($source['restaurant_id'])) {
-            $previous = ImportBatch::where('location_id', $batch->location_id)->where('organization_id', $batch->organization_id)->where('source_restaurant', (string) $source['restaurant_id'])->where('status', 'published')->latest('id')->first();
+        $adapter = app(GloriaFoodAdapter::class);
+        $identity = $adapter->identity($source);
+        $resolution = app(ResolveImportSource::class)->execute($batch, $identity);
+        if ($batch->status === 'queued' && empty($batch->settings['nutrition_map'])) {
+            $previous = $resolution['previous'];
             if (! empty($previous?->settings['nutrition_map'])) {
                 $batch->update(['settings' => [...$batch->settings, 'nutrition_map' => $previous->settings['nutrition_map']]]);
             }
         }
-        $normalized = app(GloriaFoodAdapter::class)->normalize($source, $batch->settings);
+        $normalized = $adapter->normalize($source, $batch->settings);
+        $normalized['menu']['source_restaurant'] = $resolution['namespace'];
+        $normalized['menu']['resolved_restaurant_id'] = $resolution['restaurant_id'];
+        if ($resolution['conflict']) {
+            $normalized['issues'][] = ['severity' => 'blocker', 'code' => 'source_identity_conflict', 'path' => 'restaurant_id', 'message' => 'Multiple source identities share this menu ID. Confirm the source restaurant before publication.'];
+        }
         $evidence = app(ImportVerification::class)->evidence($normalized['menu']);
         DB::transaction(function () use ($batch, $source, $normalized, $evidence) {
             $batch = ImportBatch::whereKey($batch->id)->lockForUpdate()->firstOrFail();
@@ -39,7 +47,7 @@ class ProcessImport
                 DB::table('import_issues')->insert(['batch_id' => $batch->id, ...$issue, 'created_at' => now(), 'updated_at' => now()]);
             }
             $batch->source_restaurant = $menu['source_restaurant'];
-            $report = ['adapter_version' => GloriaFoodAdapter::VERSION, 'source_restaurant' => $menu['source_restaurant'], 'source_menu' => $menu['source_menu'], 'currency' => $menu['currency'], 'settings' => $batch->settings, 'products' => array_sum(array_map(fn ($c) => count($c['items']), $menu['categories'])), 'categories' => count($menu['categories']), 'blockers' => count(array_filter($issues, fn ($i) => $i['severity'] === 'blocker')), 'source_changes' => app(ImportVerification::class)->diff($batch, $menu), 'synthetic_baskets' => $evidence, 'checked_at' => now()->toIso8601String(), 'checksum' => hash('sha256', json_encode($source, JSON_THROW_ON_ERROR))];
+            $report = ['adapter_version' => GloriaFoodAdapter::VERSION, 'source_restaurant' => $menu['source_restaurant'], 'source_menu' => $menu['source_menu'], 'reported_restaurant_id' => $menu['reported_restaurant_id'], 'resolved_restaurant_id' => $menu['resolved_restaurant_id'], 'currency' => $menu['currency'], 'settings' => $batch->settings, 'products' => array_sum(array_map(fn ($c) => count($c['items']), $menu['categories'])), 'categories' => count($menu['categories']), 'blockers' => count(array_filter($issues, fn ($i) => $i['severity'] === 'blocker')), 'source_changes' => app(ImportVerification::class)->diff($batch, $menu), 'synthetic_baskets' => $evidence, 'checked_at' => now()->toIso8601String(), 'checksum' => hash('sha256', json_encode($source, JSON_THROW_ON_ERROR))];
             DB::table('import_reports')->insert(['batch_id' => $batch->id, 'report' => json_encode($report, JSON_THROW_ON_ERROR), 'created_at' => now(), 'updated_at' => now()]);
             $batch->update(['source_restaurant' => $menu['source_restaurant'], 'status' => 'ready', 'credential' => null]);
         });

@@ -389,8 +389,24 @@ function open(id: string) {
                                         : 'border-amber-400 bg-amber-50 text-amber-900'
                                 "
                             >
-                                <strong>{{ $t('mig_issue_' + issue.code) }}</strong> · {{ issue.message
-                                }}<small class="mt-1 block break-all opacity-70">{{ issue.path }}</small>
+                                <strong>{{ $t('mig_issue_' + issue.code) }}</strong>
+                                <div v-if="issue.code === 'source_validation'" class="mt-2 grid gap-1">
+                                    <p>
+                                        {{ $t('mig_validation_field') }}:
+                                        <code class="break-all">{{ issue.path }}</code>
+                                    </p>
+                                    <p>
+                                        {{ $t('mig_validation_rules') }}: <code>{{ issue.message }}</code>
+                                    </p>
+                                </div>
+                                <template v-else>
+                                    ·
+                                    {{
+                                        issue.code === 'source_identity_conflict'
+                                            ? $t('mig_source_identity_conflict_help')
+                                            : issue.message
+                                    }}<small class="mt-1 block break-all opacity-70">{{ issue.path }}</small></template
+                                >
                             </li>
                         </ul>
                     </section>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Imports\GloriaFoodAdapter;
 use App\Domain\Imports\ImportVerification;
 use App\Domain\Imports\ProcessImport;
 use App\Domain\Imports\PublishImport;
@@ -14,6 +15,7 @@ use App\Models\MenuItem;
 use App\Models\ModifierGroup;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -39,6 +41,102 @@ function publishBatch($u, $b, array $resolutions = [])
 {
     return app(PublishImport::class)->execute($u, $b, $resolutions, true, app(PublishImport::class)->reviewHash($b));
 }
+
+it('still rejects malformed nonempty provider restaurant IDs', function ($value) {
+    $source = migrationSource();
+    $source['restaurant_id'] = $value;
+    expect(fn () => app(GloriaFoodAdapter::class)->identity($source))->toThrow(ValidationException::class);
+})->with([0, -1, 'not-an-id', [[]]]);
+
+it('requires a source menu ID even when the provider restaurant ID is absent', function () {
+    expect(fn () => app(GloriaFoodAdapter::class)->identity([]))->toThrow(ValidationException::class);
+});
+
+it('accepts fetched menus without a restaurant ID while preserving the original payload and credential cleanup', function ($value) {
+    [$u, $l, $old] = tenantFixture();
+    $settings = migrationBatch($u, $l)->settings;
+    $source = migrationSource();
+    $source['currency'] = $l->fresh()->currency;
+    unset($source['restaurant_id']);
+    if ($value !== 'missing') {
+        $source['restaurant_id'] = $value;
+    }
+    Http::fake(['pos.globalfoodsoft.com/*' => Http::response($source)]);
+    $batch = ImportBatch::create(['organization_id' => $l->organization_id, 'location_id' => $l->id, 'user_id' => $u->id, 'settings' => $settings, 'credential' => 'private-fetch-key']);
+    (new FetchGloriaFoodMenu($batch->id))->handle();
+    expect($batch->fresh()->status)->toBe('ready')->and($batch->fresh()->credential)->toBeNull();
+    $canonical = app(ProcessImport::class)->canonical($batch);
+    expect($canonical['source_restaurant'])->toBe('menu:'.$source['id'])->and($canonical['reported_restaurant_id'])->toBeNull();
+    $raw = json_decode(Crypt::decryptString(DB::table('import_snapshots')->where('batch_id', $batch->id)->value('source')), true);
+    expect($raw)->toBe($source)->and($l->menus()->first()->categories->first()->items->first()->id)->toBe($old->id);
+})->with(['missing', null, '']);
+
+it('preserves source lineage, local edit decisions and nutrition mapping when the provider adds or removes its restaurant ID', function () {
+    [$u, $l] = tenantFixture();
+    $source = migrationSource();
+    unset($source['restaurant_id']);
+    $first = migrationBatch($u, $l, $source);
+    $firstMenu = publishBatch($u, $first);
+    $firstMenu->categories->first()->items->first()->update(['description' => 'Local reviewed description']);
+    $knownSource = migrationSource();
+    $knownSource['currency'] = $l->fresh()->currency;
+    $settings = $first->settings;
+    unset($settings['nutrition_map']);
+    $second = ImportBatch::create(['organization_id' => $l->organization_id, 'location_id' => $l->id, 'user_id' => $u->id, 'settings' => $settings]);
+    app(ProcessImport::class)->execute($second, $knownSource);
+    $second->refresh();
+    expect($second->source_restaurant)->toBe($first->source_restaurant)->and($second->settings['nutrition_map'])->toBe($first->settings['nutrition_map']);
+    expect(app(PublishImport::class)->conflicts($second))->toContain('58424');
+    $secondMenu = publishBatch($u, $second, ['58424' => 'keep_local']);
+    expect(MenuItem::whereHas('category', fn ($q) => $q->where('menu_id', $secondMenu->id))->where('source_key', '58424')->first()->description)->toBe('Local reviewed description');
+    expect($l->menus()->count())->toBe(1)->and(MenuItem::whereHas('category', fn ($q) => $q->where('menu_id', $secondMenu->id))->count())->toBe(4);
+    $third = migrationBatch($u, $l, $source);
+    $canonical = app(ProcessImport::class)->canonical($third);
+    expect($canonical['source_restaurant'])->toBe($first->source_restaurant)->and($canonical['reported_restaurant_id'])->toBeNull()->and($canonical['resolved_restaurant_id'])->toBe((string) $knownSource['restaurant_id']);
+});
+
+it('reuses legacy numeric source identity only within the same organization and location', function () {
+    [$u, $l] = tenantFixture();
+    $first = migrationBatch($u, $l);
+    publishBatch($u, $first);
+    $report = json_decode(DB::table('import_reports')->where('batch_id', $first->id)->value('report'), true);
+    unset($report['reported_restaurant_id'], $report['resolved_restaurant_id']);
+    DB::table('import_reports')->where('batch_id', $first->id)->update(['report' => json_encode($report)]);
+    $source = migrationSource();
+    unset($source['restaurant_id']);
+    $same = migrationBatch($u, $l, $source);
+    expect($same->source_restaurant)->toBe($first->source_restaurant);
+    $secondLocation = $l->replicate(['public_id', 'slug']);
+    $secondLocation->name = 'Second source location';
+    $secondLocation->save();
+    $separate = migrationBatch($u, $secondLocation, $source);
+    expect($separate->source_restaurant)->toBe('menu:'.$source['id']);
+    [$other, $otherLocation] = tenantFixture('other-source');
+    expect(migrationBatch($other, $otherLocation, $source)->source_restaurant)->toBe('menu:'.$source['id']);
+});
+
+it('blocks ambiguous missing identities and refuses stale source aliases at publication', function () {
+    [$u, $l] = tenantFixture();
+    $missingSource = migrationSource();
+    unset($missingSource['restaurant_id']);
+    $staged = migrationBatch($u, $l, $missingSource);
+    $known = migrationBatch($u, $l);
+    $knownMenu = publishBatch($u, $known);
+    try {
+        publishBatch($u, $staged);
+        $this->fail('Expected identity conflict');
+    } catch (HttpException $e) {
+        expect($e->getStatusCode())->toBe(409);
+    }
+    expect($l->menus()->first()->id)->toBe($knownMenu->id);
+    $otherSource = migrationSource();
+    $otherSource['restaurant_id'] = 999999;
+    $other = migrationBatch($u, $l, $otherSource);
+    publishBatch($u, $other);
+    $ambiguous = migrationBatch($u, $l, $missingSource);
+    expect(DB::table('import_issues')->where('batch_id', $ambiguous->id)->where('code', 'source_identity_conflict')->where('severity', 'blocker')->exists())->toBeTrue();
+    expect(fn () => publishBatch($u, $ambiguous))->toThrow(ValidationException::class);
+});
 it('normalizes official category and size rules without mutating the active menu', function () {
     [$u,$l,$old] = tenantFixture();
     $b = migrationBatch($u, $l);

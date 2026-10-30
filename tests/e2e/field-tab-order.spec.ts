@@ -118,6 +118,10 @@ test('platform administration uses the same field rule and non-field explanation
         .check();
     await page.getByRole('button', { name: 'Preia și verifică', exact: true }).click();
     await expect(page.getByRole('alert')).toContainText('Meniul a fost preluat');
+    await expect(page.getByText('Date din sursă nevalide', { exact: true })).toBeVisible();
+    await expect(page.getByText('Câmp afectat:', { exact: false })).toBeVisible();
+    await expect(page.getByText('Reguli respinse:', { exact: false })).toBeVisible();
+    await expect(page.getByText('mig_issue_source_validation', { exact: true })).toHaveCount(0);
     await expect(page.getByText('categories.0.name', { exact: true })).toBeVisible();
     await expect(page.getByText('max:100', { exact: false })).toBeVisible();
     await page.screenshot({ path: 'test-results/import-validation-details.png', fullPage: true });

@@ -466,5 +466,6 @@
   "This promotion is invalid, exhausted or not applicable to the basket.": "Promoția este invalidă, a atins limita de utilizări sau nu se aplică acestui coș.",
   "Use a website address without credentials, query parameters or fragments.": "Folosește adresa site-ului fără parolă, parametri sau fragment.",
   "Preparation has not started for this scheduled order.": "Încă nu a început intervalul de pregătire pentru această comandă programată.",
-  "HTTPS is required.": "Conexiunea HTTPS este obligatorie."
+  "HTTPS is required.": "Conexiunea HTTPS este obligatorie.",
+  "The import source changed. Start a new import to verify it safely.": "Identitatea sursei s-a schimbat. Pornește un import nou pentru a o verifica în siguranță."
 }

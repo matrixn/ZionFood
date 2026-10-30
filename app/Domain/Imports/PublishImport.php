@@ -55,6 +55,10 @@ class PublishImport
             }
             abort_unless(hash_equals($this->reviewHash($batch), $reviewHash), 409, __('The menu changed. Refresh the migration preview.'));
             $canonical = app(ProcessImport::class)->canonical($batch);
+            if (array_key_exists('reported_restaurant_id', $canonical)) {
+                $identity = app(ResolveImportSource::class)->execute($batch, $canonical);
+                abort_if($identity['conflict'] || $identity['namespace'] !== $canonical['source_restaurant'], 409, __('The import source changed. Start a new import to verify it safely.'));
+            }
             abort_unless($canonical['currency'] === $location->currency, 422);
             $conflicts = $this->conflicts($batch);
             foreach ($conflicts as $key) {

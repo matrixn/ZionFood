@@ -1,4 +1,4 @@
-# WordPress API — ZionFood 0.0.38
+# WordPress API — ZionFood 0.0.39
 
 Backend contract for the future WordPress plugin. The plugin itself, its blocks, shortcodes and public proxy are a separate deliverable. See [capability report](WORDPRESS_CAPABILITIES.md) and [OpenAPI](openapi.json).
 

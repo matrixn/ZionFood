@@ -8,14 +8,23 @@ use Illuminate\Validation\ValidationException;
 
 class GloriaFoodAdapter
 {
-    public const VERSION = '1.0.0';
+    public const VERSION = '1.0.1';
 
     private array $issues = [];
+
+    public function identity(array $source): array
+    {
+        Validator::make($source, ['id' => 'required|integer|min:1', 'restaurant_id' => 'nullable|integer|min:1'])->validate();
+        $restaurant = isset($source['restaurant_id']) && $source['restaurant_id'] !== '' ? (string) $source['restaurant_id'] : null;
+
+        return ['source_restaurant' => $restaurant ?? 'menu:'.$source['id'], 'source_menu' => (string) $source['id'], 'reported_restaurant_id' => $restaurant, 'resolved_restaurant_id' => $restaurant];
+    }
 
     public function normalize(array $source, array $settings): array
     {
         $this->issues = [];
-        Validator::make($source, ['id' => 'required|integer|min:1', 'restaurant_id' => 'required|integer|min:1', 'currency' => 'required|string|size:3', 'categories' => 'required|array|min:1|max:200', 'categories.*.id' => 'required|integer|distinct', 'categories.*.name' => 'required|string|max:100', 'categories.*.items' => 'present|array|max:2000'])->validate();
+        $identity = $this->identity($source);
+        Validator::make($source, ['currency' => 'required|string|size:3', 'categories' => 'required|array|min:1|max:200', 'categories.*.id' => 'required|integer|distinct', 'categories.*.name' => 'required|string|max:100', 'categories.*.items' => 'present|array|max:2000'])->validate();
         $categories = [];
         $seen = [];
         $count = 0;
@@ -89,7 +98,7 @@ class GloriaFoodAdapter
         $this->issue('warning', 'source_rules', 'menu', 'Undocumented active/schedule/promotion fields are not interpreted. Confirm availability against the source.');
         $this->issue('warning', 'semantics', 'menu', 'Confirm size-price mode, distinct-option selection limits and nutrition basis against your source menu.');
 
-        return ['menu' => ['source_restaurant' => (string) $source['restaurant_id'], 'source_menu' => (string) $source['id'], 'currency' => strtoupper($source['currency']), 'categories' => $categories], 'issues' => $this->issues];
+        return ['menu' => [...$identity, 'currency' => strtoupper($source['currency']), 'categories' => $categories], 'issues' => $this->issues];
     }
 
     private function groups(array $groups, string $path): array

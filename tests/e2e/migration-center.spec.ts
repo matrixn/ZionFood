@@ -2,7 +2,9 @@ import { test, expect as baseExpect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 const ro = JSON.parse(readFileSync('resources/js/i18n/ro.json', 'utf8'));
 const expect = baseExpect.configure({ timeout: 20000 });
-const account = JSON.parse(readFileSync('storage/app/private/browser-account.json', 'utf8'));
+const account = JSON.parse(
+    readFileSync(process.env.ZF_MIGRATION_FIXTURE ?? 'storage/app/private/browser-account.json', 'utf8'),
+);
 test('imports official menu, resolves nutrient IDs, publishes, orders size toppings and rolls back', async ({
     page,
     request,
@@ -25,6 +27,7 @@ test('imports official menu, resolves nutrient IDs, publishes, orders size toppi
     const source = JSON.parse(readFileSync('tests/Fixtures/gloriafood-menu.json', 'utf8'));
     source.currency = 'RON';
     source.restaurant_id = Date.now(); // Isolate first-import mapping from prior local browser runs.
+    if (process.env.ZF_MIGRATION_WITHOUT_RESTAURANT_ID === '1') delete source.restaurant_id;
     source.categories[0].items[0].sizes[0].groups[0].allow_quantity = true;
     await page.locator('input[type=file]').setInputFiles({
         name: 'menu.json',

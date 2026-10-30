@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.39 — 2026-10-31
+
+- Accept missing, null or empty GloriaFood restaurant IDs, resolving a menu-based namespace against published import history scoped to organization/location. Keep source snapshots unchanged and reject malformed nonempty IDs.
+- Preserve source lineage, nutrient mappings and local-edit conflict handling across optional-ID changes and legacy imports. Block ambiguous histories and stale identity aliases at publication.
+- Translate source-validation issue titles and separate field/rule diagnostics in Romanian and English. Add provider-fetch, reimport, isolation and browser regressions; no dependency or database-schema changes.
+
 ## 0.0.38 — 2026-10-31
 
 - Replace access-receipt wording with friendly quick-verification copy in Romanian/English, including backend messages.

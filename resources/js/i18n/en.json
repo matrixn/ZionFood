@@ -1587,5 +1587,10 @@
     "hold_to_reveal_confirmation": "Hold to reveal password confirmation",
     "password_reveal_help": "Hold the adjacent button to reveal the password. It is hidden as soon as you release or leave the button. With a keyboard, hold F2 while in the field.",
     "field_help_keyboard_hint": "Press F1 in the field for help. Escape closes the explanation.",
-    "mig_validation_failure": "The menu was received, but some fields do not match the supported format. The fields and rules that blocked the import are listed below. The key is not retained."
+    "mig_validation_failure": "The menu was received, but some fields do not match the supported format. The fields and rules that blocked the import are listed below. The key is not retained.",
+    "mig_issue_source_validation": "Invalid source data",
+    "mig_validation_field": "Affected field",
+    "mig_validation_rules": "Failed rules",
+    "mig_issue_source_identity_conflict": "Source identity needs verification",
+    "mig_source_identity_conflict_help": "The same menu ID appears for different source restaurants in this location’s history. Confirm the source restaurant before publication."
 }

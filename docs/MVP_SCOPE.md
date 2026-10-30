@@ -1,4 +1,6 @@
-# Scope at 0.0.38
+# Scope at 0.0.39
+
+0.0.39 accepts GloriaFood menus without restaurant_id, retaining stable organization/location-scoped source lineage and explicit local-edit decisions across reimports. Ambiguous source histories and stale identity aliases block publication. Validation diagnostics have translated titles and separate field/rule labels. Real production import acceptance remains pending a new authorized attempt.
 
 0.0.38 applies direct field-to-field Tab navigation across shared and inline forms, retaining hover/screen-reader/F1 help and non-field keyboard explanations. Registration uses friendly quick-verification copy. GloriaFood validation failures expose bounded sanitized field/rule diagnostics for new imports; the specific cause of older production failures requires a fresh attempt because the prior payload and credential were not retained.
 
