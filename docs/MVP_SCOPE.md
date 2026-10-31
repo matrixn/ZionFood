@@ -1,4 +1,4 @@
-# Scope at 0.0.43
+# Scope at 0.0.44
 
 0.0.43 adds bilingual contact onboarding on the marketing landing, collecting only name, email and phone. Leads are stored encrypted, deduplicated without anonymous overwrite and managed only by verified platform administrators (statuses, counters, filters, pagination and permanent deletion). No accounts, restaurant onboarding, newsletters or emails are triggered. Static SEO markup stays free of contact data; JavaScript is required for the submitted form. A new additive service_leads migration is required.
 

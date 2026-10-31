@@ -7,7 +7,7 @@ use App\Domain\Imports\PublishImport;
 use App\Domain\Integrations\PublicDnsResolver;
 use App\Jobs\DownloadGloriaFoodPhotos;
 use App\Models\ImportBatch;
-use Illuminate\Database\QueryException;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
@@ -161,8 +161,24 @@ it('rejects stale logo approval and protects later logo edits from rollback', fu
 it('removes copied logo files if menu publication rolls back', function () {
     [$u, $l] = tenantFixture();
     $b = logoBatch($u, $l);
-    DB::unprepared("CREATE TRIGGER fail_logo_publication BEFORE INSERT ON import_publications BEGIN SELECT RAISE(FAIL, 'test publication failure'); END;");
-    expect(fn () => publishLogo($u, $b))->toThrow(QueryException::class);
+    $connection = DB::connection();
+    $dispatcher = $connection->getEventDispatcher();
+    $isolated = clone $dispatcher;
+    $connection->setEventDispatcher($isolated);
+    $path = app(ProcessImport::class)->canonical($b)['public_menu']['settings_candidates']['logo']['value'];
+    $isolated->listen(QueryExecuted::class, function (QueryExecuted $query) use ($path) {
+        if (str_starts_with(strtolower(ltrim($query->sql)), 'insert') && str_contains($query->sql, 'import_publications')) {
+            // Fail after the real publication insert, with no driver-specific DDL or implicit commit.
+            Storage::disk('public')->assertExists($path);
+            throw new RuntimeException('Forced publication failure');
+        }
+    });
+    try {
+        expect(fn () => publishLogo($u, $b))->toThrow(RuntimeException::class, 'Forced publication failure');
+    } finally {
+        $connection->setEventDispatcher($dispatcher);
+    }
+    expect(DB::table('import_publications')->where('batch_id', $b->id)->exists())->toBeFalse();
     expect($b->fresh()->status)->toBe('ready')->and($l->restaurant()->first()->logo_path)->toBeNull();
     expect(Storage::disk('public')->allFiles())->toBe([]);
 });

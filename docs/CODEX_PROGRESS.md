@@ -1,4 +1,12 @@
-# ZionFood progress — 0.0.43
+# ZionFood progress — 0.0.44
+
+## Version 0.0.44 - portable logo rollback regression (October 31)
+
+The supplied GitHub Actions log identifies a test-fixture portability defect: SQLite CREATE TRIGGER / RAISE syntax was executed by the MariaDB test job. Replaced that trigger with a cloned connection query-event dispatcher and a scoped listener that throws after the actual import_publications insert. The listener first verifies that the logo copy exists, then the test verifies that the insert/branding update rolled back and the copied file was removed. The original dispatcher is restored in finally. No driver-specific SQL, schema DDL, implicit commit or runtime behavior change is introduced.
+
+The dedicated SQLite logo group passed **17 tests /77 assertions** (4.52s). TypeScript, ESLint max-warnings0, **30 Vitest tests** and production/RO-EN SEO builds passed. Linux Pint passed **337 PHP files** with fresh private cache /tmp/zionfood-0044-mariadb-20261031-3d6c81.json, then the exact CI command `php vendor/bin/pint --test`, also **337 passed**. Composer validation passed with its existing explicit-version advisory and the metadata-only lock update preserves dependencies. Current version metadata, README history/checklist and changelog are synchronized to0.0.44; no migration, dependency or environment-file change is required.
+
+UTM analytics work was preserved in a scoped local stash while preparing this independent CI fix. A dedicated local MariaDB10.11 container/database on port13317 is used for the portability check, with test-only credentials and no production connection. Initial attempts did not connect to the background container after its WSL lifecycle ended; the test server is now kept attached during validation. The same **17 logo tests /77 assertions passed on MariaDB10.11.19** (111.63s, including initial schema setup) with Linux PHP8.4 and Xdebug disabled. Slow preliminary test processes were stopped before the final run; no parallel test process was allowed to share fake storage. Both successful driver runs cover the actual post-insert rollback and file cleanup. No tag or manual deployment.
 
 ## Version 0.0.43 - bilingual landing contact onboarding and platform leads (October 31)
 

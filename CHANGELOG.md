@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.44 — 2026-10-31
+
+- Replace the SQLite-only logo-publication failure trigger with an isolated query-event listener that fails after the actual insert and restores its dispatcher. The regression now checks file and database rollback without driver-specific SQL or implicit DDL commits.
+- Runtime behavior and database schema are unchanged.
+
 ## 0.0.43 — 2026-10-31
 
 - Bilingual landing-page contact onboarding with just name, email and phone, visible confirmation, field help and retry preservation.

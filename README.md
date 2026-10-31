@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.43** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.44** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,11 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 31 octombrie 2026 — verificarea rollback-ului pe MariaDB · 0.0.44
+
+- [x] Testul de rollback al logo-ului folosește o eroare controlată după inserarea reală a publicării, fără trigger specific SQLite sau DDL care ar putea închide tranzacția în MariaDB.
+- [x] Verifică revenirea bazei de date și eliminarea fișierului copiat în timpul publicării eșuate.
 
 ### 31 octombrie 2026 — persoane interesate de ZionFood · 0.0.43
 
