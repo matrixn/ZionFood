@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.44** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.45** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,17 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 31 octombrie 2026 — campanii UTM și solicitări atribuite · 0.0.45
+
+- [x] Administrare generală → **Campanii și vizite**: jurnal cu sursă, mediu, campanie, conținut, termen, ID, data și pagina de intrare.
+- [x] Filtre pe 7/30/90 de zile, sursă, mediu și campanie; topul campaniilor după solicitări și vizite, cu paginare.
+- [x] Atribuire automată a solicitărilor noi către ultima campanie eligibilă din sesiune, în maximum 30 de minute; acces direct la lead-urile vizitei.
+- [x] Reîncărcările sunt deduplicate; nu se confundă vizitele înregistrate cu persoane unice. Roboții identificați, preîncărcările, administratorii și semnalele DNT/GPC sunt excluse.
+- [x] Fără IP, user-agent, URL complet sau identificator persistent de vizitator în tabelul de campanii. Acces numai pentru administratorul general.
+
+Exemplu de parametri: `/?utm_source=facebook&utm_medium=paid_social&utm_campaign=migrare_gloriafood`.
+Detalii: [campanii și atribuire](docs/CAMPAIGNS.md).
 
 ### 31 octombrie 2026 — verificarea rollback-ului pe MariaDB · 0.0.44
 

@@ -237,6 +237,7 @@ function switchLocation(id: string) {
                     </section>
                     <template v-if="mode === 'Platform admin'">
                         <Link href="/admin" class="block p-3 text-brand">{{ $t('organizations') }}</Link>
+                        <Link href="/admin/campaigns" class="block p-3 text-brand">{{ $t('campaigns_title') }}</Link>
                         <Link href="/admin/leads" class="block p-3 text-brand">{{ $t('leads_title') }}</Link>
                         <Link href="/admin/ingredients" class="block p-3 text-brand">{{
                             $t('ingredients_title')

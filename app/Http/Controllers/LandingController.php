@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Marketing\Actions\BuildRobotsTxt;
+use App\Domain\Marketing\Actions\RecordCampaignVisit;
 use App\Domain\Marketing\LandingSeo;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,6 +17,10 @@ class LandingController extends Controller
         app()->setLocale($locale);
         $meta = $seo->meta($locale, (bool) $request->user());
         $response = Inertia::render('Welcome', ['locale' => $locale, 'seo' => $meta])->withViewData('landingMeta', $meta)->toResponse($request);
+
+        if ($response->isSuccessful()) {
+            app(RecordCampaignVisit::class)->execute($request, $locale);
+        }
 
         return $response->cookie('zf_locale', $locale, 525600, '/', null, $request->isSecure(), true, false, 'lax');
     }

@@ -3,6 +3,7 @@
 use App\Domain\Marketing\LandingSeo;
 use App\Http\Controllers\AdminEmailsController;
 use App\Http\Controllers\BrandingController;
+use App\Http\Controllers\CampaignVisitsController;
 use App\Http\Controllers\CommunicationLogController;
 use App\Http\Controllers\CuisineController;
 use App\Http\Controllers\DiningController;
@@ -61,6 +62,7 @@ Route::post('/invitations/{invitation}', [StaffController::class, 'accept'])->mi
 Route::get('/test-email', [TestEmailController::class, 'show']);
 Route::post('/test-email', [TestEmailController::class, 'send'])->middleware('throttle:admin-mail-test');
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/campaigns', [CampaignVisitsController::class, 'index']);
     Route::get('/admin/leads', [ServiceLeadController::class, 'index']);
     Route::patch('/admin/leads/{lead}', [ServiceLeadController::class, 'update']);
     Route::delete('/admin/leads/{lead}', [ServiceLeadController::class, 'destroy']);

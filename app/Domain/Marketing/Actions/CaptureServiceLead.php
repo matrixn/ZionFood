@@ -2,12 +2,13 @@
 
 namespace App\Domain\Marketing\Actions;
 
+use App\Models\CampaignVisit;
 use App\Models\ServiceLead;
 use Illuminate\Support\Facades\Validator;
 
 class CaptureServiceLead
 {
-    public function execute(array $input): void
+    public function execute(array $input, ?CampaignVisit $campaignVisit = null): void
     {
         // A filled honeypot receives the same public confirmation without saving data.
         if (filled($input['website'] ?? null)) {
@@ -29,6 +30,6 @@ class CaptureServiceLead
         ], [], ['name' => __('Contact name'), 'email' => __('Email address'), 'phone' => __('Phone number')])->validate();
 
         // Unique email identity also handles racing submissions. Anonymous retries never overwrite a lead.
-        ServiceLead::firstOrCreate(['email_hash' => ServiceLead::emailHash($data['email'])], [...$data, 'status' => 'new']);
+        ServiceLead::firstOrCreate(['email_hash' => ServiceLead::emailHash($data['email'])], [...$data, 'status' => 'new', 'campaign_visit_id' => $campaignVisit?->id]);
     }
 }

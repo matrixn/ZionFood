@@ -1,4 +1,4 @@
-# Contact onboarding and leads — 0.0.44
+# Contact onboarding and leads — 0.0.45
 
 The marketing landing (`/` in Romanian, `/en` in English) includes `#contact`, with links from desktop/mobile navigation, the hero and footer. It asks only for contact name, email and phone. Each visible field has localized explanatory help and an accessible input name. Tab goes directly between controls rather than stopping at form-help icons. A hidden honeypot and the page locale are technical values, not extra visible questions.
 
@@ -21,3 +21,7 @@ Statuses are stable internal values `new`, `contacted`, `qualified`, `closed`, w
 ## Release and checks
 
 Run the additive `2026_10_31_000200_create_service_leads_table` migration through the normal release process before accepting requests. Build the client and localized SEO artifacts together; no dependency or environment changes are needed. Production data and Forge were not used for local acceptance. Tests use isolated SQLite databases, private browser sessions and synthetic contacts under example.test. See CODEX_PROGRESS.md for executed checks and remaining work.
+
+## Campaign attribution from 0.0.45
+
+A newly created lead can reference the last eligible tagged marketing visit in the current session, within30 minutes of that entry. The association is resolved server-side; submitted campaign IDs/tags are ignored. Untagged navigation and language changes preserve the eligible pointer. Expired/opted-out/unavailable attribution leaves the request valid and unassigned; duplicate email submissions preserve the existing request and its initial association. The admin list displays campaign context and accepts an authorized campaign_visit filter from the campaign dashboard. See CAMPAIGNS.md for deduplication, exclusions, report definitions and the additional migration.

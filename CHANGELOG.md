@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.45 — 2026-10-31
+
+- Platform-only UTM visit log, campaign ranking, retained-lead/qualified-request counters, period/source/medium/campaign filters and pagination.
+- Server-side tagged landing entries, session-scoped 30-minute deduplication and last-eligible-campaign attribution for newly captured leads. Client attribution IDs are ignored; anonymous duplicates retain their original association.
+- Bounded labels, bot/prefetch/admin and DNT/GPC exclusions, analytics admission limiting and isolated failure handling. No raw IP/UA/full URL or durable visitor identity is stored in campaign records.
+- Added campaign_visits and nullable lead attribution FK; normalized SQL aggregate numbers and byte-exact campaign filters for SQLite/MariaDB consistency.
+
 ## 0.0.44 — 2026-10-31
 
 - Replace the SQLite-only logo-publication failure trigger with an isolated query-event listener that fails after the actual insert and restores its dispatcher. The regression now checks file and database rollback without driver-specific SQL or implicit DDL commits.

@@ -1,4 +1,6 @@
-# ZionFood 0.0.44
+# ZionFood 0.0.45
+
+RecordCampaignVisit handles only successful marketing landing GETs with usable UTM tags. Existing session IDs scope transient cache locks/deduplication and a 30-minute attribution pointer; campaign rows contain validated labels, clean entry path/language and time, with no IP/UA/session ID/full URL. Campaign identity groups source/medium/name/ID; creative/term variants remain individual visit metadata. Lead capture accepts a server-resolved eligible campaign visit, never a client ID, and preserves original attribution on duplicate email identities. Platform-only reporting uses UTC query boundaries derived from Bucharest days, bounded pagination, integer aggregate DTOs and portable byte-exact filters. See CAMPAIGNS.md.
 
 Landing contact requests are platform data, outside organization/location tenancy. CaptureServiceLead validates three contact fields, normalizes email identity and stores encrypted attributes in ServiceLead with a unique keyed hash. Anonymous duplicates never mutate existing contacts/status. The JSON-only, CSRF-protected marketing-host endpoint has an independent IP rate limit and honeypot; it creates no account/mail/job. ManageServiceLead repeats platform-admin authorization for status/deletion, and admin listing explicitly exposes only permitted contact fields, with encrypted Inertia history and no-store responses. Build-owned landing HTML contains only blank form controls. See LEAD_CAPTURE.md.
 

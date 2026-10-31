@@ -1,4 +1,6 @@
-# Scope at 0.0.44
+# Scope at 0.0.45
+
+0.0.45 adds platform campaign analytics for tagged marketing visits and new contact requests: all six standard UTM fields, current retained/qualified-lead counts, campaign ranking, 7/30/90-day filters and paginated visit records. Deduplication and last-eligible attribution use a 30-minute existing-session window. Numbers describe recorded visits and retained requests, not unique people or conversion rates. Untagged/restaurant traffic stays separate, and bot/prefetch/admin/privacy exclusions apply. The campaign_visits migration and nullable lead FK are required.
 
 0.0.43 adds bilingual contact onboarding on the marketing landing, collecting only name, email and phone. Leads are stored encrypted, deduplicated without anonymous overwrite and managed only by verified platform administrators (statuses, counters, filters, pagination and permanent deletion). No accounts, restaurant onboarding, newsletters or emails are triggered. Static SEO markup stays free of contact data; JavaScript is required for the submitted form. A new additive service_leads migration is required.
 

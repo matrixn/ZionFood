@@ -18,10 +18,17 @@ interface Lead {
     status: string;
     locale: string;
     created_at: string;
+    campaign: {
+        public_id: string;
+        utm_source: string | null;
+        utm_medium: string | null;
+        utm_campaign: string | null;
+        utm_id: string | null;
+    } | null;
 }
 const props = defineProps<{
     leads: { data: Lead[]; current_page: number; last_page: number; total: number };
-    filters: { status?: string };
+    filters: { status?: string; campaign_visit?: string };
     summary: Record<string, number>;
 }>();
 const states = ['new', 'contacted', 'qualified', 'closed'];
@@ -30,10 +37,17 @@ const deleting = ref<Lead | null>(null);
 const toast = useToast();
 const options = () => states.map((value) => ({ value, label: t('leads_status_' + value) }));
 function filter(status: string | null) {
-    router.get('/admin/leads', status ? { status } : {}, { preserveState: true, preserveScroll: true });
+    router.get(
+        '/admin/leads',
+        {
+            ...(status ? { status } : {}),
+            ...(props.filters.campaign_visit ? { campaign_visit: props.filters.campaign_visit } : {}),
+        },
+        { preserveState: true, preserveScroll: true },
+    );
 }
 function pageUrl(page: number) {
-    return `/admin/leads?page=${page}${props.filters.status ? `&status=${props.filters.status}` : ''}`;
+    return `/admin/leads?page=${page}${props.filters.status ? `&status=${props.filters.status}` : ''}${props.filters.campaign_visit ? `&campaign_visit=${props.filters.campaign_visit}` : ''}`;
 }
 async function update(lead: Lead, status: string) {
     if (busy.value) return;
@@ -76,6 +90,12 @@ function date(value: string) {
             :title="$t('leads_title')"
             :description="$t('leads_description')"
         />
+        <p v-if="filters.campaign_visit" class="mb-5 rounded-xl bg-violet-50 p-4 text-sm text-violet-900">
+            {{ $t('campaigns_lead_filter') }}
+            <Link href="/admin/leads" class="ml-2 font-semibold underline">{{
+                $t('campaigns_lead_filter_clear')
+            }}</Link>
+        </p>
         <div class="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div v-for="state in states" :key="state" class="panel !p-4">
                 <p class="text-xs font-medium text-slate-500">{{ $t('leads_status_' + state) }}</p>
@@ -118,6 +138,15 @@ function date(value: string) {
                         >{{ $t('leads_status_' + lead.status) }}</span
                     >
                 </div>
+                <p
+                    v-if="lead.campaign"
+                    class="mt-4 break-words rounded-lg bg-violet-50 p-3 text-xs leading-relaxed text-violet-900 dark:bg-violet-950 dark:text-violet-100"
+                >
+                    <strong>{{ $t('campaigns_lead_attribution') }}</strong>
+                    {{ lead.campaign.utm_campaign || lead.campaign.utm_id || $t('campaigns_unspecified') }} ·
+                    {{ lead.campaign.utm_source || $t('campaigns_unspecified') }} /
+                    {{ lead.campaign.utm_medium || $t('campaigns_unspecified') }}
+                </p>
                 <div class="my-5 grid gap-2 text-sm">
                     <a :href="'mailto:' + encodeURIComponent(lead.email)" class="break-all text-brand"
                         ><i class="pi pi-envelope mr-2" aria-hidden="true" />{{ lead.email }}</a
