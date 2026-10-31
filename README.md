@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.41** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.42** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,13 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 31 octombrie 2026 — logo opțional din linkul GloriaFood · 0.0.42
+
+- [x] Logo separat în simulare, cu previzualizare existent/propus și alegere nebifată implicit.
+- [x] Descărcare și verificare în stocare privată; înlocuire numai la aprobarea explicită a importului.
+- [x] Proporții și transparență păstrate; logo comun locațiilor, cu protecție la editări concurente și revenire la cel anterior.
+- [x] Lipsa unui logo distinct sau o descărcare eșuată nu blochează importul meniului și nu modifică logo-ul existent. Imaginile de fundal/produse nu sunt ghicite ca logo.
 
 ### 31 octombrie 2026 — datele restaurantului din linkul GloriaFood · 0.0.41
 

@@ -107,6 +107,16 @@ class MigrationCenterController extends Controller
         abort(404);
     }
 
+    public function logo(Request $r, string $location, string $batch)
+    {
+        $b = $this->batch($r, $location, $batch);
+        abort_unless(in_array($b->status, ['enriching', 'ready', 'published', 'reverted'], true), 404);
+        $photo = app(ProcessImport::class)->canonical($b)['public_menu']['logo'] ?? null;
+        abort_unless(is_array($photo), 404);
+
+        return response(app(ImportPhotos::class)->bytes($b, 'logo', $photo), 200, ['Content-Type' => 'image/webp', 'Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff']);
+    }
+
     private function report(ImportBatch $b): array
     {
         $base = ['batch_id' => $b->public_id, 'status' => $b->status, 'failure_code' => $b->failure_code, 'report' => null, 'menu' => null, 'issues' => DB::table('import_issues')->where('batch_id', $b->id)->limit(50)->get(['severity', 'code', 'path', 'message']), 'conflicts' => [], 'review_hash' => null];
@@ -148,7 +158,7 @@ class MigrationCenterController extends Controller
     public function publish(Request $r, string $location, string $batch, PublishImport $action)
     {
         $b = $this->batch($r, $location, $batch);
-        $d = $r->validate(['acknowledged' => 'required|accepted', 'resolutions' => 'present|array|max:2000', 'resolutions.*' => 'in:keep_local,use_source', 'settings_fields' => 'sometimes|array|max:5', 'settings_fields.*' => ['string', 'distinct', Rule::in(NormalizePublicRestaurantSettings::FIELDS)], 'review_hash' => 'required|string|size:64']);
+        $d = $r->validate(['acknowledged' => 'required|accepted', 'resolutions' => 'present|array|max:2000', 'resolutions.*' => 'in:keep_local,use_source', 'settings_fields' => 'sometimes|array|max:6', 'settings_fields.*' => ['string', 'distinct', Rule::in(NormalizePublicRestaurantSettings::FIELDS)], 'review_hash' => 'required|string|size:64']);
         $menu = $action->execute($r->user(), $b, $d['resolutions'], true, $d['review_hash'], $d['settings_fields'] ?? []);
 
         return response()->json(['menu_id' => $menu->public_id]);

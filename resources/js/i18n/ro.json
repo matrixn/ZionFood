@@ -1657,5 +1657,14 @@
     "mig_settings_confirm": "Se vor aplica și următoarele modificări. Zonele existente sunt păstrate:",
     "mig_settings_setup_phone": "În configurarea locației",
     "mig_refresh_preview": "Actualizează simularea",
-    "mig_refresh_preview_help": "Reîncarcă datele existente pentru comparație, fără a prelua din nou sursa. Aprobarea trebuie bifată din nou."
+    "mig_refresh_preview_help": "Reîncarcă datele existente pentru comparație, fără a prelua din nou sursa. Aprobarea trebuie bifată din nou.",
+    "mig_setting_logo": "Logo restaurant",
+    "mig_setting_logo_help": "Compară logo-ul existent cu cel identificat în meniul public. Bifează doar dacă vrei să îl înlocuiești la aprobarea importului. Logo-ul este comun tuturor locațiilor restaurantului.",
+    "mig_select_logo": "Preia logo-ul",
+    "mig_settings_error_logo": "Meniul public nu expune un logo distinct al restaurantului într-un format acceptat. Logo-ul existent rămâne neschimbat; îl poți încărca din Identitatea restaurantului.",
+    "mig_settings_error_logo_pending": "Logo-ul se descarcă pentru previzualizare. Opțiunea devine disponibilă după verificarea imaginii.",
+    "mig_settings_error_logo_download": "Logo-ul nu a putut fi descărcat sau verificat. Poți continua importul meniului; logo-ul existent rămâne neschimbat.",
+    "mig_logo_current_alt": "Logo existent al restaurantului",
+    "mig_logo_proposed_alt": "Logo propus din GloriaFood",
+    "mig_logo_preserved": "Imaginea își păstrează proporțiile. Alegerea se aplică numai la aprobarea importului."
 }

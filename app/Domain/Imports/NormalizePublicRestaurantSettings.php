@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 
 class NormalizePublicRestaurantSettings
 {
-    public const FIELDS = ['name', 'address', 'phone', 'hours', 'zones'];
+    public const FIELDS = ['name', 'address', 'phone', 'hours', 'zones', 'logo'];
 
     public function execute(array $source): array
     {
@@ -21,6 +21,23 @@ class NormalizePublicRestaurantSettings
         }
 
         return $fields;
+    }
+
+    private function logo(array $source): array
+    {
+        // Only explicit restaurant-logo records; never infer a logo from a theme or product image.
+        foreach (['restaurant_logo', 'logo'] as $type) {
+            $picture = $source['pictures'][$type] ?? null;
+            if (is_array($picture) && ($picture['thumbnail_type'] ?? null) === $type
+                && in_array((string) ($picture['entity_id'] ?? ''), ['0', (string) ($source['id'] ?? '')], true)
+                && empty($picture['theme_set_id'])
+                && preg_match('/^[a-f0-9-]{36}\.(jpg|jpeg|png|webp)$/D', $picture['filename'] ?? '')) {
+                $density = in_array($picture['density'] ?? 1, [2, 3], true) ? '_d'.$picture['density'] : '';
+
+                return ['source_url' => GloriaFoodPublicClient::CDN.pathinfo($picture['filename'], PATHINFO_FILENAME).$density.'.'.pathinfo($picture['filename'], PATHINFO_EXTENSION)];
+            }
+        }
+        throw new \RuntimeException('public_logo_missing');
     }
 
     private function name(array $source): string

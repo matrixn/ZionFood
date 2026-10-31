@@ -145,7 +145,18 @@ const settingsPreview = computed(() =>
                 ? preview.value?.report?.settings_changes?.[field.key]
                 : undefined;
         return applied
-            ? { ...field, current: applied.before, proposed: applied.after, current_setup_phone: undefined }
+            ? {
+                  ...field,
+                  current: applied.before,
+                  proposed: applied.after,
+                  current_setup_phone: undefined,
+                  current_image_url:
+                      field.key === 'logo'
+                          ? applied.before
+                              ? `/storage/${applied.before}`
+                              : null
+                          : field.current_image_url,
+              }
             : field;
     }),
 );

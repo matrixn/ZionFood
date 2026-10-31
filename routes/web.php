@@ -114,6 +114,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/app/locations/{location}/migration-center', [MigrationCenterController::class, 'index']);
     Route::post('/app/locations/{location}/migration-center', [MigrationCenterController::class, 'start'])->middleware('throttle:menu-import');
     Route::get('/app/locations/{location}/migration-center/{batch}', [MigrationCenterController::class, 'detail']);
+    Route::get('/app/locations/{location}/migration-center/{batch}/logo', [MigrationCenterController::class, 'logo']);
     Route::get('/app/locations/{location}/migration-center/{batch}/photos/{product}', [MigrationCenterController::class, 'photo']);
     Route::get('/app/locations/{location}/migration-center/{batch}/print', [MigrationCenterController::class, 'printable']);
     Route::get('/app/locations/{location}/migration-center/{batch}/report', [MigrationCenterController::class, 'download']);

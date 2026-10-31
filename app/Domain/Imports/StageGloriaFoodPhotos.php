@@ -28,6 +28,9 @@ class StageGloriaFoodPhotos
                 }
             }
             $meta = &$menu['public_menu'];
+            if (isset($meta['logo_source_url'])) {
+                $urls = ['logo' => $meta['logo_source_url']] + $urls;
+            }
             $limited = ($meta['bytes'] ?? 0) >= 134217728;
             $chunk = $stop || $limited ? $urls : array_slice($urls, 0, 5, true);
             $responses = [];
@@ -41,7 +44,9 @@ class StageGloriaFoodPhotos
             $photos = [];
             foreach ($chunk as $key => $url) {
                 if ($stop || $limited) {
-                    $meta[$limited ? 'limited' : 'failed']++;
+                    if ($key !== 'logo') {
+                        $meta[$limited ? 'limited' : 'failed']++;
+                    }
 
                     continue;
                 }
@@ -51,15 +56,30 @@ class StageGloriaFoodPhotos
                         $meta['bytes'] += strlen($response->body());
                     }
                     if ($meta['bytes'] > 134217728) {
-                        $meta['limited']++;
+                        if ($key !== 'logo') {
+                            $meta['limited']++;
+                        }
 
                         continue;
                     }
                     $bytes = app(GloriaFoodPublicClient::class)->imageBytes($response);
                     $photos[$key] = app(ImportPhotos::class)->stage($batch, (string) $key, $bytes, $url);
-                    $meta['downloaded']++;
+                    if ($key !== 'logo') {
+                        $meta['downloaded']++;
+                    }
                 } catch (\Throwable) {
-                    $meta['failed']++;
+                    if ($key !== 'logo') {
+                        $meta['failed']++;
+                    }
+                }
+            }
+            if (array_key_exists('logo', $chunk)) {
+                unset($meta['logo_source_url']);
+                if (isset($photos['logo'])) {
+                    $meta['logo'] = $photos['logo'];
+                    $meta['settings_candidates']['logo'] = ['available' => true, 'value' => app(ImportPhotos::class)->publicPath($batch, 'logo', $photos['logo']), 'error' => null];
+                } else {
+                    $meta['settings_candidates']['logo'] = ['available' => false, 'value' => null, 'error' => 'logo_download'];
                 }
             }
             foreach ($menu['categories'] as &$category) {

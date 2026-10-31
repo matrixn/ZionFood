@@ -8,6 +8,7 @@ use App\Models\RestaurantLocation;
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class ImportRestaurantSettings
@@ -31,6 +32,7 @@ class ImportRestaurantSettings
         }
 
         return [
+            'logo' => ['value' => $l->restaurant->logo_path],
             'name' => ['value' => $l->restaurant->name, 'profiles' => $profiles],
             'phone' => ['value' => $l->restaurant->contact_phone, 'profile' => array_intersect_key($basics, ['phone' => true])],
             'address' => ['value' => $address, 'profile' => array_intersect_key($basics, array_flip(self::ADDRESS))],
@@ -50,6 +52,9 @@ class ImportRestaurantSettings
         $siblings = $location->restaurant->locations()->orderBy('id')->pluck('name')->all();
         $fields = [];
         foreach (NormalizePublicRestaurantSettings::FIELDS as $key) {
+            if (! isset($candidates[$key])) {
+                continue; // Older staged imports retain their original choices.
+            }
             $candidate = $candidates[$key];
             $after = $candidate['value'];
             $added = 0;
@@ -64,7 +69,9 @@ class ImportRestaurantSettings
             }
             $fields[] = ['key' => $key, 'available' => $candidate['available'], 'error' => $candidate['error'], 'current' => $state[$key]['value'], 'proposed' => $after,
                 'current_setup_phone' => $key === 'phone' ? ($state['phone']['profile']['phone'] ?? null) : null, 'changed' => $key === 'zones' ? $added > 0 : $state[$key]['value'] !== $after, 'added_zones' => $added,
-                'affected_locations' => in_array($key, ['name', 'phone'], true) ? $siblings : [$location->name]];
+                'current_image_url' => $key === 'logo' && $state['logo']['value'] ? Storage::disk('public')->url($state['logo']['value']) : null,
+                'proposed_image_url' => $key === 'logo' && $candidate['available'] ? '/app/locations/'.$location->public_id.'/migration-center/'.$batch->public_id.'/logo' : null,
+                'affected_locations' => in_array($key, ['name', 'phone', 'logo'], true) ? $siblings : [$location->name]];
         }
 
         return $fields;
@@ -101,7 +108,7 @@ class ImportRestaurantSettings
         return hash('sha256', json_encode($values, JSON_THROW_ON_ERROR));
     }
 
-    public function apply(User $actor, RestaurantLocation $location, ImportBatch $batch, array $menu, array $fields): ?string
+    public function apply(User $actor, RestaurantLocation $location, ImportBatch $batch, array $menu, array $fields, array &$createdPhotos = []): ?string
     {
         if (! $fields) {
             return null;
@@ -125,7 +132,10 @@ class ImportRestaurantSettings
         $addedIds = [];
         foreach ($fields as $field) {
             $value = $menu['public_menu']['settings_candidates'][$field]['value'];
-            if ($field === 'zones') {
+            if ($field === 'logo') {
+                $value = app(ImportPhotos::class)->publish($batch, 'logo', $menu['public_menu']['logo'], $createdPhotos);
+                $this->write($location, $field, $value);
+            } elseif ($field === 'zones') {
                 $plan = $this->zonePlan($batch, $before['zones']['value'], $value);
                 $newIds = [];
                 $priority = min(1000, (int) $location->zones()->max('priority') + 1);
@@ -163,7 +173,10 @@ class ImportRestaurantSettings
 
     private function write(RestaurantLocation $location, string $field, mixed $value, ?array $restore = null): void
     {
-        if ($field === 'name') {
+        if ($field === 'logo') {
+            // Retain the previous file for guarded rollback and existing share previews.
+            $location->restaurant()->update(['logo_path' => $value]);
+        } elseif ($field === 'name') {
             $location->restaurant()->update(['name' => $value]);
             foreach ($location->restaurant->locations()->orderBy('id')->get() as $sibling) {
                 $this->basics($sibling, ['restaurant_name'], $restore === null ? ['restaurant_name' => $value] : $restore['profiles'][$sibling->id]);

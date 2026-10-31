@@ -1657,5 +1657,14 @@
     "mig_settings_confirm": "The following changes will also apply. Existing zones are retained:",
     "mig_settings_setup_phone": "Location setup phone",
     "mig_refresh_preview": "Refresh preview",
-    "mig_refresh_preview_help": "Reload current data for comparison without fetching the source again. Review confirmation must be checked again."
+    "mig_refresh_preview_help": "Reload current data for comparison without fetching the source again. Review confirmation must be checked again.",
+    "mig_setting_logo": "Restaurant logo",
+    "mig_setting_logo_help": "Compare the existing logo with the one identified in the public menu. Select only if you want to replace it when approving the import. The logo is shared by all restaurant locations.",
+    "mig_select_logo": "Import the logo",
+    "mig_settings_error_logo": "The public menu does not expose a distinct restaurant logo in a supported format. Your existing logo remains unchanged; you can upload one in Restaurant identity.",
+    "mig_settings_error_logo_pending": "The logo is downloading for preview. This option becomes available after the image is verified.",
+    "mig_settings_error_logo_download": "The logo could not be downloaded or verified. You can continue importing the menu; your existing logo remains unchanged.",
+    "mig_logo_current_alt": "Existing restaurant logo",
+    "mig_logo_proposed_alt": "Proposed logo from GloriaFood",
+    "mig_logo_preserved": "The image keeps its proportions. Your choice applies only when approving the import."
 }

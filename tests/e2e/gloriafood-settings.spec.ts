@@ -39,7 +39,7 @@ test('reviews restaurant settings, approves selected fields, appends zones and r
     const batch = (await (await started).json()).batch_id;
     await expect(page.getByRole('heading', { name: 'Pregătit pentru verificare', exact: true })).toBeVisible();
     const review = page.getByTestId('migration-settings-review');
-    await expect(review.getByRole('checkbox')).toHaveCount(5);
+    await expect(review.getByRole('checkbox')).toHaveCount(6);
     for (const checkbox of await review.getByRole('checkbox').all()) await expect(checkbox).not.toBeChecked();
     const before = await (await page.request.get(`${base}/${batch}`)).json();
     const fields = Object.fromEntries(

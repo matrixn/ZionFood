@@ -1,4 +1,4 @@
-# Raport capabilități WordPress API — 0.0.41
+# Raport capabilități WordPress API — 0.0.42
 
 Backendul ZionFood este pregătit pentru pluginul WordPress care urmează. Comparația folosește descrierile oficiale [GloriaFood din WordPress.org](https://wordpress.org/plugins/menu-ordering-reservations/) și [pagina pluginului](https://www.gloriafood.com/wordpress-restaurant-plugin). Importul integral din GloriaFood existent rămâne documentat separat în [Migration Center](MIGRATION_CENTER.md).
 

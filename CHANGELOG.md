@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.42 — 2026-10-31
+
+- Optional restaurant logo choice in public-link migration previews, default off, with existing/proposed images and shared-location disclosure.
+- Bounded private staging reuses verified CDN transport and WebP decoding, preserving transparency and proportions. Explicit approval alone publishes the logo; previous files remain for guarded rollback.
+- Missing/unsupported logos and failed downloads leave existing branding unchanged. Older staged settings remain compatible; product-photo counters exclude logos.
+
 ## 0.0.41 — 2026-10-31
 
 - Add opt-in restaurant name, address/map position, phone, opening hours/time zone and delivery-zone proposals from the verified public menu. Compare current/proposed data and zone outlines before explicit publication; defaults remain unchecked.

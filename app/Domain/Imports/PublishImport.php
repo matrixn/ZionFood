@@ -53,7 +53,8 @@ class PublishImport
             try {
                 // An after-commit callback can fail after the menu is already durable.
                 $referenced = MenuItem::withTrashed()->where('organization_id', $context->organization_id)->whereIn('image_path', $createdPhotos)->pluck('image_path')->all();
-                Storage::disk('public')->delete(array_values(array_diff($createdPhotos, $referenced)));
+                $logos = Restaurant::where('organization_id', $context->organization_id)->whereIn('logo_path', $createdPhotos)->pluck('logo_path')->all();
+                Storage::disk('public')->delete(array_values(array_diff($createdPhotos, $referenced, $logos)));
             } catch (\Throwable $cleanup) {
                 Log::warning('GloriaFood photo cleanup deferred', ['batch_id' => $context->public_id, 'exception_class' => $cleanup::class]);
             }
@@ -88,7 +89,7 @@ class PublishImport
                 }
             }
             $previous = $this->previous($batch);
-            $settingsSnapshot = app(ImportRestaurantSettings::class)->apply($actor, $location, $batch, $canonical, $settingsFields);
+            $settingsSnapshot = app(ImportRestaurantSettings::class)->apply($actor, $location, $batch, $canonical, $settingsFields, $createdPhotos);
             $oldItems = $previous ? MenuItem::withTrashed()->whereHas('category', fn ($q) => $q->where('menu_id', $previous->menu_id))->get() : collect();
             $previousIds = $location->menus()->pluck('menus.id')->all();
             $menu = Menu::create(['organization_id' => $location->organization_id, 'restaurant_id' => $location->restaurant_id, 'name' => 'GloriaFood · '.now()->format('Y-m-d H:i'), 'is_active' => false]);

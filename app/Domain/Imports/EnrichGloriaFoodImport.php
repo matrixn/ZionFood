@@ -50,6 +50,14 @@ class EnrichGloriaFoodImport
                 $menu['public_menu']['restaurant'] = array_intersect_key($public, array_flip(['id', 'uid', 'name', 'address', 'phone', 'latitude', 'longitude', 'cuisines']));
                 $menu['public_menu']['settings_candidates'] = app(NormalizePublicRestaurantSettings::class)->execute($public);
                 $this->plan($menu, $public);
+                $logo = &$menu['public_menu']['settings_candidates']['logo'];
+                if ($logo['available']) {
+                    $menu['public_menu']['logo_source_url'] = $logo['value']['source_url'];
+                    $menu['public_menu']['pending']++;
+                    $menu['public_menu']['status'] = 'pending';
+                    $logo = ['available' => false, 'value' => null, 'error' => 'logo_pending'];
+                }
+                unset($logo);
                 if ($menu['public_menu']['failed'] || $menu['public_menu']['limited']) {
                     $issues[] = $this->issue('warning', 'public_photos_incomplete');
                 }

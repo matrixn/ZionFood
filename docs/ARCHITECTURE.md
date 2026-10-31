@@ -1,4 +1,6 @@
-# ZionFood 0.0.41
+# ZionFood 0.0.42
+
+Optional logo enrichment uses the same bounded image queue and pinned/TLS-verified CDN transport. Explicit typed restaurant-logo records are staged privately and served by a scoped no-store preview route; theme/product images are never substituted. Default-off selection publishes the logo within the existing menu/settings transaction and receipt, preserving the prior logo for guarded rollback. Publication failure cleanup checks both menu image references and committed restaurant logos.
 
 Migration Center stages normalized optional restaurant settings alongside public-menu photo evidence. Explicit key selections apply shared name/phone and location address/pin/hours or append-only zones within the menu publication transaction. The review hash binds current settings and publication locks include the restaurant. Encrypted, scope-bound publication receipts support guarded selective rollback and preserve pre-existing zones. Source-zone mappings survive normal Settings edits because zone IDs are updated in place. See MIGRATION_CENTER.md for supported source shapes and limits.
 

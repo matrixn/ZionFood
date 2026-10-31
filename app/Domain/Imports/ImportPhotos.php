@@ -3,6 +3,7 @@
 namespace App\Domain\Imports;
 
 use App\Models\ImportBatch;
+use App\Models\RestaurantLocation;
 use Illuminate\Support\Facades\Storage;
 
 class ImportPhotos
@@ -17,6 +18,8 @@ class ImportPhotos
         if (! $image) {
             throw new \RuntimeException('public_photo_decode');
         }
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
         ob_start();
         try {
             if (! imagewebp($image, null, 85)) {
@@ -42,7 +45,7 @@ class ImportPhotos
     public function bytes(ImportBatch $batch, string $key, array $photo): string
     {
         $hash = $photo['sha256'] ?? '';
-        if (! ctype_digit($key) || ! preg_match('/^[a-f0-9]{64}$/D', $hash) || ($photo['path'] ?? '') !== 'imports/'.$batch->public_id.'/photos/'.$key.'-'.$hash.'.webp') {
+        if ((! ctype_digit($key) && $key !== 'logo') || ! preg_match('/^[a-f0-9]{64}$/D', $hash) || ($photo['path'] ?? '') !== 'imports/'.$batch->public_id.'/photos/'.$key.'-'.$hash.'.webp') {
             throw new \RuntimeException('public_photo_path');
         }
         $bytes = Storage::disk('local')->get($photo['path']);
@@ -53,10 +56,17 @@ class ImportPhotos
         return $bytes;
     }
 
+    public function publicPath(ImportBatch $batch, string $key, array $photo): string
+    {
+        $prefix = $key === 'logo' ? 'branding/'.$batch->organization_id.'/'.RestaurantLocation::where('organization_id', $batch->organization_id)->findOrFail($batch->location_id)->restaurant->public_id : 'menu/'.$batch->organization_id;
+
+        return $prefix.'/imports/'.$batch->public_id.'/'.$key.'-'.$photo['sha256'].'.webp';
+    }
+
     public function publish(ImportBatch $batch, string $key, array $photo, array &$created): string
     {
         $bytes = $this->bytes($batch, $key, $photo);
-        $path = 'menu/'.$batch->organization_id.'/imports/'.$batch->public_id.'/'.$key.'-'.$photo['sha256'].'.webp';
+        $path = $this->publicPath($batch, $key, $photo);
         if (! Storage::disk('public')->exists($path)) {
             if (! Storage::disk('public')->put($path, $bytes)) {
                 throw new \RuntimeException('public_photo_publication');

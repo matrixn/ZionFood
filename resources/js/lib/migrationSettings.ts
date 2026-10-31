@@ -34,4 +34,6 @@ export interface ImportedSettingPreview {
     added_zones: number;
     affected_locations: string[];
     current_setup_phone?: string | null;
+    current_image_url?: string | null;
+    proposed_image_url?: string | null;
 }

@@ -56,11 +56,11 @@ it('previews all five settings without changing any existing data or re-fetching
     $b = settingsBatch($u, $l);
     $preview = $action->preview($b, app(ProcessImport::class)->canonical($b));
     expect($action->state($l))->toBe($before);
-    expect(array_column($preview, 'available'))->toBe([true, true, true, true, true]);
+    expect(array_column($preview, 'available'))->toBe([true, true, true, true, true, false]);
     expect($preview[4]['proposed'][0])->toMatchArray(['fee' => 525, 'minimum_order' => 4010]);
     expect($preview[4]['proposed'][0]['geometry']['coordinates'][0])->toBe([[24, 45], [25, 45], [25, 46], [24, 45]]);
     $url = '/app/locations/'.$l->public_id.'/migration-center/'.$b->public_id;
-    $this->actingAs($u)->getJson($url)->assertOk()->assertJsonCount(5, 'settings_preview');
+    $this->actingAs($u)->getJson($url)->assertOk()->assertJsonCount(6, 'settings_preview');
     publishSettings($u, $b, []);
     expect($action->state($l))->toBe($before);
     Http::assertSentCount(1);
@@ -81,7 +81,7 @@ it('applies only the explicitly selected setting', function ($field) {
     expect(json_decode(Crypt::decryptString($snapshot), true)['before'])->toHaveKey($field);
     $report = json_decode(DB::table('import_reports')->where('batch_id', $b->id)->value('report'), true);
     expect(array_keys($report['settings_changes']))->toBe([$field]);
-})->with(NormalizePublicRestaurantSettings::FIELDS);
+})->with(array_values(array_diff(NormalizePublicRestaurantSettings::FIELDS, ['logo'])));
 
 it('appends zones without deleting or modifying existing zones and avoids reimport duplicates', function () {
     [$u, $l] = tenantFixture();
@@ -128,14 +128,14 @@ it('rejects a stale preview when restaurant settings change before approval', fu
         expect($e->getStatusCode())->toBe(409);
     }
     expect($b->fresh()->status)->toBe('ready');
-})->with(NormalizePublicRestaurantSettings::FIELDS);
+})->with(array_values(array_diff(NormalizePublicRestaurantSettings::FIELDS, ['logo'])));
 
 it('rolls selected settings back without deleting zones that predated the import', function () {
     [$u, $l] = tenantFixture();
     $old = $l->zones()->create(['name' => 'Existing', 'postal_prefix' => '24', 'fee' => 100, 'minimum_order' => 0]);
     $before = app(ImportRestaurantSettings::class)->state($l);
     $b = settingsBatch($u, $l);
-    publishSettings($u, $b, NormalizePublicRestaurantSettings::FIELDS);
+    publishSettings($u, $b, array_values(array_diff(NormalizePublicRestaurantSettings::FIELDS, ['logo'])));
     app(PublishImport::class)->revert($u, $b);
     expect(app(ImportRestaurantSettings::class)->state($l))->toBe($before)->and($old->fresh())->not->toBeNull();
 });

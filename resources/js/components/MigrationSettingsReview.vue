@@ -58,7 +58,7 @@ function allowed(field: ImportedSettingPreview) {
             <p v-else-if="!allowed(field)" class="mt-2 text-sm text-amber-800">
                 {{ $t('mig_settings_orders_permission') }}
             </p>
-            <p v-if="['name', 'phone'].includes(field.key)" class="mt-3 text-xs text-slate-500">
+            <p v-if="['name', 'phone', 'logo'].includes(field.key)" class="mt-3 text-xs text-slate-500">
                 {{ $t('mig_settings_shared') }}: {{ field.affected_locations.join(', ') }}
             </p>
             <p v-if="field.key === 'zones'" class="mt-3 text-xs text-slate-500">
@@ -76,6 +76,19 @@ function allowed(field: ImportedSettingPreview) {
                     <template v-if="field[side] === null"
                         ><p class="text-slate-400">{{ $t('mig_settings_empty') }}</p></template
                     >
+                    <template v-else-if="field.key === 'logo'">
+                        <div
+                            class="flex h-40 items-center justify-center rounded-xl border border-slate-100 bg-white p-4"
+                        >
+                            <img
+                                v-if="side === 'current' ? field.current_image_url : field.proposed_image_url"
+                                :src="(side === 'current' ? field.current_image_url : field.proposed_image_url)!"
+                                :alt="$t(side === 'current' ? 'mig_logo_current_alt' : 'mig_logo_proposed_alt')"
+                                class="max-h-full max-w-full object-contain"
+                            />
+                        </div>
+                        <p class="mt-2 text-xs text-slate-500">{{ $t('mig_logo_preserved') }}</p>
+                    </template>
                     <template v-else-if="field.key === 'hours'">
                         <p class="mb-2 font-medium">{{ (field[side] as ImportedHours).timezone }}</p>
                         <dl class="grid gap-1">

@@ -1,4 +1,6 @@
-# Scope at 0.0.41
+# Scope at 0.0.42
+
+0.0.42 adds a default-off logo import choice with current/proposed previews, private staging, explicit approved replacement and guarded rollback. A distinct typed logo must be exposed by the public response; no theme/product fallback is inferred. An absent/unsupported logo or failed download is optional and keeps current branding intact. The captured real response used locally has no distinct logo; positive logo cases use controlled fixtures pending validation against a real provider account that exposes one.
 
 0.0.41 adds opt-in current/proposed restaurant-setting comparisons to public-menu imports: shared name/phone, location address/pin, weekly hours/time zone and append-only delivery zones. All choices default off. Approval applies only selected valid fields transactionally, preserves existing zones and local edits, guards stale previews and records encrypted rollback evidence. Unsupported source structures are unavailable individually. Existing imports without a public link or selected settings keep their data.
 
