@@ -14,7 +14,6 @@ use App\Http\Requests\OnboardingRequest;
 use App\Models\Ingredient;
 use App\Models\LocationStaff;
 use App\Models\ModifierGroup;
-use App\Models\Organization;
 use App\Models\OrganizationMembership;
 use App\Models\OrganizationSubscription;
 use App\Models\RestaurantLocation;
@@ -38,7 +37,7 @@ class WorkspaceController extends Controller
     {
         $location = $this->locations($request)->first();
 
-        return $location ? redirect('/app/locations/'.$location->public_id) : redirect('/onboarding');
+        return $location ? redirect('/app/locations/'.$location->public_id) : redirect($request->user()->is_platform_admin ? '/admin' : '/onboarding');
     }
 
     public function onboard(OnboardingRequest $request, OnboardOrganization $action)
@@ -119,12 +118,5 @@ class WorkspaceController extends Controller
         app(SaveLocationSettings::class)->execute($request->user(), $context, $request->validated());
 
         return back()->with('success', __('Location settings saved.'));
-    }
-
-    public function admin(Request $request, ?string $organization = null)
-    {
-        abort_unless($request->user()->is_platform_admin, 403);
-
-        return Inertia::render('admin/Organizations', ['organizations' => Organization::withCount('restaurants', 'memberships')->orderBy('id')->paginate(25), 'selected' => $organization ? Organization::where('public_id', $organization)->with('restaurants.locations', 'memberships.user')->firstOrFail() : null, 'subscriptions' => OrganizationSubscription::with('plan')->get()]);
     }
 }

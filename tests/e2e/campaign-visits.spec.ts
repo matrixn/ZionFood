@@ -39,7 +39,7 @@ test('deduplicates UTM entries, attributes a contact request and reports it in p
     await expect(page).not.toHaveURL(/\/login$/);
     const report = '/admin/campaigns?utm_campaign=' + encodeURIComponent(campaign);
     await page.goto(report);
-    await expect(page.getByRole('heading', { name: 'Campanii și vizite', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Trafic și campanii', exact: true })).toBeVisible();
     await expect(page.getByTestId('campaign-metric-visits').locator('strong')).toHaveText('1');
     await expect(page.getByTestId('campaign-metric-leads').locator('strong')).toHaveText('1');
     const visit = page.locator('article[data-visit-id]');

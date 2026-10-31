@@ -86,10 +86,7 @@ function date(value: string) {
 </script>
 <template>
     <AdminLayout
-        ><Head :title="$t('leads_title')" /><ZFPageHeader
-            :title="$t('leads_title')"
-            :description="$t('leads_description')"
-        />
+        ><Head :title="$t('pa_leads')" /><ZFPageHeader :title="$t('pa_leads')" :description="$t('leads_description')" />
         <p v-if="filters.campaign_visit" class="mb-5 rounded-xl bg-violet-50 p-4 text-sm text-violet-900">
             {{ $t('campaigns_lead_filter') }}
             <Link href="/admin/leads" class="ml-2 font-semibold underline">{{

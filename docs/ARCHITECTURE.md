@@ -1,4 +1,6 @@
-# ZionFood 0.0.45
+# ZionFood 0.0.46
+
+Platform administration uses a dedicated responsive AdminLayout and grouped navigation, independent of the tenant shell. BuildPlatformOverview authorizes the platform actor and aggregates UTC reporting windows with integer currency-separated completed-order value. PlatformController exposes bounded directories and safe support/import DTOs under verified platform authorization, private/no-store responses and encrypted Inertia history. Monitoring reads recorded application states without provider calls or quota initialization. Platform access does not imply tenant operating access. See PLATFORM_ADMIN.md for definitions and boundaries.
 
 RecordCampaignVisit handles only successful marketing landing GETs with usable UTM tags. Existing session IDs scope transient cache locks/deduplication and a 30-minute attribution pointer; campaign rows contain validated labels, clean entry path/language and time, with no IP/UA/session ID/full URL. Campaign identity groups source/medium/name/ID; creative/term variants remain individual visit metadata. Lead capture accepts a server-resolved eligible campaign visit, never a client ID, and preserves original attribution on duplicate email identities. Platform-only reporting uses UTC query boundaries derived from Bucharest days, bounded pagination, integer aggregate DTOs and portable byte-exact filters. See CAMPAIGNS.md.
 

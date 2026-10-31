@@ -1,4 +1,20 @@
-# ZionFood progress — 0.0.45
+# ZionFood progress — 0.0.46
+
+## Version 0.0.46 - Professional platform administration (October 31)
+
+Replaced the organization-list entry page with a dedicated platform control centre and an independent responsive administration shell. Grouped navigation covers Customers & access, Growth, Catalog, Monitoring and Configuration. Existing catalogs, leads/campaigns, email/provider controls, error alerts and AI settings retain their behavior with matching professional page names. Added a paginated organization/subscription directory, safe organization support record, searchable account/verification directory and operational overview with a filtered import registry. Legacy organization URLs redirect; unassigned platform administrators now reach the console instead of restaurant onboarding. Platform access still grants no implicit tenant permissions.
+
+The overview aggregates daily UTC series for 7/30/90 days, completed-order value separated by currency, account/customer estate, active orders, lead backlog, campaign entries, reservations, expiring trials and recorded failures/deferrals. Chart data have an accessible table. Labels explain creation-date/current-status semantics, approximate campaign entries and the distinction between completed value and receipts. Monitoring reads stored statuses without making provider calls or initializing/resetting quota/circuit records; it does not claim Horizon/Reverb health. New responses use explicit support DTOs, private/no-store headers and encrypted Inertia history. New controls have specific RO/EN help, accessible names, direct Tab navigation and F1 help. No schema, billing mutations, tenant impersonation or automatic retries were added. See PLATFORM_ADMIN.md.
+
+Validation executed locally:
+
+- Full SQLite PHP/Pest suite: **521 passed / 4,036 assertions / 139.70s**. After a final refinement to retain literal `0` search terms, the dedicated platform suite passed again: **17 passed / 216 assertions**, including verified/platform authorization, aggregate boundaries/currencies, safe payloads, filtering/pagination, literal wildcard searches, legacy links, mail-settings read-only behavior and retained tenant isolation.
+- Same final 17 dedicated cases on isolated **MariaDB 10.11: 216 assertions / 61.06s**. A private disposable database/container was used; no production data or provider secrets were used.
+- **30 Vitest tests** passed, including catalogue parity/static UI keys and help coverage. TypeScript passed through the final production build; ESLint passed without warnings. Client build and bilingual SEO prerender succeeded.
+- Dedicated Playwright platform flow passed (**30.2s**): desktop statistics, period/series chart changes, accessible table, F1 tooltip, direct field Tab order, organization search/detail, account filter, import filter, RO/EN persistence, mobile drawer/no page overflow and dark theme. Desktop, mobile and dark captures were visually inspected. The existing campaign capture/attribution/status/deletion browser regression also passed after the heading rename (23.8s). The first attempts found a test-only premature navigation after login, a real missing explicit accessible name on PrimeVue selectors (fixed for all new selects), and a test-only ambiguous organization/restaurant heading (scoped to h1). The final flow passed with no page errors.
+- Linux Pint with a **new private cache path** and the exact CI `php vendor/bin/pint --test` both passed across **345 PHP files**. The first fresh check caught a Windows line ending in config/zionfood.php; Linux Pint corrected it before both successful final checks. Composer validate passed with only its existing explicit-project-version advisory. Lockfile metadata was regenerated on Linux (native Windows lacks Horizon's pcntl extension); dependency versions remain unchanged.
+
+No real mail, AI/import provider request, production health probe, Forge operation, tag or manual deployment was performed. Active health/recovery controls, billing changes and audited privileged-account mutations remain separate follow-up work. Production volume/performance is not established by these local fixtures.
 
 ## Version 0.0.45 - UTM visits and lead attribution (October 31)
 

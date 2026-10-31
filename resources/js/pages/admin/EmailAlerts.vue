@@ -44,9 +44,9 @@ async function save(resume = false) {
 </script>
 <template>
     <AdminLayout
-        ><Head :title="$t('alerts_title')" />
+        ><Head :title="$t('pa_alerts')" />
         <div class="mx-auto max-w-3xl space-y-6">
-            <h1 class="text-3xl font-semibold">{{ $t('alerts_title') }}</h1>
+            <h1 class="text-3xl font-semibold">{{ $t('pa_alerts') }}</h1>
             <p class="muted">{{ $t('alerts_explanation') }}</p>
             <div class="panel space-y-4">
                 <p v-if="!state.environment_enabled" class="rounded-xl bg-amber-50 p-4 text-amber-900">

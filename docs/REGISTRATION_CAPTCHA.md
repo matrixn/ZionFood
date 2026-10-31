@@ -1,4 +1,4 @@
-# Verificarea rapidă ZionFood — 0.0.45
+# Verificarea rapidă ZionFood — 0.0.46
 
 Înregistrarea obișnuită include o verificare proprie, în română implicit și engleză opțional, prezentată ca „Un pas și ești gata” / „One quick step”. Vizitatorul citește patru cifre dintr-o imagine PNG generată local, le introduce prin tastatură sau butoane și verifică răspunsul. Rezultatul apare animat; butonul de creare a contului devine disponibil după confirmare. Imaginea este generată dinamic prin extensia GD deja obligatorie, fără fonturi sau servicii CAPTCHA externe.
 

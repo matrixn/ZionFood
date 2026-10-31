@@ -1,4 +1,4 @@
-# Contact onboarding and leads — 0.0.45
+# Contact onboarding and leads — 0.0.46
 
 The marketing landing (`/` in Romanian, `/en` in English) includes `#contact`, with links from desktop/mobile navigation, the hero and footer. It asks only for contact name, email and phone. Each visible field has localized explanatory help and an accessible input name. Tab goes directly between controls rather than stopping at form-help icons. A hidden honeypot and the page locale are technical values, not extra visible questions.
 

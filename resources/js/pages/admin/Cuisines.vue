@@ -84,8 +84,8 @@ onBeforeUnmount(cleanup);
 </script>
 <template>
     <AdminLayout
-        ><Head :title="$t('cuisine_admin_title')" /><ZFPageHeader
-            :title="$t('cuisine_admin_title')"
+        ><Head :title="$t('pa_cuisines')" /><ZFPageHeader
+            :title="$t('pa_cuisines')"
             :description="$t('cuisine_admin_hint')"
         />
         <form id="cuisine-editor" class="panel mb-8 scroll-mt-5 space-y-5" @submit.prevent="save">

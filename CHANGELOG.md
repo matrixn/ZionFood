@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.46 — 2026-10-31
+
+- Dedicated responsive platform console with grouped professional navigation, bilingual help, active states and light/dark presentation; restaurant layouts remain independent.
+- Platform dashboard with UTC period charts, accessible chart data, registered estate/accounts, lead backlog, expiring trials and attention counters. Completed order value stays separated by currency and is not described as receipts.
+- Searchable, paginated organization/subscription and account directories, organization support records and read-only operational/import monitoring using explicit safe DTOs.
+- Preserve legacy organization URLs and send unassigned platform administrators to the control centre instead of restaurant onboarding. No additional tenant operating privileges.
+- Existing catalog, campaign, lead, email/quota, alert and AI administration tools remain available in their new navigation groups. No automatic provider calls, retries or new billing mutations.
+
 ## 0.0.45 — 2026-10-31
 
 - Platform-only UTM visit log, campaign ranking, retained-lead/qualified-request counters, period/source/medium/campaign filters and pagination.

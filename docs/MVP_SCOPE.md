@@ -1,4 +1,6 @@
-# Scope at 0.0.45
+# Scope at 0.0.46
+
+0.0.46 adds a dedicated professional platform control centre, grouped navigation, daily UTC activity charts, currency-separated completed-order value, customer/subscription and account directories, organization support records, and operational/import monitoring. Existing catalog, lead/campaign, email/quota, alert and AI controls remain available. New administrative views are read-only; billing changes, privileged account mutations and active health/recovery probes are separate follow-up work. See PLATFORM_ADMIN.md.
 
 0.0.45 adds platform campaign analytics for tagged marketing visits and new contact requests: all six standard UTM fields, current retained/qualified-lead counts, campaign ranking, 7/30/90-day filters and paginated visit records. Deduplication and last-eligible attribution use a 30-minute existing-session window. Numbers describe recorded visits and retained requests, not unique people or conversion rates. Untagged/restaurant traffic stays separate, and bot/prefetch/admin/privacy exclusions apply. The campaign_visits migration and nullable lead FK are required.
 

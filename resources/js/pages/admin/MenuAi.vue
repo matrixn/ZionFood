@@ -35,10 +35,10 @@ async function save() {
 </script>
 <template>
     <AdminLayout
-        ><Head :title="$t('mc_ai_settings')" />
+        ><Head :title="$t('pa_ai')" />
         <div class="mx-auto max-w-2xl space-y-6">
             <Link href="/admin" class="text-brand">← {{ $t('platform_overview') }}</Link>
-            <h1 class="text-3xl font-semibold">{{ $t('mc_ai_settings') }}</h1>
+            <h1 class="text-3xl font-semibold">{{ $t('pa_ai') }}</h1>
             <p class="muted">{{ $t('mc_provider_hint') }}</p>
             <form class="panel grid gap-5" @submit.prevent="save">
                 <p v-if="error" role="alert" class="text-red-700">{{ error }}</p>

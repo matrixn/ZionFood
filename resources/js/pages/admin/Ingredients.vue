@@ -8,8 +8,8 @@ defineProps<{ ingredients: Ingredient[] }>();
 </script>
 <template>
     <AdminLayout
-        ><Head :title="$t('ingredients_title')" /><ZFPageHeader
-            :title="$t('ingredients_title')"
+        ><Head :title="$t('pa_ingredients')" /><ZFPageHeader
+            :title="$t('pa_ingredients')"
             :description="$t('ingredients_shared')"
         />
         <section class="panel"><IngredientManager :ingredients="ingredients" base="/admin/ingredients" /></section>

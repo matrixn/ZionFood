@@ -87,8 +87,8 @@ function date(value: string) {
 </script>
 <template>
     <AdminLayout
-        ><Head :title="$t('campaigns_title')" /><ZFPageHeader
-            :title="$t('campaigns_title')"
+        ><Head :title="$t('pa_campaigns')" /><ZFPageHeader
+            :title="$t('pa_campaigns')"
             :description="$t('campaigns_description')"
         />
         <p

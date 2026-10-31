@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.45** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.46** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,16 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 31 octombrie 2026 — administrare generală și centru de control · 0.0.46
+
+- [x] Interfață profesională separată pentru administratorul platformei, cu navigație grupată, meniu mobil, temă luminoasă/întunecată și RO/EN.
+- [x] Dashboard cu organizații, restaurante, locații, conturi, solicitări, campanii, rezervări, comenzi active și valoarea comenzilor finalizate pe monede.
+- [x] Grafice zilnice pentru 7/30/90 de zile, tabel accesibil cu datele graficului, trialuri care expiră și acces rapid la incidentele înregistrate.
+- [x] Registru de organizații cu căutare și filtre de abonament; fișa clientului cu restaurante, locații și echipă; registru de conturi cu filtre de acces/verificare.
+- [x] Monitorizare a importurilor și integrărilor, starea salvată a cotelor email și protecției alertelor, cu legături către instrumentele existente.
+- [x] Explicații și tooltip-uri bilingve pentru câmpurile noi și definițiile statisticilor; accesul administrativ rămâne separat de permisiunile restaurantelor.
+- [ ] Probe active de sănătate, recuperare administrativă cu audit și gestionarea facturării: etape separate. [Definiții și limite](docs/PLATFORM_ADMIN.md).
 
 ### 31 octombrie 2026 — campanii UTM și solicitări atribuite · 0.0.45
 
