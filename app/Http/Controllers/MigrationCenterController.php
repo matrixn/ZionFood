@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Imports\GloriaFoodPublicClient;
 use App\Domain\Imports\ImportComplexityException;
+use App\Domain\Imports\ImportPhotos;
 use App\Domain\Imports\ProcessImport;
 use App\Domain\Imports\PublishImport;
 use App\Domain\Imports\RecordImportValidationFailure;
@@ -49,7 +51,12 @@ class MigrationCenterController extends Controller
     {
         $l = $this->location($r, $location);
         $data = $r->validate(['source' => 'required|in:api,file', 'key' => 'required_if:source,api|nullable|string|min:5|max:512|regex:/^[^\r\n]+$/', 'file' => 'required_if:source,file|nullable|file|max:5120', 'authorized' => 'required|accepted', 'size_prices' => ['required', Rule::in(['base_plus_size', 'absolute'])], 'nutrition_basis' => ['required', Rule::in(['per_100g', 'per_100ml', 'per_serving'])], 'tax_basis_points' => 'required|integer|min:0|max:10000']);
-        $batch = ImportBatch::create(['organization_id' => $l->organization_id, 'location_id' => $l->id, 'user_id' => $r->user()->id, 'settings' => array_intersect_key($data, array_flip(['size_prices', 'nutrition_basis', 'tax_basis_points'])), 'credential' => $data['source'] === 'api' ? $data['key'] : null]);
+        $public = $r->validate(['public_menu_url' => 'nullable|string|max:512']);
+        if (! empty($public['public_menu_url'])) {
+            $uid = app(GloriaFoodPublicClient::class)->uid($public['public_menu_url']);
+            $data['public_menu_url'] = 'https://www.foodbooking.com/ordering/restaurant/menu?restaurant_uid='.$uid;
+        }
+        $batch = ImportBatch::create(['organization_id' => $l->organization_id, 'location_id' => $l->id, 'user_id' => $r->user()->id, 'settings' => array_intersect_key($data, array_flip(['size_prices', 'nutrition_basis', 'tax_basis_points', 'public_menu_url'])), 'credential' => $data['source'] === 'api' ? $data['key'] : null]);
         if ($data['source'] === 'api') {
             try {
                 Bus::dispatch((new FetchGloriaFoodMenu($batch->id))->afterCommit());
@@ -83,10 +90,25 @@ class MigrationCenterController extends Controller
         return response()->json($this->report($b));
     }
 
+    public function photo(Request $r, string $location, string $batch, string $product)
+    {
+        $b = $this->batch($r, $location, $batch);
+        abort_unless(in_array($b->status, ['enriching', 'ready', 'published', 'reverted'], true), 404);
+        $menu = app(ProcessImport::class)->canonical($b);
+        foreach ($menu['categories'] as $category) {
+            foreach ($category['items'] as $item) {
+                if ($item['key'] === $product && isset($item['photo'])) {
+                    return response(app(ImportPhotos::class)->bytes($b, $product, $item['photo']), 200, ['Content-Type' => 'image/webp', 'Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff']);
+                }
+            }
+        }
+        abort(404);
+    }
+
     private function report(ImportBatch $b): array
     {
         $base = ['batch_id' => $b->public_id, 'status' => $b->status, 'failure_code' => $b->failure_code, 'report' => null, 'menu' => null, 'issues' => DB::table('import_issues')->where('batch_id', $b->id)->limit(50)->get(['severity', 'code', 'path', 'message']), 'conflicts' => [], 'review_hash' => null];
-        if (! in_array($b->status, ['ready', 'published', 'reverted'], true)) {
+        if (! in_array($b->status, ['enriching', 'ready', 'published', 'reverted'], true)) {
             return $base;
         }
 

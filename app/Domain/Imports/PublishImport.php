@@ -14,6 +14,8 @@ use App\Models\OutboxMessage;
 use App\Models\RestaurantLocation;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -43,7 +45,24 @@ class PublishImport
 
     public function execute(User $actor, ImportBatch $context, array $resolutions, bool $acknowledged, string $reviewHash): Menu
     {
-        return DB::transaction(function () use ($actor, $context, $resolutions, $acknowledged, $reviewHash) {
+        $createdPhotos = [];
+        try {
+            return $this->publish($actor, $context, $resolutions, $acknowledged, $reviewHash, $createdPhotos);
+        } catch (\Throwable $e) {
+            try {
+                // An after-commit callback can fail after the menu is already durable.
+                $referenced = MenuItem::withTrashed()->where('organization_id', $context->organization_id)->whereIn('image_path', $createdPhotos)->pluck('image_path')->all();
+                Storage::disk('public')->delete(array_values(array_diff($createdPhotos, $referenced)));
+            } catch (\Throwable $cleanup) {
+                Log::warning('GloriaFood photo cleanup deferred', ['batch_id' => $context->public_id, 'exception_class' => $cleanup::class]);
+            }
+            throw $e;
+        }
+    }
+
+    private function publish(User $actor, ImportBatch $context, array $resolutions, bool $acknowledged, string $reviewHash, array &$createdPhotos): Menu
+    {
+        return DB::transaction(function () use ($actor, $context, $resolutions, $acknowledged, $reviewHash, &$createdPhotos) {
             MenuWriteLock::organization($context->organization_id);
             $location = RestaurantLocation::whereKey($context->location_id)->lockForUpdate()->firstOrFail();
             app(TenantAccess::class)->requireManage($actor, $location->organization_id);
@@ -69,7 +88,7 @@ class PublishImport
             $previous = $this->previous($batch);
             $oldItems = $previous ? MenuItem::withTrashed()->whereHas('category', fn ($q) => $q->where('menu_id', $previous->menu_id))->get() : collect();
             $previousIds = $location->menus()->pluck('menus.id')->all();
-            $menu = Menu::create(['organization_id' => $location->organization_id, 'restaurant_id' => $location->restaurant_id, 'name' => 'GloriaFood · '.now()->format('Y-m-d H:i'), 'is_active' => false]);
+            $menu = Menu::create(['organization_id' => $location->organization_id, 'restaurant_id' => $location->restaurant_id, 'name' => 'GloriaFood Â· '.now()->format('Y-m-d H:i'), 'is_active' => false]);
             $namespace = 'gloriafood:'.$canonical['source_restaurant'];
             $seen = [];
             foreach ($canonical['categories'] as $position => $c) {
@@ -87,7 +106,11 @@ class PublishImport
 
                         continue;
                     }
-                    $item = MenuItem::create(['organization_id' => $location->organization_id, 'category_id' => $category->id, 'source_key' => $key, 'name' => $i['name'], 'description' => $i['description'], 'price' => $i['price'], 'order_types' => $i['order_types'], 'kitchen_name' => $i['kitchen_name'], 'content' => $i['content'], 'image_path' => $old?->image_path, 'tax_basis_points' => $batch->settings['tax_basis_points']]);
+                    $imagePath = $old?->image_path;
+                    if (! $imagePath && isset($i['photo'])) {
+                        $imagePath = app(ImportPhotos::class)->publish($batch, $key, $i['photo'], $createdPhotos);
+                    }
+                    $item = MenuItem::create(['organization_id' => $location->organization_id, 'category_id' => $category->id, 'source_key' => $key, 'name' => $i['name'], 'description' => $i['description'], 'price' => $i['price'], 'order_types' => $i['order_types'], 'kitchen_name' => $i['kitchen_name'], 'content' => $i['content'], 'image_path' => $imagePath, 'tax_basis_points' => $batch->settings['tax_basis_points']]);
                     if ($old) {
                         $item->ingredients()->sync($old->ingredients->mapWithKeys(fn ($ing) => [$ing->id => ['organization_id' => $location->organization_id, 'position' => $ing->pivot->position]])->all());
                     }

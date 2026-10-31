@@ -1,4 +1,6 @@
-# Scope at 0.0.39
+# Scope at 0.0.40
+
+0.0.40 optionally enriches Fetch Menu imports with photos from a public FoodBooking link. It retains every source product/category, verifies menu/restaurant/currency, matches exact product IDs with available-name checks and stages bounded queued downloads in private storage. Preview/progress updates automatically; images become public only with approved publication. An empty link preserves the previous flow. Public restaurant name/address are informational and do not overwrite location settings.
 
 0.0.39 accepts GloriaFood menus without restaurant_id, retaining stable organization/location-scoped source lineage and explicit local-edit decisions across reimports. Ambiguous source histories and stale identity aliases block publication. Validation diagnostics have translated titles and separate field/rule labels. Real production import acceptance remains pending a new authorized attempt.
 

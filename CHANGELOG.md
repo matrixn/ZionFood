@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.40 — 2026-10-31
+
+- Add an optional public FoodBooking menu URL to Migration Center. Keep Fetch Menu products/prices authoritative; verify source identity and attach photos by exact product IDs, additionally checking names when available. An empty URL keeps the previous import flow.
+- Stage photos privately in bounded queued chunks, with automatic preview progress and explicit matched/downloaded/missing/failed/limited counters. Validate raster images, use density-aware source variants, re-encode WebP and publish only on approval while preserving existing photos on reimport.
+- Use fixed provider/CDN destinations with public DNS validation, cURL address pinning, verified TLS, disabled proxies/redirects and response/image/traffic limits. Add guarded tenant-only previews, failed-job recovery, temporary-file pruning and regression coverage. No dependency or database-schema change.
+
 ## 0.0.39 — 2026-10-31
 
 - Accept missing, null or empty GloriaFood restaurant IDs, resolving a menu-based namespace against published import history scoped to organization/location. Keep source snapshots unchanged and reject malformed nonempty IDs.

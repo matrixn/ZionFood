@@ -10,6 +10,7 @@ import Button from 'primevue/button';
 import Password from 'primevue/password';
 import Select from 'primevue/select';
 import InputNumber from 'primevue/inputnumber';
+import InputText from 'primevue/inputtext';
 import Checkbox from 'primevue/checkbox';
 import Dialog from 'primevue/dialog';
 import { useToast } from 'primevue/usetoast';
@@ -39,6 +40,7 @@ interface ImportedProduct {
     name: string;
     description: string;
     price: number;
+    photo?: { width: number; height: number };
     order_types: string[] | null;
     content: { allergens: string[]; labels: string[]; nutrition: ImportedNutrition | null };
     groups: Group[];
@@ -63,6 +65,16 @@ interface Preview {
         blockers: number;
         currency: string;
         adapter_version: string;
+        public_menu?: {
+            status: string;
+            url: string;
+            matched: number;
+            downloaded: number;
+            missing: number;
+            failed: number;
+            limited: number;
+            restaurant?: { name: string; address: string };
+        } | null;
         source_changes: { key: string; name: string; change: string }[];
         synthetic_baskets: {
             product: string;
@@ -80,6 +92,7 @@ const base = `/app/locations/${props.location.public_id}/migration-center`;
 const batches = ref([...props.batches]);
 const source = ref('api');
 const key = ref('');
+const publicMenuUrl = ref('');
 const file = ref<File>();
 const authorized = ref(false);
 const sizePrices = ref('base_plus_size');
@@ -133,9 +146,9 @@ async function load(id: string) {
     try {
         const data = await api<Preview>(`${base}/${id}`);
         if (selected.value !== id) return;
-        const wasQueued = preview.value?.status === 'queued';
+        const wasQueued = ['queued', 'enriching'].includes(preview.value?.status ?? '');
         preview.value = data;
-        if (data.status === 'queued') timer = setTimeout(() => void load(id), 3000);
+        if (['queued', 'enriching'].includes(data.status)) timer = setTimeout(() => void load(id), 3000);
         else if (wasQueued && data.status === 'ready')
             toast.add({ severity: 'success', summary: t('mig_ready'), detail: t('mig_ready_help'), life: 10000 });
         const row = batches.value.find((b) => b.public_id === id);
@@ -152,6 +165,7 @@ async function start() {
     try {
         const data = new FormData();
         data.append('source', source.value);
+        if (publicMenuUrl.value.trim()) data.append('public_menu_url', publicMenuUrl.value.trim());
         if (source.value === 'api') data.append('key', key.value);
         else if (file.value) data.append('file', file.value);
         data.append('authorized', authorized.value ? '1' : '0');
@@ -260,6 +274,14 @@ function open(id: string) {
                         :aria-label="$t('mig_file')"
                         @change="file = ($event.target as HTMLInputElement).files?.[0]"
                 /></ZFFormField>
+                <ZFFormField :label="$t('mig_public_menu_url')" :help="$t('mig_public_menu_url_help')">
+                    <InputText
+                        v-model="publicMenuUrl"
+                        type="url"
+                        :aria-label="$t('mig_public_menu_url')"
+                        placeholder="https://www.foodbooking.com/ordering/restaurant/menu?restaurant_uid=…"
+                    />
+                </ZFFormField>
                 <ZFFormField :label="$t('mig_price_mode')" :help="$t('mig_price_help')"
                     ><Select
                         v-model="sizePrices"
@@ -333,7 +355,9 @@ function open(id: string) {
                                 >{{ $t('mig_report') }}</a
                             >
                         </div>
-                        <p v-if="preview.status === 'queued'" role="status" class="muted mt-3">{{ $t('mig_wait') }}</p>
+                        <p v-if="['queued', 'enriching'].includes(preview.status)" role="status" class="muted mt-3">
+                            {{ $t('mig_wait') }}
+                        </p>
                         <p v-if="preview.status === 'failed'" role="alert" class="mt-3 text-red-700">
                             {{
                                 $t(
@@ -402,13 +426,35 @@ function open(id: string) {
                                 <template v-else>
                                     ·
                                     {{
-                                        issue.code === 'source_identity_conflict'
-                                            ? $t('mig_source_identity_conflict_help')
+                                        issue.code === 'source_identity_conflict' || issue.code.startsWith('public_')
+                                            ? $t('mig_' + issue.code + '_help')
                                             : issue.message
                                     }}<small class="mt-1 block break-all opacity-70">{{ issue.path }}</small></template
                                 >
                             </li>
                         </ul>
+                    </section>
+                    <section v-if="preview.report?.public_menu" class="panel space-y-3" data-testid="migration-photos">
+                        <h3 class="font-semibold">{{ $t('mig_public_photos') }}</h3>
+                        <p class="text-sm">{{ $t('mig_public_status_' + preview.report.public_menu.status) }}</p>
+                        <p v-if="preview.report.public_menu.restaurant" class="text-sm text-slate-500">
+                            {{ preview.report.public_menu.restaurant.name }} ·
+                            {{ preview.report.public_menu.restaurant.address }}
+                        </p>
+                        <dl class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+                            <div
+                                v-for="metric in ['matched', 'downloaded', 'missing', 'failed'] as const"
+                                :key="metric"
+                                class="rounded-xl bg-slate-50 p-3 dark:bg-slate-800"
+                            >
+                                <dt>{{ $t('mig_photos_' + metric) }}</dt>
+                                <dd class="mt-1 text-xl font-semibold">{{ preview.report.public_menu[metric] }}</dd>
+                            </div>
+                        </dl>
+                        <p v-if="preview.report.public_menu.limited" class="text-sm text-amber-700">
+                            {{ $t('mig_photos_limited') }}: {{ preview.report.public_menu.limited }}
+                        </p>
+                        <p class="text-xs text-slate-500">{{ $t('mig_public_preview_help') }}</p>
                     </section>
                     <section v-if="preview.status === 'ready' && unmappedNutrients.length" class="panel grid gap-3">
                         <h3 class="font-semibold">{{ $t('mig_map_nutrients') }}</h3>
@@ -458,7 +504,18 @@ function open(id: string) {
                         </p>
                         <details v-for="item in category.items" :key="item.key" class="border-t border-slate-100 py-3">
                             <summary class="cursor-pointer font-medium">
-                                {{ item.name }}
+                                <span class="inline-flex max-w-[75%] items-center gap-3 align-middle">
+                                    <img
+                                        v-if="item.photo"
+                                        :src="`${base}/${selected}/photos/${encodeURIComponent(item.key)}`"
+                                        :alt="item.name"
+                                        width="56"
+                                        height="56"
+                                        loading="lazy"
+                                        class="size-14 shrink-0 rounded-xl object-cover"
+                                    />
+                                    <span>{{ item.name }}</span>
+                                </span>
                                 <span class="float-right">{{ money(item.price, preview?.report?.currency) }}</span>
                             </summary>
                             <p class="my-2 text-sm text-slate-500">{{ item.description }}</p>

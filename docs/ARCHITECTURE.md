@@ -1,4 +1,4 @@
-# ZionFood 0.0.39
+# ZionFood 0.0.40
 
 Form-related FieldHelp resolves controls within its label or explicit field wrapper, skips its own Tab stop and associates a permanent screen-reader description. F1 opens help from the control and Escape/blur closes it; observers track dynamic fields and clean up only the help associations they own. Help for statuses/statistics remains keyboard-focusable. Auth password reveal buttons are adjacent siblings outside the input, use transient mutually exclusive Vue state and support holding F2 from the field. Release, cancellation, pointer leave, blur, visibility changes and submission remask the value. Registration preserves password values only in the current form after validation failures, clearing after success; server password flash exclusions and CAPTCHA proof consumption order are unchanged.
 

@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.39** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.40** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,15 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 31 octombrie 2026 — fotografii GloriaFood din meniul public · 0.0.40
+
+- [x] Link FoodBooking opțional în Migration Center: dacă lipsește, importul Fetch Menu funcționează ca înainte, fără cereri pentru fotografii.
+- [x] Verificare ID meniu, restaurant și monedă; asocierea imaginilor după ID-uri exacte și verificarea numelor disponibile, fără eliminarea produselor/categoriilor care lipsesc de pe pagina publică.
+- [x] Pozele cu ID exact pot fi asociate și produselor Fetch Menu care lipsesc din lista publică vizibilă, dacă există în catalogul de imagini.
+- [x] Fotografii de rezoluție mare descărcate în fundal în loturi mici, validate și convertite în WebP; previzualizare privată, contoare actualizate automat și publicare doar după aprobare.
+- [x] Numele și adresa din pagina publică sunt afișate pentru verificare, fără rescrierea setărilor locației. Reimportul păstrează fotografiile existente.
+- [x] Destinații fixe, DNS public verificat și conexiuni TLS cu adresă fixată; fără redirectări/proxy, cu limite pentru răspunsuri, dimensiuni și trafic. Fișierele temporare expiră împreună cu importul nepublicat.
 
 ### 31 octombrie 2026 — import GloriaFood fără restaurant_id · 0.0.39
 

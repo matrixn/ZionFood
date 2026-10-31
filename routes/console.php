@@ -7,6 +7,7 @@ use App\Domain\Marketing\LandingSeo;
 use App\Domain\Orders\ReleaseScheduledOrders;
 use App\Jobs\DeliverOutbox;
 use App\Jobs\DeliverWebhook;
+use App\Jobs\DownloadGloriaFoodPhotos;
 use App\Models\CommunicationLog;
 use App\Models\EmailDelivery;
 use App\Models\ImportBatch;
@@ -19,6 +20,7 @@ use App\Models\WebhookDelivery;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schedule;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 Artisan::command('zionfood:outbox', function () {
@@ -95,6 +97,7 @@ Artisan::command('zionfood:admin {email}', function () {
 });
 
 Artisan::command('zionfood:imports-prune', function () {
+    ImportBatch::where('status', 'enriching')->where('updated_at', '<', now()->subHour())->pluck('id')->each(fn ($id) => (new DownloadGloriaFoodPhotos($id))->failed(null));
     ImportBatch::where('status', 'queued')->where('created_at', '<', now()->subHour())->update(['credential' => null, 'status' => 'failed', 'failure_code' => 'queue_expired']);
     ImportBatch::whereIn('status', ['ready', 'failed'])->where('created_at', '<', now()->subDays(max(1, (int) config('imports.retention_days'))))->chunkById(100, function ($batches) {
         foreach ($batches as $b) {
@@ -103,6 +106,7 @@ Artisan::command('zionfood:imports-prune', function () {
                 if (! in_array($locked->status, ['ready', 'failed'], true)) {
                     return;
                 }DB::table('import_snapshots')->where('batch_id', $b->id)->delete();
+                DB::afterCommit(fn () => Storage::disk('local')->deleteDirectory('imports/'.$locked->public_id));
                 $locked->update(['credential' => null, 'status' => 'expired']);
             });
         }
