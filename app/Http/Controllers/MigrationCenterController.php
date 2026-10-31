@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Domain\Imports\GloriaFoodPublicClient;
 use App\Domain\Imports\ImportComplexityException;
 use App\Domain\Imports\ImportPhotos;
+use App\Domain\Imports\ImportRestaurantSettings;
+use App\Domain\Imports\NormalizePublicRestaurantSettings;
 use App\Domain\Imports\ProcessImport;
 use App\Domain\Imports\PublishImport;
 use App\Domain\Imports\RecordImportValidationFailure;
@@ -44,7 +46,7 @@ class MigrationCenterController extends Controller
     {
         $l = $this->location($r, $location);
 
-        return Inertia::render('restaurant/MigrationCenter', ['location' => $l->load('restaurant', 'hours', 'fulfillment', 'zones'), 'locations' => app(WorkspaceController::class)->locations($r), 'canManage' => true, 'permissions' => app(TenantAccess::class)->permissions($r->user(), $l->organization_id), 'batches' => ImportBatch::where('location_id', $l->id)->latest()->limit(30)->get(['public_id', 'status', 'source_restaurant', 'created_at'])]);
+        return Inertia::render('restaurant/MigrationCenter', ['location' => $l->load('restaurant', 'hours', 'fulfillment', 'zones'), 'locations' => app(WorkspaceController::class)->locations($r), 'canManage' => true, 'mapConfig' => config('maps'), 'permissions' => app(TenantAccess::class)->permissions($r->user(), $l->organization_id), 'batches' => ImportBatch::where('location_id', $l->id)->latest()->limit(30)->get(['public_id', 'status', 'source_restaurant', 'created_at'])]);
     }
 
     public function start(Request $r, string $location)
@@ -111,8 +113,9 @@ class MigrationCenterController extends Controller
         if (! in_array($b->status, ['enriching', 'ready', 'published', 'reverted'], true)) {
             return $base;
         }
+        $canonical = app(ProcessImport::class)->canonical($b);
 
-        return [...$base, 'report' => json_decode(DB::table('import_reports')->where('batch_id', $b->id)->value('report'), true), 'menu' => app(ProcessImport::class)->canonical($b), 'issues' => DB::table('import_issues')->where('batch_id', $b->id)->get(['severity', 'code', 'path', 'message']), 'conflicts' => $b->status === 'ready' ? app(PublishImport::class)->conflicts($b) : [], 'review_hash' => $b->status === 'ready' ? app(PublishImport::class)->reviewHash($b) : null, 'publication' => DB::table('import_publications')->where('batch_id', $b->id)->first(['approved_by', 'created_at', 'reverted_at'])];
+        return [...$base, 'report' => json_decode(DB::table('import_reports')->where('batch_id', $b->id)->value('report'), true), 'menu' => $canonical, 'settings_preview' => app(ImportRestaurantSettings::class)->preview($b, $canonical), 'issues' => DB::table('import_issues')->where('batch_id', $b->id)->get(['severity', 'code', 'path', 'message']), 'conflicts' => $b->status === 'ready' ? app(PublishImport::class)->conflicts($b) : [], 'review_hash' => $b->status === 'ready' ? app(PublishImport::class)->reviewHash($b) : null, 'publication' => DB::table('import_publications')->where('batch_id', $b->id)->first(['approved_by', 'created_at', 'reverted_at'])];
     }
 
     public function resolve(Request $r, string $location, string $batch)
@@ -145,8 +148,8 @@ class MigrationCenterController extends Controller
     public function publish(Request $r, string $location, string $batch, PublishImport $action)
     {
         $b = $this->batch($r, $location, $batch);
-        $d = $r->validate(['acknowledged' => 'required|accepted', 'resolutions' => 'present|array|max:2000', 'resolutions.*' => 'in:keep_local,use_source', 'review_hash' => 'required|string|size:64']);
-        $menu = $action->execute($r->user(), $b, $d['resolutions'], true, $d['review_hash']);
+        $d = $r->validate(['acknowledged' => 'required|accepted', 'resolutions' => 'present|array|max:2000', 'resolutions.*' => 'in:keep_local,use_source', 'settings_fields' => 'sometimes|array|max:5', 'settings_fields.*' => ['string', 'distinct', Rule::in(NormalizePublicRestaurantSettings::FIELDS)], 'review_hash' => 'required|string|size:64']);
+        $menu = $action->execute($r->user(), $b, $d['resolutions'], true, $d['review_hash'], $d['settings_fields'] ?? []);
 
         return response()->json(['menu_id' => $menu->public_id]);
     }

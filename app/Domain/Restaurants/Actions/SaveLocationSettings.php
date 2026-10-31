@@ -7,6 +7,7 @@ use App\Domain\Tenancy\TenantAccess;
 use App\Models\RestaurantLocation;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class SaveLocationSettings
 {
@@ -25,14 +26,25 @@ class SaveLocationSettings
             foreach ($data['hours'] as $hours) {
                 $location->hours()->create(array_intersect_key($hours, array_flip(['weekday', 'opens_at', 'closes_at'])));
             }
-            $location->zones()->delete();
+            $zoneIds = [];
             foreach ($data['zones'] as $zone) {
                 $zone['postal_prefix'] ??= '';
                 if (isset($zone['geometry'])) {
                     $zone['geometry'] = array_intersect_key($zone['geometry'], array_flip(['type', 'coordinates']));
                 }
-                $location->zones()->create(array_intersect_key($zone, array_flip(['name', 'postal_prefix', 'fee', 'minimum_order', 'geometry', 'priority'])));
+                $fields = array_intersect_key($zone, array_flip(['name', 'postal_prefix', 'fee', 'minimum_order', 'geometry', 'priority']));
+                if (isset($zone['id'])) {
+                    $existing = $location->zones()->whereKey($zone['id'])->first();
+                    if (! $existing || in_array($existing->id, $zoneIds, true)) {
+                        throw ValidationException::withMessages(['zones' => __('Choose delivery zones belonging to this location.')]);
+                    }
+                    $existing->update($fields);
+                    $zoneIds[] = $existing->id;
+                } else {
+                    $zoneIds[] = $location->zones()->create($fields)->id;
+                }
             }
+            $location->zones()->whereNotIn('id', $zoneIds)->delete();
         });
     }
 }

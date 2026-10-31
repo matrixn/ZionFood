@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.41 — 2026-10-31
+
+- Add opt-in restaurant name, address/map position, phone, opening hours/time zone and delivery-zone proposals from the verified public menu. Compare current/proposed data and zone outlines before explicit publication; defaults remain unchecked.
+- Append delivery zones only, preserving existing rows and local edits. Persist external zone mappings and deduplicate equivalent entries on reimport. Reject unsupported schedules, polygons or rates per field without silently approximating them.
+- Apply selected settings with the menu transaction, repeat permissions and stale-preview checks, archive before/after evidence and support guarded rollback. Add an encrypted nullable publication-settings snapshot migration. No dependency changes.
+
 ## 0.0.40 — 2026-10-31
 
 - Add an optional public FoodBooking menu URL to Migration Center. Keep Fetch Menu products/prices authoritative; verify source identity and attach photos by exact product IDs, additionally checking names when available. An empty URL keeps the previous import flow.

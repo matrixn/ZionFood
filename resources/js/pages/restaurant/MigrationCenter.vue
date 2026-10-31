@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useLocationDates } from '@/lib/locationDates';
 const dates = useLocationDates();
-import { ref, computed, onUnmounted } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { ref, computed, onUnmounted, watch } from 'vue';
+import { Head, router } from '@inertiajs/vue3';
 import RestaurantLayout from '@/layouts/RestaurantLayout.vue';
 import ZFFormField from '@/components/ui/ZFFormField.vue';
 import ZFPageHeader from '@/components/ui/ZFPageHeader.vue';
@@ -17,6 +17,9 @@ import { useToast } from 'primevue/usetoast';
 import { tr as t } from '@/i18n';
 import { api, money } from '@/lib/http';
 import type { WorkspaceProps } from '@/types';
+import type { MapConfig } from '@/lib/deliveryGeometry';
+import type { ImportedSettingPreview, ImportedSettingValue } from '@/lib/migrationSettings';
+import MigrationSettingsReview from '@/components/MigrationSettingsReview.vue';
 interface Batch {
     public_id: string;
     status: string;
@@ -58,6 +61,7 @@ interface Preview {
     failure_code: string | null;
     review_hash: string | null;
     conflicts: string[];
+    settings_preview?: ImportedSettingPreview[];
     issues: { severity: string; code: string; path: string; message: string }[];
     report: {
         products: number;
@@ -84,10 +88,11 @@ interface Preview {
             currency: string;
         }[];
         checksum: string;
+        settings_changes?: Record<string, { before: ImportedSettingValue; after: ImportedSettingValue }>;
     } | null;
     menu: { categories: { name: string; groups: Group[]; items: ImportedProduct[] }[] } | null;
 }
-const props = defineProps<WorkspaceProps & { batches: Batch[] }>();
+const props = defineProps<WorkspaceProps & { batches: Batch[]; mapConfig: MapConfig }>();
 const base = `/app/locations/${props.location.public_id}/migration-center`;
 const batches = ref([...props.batches]);
 const source = ref('api');
@@ -95,6 +100,7 @@ const key = ref('');
 const publicMenuUrl = ref('');
 const file = ref<File>();
 const authorized = ref(false);
+const settingsFields = ref<string[]>([]);
 const sizePrices = ref('base_plus_size');
 const nutritionBasis = ref('per_100g');
 const tax = ref(0);
@@ -132,8 +138,27 @@ async function resolveFood() {
 const busy = ref(false);
 const error = ref('');
 const preview = ref<Preview | null>(null);
+const settingsPreview = computed(() =>
+    (preview.value?.settings_preview ?? []).map((field) => {
+        const applied =
+            preview.value?.status !== 'ready' && preview.value?.status !== 'enriching'
+                ? preview.value?.report?.settings_changes?.[field.key]
+                : undefined;
+        return applied
+            ? { ...field, current: applied.before, proposed: applied.after, current_setup_phone: undefined }
+            : field;
+    }),
+);
 const selected = ref('');
 const acknowledged = ref(false);
+watch(
+    settingsFields,
+    () => {
+        acknowledged.value = false;
+        confirm.value = false;
+    },
+    { deep: true },
+);
 const resolutions = ref<Record<string, string>>({});
 const confirm = ref(false);
 const toast = useToast();
@@ -148,6 +173,12 @@ async function load(id: string) {
         if (selected.value !== id) return;
         const wasQueued = ['queued', 'enriching'].includes(preview.value?.status ?? '');
         preview.value = data;
+        if (data.status === 'ready')
+            settingsFields.value = settingsFields.value.filter((key) =>
+                data.settings_preview?.some((field) => field.key === key && field.available),
+            );
+        if (['published', 'reverted'].includes(data.status))
+            settingsFields.value = Object.keys(data.report?.settings_changes ?? {});
         if (['queued', 'enriching'].includes(data.status)) timer = setTimeout(() => void load(id), 3000);
         else if (wasQueued && data.status === 'ready')
             toast.add({ severity: 'success', summary: t('mig_ready'), detail: t('mig_ready_help'), life: 10000 });
@@ -162,6 +193,7 @@ async function start() {
     error.value = '';
     acknowledged.value = false;
     resolutions.value = {};
+    settingsFields.value = [];
     try {
         const data = new FormData();
         data.append('source', source.value);
@@ -198,9 +230,11 @@ async function publish() {
             acknowledged: acknowledged.value,
             resolutions: resolutions.value,
             review_hash: preview.value.review_hash,
+            settings_fields: settingsFields.value,
         });
         confirm.value = false;
         await load(selected.value);
+        if (settingsFields.value.length) router.reload({ only: ['location', 'locations', 'batches'] });
         toast.add({ severity: 'success', summary: t('mig_published'), life: 7000 });
     } catch (e) {
         error.value = (e as Error).message;
@@ -215,6 +249,7 @@ async function revert() {
     try {
         await api(`${base}/${selected.value}/revert`, 'POST');
         await load(selected.value);
+        if (settingsFields.value.length) router.reload({ only: ['location', 'locations', 'batches'] });
     } catch (e) {
         error.value = (e as Error).message;
     } finally {
@@ -224,6 +259,7 @@ async function revert() {
 function open(id: string) {
     acknowledged.value = false;
     resolutions.value = {};
+    settingsFields.value = [];
     preview.value = null;
     void load(id);
 }
@@ -340,6 +376,19 @@ function open(id: string) {
                     ><div class="panel">
                         <div class="flex flex-wrap items-center justify-between gap-3">
                             <h2 class="text-xl font-semibold">{{ $t('mig_status_' + preview.status) }}</h2>
+                            <Button
+                                v-if="preview.status === 'ready'"
+                                :label="$t('mig_refresh_preview')"
+                                :title="$t('mig_refresh_preview_help')"
+                                icon="pi pi-refresh"
+                                text
+                                :disabled="busy"
+                                @click="
+                                    acknowledged = false;
+                                    confirm = false;
+                                    load(selected);
+                                "
+                            />
                             <a
                                 v-if="preview.report"
                                 :href="`${base}/${selected}/print`"
@@ -456,6 +505,15 @@ function open(id: string) {
                         </p>
                         <p class="text-xs text-slate-500">{{ $t('mig_public_preview_help') }}</p>
                     </section>
+                    <MigrationSettingsReview
+                        v-if="preview.settings_preview?.length"
+                        v-model="settingsFields"
+                        :fields="settingsPreview"
+                        :readonly="preview.status !== 'ready'"
+                        :can-manage-orders="permissions.orders === 'manage'"
+                        :currency="preview.report?.currency ?? location.currency"
+                        :map-config="mapConfig"
+                    />
                     <section v-if="preview.status === 'ready' && unmappedNutrients.length" class="panel grid gap-3">
                         <h3 class="font-semibold">{{ $t('mig_map_nutrients') }}</h3>
                         <p class="muted">{{ $t('mig_map_help') }}</p>
@@ -579,7 +637,7 @@ function open(id: string) {
                                     :label="$t('mig_reviewed')"
                                     :text="$t('mig_reviewed_help')" /></span></label
                         ><Button
-                            :label="$t('mig_publish')"
+                            :label="$t(settingsFields.length ? 'mig_publish_settings' : 'mig_publish')"
                             icon="pi pi-check-circle"
                             :disabled="busy || !acknowledged || !!preview.report?.blockers || unresolved"
                             @click="confirm = true"
@@ -600,9 +658,26 @@ function open(id: string) {
         </div>
         <Dialog v-model:visible="confirm" modal :header="$t('mig_confirm')" class="w-full max-w-lg"
             ><p>{{ $t(preview?.status === 'published' ? 'mig_revert_help' : 'mig_publish_help') }}</p>
+            <div
+                v-if="preview?.status === 'ready' && settingsFields.length"
+                class="mt-4 rounded-xl bg-violet-50 p-4 text-sm text-violet-900"
+            >
+                <p>{{ $t('mig_settings_confirm') }}</p>
+                <ul class="mt-2 list-inside list-disc">
+                    <li v-for="field in settingsFields" :key="field">{{ $t('mig_setting_' + field) }}</li>
+                </ul>
+            </div>
             <template #footer
                 ><Button :label="$t('cancel')" text @click="confirm = false" /><Button
-                    :label="$t(preview?.status === 'published' ? 'mig_revert' : 'mig_publish')"
+                    :label="
+                        $t(
+                            preview?.status === 'published'
+                                ? 'mig_revert'
+                                : settingsFields.length
+                                  ? 'mig_publish_settings'
+                                  : 'mig_publish',
+                        )
+                    "
                     :loading="busy"
                     @click="preview?.status === 'published' ? ((confirm = false), revert()) : publish()" /></template
         ></Dialog>

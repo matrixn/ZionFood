@@ -14,7 +14,7 @@ import InputNumber from 'primevue/inputnumber';
 import ToggleSwitch from 'primevue/toggleswitch';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
-import type { WorkspaceProps } from '@/types';
+import type { WorkspaceProps, Location } from '@/types';
 const props = defineProps<
     WorkspaceProps & {
         editorSection?: 'hours' | 'delivery';
@@ -86,6 +86,7 @@ const form = useForm({
         closes_at: h.closes_at.slice(0, 5),
     })),
     zones: props.location.zones.map((z) => ({
+        id: z.id,
         name: z.name,
         postal_prefix: z.postal_prefix,
         fee: z.fee,
@@ -109,7 +110,18 @@ useSetupEditorGuard(
             @submit.prevent="
                 form.put('/app/locations/' + location.public_id + '/settings', {
                     preserveScroll: true,
-                    onSuccess: () => form.defaults(),
+                    onSuccess: (page) => {
+                        form.zones = (page.props.location as Location).zones.map((zone) => ({
+                            id: zone.id,
+                            name: zone.name,
+                            postal_prefix: zone.postal_prefix,
+                            fee: zone.fee,
+                            minimum_order: zone.minimum_order,
+                            geometry: zone.geometry ?? null,
+                            priority: zone.priority ?? 0,
+                        }));
+                        form.defaults();
+                    },
                 })
             "
         >
@@ -315,6 +327,7 @@ useSetupEditorGuard(
                     text
                     @click="
                         form.zones.push({
+                            id: undefined,
                             name: '',
                             postal_prefix: '',
                             fee: 0,

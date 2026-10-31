@@ -48,6 +48,7 @@ class EnrichGloriaFoodImport
             } else {
                 $menu['public_menu']['status'] = 'verified';
                 $menu['public_menu']['restaurant'] = array_intersect_key($public, array_flip(['id', 'uid', 'name', 'address', 'phone', 'latitude', 'longitude', 'cuisines']));
+                $menu['public_menu']['settings_candidates'] = app(NormalizePublicRestaurantSettings::class)->execute($public);
                 $this->plan($menu, $public);
                 if ($menu['public_menu']['failed'] || $menu['public_menu']['limited']) {
                     $issues[] = $this->issue('warning', 'public_photos_incomplete');

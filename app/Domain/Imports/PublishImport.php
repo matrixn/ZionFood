@@ -11,6 +11,7 @@ use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\ModifierGroup;
 use App\Models\OutboxMessage;
+use App\Models\Restaurant;
 use App\Models\RestaurantLocation;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -43,11 +44,11 @@ class PublishImport
         return $conflicts;
     }
 
-    public function execute(User $actor, ImportBatch $context, array $resolutions, bool $acknowledged, string $reviewHash): Menu
+    public function execute(User $actor, ImportBatch $context, array $resolutions, bool $acknowledged, string $reviewHash, array $settingsFields = []): Menu
     {
         $createdPhotos = [];
         try {
-            return $this->publish($actor, $context, $resolutions, $acknowledged, $reviewHash, $createdPhotos);
+            return $this->publish($actor, $context, $resolutions, $acknowledged, $reviewHash, $createdPhotos, $settingsFields);
         } catch (\Throwable $e) {
             try {
                 // An after-commit callback can fail after the menu is already durable.
@@ -60,19 +61,20 @@ class PublishImport
         }
     }
 
-    private function publish(User $actor, ImportBatch $context, array $resolutions, bool $acknowledged, string $reviewHash, array &$createdPhotos): Menu
+    private function publish(User $actor, ImportBatch $context, array $resolutions, bool $acknowledged, string $reviewHash, array &$createdPhotos, array $settingsFields): Menu
     {
-        return DB::transaction(function () use ($actor, $context, $resolutions, $acknowledged, $reviewHash, &$createdPhotos) {
+        return DB::transaction(function () use ($actor, $context, $resolutions, $acknowledged, $reviewHash, &$createdPhotos, $settingsFields) {
             MenuWriteLock::organization($context->organization_id);
             $location = RestaurantLocation::whereKey($context->location_id)->lockForUpdate()->firstOrFail();
+            Restaurant::whereKey($location->restaurant_id)->where('organization_id', $location->organization_id)->lockForUpdate()->firstOrFail();
             app(TenantAccess::class)->requireManage($actor, $location->organization_id);
             app(TenantAccess::class)->requireFeature($actor, $location, 'menu', true);
             $batch = ImportBatch::whereKey($context->id)->lockForUpdate()->firstOrFail();
-            abort_unless($batch->organization_id === $location->organization_id && $batch->status === 'ready', 409);
+            abort_unless($batch->organization_id === $location->organization_id && $batch->location_id === $location->id && $batch->status === 'ready', 409);
             if (! $acknowledged || DB::table('import_issues')->where('batch_id', $batch->id)->where('severity', 'blocker')->exists()) {
                 throw ValidationException::withMessages(['import' => __('Resolve blocking issues and confirm the verification report before publication.')]);
             }
-            abort_unless(hash_equals($this->reviewHash($batch), $reviewHash), 409, __('The menu changed. Refresh the migration preview.'));
+            abort_unless(hash_equals($this->reviewHash($batch), $reviewHash), 409, __('The restaurant or menu changed. Refresh the migration preview.'));
             $canonical = app(ProcessImport::class)->canonical($batch);
             if (array_key_exists('reported_restaurant_id', $canonical)) {
                 $identity = app(ResolveImportSource::class)->execute($batch, $canonical);
@@ -86,9 +88,10 @@ class PublishImport
                 }
             }
             $previous = $this->previous($batch);
+            $settingsSnapshot = app(ImportRestaurantSettings::class)->apply($actor, $location, $batch, $canonical, $settingsFields);
             $oldItems = $previous ? MenuItem::withTrashed()->whereHas('category', fn ($q) => $q->where('menu_id', $previous->menu_id))->get() : collect();
             $previousIds = $location->menus()->pluck('menus.id')->all();
-            $menu = Menu::create(['organization_id' => $location->organization_id, 'restaurant_id' => $location->restaurant_id, 'name' => 'GloriaFood Â· '.now()->format('Y-m-d H:i'), 'is_active' => false]);
+            $menu = Menu::create(['organization_id' => $location->organization_id, 'restaurant_id' => $location->restaurant_id, 'name' => 'GloriaFood · '.now()->format('Y-m-d H:i'), 'is_active' => false]);
             $namespace = 'gloriafood:'.$canonical['source_restaurant'];
             $seen = [];
             foreach ($canonical['categories'] as $position => $c) {
@@ -137,7 +140,7 @@ class PublishImport
             }
             $menu->update(['is_active' => true]);
             $location->menus()->sync([$menu->id => ['organization_id' => $location->organization_id]]);
-            DB::table('import_publications')->insert(['batch_id' => $batch->id, 'menu_id' => $menu->id, 'previous_menu_ids' => json_encode($previousIds), 'product_hashes' => json_encode(app(MenuGraph::class)->hashes($menu)), 'published_hash' => app(MenuGraph::class)->fingerprint($menu), 'approved_by' => $actor->id, 'created_at' => now(), 'updated_at' => now()]);
+            DB::table('import_publications')->insert(['batch_id' => $batch->id, 'menu_id' => $menu->id, 'previous_menu_ids' => json_encode($previousIds), 'product_hashes' => json_encode(app(MenuGraph::class)->hashes($menu)), 'published_hash' => app(MenuGraph::class)->fingerprint($menu), 'settings_snapshot' => $settingsSnapshot, 'approved_by' => $actor->id, 'created_at' => now(), 'updated_at' => now()]);
             $batch->update(['status' => 'published']);
             $this->signal($location);
             DB::afterCommit(fn () => MenuCache::forgetOrganization($location->organization_id));
@@ -150,8 +153,10 @@ class PublishImport
     {
         $previous = $this->previous($batch);
         $location = RestaurantLocation::findOrFail($batch->location_id);
+        $canonical = app(ProcessImport::class)->canonical($batch);
+        $settingsState = isset($canonical['public_menu']['settings_candidates']) ? app(ImportRestaurantSettings::class)->state($location) : null;
 
-        return hash('sha256', json_encode([$location->currency, $location->menus()->orderBy('menus.id')->get()->map(fn ($m) => [$m->id, app(MenuGraph::class)->fingerprint($m)])->all(), $batch->fresh()->settings, DB::table('import_snapshots')->where('batch_id', $batch->id)->value('canonical'), $previous?->id, $previous ? app(MenuGraph::class)->fingerprint(Menu::findOrFail($previous->menu_id)) : null], JSON_THROW_ON_ERROR));
+        return hash('sha256', json_encode([$location->currency, $location->menus()->orderBy('menus.id')->get()->map(fn ($m) => [$m->id, app(MenuGraph::class)->fingerprint($m)])->all(), $batch->fresh()->settings, DB::table('import_snapshots')->where('batch_id', $batch->id)->value('canonical'), $previous?->id, $previous ? app(MenuGraph::class)->fingerprint(Menu::findOrFail($previous->menu_id)) : null, $settingsState], JSON_THROW_ON_ERROR));
     }
 
     public function revert(User $actor, ImportBatch $context): void
@@ -159,12 +164,15 @@ class PublishImport
         DB::transaction(function () use ($actor, $context) {
             MenuWriteLock::organization($context->organization_id);
             $location = RestaurantLocation::whereKey($context->location_id)->lockForUpdate()->firstOrFail();
+            Restaurant::whereKey($location->restaurant_id)->where('organization_id', $location->organization_id)->lockForUpdate()->firstOrFail();
             app(TenantAccess::class)->requireManage($actor, $location->organization_id);
             app(TenantAccess::class)->requireFeature($actor, $location, 'menu', true);
             $batch = ImportBatch::whereKey($context->id)->lockForUpdate()->firstOrFail();
+            abort_unless($batch->organization_id === $location->organization_id && $batch->location_id === $location->id, 409);
             $p = DB::table('import_publications')->where('batch_id', $batch->id)->first();
             abort_unless($p && $batch->status === 'published' && ! $p->reverted_at, 409);
             abort_unless($location->menus()->pluck('menus.id')->all() === [$p->menu_id] && hash_equals($p->published_hash, app(MenuGraph::class)->fingerprint(Menu::findOrFail($p->menu_id))), 409, __('The published menu changed; automatic rollback would discard local edits.'));
+            app(ImportRestaurantSettings::class)->revert($actor, $location, $p->settings_snapshot ?? null);
             $location->menus()->sync(collect(json_decode($p->previous_menu_ids, true))->mapWithKeys(fn ($id) => [$id => ['organization_id' => $location->organization_id]])->all());
             DB::table('import_publications')->where('id', $p->id)->update(['reverted_at' => now(), 'updated_at' => now()]);
             $batch->update(['status' => 'reverted']);

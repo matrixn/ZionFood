@@ -1,4 +1,6 @@
-# ZionFood 0.0.40
+# ZionFood 0.0.41
+
+Migration Center stages normalized optional restaurant settings alongside public-menu photo evidence. Explicit key selections apply shared name/phone and location address/pin/hours or append-only zones within the menu publication transaction. The review hash binds current settings and publication locks include the restaurant. Encrypted, scope-bound publication receipts support guarded selective rollback and preserve pre-existing zones. Source-zone mappings survive normal Settings edits because zone IDs are updated in place. See MIGRATION_CENTER.md for supported source shapes and limits.
 
 Form-related FieldHelp resolves controls within its label or explicit field wrapper, skips its own Tab stop and associates a permanent screen-reader description. F1 opens help from the control and Escape/blur closes it; observers track dynamic fields and clean up only the help associations they own. Help for statuses/statistics remains keyboard-focusable. Auth password reveal buttons are adjacent siblings outside the input, use transient mutually exclusive Vue state and support holding F2 from the field. Release, cancellation, pointer leave, blur, visibility changes and submission remask the value. Registration preserves password values only in the current form after validation failures, clearing after success; server password flash exclusions and CAPTCHA proof consumption order are unchanged.
 

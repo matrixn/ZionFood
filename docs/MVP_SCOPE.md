@@ -1,4 +1,6 @@
-# Scope at 0.0.40
+# Scope at 0.0.41
+
+0.0.41 adds opt-in current/proposed restaurant-setting comparisons to public-menu imports: shared name/phone, location address/pin, weekly hours/time zone and append-only delivery zones. All choices default off. Approval applies only selected valid fields transactionally, preserves existing zones and local edits, guards stale previews and records encrypted rollback evidence. Unsupported source structures are unavailable individually. Existing imports without a public link or selected settings keep their data.
 
 0.0.40 optionally enriches Fetch Menu imports with photos from a public FoodBooking link. It retains every source product/category, verifies menu/restaurant/currency, matches exact product IDs with available-name checks and stages bounded queued downloads in private storage. Preview/progress updates automatically; images become public only with approved publication. An empty link preserves the previous flow. Public restaurant name/address are informational and do not overwrite location settings.
 
