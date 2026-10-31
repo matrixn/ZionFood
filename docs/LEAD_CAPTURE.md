@@ -1,0 +1,23 @@
+# Contact onboarding and leads — 0.0.43
+
+The marketing landing (`/` in Romanian, `/en` in English) includes `#contact`, with links from desktop/mobile navigation, the hero and footer. It asks only for contact name, email and phone. Each visible field has localized explanatory help and an accessible input name. Tab goes directly between controls rather than stopping at form-help icons. A hidden honeypot and the page locale are technical values, not extra visible questions.
+
+This is a request to discuss ZionFood, including a possible GloriaFood migration. It does not create a user, organization or restaurant; it does not sign the person up to newsletters, send email, reserve a mail quota or queue a job. The form explains the contact purpose and shows confirmation only after the server returns its expected receipt. Validation/network/rate-limit failures preserve the typed contact values for retry. Successful submission clears the form values and focuses a visible confirmation. JavaScript is required; without it the build-owned form displays a localized notice and its submit button stays disabled. The explicit POST action prevents accidental personal-data query strings.
+
+## Persistence and public boundary
+
+`POST /interest` is a web/CSRF endpoint accepting JSON only on configured marketing application hosts. Verified restaurant domains and API-only hosts cannot use it. No arbitrary destination URL, credential or organization ID is accepted. `CaptureServiceLead` validates name (2–120 characters, without control characters), RFC email (up to254 characters), phone (7–30 characters using the supported phone punctuation) and locale (`ro`/`en`). A filled honeypot gets the same generic receipt without saving. Response payloads contain only `{status: "received"}`, never contact values, record IDs or existing-email information. Non-JSON submissions return406 rather than redirecting and flashing personal input into a session.
+
+`service_leads` stores name/email/phone through Laravel encrypted casts. Email identity is a unique HMAC-SHA256 value over the trimmed lowercase email, namespaced with the application key. First-or-create handles duplicate/racing identities; an anonymous repeat cannot replace existing details, change its locale/status or reopen a closed request. The model hides contact fields/hash from default serialization. The platform-admin list selects contact values explicitly. No raw visitor IP, user agent or third-party tracking identifier is persisted in the lead table. Application-key rotation must account for encrypted data and rebuilding keyed email identities; do not discard the key needed to decrypt retained records.
+
+The independent limiter allows three POSTs per minute and ten per hour per IP. Validation and duplicate attempts count toward that budget. This is basic layered abuse protection, not a claim that all automated submissions are prevented. No CAPTCHA or third-party tracker is added. Standard web CSRF protection remains active. New code does not log contact values.
+
+## Platform administration
+
+`/admin/leads` requires an authenticated, email-verified platform administrator; restaurant owners/managers/staff cannot list or mutate leads. The admin shell links to **Solicitări de contact / Contact requests**. The page displays platform-wide status counters, filters by status, paginates25 records per page and shows name, email, phone, original form language and submission date (Europe/Bucharest). Email/telephone links use the provided contact fields. Personal values are not filter query parameters. Responses use private/no-store caching and encrypted Inertia history.
+
+Statuses are stable internal values `new`, `contacted`, `qualified`, `closed`, with RO/EN labels. PATCH accepts only the status; `updated_by` is the current platform administrator. `ManageServiceLead` repeats authorization and validates the whitelist. Deletion requires a UI confirmation and a protected DELETE endpoint, removes the contact record/hash permanently and does not delete any user account. Deleted addresses can submit a new contact request. There is no automatic lead-to-account conversion or external CRM/email integration in this release.
+
+## Release and checks
+
+Run the additive `2026_10_31_000200_create_service_leads_table` migration through the normal release process before accepting requests. Build the client and localized SEO artifacts together; no dependency or environment changes are needed. Production data and Forge were not used for local acceptance. Tests use isolated SQLite databases, private browser sessions and synthetic contacts under example.test. See CODEX_PROGRESS.md for executed checks and remaining work.

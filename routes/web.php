@@ -19,6 +19,7 @@ use App\Http\Controllers\PublicOrderingController;
 use App\Http\Controllers\RegistrationCaptchaController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RestaurantSetupController;
+use App\Http\Controllers\ServiceLeadController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\TestEmailController;
 use App\Http\Controllers\WordpressConnectionController;
@@ -37,6 +38,7 @@ Route::get('/', function (Request $request, PublicOrderingController $controller
     return app(LandingController::class)->show($request, app(LandingSeo::class));
 });
 Route::get('/en', [LandingController::class, 'show']);
+Route::post('/interest', [ServiceLeadController::class, 'store'])->middleware('throttle:service-leads');
 Route::get('/robots.txt', [LandingController::class, 'robots']);
 Route::get('/sitemap.xml', [LandingController::class, 'sitemap']);
 Route::get('/store/{location}', function (Request $r, string $location, PublicOrderingController $c) {
@@ -59,6 +61,9 @@ Route::post('/invitations/{invitation}', [StaffController::class, 'accept'])->mi
 Route::get('/test-email', [TestEmailController::class, 'show']);
 Route::post('/test-email', [TestEmailController::class, 'send'])->middleware('throttle:admin-mail-test');
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/leads', [ServiceLeadController::class, 'index']);
+    Route::patch('/admin/leads/{lead}', [ServiceLeadController::class, 'update']);
+    Route::delete('/admin/leads/{lead}', [ServiceLeadController::class, 'destroy']);
     Route::get('/admin/communication-logs', [CommunicationLogController::class, 'index']);
     Route::get('/admin/communication-logs/data', [CommunicationLogController::class, 'data']);
     Route::get('/app/locations/{location}/communication-logs', [CommunicationLogController::class, 'index']);

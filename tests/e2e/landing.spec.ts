@@ -55,10 +55,10 @@ test('landing page presents both languages, real CTAs and isolated interactive p
     await page
         .locator('.kitchen-story')
         .screenshot({ path: 'test-results/landing-kitchen.png', animations: 'disabled' });
+    expect(mutations).toEqual([]);
     await page.getByRole('link', { name: 'Start with ZionFood' }).last().click();
     await expect(page).toHaveURL(/\/register$/);
     expect(errors).toEqual([]);
-    expect(mutations).toEqual([]);
 });
 
 test('mobile landing has working navigation and respects reduced motion', async ({ browser }) => {

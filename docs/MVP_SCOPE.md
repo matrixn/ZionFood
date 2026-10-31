@@ -1,4 +1,6 @@
-# Scope at 0.0.42
+# Scope at 0.0.43
+
+0.0.43 adds bilingual contact onboarding on the marketing landing, collecting only name, email and phone. Leads are stored encrypted, deduplicated without anonymous overwrite and managed only by verified platform administrators (statuses, counters, filters, pagination and permanent deletion). No accounts, restaurant onboarding, newsletters or emails are triggered. Static SEO markup stays free of contact data; JavaScript is required for the submitted form. A new additive service_leads migration is required.
 
 0.0.42 adds a default-off logo import choice with current/proposed previews, private staging, explicit approved replacement and guarded rollback. A distinct typed logo must be exposed by the public response; no theme/product fallback is inferred. An absent/unsupported logo or failed download is optional and keeps current branding intact. The captured real response used locally has no distinct logo; positive logo cases use controlled fixtures pending validation against a real provider account that exposes one.
 

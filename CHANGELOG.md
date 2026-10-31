@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.43 — 2026-10-31
+
+- Bilingual landing-page contact onboarding with just name, email and phone, visible confirmation, field help and retry preservation.
+- Encrypted lead storage, normalized keyed email deduplication, honeypot, per-IP minute/hour limits and web CSRF protection. Contact requests do not create accounts or send mail.
+- Platform-only contact-request management with status counters, filters, pagination, contact links and confirmed permanent deletion. Added the service_leads migration and protected private history/cache behavior.
+
 ## 0.0.42 — 2026-10-31
 
 - Optional restaurant logo choice in public-link migration previews, default off, with existing/proposed images and shared-location disclosure.

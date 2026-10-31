@@ -1,4 +1,6 @@
-# ZionFood 0.0.42
+# ZionFood 0.0.43
+
+Landing contact requests are platform data, outside organization/location tenancy. CaptureServiceLead validates three contact fields, normalizes email identity and stores encrypted attributes in ServiceLead with a unique keyed hash. Anonymous duplicates never mutate existing contacts/status. The JSON-only, CSRF-protected marketing-host endpoint has an independent IP rate limit and honeypot; it creates no account/mail/job. ManageServiceLead repeats platform-admin authorization for status/deletion, and admin listing explicitly exposes only permitted contact fields, with encrypted Inertia history and no-store responses. Build-owned landing HTML contains only blank form controls. See LEAD_CAPTURE.md.
 
 Optional logo enrichment uses the same bounded image queue and pinned/TLS-verified CDN transport. Explicit typed restaurant-logo records are staged privately and served by a scoped no-store preview route; theme/product images are never substituted. Default-off selection publishes the logo within the existing menu/settings transaction and receipt, preserving the prior logo for guarded rollback. Publication failure cleanup checks both menu image references and committed restaurant logos.
 

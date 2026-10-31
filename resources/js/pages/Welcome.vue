@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import LanguageSelector from '@/components/ui/LanguageSelector.vue';
 import ZFLogo from '@/components/ui/ZFLogo.vue';
+import LandingLeadForm from '@/components/marketing/LandingLeadForm.vue';
 interface Seo {
     title: string;
     description: string;
@@ -163,7 +164,8 @@ onBeforeUnmount(() => {
                     <a href="#platform">{{ $t('landing_nav_platform') }}</a
                     ><a href="#workflow">{{ $t('landing_nav_workflow') }}</a
                     ><a href="#migration">{{ $t('landing_nav_migration') }}</a
-                    ><a href="#questions">{{ $t('landing_nav_faq') }}</a>
+                    ><a href="#questions">{{ $t('landing_nav_faq') }}</a
+                    ><a href="#contact">{{ $t('lead_nav') }}</a>
                 </div>
                 <div class="nav-actions">
                     <Link :href="signedIn ? '/app' : '/login'" class="nav-login"
@@ -185,6 +187,7 @@ onBeforeUnmount(() => {
                     ><a href="#workflow" @click="mobileOpen = false">{{ $t('landing_nav_workflow') }}</a
                     ><a href="#migration" @click="mobileOpen = false">{{ $t('landing_nav_migration') }}</a
                     ><a href="#questions" @click="mobileOpen = false">{{ $t('landing_nav_faq') }}</a
+                    ><a href="#contact" @click="mobileOpen = false">{{ $t('lead_nav') }}</a
                     ><Link :href="signedIn ? '/app' : '/login'">{{
                         signedIn ? $t('landing_dashboard') : $t('sign_in')
                     }}</Link>
@@ -227,6 +230,9 @@ onBeforeUnmount(() => {
                             >{{ $t('landing_cta_explore') }}</a
                         >
                     </div>
+                    <p class="hero-contact">
+                        <a href="#contact">{{ $t('lead_hero_cta') }} <span aria-hidden="true">↗</span></a>
+                    </p>
                     <p class="hero-note">
                         <i class="pi pi-check-circle" aria-hidden="true" />{{ $t('landing_trial_note') }}
                     </p>
@@ -660,6 +666,8 @@ onBeforeUnmount(() => {
                 </div>
             </section>
 
+            <LandingLeadForm />
+
             <section id="questions" class="faq-section section-wrap" data-reveal>
                 <div class="faq-intro">
                     <p class="eyebrow">{{ $t('landing_faq_eyebrow') }}</p>
@@ -703,7 +711,8 @@ onBeforeUnmount(() => {
             <div class="footer-links">
                 <a href="#platform">{{ $t('landing_nav_platform') }}</a
                 ><a href="#questions">{{ $t('landing_nav_faq') }}</a
-                ><Link href="/login">{{ $t('sign_in') }}</Link>
+                ><Link href="/login">{{ $t('sign_in') }}</Link
+                ><a href="#contact">{{ $t('lead_nav') }}</a>
             </div>
             <div class="footer-languages" aria-label="Language">
                 <a :href="seo.alternates.ro" hreflang="ro" lang="ro">🇷🇴 Română</a
@@ -806,6 +815,16 @@ onBeforeUnmount(() => {
     overflow: clip;
     color-scheme: light;
     font-size: 16px;
+}
+.hero-contact {
+    margin-top: 18px !important;
+    font-size: 13px;
+}
+.hero-contact a {
+    color: #635bff;
+    font-weight: 600;
+    border-bottom: 1px solid #d5d1fa;
+    padding-bottom: 3px;
 }
 .section-wrap {
     width: min(1280px, calc(100% - 80px));

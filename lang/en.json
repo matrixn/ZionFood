@@ -49,5 +49,8 @@
     "Choose only available restaurant settings from the preview.": "Choose only available restaurant settings from the preview.",
     "The restaurant or menu changed. Refresh the migration preview.": "The restaurant or menu changed. Refresh the migration preview.",
     "The imported settings changed. Automatic rollback would discard local edits.": "The imported settings changed. Automatic rollback would discard local edits.",
-    "Choose delivery zones belonging to this location.": "Choose delivery zones belonging to this location."
+    "Choose delivery zones belonging to this location.": "Choose delivery zones belonging to this location.",
+    "Contact name": "contact name",
+    "Email address": "email address",
+    "Phone number": "phone number"
 }

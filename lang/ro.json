@@ -472,5 +472,7 @@
   "Choose only available restaurant settings from the preview.": "Selectează doar datele restaurantului disponibile în simulare.",
   "The restaurant or menu changed. Refresh the migration preview.": "Restaurantul sau meniul s-a modificat. Reîncarcă simularea importului.",
   "The imported settings changed. Automatic rollback would discard local edits.": "Datele importate au fost modificate ulterior. Revenirea automată ar pierde editările locale.",
-  "Choose delivery zones belonging to this location.": "Selectează zone de livrare care aparțin acestei locații."
+  "Choose delivery zones belonging to this location.": "Selectează zone de livrare care aparțin acestei locații.",
+  "Contact name": "numele de contact",
+  "Email address": "adresa de email"
 }
