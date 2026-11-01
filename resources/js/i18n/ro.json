@@ -1909,5 +1909,9 @@
     "mig_reset_confirmation_help": "Introdu exact RESET, cu majuscule. Confirmi eliminarea produselor importate, inclusiv a editărilor lor. Acțiunea este limitată la locația curentă și se verifică din nou înainte de salvare.",
     "mig_reset_reload": "Actualizează previzualizarea",
     "mig_reset_confirm_button": "Confirmă resetarea",
-    "mig_reset_disabled_help": "Este necesară o previzualizare validă, fără meniuri partajate, și confirmarea RESET."
+    "mig_reset_disabled_help": "Este necesară o previzualizare validă, fără meniuri partajate, și confirmarea RESET.",
+    "setup_reservations_prerequisites": "Înainte de activare, salvează capacitatea locației și regulile de rezervare.",
+    "setup_configure_reservations": "Configurează regulile de rezervare",
+    "setup_qr_prerequisites": "Înainte de a activa comenzile prin QR, configurează sălile și mesele, cu numărul de locuri pentru fiecare masă.",
+    "setup_configure_tables": "Configurează sălile și mesele"
 }

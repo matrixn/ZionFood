@@ -1,4 +1,4 @@
-# ZionFood 0.0.47
+# ZionFood 0.0.48
 
 ResetImports uses a location-scoped reviewed plan and organization/batch locks to remove imported menu graphs, preserve local content and orders, restore prior menu assignments and optionally restore unchanged imported settings. ImportReset audit records and reset_id retain historical evidence while excluding reset batches from publication lineage. Shared affected menus block reset; delayed jobs cannot revive reset batches. Unreferenced public import media is cleaned only after commit. See MIGRATION_CENTER.md#import-reset.
 

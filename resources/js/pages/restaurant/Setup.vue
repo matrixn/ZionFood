@@ -677,6 +677,17 @@ onBeforeUnmount(
                                     }}<FieldHelp :label="$t('booking_enable')" field="booking_enable" /></span></span
                             ><ToggleSwitch v-model="services.reservations_enabled" :aria-label="$t('booking_enable')"
                         /></label>
+                        <div class="rounded-xl bg-slate-50 p-4 text-sm dark:bg-slate-800">
+                            <p class="text-slate-600 dark:text-slate-300">
+                                {{ $t('setup_reservations_prerequisites') }}
+                            </p>
+                            <Link
+                                :href="base + '/setup/reservations'"
+                                class="mt-2 inline-flex items-center gap-2 font-medium text-brand"
+                                ><i class="pi pi-calendar" aria-hidden="true" />{{ $t('setup_configure_reservations')
+                                }}<i class="pi pi-arrow-right text-xs" aria-hidden="true"
+                            /></Link>
+                        </div>
                         <label class="flex items-center justify-between gap-4"
                             ><span
                                 ><span class="field-label"
@@ -684,6 +695,15 @@ onBeforeUnmount(
                                     }}<FieldHelp :label="$t('dining_enable')" field="dining_enable" /></span></span
                             ><ToggleSwitch v-model="services.dine_in_enabled" :aria-label="$t('dining_enable')"
                         /></label>
+                        <div class="rounded-xl bg-slate-50 p-4 text-sm dark:bg-slate-800">
+                            <p class="text-slate-600 dark:text-slate-300">{{ $t('setup_qr_prerequisites') }}</p>
+                            <Link
+                                :href="base + '/setup/seating'"
+                                class="mt-2 inline-flex items-center gap-2 font-medium text-brand"
+                                ><i class="pi pi-table" aria-hidden="true" />{{ $t('setup_configure_tables')
+                                }}<i class="pi pi-arrow-right text-xs" aria-hidden="true"
+                            /></Link>
+                        </div>
                         <label v-if="services.dine_in_enabled" class="flex items-center justify-between gap-4"
                             ><span
                                 ><span class="field-label"

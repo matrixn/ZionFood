@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.48 — 2026-11-01
+
+- Add always-visible reservation-rule and room/table setup links beside the relevant Services switches, with Romanian/English prerequisite guidance. Both destinations stay within the current location's setup wizard; existing validation and unsaved-change guards are preserved.
+
 ## 0.0.47 — 2026-11-01
 
 - Location-scoped import reset with a reviewed graph/settings hash, typed confirmation, safe menu graph cleanup and restoration of prior menu assignments.

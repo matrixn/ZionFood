@@ -1909,5 +1909,9 @@
     "mig_reset_confirmation_help": "Enter RESET exactly, in uppercase. This confirms removing imported products, including edits. The action is scoped to the current location and verified again before saving.",
     "mig_reset_reload": "Refresh preview",
     "mig_reset_confirm_button": "Confirm reset",
-    "mig_reset_disabled_help": "Requires a valid preview without shared menus, and the RESET confirmation."
+    "mig_reset_disabled_help": "Requires a valid preview without shared menus, and the RESET confirmation.",
+    "setup_reservations_prerequisites": "Before enabling reservations, save the location capacity and reservation rules.",
+    "setup_configure_reservations": "Configure reservation rules",
+    "setup_qr_prerequisites": "Before enabling QR ordering, configure rooms and tables, including the number of seats at each table.",
+    "setup_configure_tables": "Configure rooms and tables"
 }

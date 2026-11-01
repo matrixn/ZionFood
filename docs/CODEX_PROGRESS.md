@@ -1,4 +1,10 @@
-# ZionFood progress — 0.0.47
+# ZionFood progress — 0.0.48
+
+## Version 0.0.48 - Service prerequisite links inside setup (November 1)
+
+Added always-visible guidance beside the reservation and QR service switches. Reservation setup links directly to the current location's /setup/reservations; QR setup links to /setup/seating. Both remain within the existing wizard, explain the necessary preparation before activation and are available while the services are off. Matching RO/EN text was added. Backend validation, permissions and existing unsaved-change navigation guards are unchanged. README/changelog and release metadata are synchronized; no schema or dependency changes.
+
+Executed checks: **12 PHP/Pest setup/workspace tests / 226 assertions**; **30 Vitest tests**, including localization/field-help coverage; ESLint; TypeScript and client/SEO production build. Fresh private-cache Linux Pint and exact CI `php vendor/bin/pint --test` passed across **348 files**. Composer validate passed with its existing explicit-project-version advisory; the dependency lock graph is unchanged. Playwright passed **1 test / 13.1s**, exercising both actual destinations in Romanian and English, retained location/wizard, one layout header, and mobile no-overflow. The mobile capture was visually inspected. Browser work used a private SQLite clone and synthetic fixture, without modifying live restaurant data or calling external providers. The full unrelated PHP suite and MariaDB were not repeated for this UI-only change. No tag or manual deployment.
 
 ## Version 0.0.47 - Restaurant import reset with retained audit (November 1)
 
