@@ -74,7 +74,7 @@ class PlatformController extends Controller
     public function operations(Request $request, BuildPlatformOverview $overview)
     {
         $this->authorizeAdmin($request);
-        $filters = $request->validate(['status' => ['nullable', 'in:queued,enriching,ready,published,reverted,failed']]);
+        $filters = $request->validate(['status' => ['nullable', 'in:queued,enriching,ready,published,reverted,failed,reset']]);
         $imports = DB::table('import_batches as b')->join('restaurant_locations as l', 'l.id', '=', 'b.location_id')->join('organizations as o', 'o.id', '=', 'b.organization_id')->select('b.public_id', 'b.status', 'b.provider', 'b.created_at', 'l.name as location', 'o.name as organization')->when($filters['status'] ?? null, fn ($q, $s) => $q->where('b.status', $s))->orderByDesc('b.id')->paginate(15)->withQueryString();
 
         return Inertia::render('admin/Operations', [

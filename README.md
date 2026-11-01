@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.46** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.47** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,16 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 1 noiembrie 2026 — resetarea importurilor cu istoric păstrat · 0.0.47
+
+- [x] Migration Center → **Resetează importurile**: previzualizare a curățării pe locația curentă și confirmare explicită prin textul `RESET`.
+- [x] Eliminarea produselor importate din toate versiunile, a variantelor, categoriilor importate rămase goale și opțiunilor nefolosite; reconectarea meniurilor anterioare și păstrarea rețetelor adăugate manual.
+- [x] Opțiune pentru revenirea asupra numelui, telefonului, adresei, programului, zonelor și logo-ului preluate prin import. Configurările editate ulterior sunt semnalate și păstrate.
+- [x] Comenzile, rapoartele, sursele și corespondențele importului rămân înregistrate. Importurile resetate au o stare distinctă și o evidență a resetării; un import nou pornește fără conflictele versiunilor curățate.
+- [x] Protecție pentru meniurile partajate cu alte locații, previzualizări devenite vechi și joburi întârziate; fotografiile importate se șterg numai dacă nu mai sunt folosite.
+
+Resetarea este diferită de revenirea la o versiune anterioară și nu are buton de anulare. [Reguli și limite](docs/MIGRATION_CENTER.md#import-reset).
 
 ### 31 octombrie 2026 — administrare generală și centru de control · 0.0.46
 

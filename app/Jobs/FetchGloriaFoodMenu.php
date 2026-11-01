@@ -34,12 +34,12 @@ class FetchGloriaFoodMenu implements ShouldQueue
             $stage = 'validation';
             app(ProcessImport::class)->execute($batch, $source);
         } catch (ImportComplexityException) {
-            $batch->update(['status' => 'failed', 'failure_code' => 'import_complexity_limit']);
+            ImportBatch::whereKey($batch->id)->whereNull('reset_id')->update(['status' => 'failed', 'failure_code' => 'import_complexity_limit']);
         } catch (ValidationException $e) {
             $details = app(RecordImportValidationFailure::class)->execute($batch, $e);
             Log::warning('GloriaFood import validation failed', ['batch_id' => $batch->public_id, 'exception_class' => $e::class, 'stage' => $stage, 'validation_failures' => $details]);
         } catch (\Throwable $e) {
-            $batch->update(['status' => 'failed', 'failure_code' => 'fetch_or_validation_failed']);
+            ImportBatch::whereKey($batch->id)->whereNull('reset_id')->update(['status' => 'failed', 'failure_code' => 'fetch_or_validation_failed']);
             Log::warning('GloriaFood import failed', ['batch_id' => $batch->public_id, 'exception_class' => $e::class, 'stage' => $stage]);
         } finally {
             $batch->update(['credential' => null]);
@@ -48,6 +48,6 @@ class FetchGloriaFoodMenu implements ShouldQueue
 
     public function failed(?\Throwable $exception): void
     {
-        ImportBatch::whereKey($this->batchId)->update(['credential' => null, 'status' => 'failed', 'failure_code' => 'worker_failed']);
+        ImportBatch::whereKey($this->batchId)->whereNull('reset_id')->update(['credential' => null, 'status' => 'failed', 'failure_code' => 'worker_failed']);
     }
 }

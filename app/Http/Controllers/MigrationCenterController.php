@@ -10,11 +10,14 @@ use App\Domain\Imports\NormalizePublicRestaurantSettings;
 use App\Domain\Imports\ProcessImport;
 use App\Domain\Imports\PublishImport;
 use App\Domain\Imports\RecordImportValidationFailure;
+use App\Domain\Imports\ResetImports;
 use App\Domain\Menus\MenuContent;
+use App\Domain\Menus\MenuWriteLock;
 use App\Domain\Tenancy\TenantAccess;
 use App\Jobs\FetchGloriaFoodMenu;
 use App\Models\ImportBatch;
 use App\Models\RestaurantLocation;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Crypt;
@@ -58,12 +61,16 @@ class MigrationCenterController extends Controller
             $uid = app(GloriaFoodPublicClient::class)->uid($public['public_menu_url']);
             $data['public_menu_url'] = 'https://www.foodbooking.com/ordering/restaurant/menu?restaurant_uid='.$uid;
         }
-        $batch = ImportBatch::create(['organization_id' => $l->organization_id, 'location_id' => $l->id, 'user_id' => $r->user()->id, 'settings' => array_intersect_key($data, array_flip(['size_prices', 'nutrition_basis', 'tax_basis_points', 'public_menu_url'])), 'credential' => $data['source'] === 'api' ? $data['key'] : null]);
+        $batch = DB::transaction(function () use ($l, $r, $data) {
+            MenuWriteLock::organization($l->organization_id);
+
+            return ImportBatch::create(['organization_id' => $l->organization_id, 'location_id' => $l->id, 'user_id' => $r->user()->id, 'settings' => array_intersect_key($data, array_flip(['size_prices', 'nutrition_basis', 'tax_basis_points', 'public_menu_url'])), 'credential' => $data['source'] === 'api' ? $data['key'] : null]);
+        });
         if ($data['source'] === 'api') {
             try {
                 Bus::dispatch((new FetchGloriaFoodMenu($batch->id))->afterCommit());
             } catch (\Throwable $e) {
-                $batch->update(['credential' => null, 'status' => 'failed', 'failure_code' => 'queue_unavailable']);
+                ImportBatch::whereKey($batch->id)->whereNull('reset_id')->update(['credential' => null, 'status' => 'failed', 'failure_code' => 'queue_unavailable']);
                 Log::warning('GloriaFood import queue unavailable', ['batch_id' => $batch->public_id, 'exception_class' => $e::class]);
             }
         } else {
@@ -73,12 +80,12 @@ class MigrationCenterController extends Controller
                     throw new \RuntimeException;
                 }app(ProcessImport::class)->execute($batch, $source);
             } catch (ImportComplexityException) {
-                $batch->update(['status' => 'failed', 'failure_code' => 'import_complexity_limit']);
+                ImportBatch::whereKey($batch->id)->whereNull('reset_id')->update(['status' => 'failed', 'failure_code' => 'import_complexity_limit']);
             } catch (ValidationException $e) {
                 $details = app(RecordImportValidationFailure::class)->execute($batch, $e);
                 Log::warning('GloriaFood import validation failed', ['batch_id' => $batch->public_id, 'exception_class' => $e::class, 'stage' => 'file_validation', 'validation_failures' => $details]);
             } catch (\Throwable) {
-                $batch->update(['status' => 'failed', 'failure_code' => 'invalid_source_file']);
+                ImportBatch::whereKey($batch->id)->whereNull('reset_id')->update(['status' => 'failed', 'failure_code' => 'invalid_source_file']);
             }
         }
 
@@ -95,7 +102,7 @@ class MigrationCenterController extends Controller
     public function photo(Request $r, string $location, string $batch, string $product)
     {
         $b = $this->batch($r, $location, $batch);
-        abort_unless(in_array($b->status, ['enriching', 'ready', 'published', 'reverted'], true), 404);
+        abort_unless(in_array($b->status, ['enriching', 'ready', 'published', 'reverted', 'reset'], true), 404);
         $menu = app(ProcessImport::class)->canonical($b);
         foreach ($menu['categories'] as $category) {
             foreach ($category['items'] as $item) {
@@ -110,7 +117,7 @@ class MigrationCenterController extends Controller
     public function logo(Request $r, string $location, string $batch)
     {
         $b = $this->batch($r, $location, $batch);
-        abort_unless(in_array($b->status, ['enriching', 'ready', 'published', 'reverted'], true), 404);
+        abort_unless(in_array($b->status, ['enriching', 'ready', 'published', 'reverted', 'reset'], true), 404);
         $photo = app(ProcessImport::class)->canonical($b)['public_menu']['logo'] ?? null;
         abort_unless(is_array($photo), 404);
 
@@ -119,8 +126,12 @@ class MigrationCenterController extends Controller
 
     private function report(ImportBatch $b): array
     {
-        $base = ['batch_id' => $b->public_id, 'status' => $b->status, 'failure_code' => $b->failure_code, 'report' => null, 'menu' => null, 'issues' => DB::table('import_issues')->where('batch_id', $b->id)->limit(50)->get(['severity', 'code', 'path', 'message']), 'conflicts' => [], 'review_hash' => null];
-        if (! in_array($b->status, ['enriching', 'ready', 'published', 'reverted'], true)) {
+        $reset = $b->reset_id ? DB::table('import_resets')->where('id', $b->reset_id)->where('organization_id', $b->organization_id)->where('location_id', $b->location_id)->first(['public_id', 'created_at']) : null;
+        if ($reset) {
+            $reset->created_at = CarbonImmutable::parse($reset->created_at, 'UTC')->toIso8601String();
+        }
+        $base = ['batch_id' => $b->public_id, 'status' => $b->status, 'failure_code' => $b->failure_code, 'report' => null, 'menu' => null, 'issues' => DB::table('import_issues')->where('batch_id', $b->id)->limit(50)->get(['severity', 'code', 'path', 'message']), 'conflicts' => [], 'review_hash' => null, 'reset' => $reset];
+        if (! in_array($b->status, ['enriching', 'ready', 'published', 'reverted', 'reset'], true) || ! DB::table('import_snapshots')->where('batch_id', $b->id)->exists()) {
             return $base;
         }
         $canonical = app(ProcessImport::class)->canonical($b);
@@ -169,5 +180,18 @@ class MigrationCenterController extends Controller
         $action->revert($r->user(), $this->batch($r, $location, $batch));
 
         return response()->noContent();
+    }
+
+    public function resetPreview(Request $r, string $location, ResetImports $action)
+    {
+        return response()->json($action->preview($r->user(), $this->location($r, $location)))->header('Cache-Control', 'private, no-store');
+    }
+
+    public function reset(Request $r, string $location, ResetImports $action)
+    {
+        $l = $this->location($r, $location);
+        $data = $r->validate(['confirmation' => 'required|in:RESET', 'review_hash' => 'required|string|size:64', 'restore_settings' => 'required|boolean']);
+
+        return response()->json($action->execute($r->user(), $l, $data['review_hash'], $data['restore_settings']))->header('Cache-Control', 'private, no-store');
     }
 }

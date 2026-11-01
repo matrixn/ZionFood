@@ -24,7 +24,7 @@ class PublishImport
 {
     public function previous(ImportBatch $batch): ?object
     {
-        return DB::table('import_publications as p')->join('import_batches as b', 'b.id', '=', 'p.batch_id')->where('b.location_id', $batch->location_id)->where('b.source_restaurant', $batch->source_restaurant)->whereNull('p.reverted_at')->orderByDesc('p.id')->select('p.*')->first();
+        return DB::table('import_publications as p')->join('import_batches as b', 'b.id', '=', 'p.batch_id')->where('b.organization_id', $batch->organization_id)->where('b.location_id', $batch->location_id)->where('b.source_restaurant', $batch->source_restaurant)->whereNull('b.reset_id')->whereNull('p.reverted_at')->orderByDesc('p.id')->select('p.*')->first();
     }
 
     public function conflicts(ImportBatch $batch): array

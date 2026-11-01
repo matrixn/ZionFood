@@ -1,4 +1,20 @@
-# ZionFood progress — 0.0.46
+# ZionFood progress — 0.0.47
+
+## Version 0.0.47 - Restaurant import reset with retained audit (November 1)
+
+Added a location-level Reset imports action to Migration Center, separate from rollback. It displays counts/impact, protects shared affected menus, requires the exact RESET confirmation and revalidates a graph/settings hash inside organization/location/restaurant/batch locks. All imported versions are cleaned, including edited imported products and variants; empty mapped categories and unused modifiers/options are removed. Current local products/categories and inherited modifier rules are retained, previous menu assignments restored, and orders left unchanged. Optional settings restoration reverses unchanged imported fields, preserves/identifies later manual edits and respects order permissions for hours/zones. Name/phone/logo shared-field effects are explained. History has a distinct reset status and audit link; original sources, reports, mappings, issues and publications remain. Menu headers/archived local content preserve historical referential integrity. Private source-photo evidence remains viewable; unreferenced owned public product/logo media is cleaned after commit with failure logging. An included migration creates import_resets and nullable batch.reset_id.
+
+Reset batches cannot be published/reverted or reused as an active reimport baseline; new imports start clean. Fetch/photo/validation jobs preserve reset terminal state and cannot recreate reports afterwards. Import creation shares the organization lock. The general admin import register supports the reset status. The bilingual modal has field help, a typed confirmation, pinned actions and a success toast; reset reports retain their download/preview actions. A browser check exposed a raw reset-audit timestamp without an offset; it now returns explicit UTC ISO8601 and follows the location date/time formatter correctly.
+
+Validation executed:
+
+- Full SQLite PHP/Pest suite: **531 passed / 4,118 assertions / 132.18s**. The final focused reset suite, including explicit UTC timestamp output, passed **10 tests / 73 assertions**. Earlier combined migration/settings/logo/platform/reset regression suite: **101 passed / 608 assertions / 29.86s**.
+- Isolated **MariaDB 10.11** migration/reset/settings/logo regressions: **84 passed / 392 assertions / 189.98s**. After timestamp-output normalization, the final focused MariaDB run passed **10 tests / 73 assertions / 91.14s**.
+- **30 Vitest tests** passed, including static localization and field-help coverage; TypeScript passed via the production build, ESLint passed, and client/RO+EN SEO builds completed. No dependency versions changed; Composer lock metadata was regenerated on Linux and Composer validate passed with the existing explicit-project-version advisory.
+- Fresh private-cache Linux Pint plus exact CI `php vendor/bin/pint --test` passed across **348 files**; both final checks passed again after the UTC timestamp refinement. The Linux formatter normalized the changed version config's Windows line ending.
+- Playwright reset/reimport flow passed **1 test / 27.5s**: confirmation disabled for lowercase text, F1 help, mobile footer visibility/no page overflow, optional settings choice, automatic modal close, retained history after reload and fresh source import/publication. Mobile/history captures were visually inspected. Initial browser failures were test-only selectors (PrimeVue dialog title is its accessible dialog name rather than a heading, and the existing setting label is Numele restaurantului); those selectors were corrected. All browser actions use a private migrated SQLite clone, isolated cache/session/disks and synthetic accounts/menus. No live mail, provider request, restaurant reset, Forge change, tag or manual deployment occurred.
+
+Remaining: an undo/restore workflow and operational recovery of media cleanup failures are separate work. Later manually-edited settings are intentionally preserved. Shared affected menus must be unshared before reset; ingredient catalog records are retained. The included database migration must be applied when updating an environment.
 
 ## Version 0.0.46 - Professional platform administration (October 31)
 

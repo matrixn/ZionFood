@@ -224,4 +224,30 @@ class ImportRestaurantSettings
     {
         return hash('sha256', json_encode($state, JSON_THROW_ON_ERROR));
     }
+
+    public function resetPlan(RestaurantLocation $location, array $publications): array
+    {
+        $state = $this->state($location);
+        $steps = $fields = $preserved = [];
+        foreach ($publications as $publication) {
+            if (empty($publication->settings_snapshot)) {
+                continue;
+            }
+            $change = json_decode(Crypt::decryptString($publication->settings_snapshot), true, 64, JSON_THROW_ON_ERROR);
+            abort_unless($change['organization_id'] === $location->organization_id && $change['location_id'] === $location->id && $change['restaurant_id'] === $location->restaurant_id, 409);
+            foreach ($change['before'] as $field => $before) {
+                if ($this->hash($state[$field]) !== $this->hash($change['after'][$field])) {
+                    $preserved[] = $field;
+
+                    continue;
+                }
+                // Store the deterministic plaintext plan for hashing; encrypt only when applying it.
+                $steps[] = [...$change, 'before' => [$field => $before], 'after' => [$field => $change['after'][$field]]];
+                $state[$field] = $before;
+                $fields[] = $field;
+            }
+        }
+
+        return ['steps' => $steps, 'fields' => array_values(array_unique($fields)), 'preserved' => array_values(array_unique($preserved)), 'current' => $this->state($location)];
+    }
 }

@@ -13,6 +13,9 @@ class ProcessImport
     public function execute(ImportBatch $batch, array $source): void
     {
         $batch->refresh();
+        if (! in_array($batch->status, ['queued', 'ready'], true) || $batch->reset_id !== null) {
+            return;
+        }
         $adapter = app(GloriaFoodAdapter::class);
         $identity = $adapter->identity($source);
         $resolution = app(ResolveImportSource::class)->execute($batch, $identity);

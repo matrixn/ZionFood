@@ -1,4 +1,6 @@
-# ZionFood 0.0.46
+# ZionFood 0.0.47
+
+ResetImports uses a location-scoped reviewed plan and organization/batch locks to remove imported menu graphs, preserve local content and orders, restore prior menu assignments and optionally restore unchanged imported settings. ImportReset audit records and reset_id retain historical evidence while excluding reset batches from publication lineage. Shared affected menus block reset; delayed jobs cannot revive reset batches. Unreferenced public import media is cleaned only after commit. See MIGRATION_CENTER.md#import-reset.
 
 Platform administration uses a dedicated responsive AdminLayout and grouped navigation, independent of the tenant shell. BuildPlatformOverview authorizes the platform actor and aggregates UTC reporting windows with integer currency-separated completed-order value. PlatformController exposes bounded directories and safe support/import DTOs under verified platform authorization, private/no-store responses and encrypted Inertia history. Monitoring reads recorded application states without provider calls or quota initialization. Platform access does not imply tenant operating access. See PLATFORM_ADMIN.md for definitions and boundaries.
 

@@ -1,4 +1,6 @@
-# Scope at 0.0.46
+# Scope at 0.0.47
+
+0.0.47 implements restaurant/location import reset with preview, typed confirmation, retained history and a clean reimport path. Optional guarded restoration covers imported restaurant settings; local data and orders remain protected. Reset is destructive and has no undo workflow. Shared-menu eligibility, stale confirmations, background jobs and referential/media cleanup are covered; no live restaurant reset or deployment is performed during implementation.
 
 0.0.46 adds a dedicated professional platform control centre, grouped navigation, daily UTC activity charts, currency-separated completed-order value, customer/subscription and account directories, organization support records, and operational/import monitoring. Existing catalog, lead/campaign, email/quota, alert and AI controls remain available. New administrative views are read-only; billing changes, privileged account mutations and active health/recovery probes are separate follow-up work. See PLATFORM_ADMIN.md.
 

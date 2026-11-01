@@ -134,10 +134,12 @@ function refresh(status = props.filters.status) {
                         :aria-label="$t('status')"
                         :model-value="filters.status ?? null"
                         :options="
-                            ['queued', 'enriching', 'ready', 'published', 'reverted', 'failed'].map((value) => ({
-                                value,
-                                label: $t('pa_import_' + value),
-                            }))
+                            ['queued', 'enriching', 'ready', 'published', 'reverted', 'failed', 'reset'].map(
+                                (value) => ({
+                                    value,
+                                    label: $t('pa_import_' + value),
+                                }),
+                            )
                         "
                         option-label="label"
                         option-value="value"

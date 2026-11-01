@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.47 — 2026-11-01
+
+- Location-scoped import reset with a reviewed graph/settings hash, typed confirmation, safe menu graph cleanup and restoration of prior menu assignments.
+- Retain import batches, source snapshots, reports, mappings and publication receipts; record actor/time/counts and original statuses in an import reset audit. Reset batches cannot be republished or revived by delayed workers and are excluded from reimport lineage/conflicts.
+- Preserve orders, local products/categories and referenced modifiers/media. Shared affected menus block reset; all database changes are transactional. Optional settings restoration skips later manual edits and preserves existing zone/reference protections.
+- Bilingual reset preview, pinned modal actions, success notification, retained-history notice and platform monitoring filter. New schema: import_resets and nullable import_batches.reset_id.
+
 ## 0.0.46 — 2026-10-31
 
 - Dedicated responsive platform console with grouped professional navigation, bilingual help, active states and light/dark presentation; restaurant layouts remain independent.

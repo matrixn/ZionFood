@@ -52,5 +52,8 @@
     "Choose delivery zones belonging to this location.": "Choose delivery zones belonging to this location.",
     "Contact name": "contact name",
     "Email address": "email address",
-    "Phone number": "phone number"
+    "Phone number": "phone number",
+    "Imported menus are still used by another location. Remove the shared assignment before resetting.": "Imported menus are still used by another location. Remove the shared assignment before resetting.",
+    "There are no imports to reset.": "There are no imports to reset.",
+    "Restaurant menu": "Restaurant menu"
 }

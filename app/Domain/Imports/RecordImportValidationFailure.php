@@ -25,6 +25,10 @@ class RecordImportValidationFailure
             $details[] = ['path' => substr($safePath, 0, 200), 'rules' => array_slice($safeRules, 0, 10)];
         }
         DB::transaction(function () use ($batch, $details) {
+            $batch = ImportBatch::whereKey($batch->id)->lockForUpdate()->firstOrFail();
+            if ($batch->reset_id !== null) {
+                return;
+            }
             DB::table('import_issues')->where('batch_id', $batch->id)->delete();
             foreach ($details as $detail) {
                 DB::table('import_issues')->insert(['batch_id' => $batch->id, 'severity' => 'blocker', 'code' => 'source_validation', 'path' => $detail['path'], 'message' => implode('; ', $detail['rules']), 'created_at' => now(), 'updated_at' => now()]);

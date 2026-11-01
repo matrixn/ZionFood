@@ -1,4 +1,23 @@
-# GloriaFood Migration Center — 0.0.46
+# GloriaFood Migration Center — 0.0.47
+
+## Import reset
+
+Restaurant management provides **Reset imports** for the current location. The preview counts imported product records across all versions, menu versions, retained batch logs and visible locally-created products. The user types `RESET` to confirm. This is a destructive cleanup distinct from the existing guarded rollback; there is no undo button. A new source import remains possible afterwards.
+
+`ResetImports` repeats management/menu-write authorization, serializes with organization/menu and batch locks, verifies a graph/settings review hash and refuses affected menus assigned to another location. It removes imported products (including later edits, variants and attached AI drafts/notifications), empty mapped categories and unreferenced mapped modifiers/options. Current manually-created products/categories and inherited modifier rules survive; preceding nonimport menu assignments are restored. Imported menu-version headers and any archived local-only content remain inactive for historical referential integrity. No order or immutable order snapshot is changed. Ingredient catalog entries are not removed.
+
+Optional restaurant-settings restoration walks unreverted publication receipts in reverse order. Only fields whose current state matches the imported value are restored; later manual edits are listed in the preview and preserved. Zone restoration preserves existing zones and uses the recorded added-zone IDs; if the zone state changed, it is preserved. Name, phone and logo remain shared restaurant attributes, with the existing sibling-location state guards. Restoring hours/zones additionally requires order-management permission; the checkbox is disabled with an explanation when that permission is missing. Unchecking settings restoration cleans only menu data.
+
+The `import_resets` record retains actor, location, time, counts and original batch statuses. `import_batches.reset_id` links retained logs to it and status becomes `reset`. Source/canonical snapshots, reports, mappings, issues and publication receipts are retained, including private image evidence for historical preview. Public unreferenced imported product/logo files are removed after commit; filesystem cleanup failures are logged for later recovery. Files referenced by any live/archived product or restaurant logo are protected. A cleanup failure does not roll back the committed database reset.
+
+Reset imports are excluded from active publication lineage, local-edit conflicts and zone mappings. Pending fetch/photo jobs cannot revive a reset batch; publication and rollback reject it. Starting a new import shares the organization lock with reset. Historical reports can still be opened/downloaded; imported photo/logo preview routes remain tenant authorized. Platform operational monitoring includes a reset filter.
+
+Internal session/CSRF routes:
+
+- `GET /app/locations/{location}/migration-center/reset-preview`: safe counts, eligibility, protected settings and review hash; no-store.
+- `POST /app/locations/{location}/migration-center/reset`: `confirmation: RESET`, boolean `restore_settings` and the reviewed hash; existing import-review throttle and no-store response. Reusing a stale confirmation returns conflict.
+
+No real restaurant reset is performed during implementation or testing. The included migration must run when updating an environment. Operational recovery of orphaned media after storage failures and an administrative restore/undo tool remain separate work.
 
 Access: restaurant dashboard → Connections → Migration Center. Requires a verified owner/manager with menu management permission. Platform administration alone is insufficient. Each import belongs to one organization and location.
 

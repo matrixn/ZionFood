@@ -56,6 +56,7 @@ interface ImportedProduct {
     }[];
 }
 interface Preview {
+    reset?: { public_id: string; created_at: string } | null;
     batch_id: string;
     status: string;
     failure_code: string | null;
@@ -173,6 +174,75 @@ watch(
 const resolutions = ref<Record<string, string>>({});
 const confirm = ref(false);
 const toast = useToast();
+interface ResetPreview {
+    can_restore_settings: boolean;
+    review_hash: string;
+    batches: number;
+    products: number;
+    menus: number;
+    local_products: number;
+    shared_locations: string[];
+    settings_fields: string[];
+    preserved_settings: string[];
+}
+const resetOpen = ref(false);
+const resetBusy = ref(false);
+const resetPreview = ref<ResetPreview | null>(null);
+const resetText = ref('');
+const resetRestoreSettings = ref(true);
+const resetError = ref('');
+const canReset = computed(
+    () =>
+        !!resetPreview.value?.batches &&
+        !resetPreview.value.shared_locations.length &&
+        resetText.value === 'RESET' &&
+        !resetBusy.value,
+);
+async function openReset() {
+    resetOpen.value = true;
+    resetBusy.value = true;
+    resetPreview.value = null;
+    resetError.value = '';
+    resetText.value = '';
+    try {
+        resetPreview.value = await api<ResetPreview>(base + '/reset-preview');
+        if (!resetPreview.value.can_restore_settings) resetRestoreSettings.value = false;
+    } catch (e) {
+        resetError.value = (e as Error).message;
+    } finally {
+        resetBusy.value = false;
+    }
+}
+async function resetImports() {
+    if (!canReset.value || !resetPreview.value) return;
+    resetBusy.value = true;
+    resetError.value = '';
+    try {
+        await api(base + '/reset', 'POST', {
+            confirmation: resetText.value,
+            review_hash: resetPreview.value.review_hash,
+            restore_settings: resetRestoreSettings.value,
+        });
+        clearTimeout(timer);
+        selected.value = '';
+        preview.value = null;
+        resetOpen.value = false;
+        router.reload({
+            only: ['location', 'locations', 'batches'],
+            onSuccess: () => (batches.value = [...props.batches]),
+        });
+        toast.add({
+            severity: 'success',
+            summary: t('mig_reset_success'),
+            detail: t('mig_reset_history_kept'),
+            life: 9000,
+        });
+    } catch (e) {
+        resetError.value = (e as Error).message;
+    } finally {
+        resetBusy.value = false;
+    }
+}
 let timer: ReturnType<typeof setTimeout> | undefined;
 onUnmounted(() => clearTimeout(timer));
 async function load(id: string) {
@@ -188,7 +258,7 @@ async function load(id: string) {
             settingsFields.value = settingsFields.value.filter((key) =>
                 data.settings_preview?.some((field) => field.key === key && field.available),
             );
-        if (['published', 'reverted'].includes(data.status))
+        if (['published', 'reverted', 'reset'].includes(data.status))
             settingsFields.value = Object.keys(data.report?.settings_changes ?? {});
         if (['queued', 'enriching'].includes(data.status)) timer = setTimeout(() => void load(id), 3000);
         else if (wasQueued && data.status === 'ready')
@@ -277,7 +347,18 @@ function open(id: string) {
 </script>
 <template>
     <RestaurantLayout v-bind="$props"
-        ><Head :title="$t('mig_title')" /><ZFPageHeader :title="$t('mig_title')" :description="$t('mig_intro')" />
+        ><Head :title="$t('mig_title')" /><ZFPageHeader :title="$t('mig_title')" :description="$t('mig_intro')"
+            ><span class="field-control-help"
+                ><Button
+                    :label="$t('mig_reset_open')"
+                    icon="pi pi-refresh"
+                    severity="danger"
+                    outlined
+                    :disabled="busy || resetBusy"
+                    @click="openReset" /><FieldHelp
+                    :label="$t('mig_reset_open')"
+                    :text="$t('mig_reset_open_help')" /></span
+        ></ZFPageHeader>
         <div class="mb-6 grid gap-3 sm:grid-cols-3">
             <div
                 v-for="(step, i) in ['mig_connect', 'mig_verify', 'mig_publish']"
@@ -291,6 +372,14 @@ function open(id: string) {
             </div>
         </div>
         <p v-if="error" role="alert" class="mb-4 rounded-xl bg-red-50 p-4 text-red-800">{{ error }}</p>
+        <p
+            v-if="preview?.status === 'reset'"
+            class="mb-5 rounded-xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900 dark:border-sky-800 dark:bg-sky-950 dark:text-sky-100"
+            role="status"
+        >
+            {{ $t('mig_reset_history_kept') }}
+            <span v-if="preview.reset">{{ dates.dateTime(preview.reset.created_at) }}</span>
+        </p>
         <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-[22rem_minmax(0,1fr)]">
             <aside class="panel grid min-w-0 gap-4">
                 <h2 class="text-xl font-semibold">GloriaFood → ZionFood</h2>
@@ -667,6 +756,98 @@ function open(id: string) {
                 </template>
             </section>
         </div>
+        <Dialog
+            v-model:visible="resetOpen"
+            modal
+            :header="$t('mig_reset_title')"
+            class="w-full max-w-2xl"
+            :closable="!resetBusy"
+            :close-on-escape="!resetBusy"
+        >
+            <p class="text-sm leading-relaxed">{{ $t('mig_reset_explanation') }}</p>
+            <p v-if="resetError" role="alert" class="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-800">
+                {{ resetError }}
+            </p>
+            <p v-if="resetBusy && !resetPreview" role="status" class="muted mt-5">{{ $t('mig_reset_loading') }}</p>
+            <template v-if="resetPreview">
+                <div class="my-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <div
+                        v-for="metric in ['products', 'menus', 'batches', 'local_products']"
+                        :key="metric"
+                        class="rounded-xl border border-slate-200 p-3 dark:border-slate-700"
+                    >
+                        <strong class="block text-2xl">{{
+                            resetPreview[metric as 'products' | 'menus' | 'batches' | 'local_products']
+                        }}</strong
+                        ><span class="mt-1 block text-xs text-slate-500">{{ $t('mig_reset_count_' + metric) }}</span>
+                    </div>
+                </div>
+                <p v-if="!resetPreview.batches" class="muted my-4">{{ $t('mig_reset_empty') }}</p>
+                <p
+                    v-if="resetPreview.shared_locations.length"
+                    role="alert"
+                    class="mb-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-900"
+                >
+                    {{ $t('mig_reset_shared') }} {{ resetPreview.shared_locations.join(', ') }}
+                </p>
+                <p class="muted mb-4">{{ $t('mig_reset_protection') }}</p>
+                <ZFFormField
+                    v-if="resetPreview.settings_fields.length"
+                    for="reset-settings"
+                    :label="$t('mig_reset_restore_settings')"
+                    :help="$t('mig_reset_restore_help')"
+                    ><Checkbox
+                        v-model="resetRestoreSettings"
+                        input-id="reset-settings"
+                        binary
+                        :aria-label="$t('mig_reset_restore_settings')"
+                        :disabled="resetBusy || !resetPreview.can_restore_settings"
+                    />
+                    <p v-if="!resetPreview.can_restore_settings" class="muted text-xs">
+                        {{ $t('mig_settings_orders_permission') }}
+                    </p>
+                    <p class="muted text-xs">
+                        {{ resetPreview.settings_fields.map((field) => $t('mig_setting_' + field)).join(', ') }}
+                    </p></ZFFormField
+                >
+                <p
+                    v-if="resetPreview.preserved_settings.length"
+                    class="my-4 rounded-lg bg-slate-50 p-3 text-sm dark:bg-slate-800"
+                >
+                    {{ $t('mig_reset_preserved_settings') }}
+                    {{ resetPreview.preserved_settings.map((field) => $t('mig_setting_' + field)).join(', ') }}
+                </p>
+                <ZFFormField
+                    class="mt-5"
+                    for="reset-confirmation"
+                    :label="$t('mig_reset_confirmation')"
+                    :help="$t('mig_reset_confirmation_help')"
+                    ><InputText
+                        id="reset-confirmation"
+                        v-model="resetText"
+                        :aria-label="$t('mig_reset_confirmation')"
+                        autocomplete="off"
+                        :disabled="resetBusy || !resetPreview.batches || !!resetPreview.shared_locations.length"
+                /></ZFFormField>
+            </template>
+            <template #footer
+                ><div class="flex w-full flex-wrap justify-end gap-3">
+                    <Button :label="$t('mig_reset_reload')" text :disabled="resetBusy" @click="openReset" /><Button
+                        :label="$t('cancel')"
+                        outlined
+                        :disabled="resetBusy"
+                        @click="resetOpen = false"
+                    /><Button
+                        :label="$t('mig_reset_confirm_button')"
+                        severity="danger"
+                        icon="pi pi-trash"
+                        :disabled="!canReset"
+                        :loading="resetBusy"
+                        :title="!canReset ? $t('mig_reset_disabled_help') : undefined"
+                        @click="resetImports"
+                    /></div
+            ></template>
+        </Dialog>
         <Dialog v-model:visible="confirm" modal :header="$t('mig_confirm')" class="w-full max-w-lg"
             ><p>{{ $t(preview?.status === 'published' ? 'mig_revert_help' : 'mig_publish_help') }}</p>
             <div

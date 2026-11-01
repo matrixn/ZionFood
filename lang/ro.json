@@ -474,5 +474,8 @@
   "The imported settings changed. Automatic rollback would discard local edits.": "Datele importate au fost modificate ulterior. Revenirea automată ar pierde editările locale.",
   "Choose delivery zones belonging to this location.": "Selectează zone de livrare care aparțin acestei locații.",
   "Contact name": "numele de contact",
-  "Email address": "adresa de email"
+  "Email address": "adresa de email",
+  "Imported menus are still used by another location. Remove the shared assignment before resetting.": "Meniurile importate sunt folosite și de altă locație. Elimină asocierea partajată înainte de resetare.",
+  "There are no imports to reset.": "Nu există importuri de resetat.",
+  "Restaurant menu": "Meniu restaurant"
 }

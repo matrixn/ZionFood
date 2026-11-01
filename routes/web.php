@@ -120,6 +120,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/app/notifications', [WorkspaceNotificationController::class, 'index']);
     Route::post('/app/notifications/{notification}/read', [WorkspaceNotificationController::class, 'read']);
     Route::get('/app/locations/{location}/migration-center', [MigrationCenterController::class, 'index']);
+    Route::get('/app/locations/{location}/migration-center/reset-preview', [MigrationCenterController::class, 'resetPreview']);
+    Route::post('/app/locations/{location}/migration-center/reset', [MigrationCenterController::class, 'reset'])->middleware('throttle:menu-import-review');
     Route::post('/app/locations/{location}/migration-center', [MigrationCenterController::class, 'start'])->middleware('throttle:menu-import');
     Route::get('/app/locations/{location}/migration-center/{batch}', [MigrationCenterController::class, 'detail']);
     Route::get('/app/locations/{location}/migration-center/{batch}/logo', [MigrationCenterController::class, 'logo']);
