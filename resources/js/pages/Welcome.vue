@@ -272,6 +272,7 @@ onBeforeUnmount(() => {
                             >{{ $t('landing_photo_caption') }} <i class="pi pi-heart-fill" aria-hidden="true"
                         /></span>
                     </div>
+                    <LandingLeadForm />
                     <div class="floating-reservation">
                         <span class="floating-icon"><i class="pi pi-calendar" aria-hidden="true" /></span>
                         <div>
@@ -665,8 +666,6 @@ onBeforeUnmount(() => {
                     >
                 </div>
             </section>
-
-            <LandingLeadForm />
 
             <section id="questions" class="faq-section section-wrap" data-reveal>
                 <div class="faq-intro">
@@ -2957,6 +2956,145 @@ onBeforeUnmount(() => {
     }
     .floating-reservation {
         width: 210px;
+    }
+}
+/* The contact card is the primary hero action; decorative examples keep their own space. */
+.hero {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: clamp(28px, 4vw, 64px);
+    padding-block: 24px 36px;
+    min-height: 0;
+}
+.hero-stage {
+    display: grid;
+    justify-items: center;
+    padding: 84px 24px 120px;
+}
+.hero-photo {
+    position: absolute;
+    inset: 0;
+    height: auto;
+    border-radius: 130px 130px 36px 36px;
+}
+.hero-stage .photo-caption {
+    left: 28px;
+    right: 28px;
+    bottom: 16px;
+}
+.hero-stage .floating-table {
+    z-index: 3;
+    top: 5px;
+    right: -8px;
+    animation-name: hero-float;
+    padding: 12px;
+}
+.hero-stage .floating-reservation {
+    z-index: 3;
+    left: -18px;
+    bottom: 36px;
+    padding: 12px;
+    animation-name: hero-float;
+}
+.hero-stage .hero-sticker {
+    right: -12px;
+    bottom: 34px;
+}
+@keyframes hero-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+@media (max-width: 1000px) and (min-width: 701px) {
+    .hero {
+        grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+        gap: 24px;
+    }
+    .hero h1 {
+        font-size: 54px;
+        letter-spacing: -2.5px;
+    }
+    .hero h1 em {
+        letter-spacing: -2.5px;
+    }
+    .hero-description {
+        font-size: 14px;
+        line-height: 1.7;
+    }
+    .hero-stage {
+        padding-inline: 14px;
+    }
+}
+@media (max-width: 700px) {
+    .hero {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+        padding-block: 22px 32px;
+    }
+    .hero-copy {
+        display: contents;
+    }
+    .hero .eyebrow {
+        order: 0;
+    }
+    .hero h1 {
+        order: 1;
+        text-align: center;
+        font-size: 40px;
+        line-height: 1.05;
+        margin-top: 0;
+        letter-spacing: -2px;
+    }
+    .hero h1 em {
+        letter-spacing: -2px;
+        padding-bottom: 4px;
+    }
+    .hero-stage {
+        order: 2;
+        padding: 76px 12px 116px;
+        max-width: 465px;
+    }
+    .hero-description {
+        order: 3;
+        text-align: center;
+        margin-top: 4px !important;
+    }
+    .hero-actions {
+        order: 4;
+        margin-top: 0;
+    }
+    .hero-contact {
+        display: none;
+    }
+    .hero-note {
+        order: 5;
+        margin-top: 0 !important;
+    }
+    .hero-signature {
+        display: none;
+    }
+    .hero-photo {
+        height: auto;
+        border-radius: 90px 90px 28px 28px;
+    }
+    .hero-stage .floating-table {
+        right: 0;
+        top: 0;
+        width: 190px;
+    }
+    .hero-stage .floating-reservation {
+        left: 0;
+        bottom: 38px;
+        width: 225px;
+    }
+    .hero-stage .hero-sticker {
+        right: 0;
+        bottom: 28px;
+        width: 58px;
+        height: 58px;
     }
 }
 @media (prefers-reduced-motion: reduce) {

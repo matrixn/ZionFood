@@ -8,7 +8,12 @@ import { phoneCountries, registrationPhone } from '@/lib/registrationPhone';
 
 const phone = defineModel<string>({ required: true });
 const country = defineModel<string>('country', { required: true });
-const props = defineProps<{ error?: string; countryError?: string }>();
+const props = withDefaults(defineProps<{ error?: string; countryError?: string; id?: string; disabled?: boolean }>(), {
+    id: 'phone',
+    disabled: false,
+    error: undefined,
+    countryError: undefined,
+});
 const emit = defineEmits<{ change: [] }>();
 const flags = import.meta.glob<string>('/node_modules/flag-icons/flags/4x3/*.svg', {
     eager: true,
@@ -36,7 +41,7 @@ const error = computed(
 );
 function validate() {
     touched.value = true;
-    if (!valid.value) document.getElementById('phone')?.focus();
+    if (!valid.value) document.getElementById(props.id)?.focus();
     return valid.value;
 }
 defineExpose({ validate });
@@ -47,14 +52,15 @@ defineExpose({ validate });
         data-testid="registration-phone"
     >
         <ZFFormField
-            for="phone-country"
+            :for="id + '-country'"
             :label="$t('registration_phone_country')"
             :help="$t('registration_phone_country_help')"
             :error="countryError"
         >
             <Select
                 v-model="country"
-                input-id="phone-country"
+                :input-id="id + '-country'"
+                :disabled="disabled"
                 name="phone_country"
                 :aria-label="$t('registration_phone_country')"
                 aria-required="true"
@@ -69,7 +75,7 @@ defineExpose({ validate });
                     pcFilter: {
                         root: {
                             'aria-label': $t('registration_phone_search'),
-                            'aria-describedby': 'phone-country-help',
+                            'aria-describedby': id + '-country-help',
                         },
                     },
                 }"
@@ -111,10 +117,11 @@ defineExpose({ validate });
                 >
             </Select>
         </ZFFormField>
-        <ZFFormField for="phone" :label="$t('registration_phone_number')" :help="$t('registration_phone_help')">
+        <ZFFormField :for="id" :label="$t('registration_phone_number')" :help="$t('registration_phone_help')">
             <InputText
-                id="phone"
+                :id="id"
                 v-model="phone"
+                :disabled="disabled"
                 name="phone"
                 type="tel"
                 inputmode="tel"
@@ -124,14 +131,14 @@ defineExpose({ validate });
                 class="phone-national w-full min-w-0"
                 :aria-label="$t('registration_phone_number')"
                 :aria-invalid="!!error"
-                :aria-describedby="error ? 'phone-help phone-error' : 'phone-help phone-hint'"
+                :aria-describedby="`${id}-help ${id}-${error ? 'error' : 'hint'}`"
                 @blur="touched = true"
                 @update:model-value="emit('change')"
             />
         </ZFFormField>
         <div class="col-span-2 min-h-9 pt-1">
-            <small v-if="error" id="phone-error" role="alert" class="text-red-600">{{ error }}</small>
-            <p v-else id="phone-hint" class="text-xs text-slate-500">{{ $t('registration_phone_hint') }}</p>
+            <small v-if="error" :id="id + '-error'" role="alert" class="text-red-600">{{ error }}</small>
+            <p v-else :id="id + '-hint'" class="text-xs text-slate-500">{{ $t('registration_phone_hint') }}</p>
         </div>
     </div>
 </template>

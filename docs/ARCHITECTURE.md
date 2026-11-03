@@ -1,4 +1,4 @@
-# ZionFood 0.0.49
+# ZionFood 0.0.50
 
 RegistrationPhone validates region-specific numbering metadata and normalizes new account contacts to E.164 before CAPTCHA proof consumption or account-mail admission. User telephone storage uses an encrypted cast and hidden serialization; legacy columns stay nullable while new owner/staff registration requires a region and number. The registration-only lazy Vue field validates with full metadata and serves country flags locally. See REGISTRATION_PHONE.md.
 
@@ -184,3 +184,5 @@ RegistrationCaptcha owns session-bound, short-lived, one-use challenge/proof sta
 Dedicated WordPress connections bind Sanctum credentials to one restaurant, explicit locations and abilities. Fresh membership/module checks supplement token scopes, including legacy API access; browser-only credential lifecycle preserves issuer/owner control. The WordPress API reuses domain checkout/reservation/table/menu actions. API mutation receipts use a connection lock, canonical hashes, encrypted bounded responses and retained conflict markers. Only metadata is journaled; restaurant visibility and platform administration are separate. See [WORDPRESS_API.md](WORDPRESS_API.md).
 
 PriceOrder centralizes authoritative basket/zone calculation. ApplyPromotion selects one eligible server-priced discount and consumes its shared limit inside the checkout transaction; orders preserve immutable discount snapshots. ResolveFulfillmentTime validates opt-in, timezone/notice/horizon/hours/capacity and confirmed reservation proof under the locked location. Future orders are omitted from active kitchen feeds until preparation time; an idempotent minute scheduler emits due invalidations. Payment processing remains absent. [Capability report](WORDPRESS_CAPABILITIES.md) records implemented and deferred behavior.
+
+The 0.0.50 hero contact card shares RegistrationPhoneField and the RegistrationPhone normalizer with account registration. Country is required validation context; only canonical E.164 enters encrypted ServiceLead storage. The static RO/EN build contains blank fields; no live contact data, account creation or outbound message is introduced. See LEAD_CAPTURE.md.

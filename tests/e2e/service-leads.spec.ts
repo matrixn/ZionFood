@@ -20,9 +20,13 @@ test('captures leads in both languages, preserves failed input and manages them 
     await contact.getByRole('textbox', { name: 'Your name', exact: true }).press('Tab');
     await expect(contact.getByRole('textbox', { name: 'Email address', exact: true })).toBeFocused();
     await contact.getByRole('textbox', { name: 'Email address', exact: true }).fill(`english-${nonce}@example.test`);
+    await contact.getByRole('textbox', { name: 'Email address', exact: true }).press('Tab');
+    await expect(contact.getByRole('combobox', { name: 'Country / code', exact: true })).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(contact.getByRole('textbox', { name: 'Phone number', exact: true })).toBeFocused();
     await contact.getByRole('textbox', { name: 'Phone number', exact: true }).fill('not a number');
     await contact.getByRole('button', { name: "Let's talk", exact: true }).click();
-    await expect(contact.getByRole('alert').first()).toContainText('Please check');
+    await expect(contact.getByRole('alert').first()).toContainText('selected country');
     await expect(contact.getByRole('textbox', { name: 'Your name', exact: true })).toHaveValue(englishName);
     await expect(contact.getByRole('textbox', { name: 'Phone number', exact: true })).toHaveAttribute(
         'aria-invalid',

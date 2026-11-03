@@ -1,4 +1,19 @@
-# ZionFood progress — 0.0.49
+# ZionFood progress — 0.0.50
+
+## Version 0.0.50 - Hero contact card and country-aware lead phone (November 3)
+
+Moved the single contact form into the entry hero photograph. The translucent blurred card has a readable opaque fallback, compact fields and a short purpose/campaign notice; the original QR/reservation examples keep separate floating space. The form stays stationary and is visible immediately rather than waiting for a reveal animation. On mobile the heading/card precede longer description and secondary actions. Anchor links still reach the same single #contact form.
+
+The form reuses RegistrationPhoneField with Romania/+40, local flags, international country-name search, region-aware client/server validation, instance-specific accessible IDs, F1 help and direct field-to-field Tab flow. Both phone controls are disabled during submission. CaptureServiceLead requires the selected country, reuses RegistrationPhone and persists only normalized E.164 in its existing encrypted phone column. The country is validation context rather than a new lead attribute. Existing records, deduplication, private platform administration and server campaign attribution are preserved. There is no migration, dependency update, new account, outbound contact email or SMS.
+
+Executed validation:
+
+- Full SQLite PHP/Pest: **571 passed / 4,231 assertions / 120.21s**. The focused lead/campaign/registration/SEO/first-paint subset passed **100 tests / 544 assertions**. Added contact vectors cover RO/DE/IT/CA normalization, required/unknown/malformed countries, shared-prefix region mismatch, extensions, bounded input and blank build-owned hero markup. Existing privacy, CSRF, rate-limit, deduplication, platform authorization and UTM attribution tests remain passing.
+- **46 Vitest tests** passed; ESLint passed without warnings; TypeScript plus final client and RO/EN guest/member SEO builds passed. The build retains its existing large-chunk advisory. Composer validate passed with the existing explicit-project-version advisory; both dependency graphs are unchanged.
+- **11 distinct Playwright scenarios passed across targeted batches**: hero layout/country search in RO/EN at 1440, 768, 390 and 360px; bilingual real lead capture, input retention after invalid phone/network error, direct Tab order and platform status/deletion; existing desktop/mobile navigation and interactive previews; static SEO/no-JavaScript/blocked CSS/blocked fonts; and both registration-phone scenarios, including successful signup. Hero/mobile captures were visually inspected. The final first-paint/registration batch passed **5 tests / 23.4s**. A previous first-paint assertion assumed exactly one stylesheet; shared phone styling correctly creates two build-owned links, so the test now accepts a nonempty stylesheet set while retaining actual layout/graphics checks. Floating examples were repositioned to avoid overlapping the form.
+- Fresh private-cache Linux Pint and exact CI `php vendor/bin/pint --test` passed across **351 PHP files**. Initial fresh formatting fixed line endings in the changed config/test files and one extra blank line. No unrelated runtime files changed.
+
+Browser acceptance used a private SQLite clone, synthetic example.test contacts/accounts, separate sessions/cache/disks, array mail and null broadcasting on localhost:8024. Test-only CAPTCHA/account admission overrides were inherited from the isolated registration harness; production limits are unchanged and covered in PHP. No real lead submission, production/Forge operation, provider phone/SMS lookup, tag or manual deployment. No MariaDB rerun was needed for this schema-free validation/presentation change; this increment's database coverage is SQLite. README/changelog and all current release metadata are synchronized to 0.0.50.
 
 ## Version 0.0.49 - Required country-aware registration phone (November 3)
 

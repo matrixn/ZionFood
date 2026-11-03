@@ -30,7 +30,7 @@ function campaignLead(?CampaignVisit $visit = null, string $status = 'new'): Ser
 
 function campaignContact(array $extra = []): array
 {
-    return ['name' => 'Campaign contact', 'email' => 'campaign@example.test', 'phone' => '0770123456', 'locale' => 'ro', ...$extra];
+    return ['name' => 'Campaign contact', 'email' => 'campaign@example.test', 'phone_country' => 'RO', 'phone' => '0770123456', 'locale' => 'ro', ...$extra];
 }
 
 beforeEach(function () {

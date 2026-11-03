@@ -6,7 +6,8 @@ test('landing CSS is present without JavaScript and all graphics retain bounded 
     const page = await context.newPage();
     for (const path of ['/', '/en']) {
         await page.goto(path);
-        await expect(page.locator('head link[data-landing-style]')).toHaveCount(1);
+        // Shared form components can contribute their own build-owned stylesheet.
+        expect(await page.locator('head link[data-landing-style]').count()).toBeGreaterThan(0);
         expect(await page.locator('.hero').evaluate((element) => getComputedStyle(element).display)).toBe('grid');
         expect(
             await page.locator('h1').evaluate((element) => parseFloat(getComputedStyle(element).fontSize)),

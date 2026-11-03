@@ -1693,6 +1693,7 @@
     "lead_phone_placeholder": "+40 7xx xxx xxx",
     "lead_submit": "Let's talk",
     "lead_sending": "Sending your request…",
+    "lead_contact_notice_compact": "We use these details to contact you about ZionFood, without subscribing you to a newsletter. If you came from a campaign, we attribute your request to it.",
     "lead_contact_notice": "By submitting, you ask us to contact you about ZionFood. We use these details to respond to your request; we do not automatically subscribe you to a newsletter. If you arrived through a campaign, we associate your request with it.",
     "lead_success_title": "We've received your request.",
     "lead_success_description": "Thank you for your interest! The ZionFood team now has your contact details and can follow up to discuss your restaurant.",

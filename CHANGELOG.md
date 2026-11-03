@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.50 — 2026-11-03
+
+- Promote the contact request to a translucent hero-photo card, retain the floating reservation/QR examples and prioritize the form on small screens.
+- Reuse the registration country/prefix selector and strict regional telephone validation for leads; require the region and normalize new contacts to encrypted E.164 storage.
+- Preserve RO/EN, direct Tab/F1 help, safe failure retries, privacy boundaries and campaign attribution. No schema or dependency changes.
+
 ## 0.0.49 — 2026-11-03
 
 - Required two-part registration phone field with Romania default, local flags/calling prefixes, international country-name search and matching RO/EN help.

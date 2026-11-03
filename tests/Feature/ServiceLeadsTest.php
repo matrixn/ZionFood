@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 function leadInput(array $extra = []): array
 {
-    return ['name' => '  Radu Restaurant  ', 'email' => ' RADU@EXAMPLE.TEST ', 'phone' => '+40 770 123 456', 'locale' => 'ro', ...$extra];
+    return ['name' => '  Radu Restaurant  ', 'email' => ' RADU@EXAMPLE.TEST ', 'phone' => '+40 770 123 456', 'phone_country' => 'RO', 'locale' => 'ro', ...$extra];
 }
 
 function storedLead(string $email = 'lead@example.test', string $status = 'new'): ServiceLead
@@ -28,7 +28,7 @@ it('captures only the three contact details with encrypted storage and no accoun
     $response = $this->postJson('/interest', leadInput(['status' => 'qualified', 'updated_by' => 999, 'is_platform_admin' => true]));
     $response->assertOk()->assertExactJson(['status' => 'received'])->assertHeader('Cache-Control', 'no-store, private')->assertHeader('X-Robots-Tag', 'noindex, nofollow');
     $lead = ServiceLead::sole();
-    expect($lead->name)->toBe('Radu Restaurant')->and($lead->email)->toBe('radu@example.test')->and($lead->phone)->toBe('+40 770 123 456')->and($lead->status)->toBe('new')->and($lead->updated_by)->toBeNull();
+    expect($lead->name)->toBe('Radu Restaurant')->and($lead->email)->toBe('radu@example.test')->and($lead->phone)->toBe('+40770123456')->and($lead->status)->toBe('new')->and($lead->updated_by)->toBeNull();
     $raw = DB::table('service_leads')->first();
     expect($raw->name)->not->toContain('Radu')->and($raw->email)->not->toContain('example.test')->and($raw->phone)->not->toContain('770 123');
     expect($lead->toArray())->not->toHaveKeys(['name', 'email', 'phone', 'email_hash']);
@@ -44,7 +44,7 @@ it('requires all contact fields and rejects malformed or oversized input', funct
 })->with([
     [['name' => ''], 'name'], [['name' => str_repeat('a', 121)], 'name'], [['name' => "Unsafe\nName"], 'name'],
     [['email' => 'not-an-email'], 'email'], [['email' => []], 'email'], [['phone' => ''], 'phone'],
-    [['phone' => 'call me tomorrow'], 'phone'], [['phone' => str_repeat('1', 31)], 'phone'], [['locale' => 'xx'], 'locale'],
+    [['phone' => 'call me tomorrow'], 'phone'], [['phone_country' => null], 'phone_country'], [['phone_country' => 'ZZ'], 'phone_country'], [['phone_country' => []], 'phone_country'], [['phone_country' => 'CA', 'phone' => '+1 2025550123'], 'phone'], [['phone_country' => 'DE', 'phone' => '+40770123456'], 'phone'], [['phone' => '+40770123456 ext 1'], 'phone'], [['phone' => str_repeat('1', 41)], 'phone'], [['locale' => 'xx'], 'locale'],
 ]);
 
 it('normalizes duplicate identities without replacing contact details or reopening a closed request', function () {
@@ -141,16 +141,28 @@ it('does not flash personal input from unsupported non-JSON submissions', functi
     expect(ServiceLead::count())->toBe(0);
 });
 
-it('renders three blank contact fields and localized help in build-owned HTML without caching personal data', function () {
+it('renders a single blank contact card in the hero with country-aware phone help and localized help in build-owned HTML without caching personal data', function () {
     $lead = storedLead('private-contact@example.test');
     foreach (['/' => 'ro', '/en' => 'en'] as $path => $locale) {
         $response = $this->get($path)->assertOk()->assertSee('id="contact"', false);
         $doc = new DOMDocument;
         @$doc->loadHTML('<?xml encoding="UTF-8">'.$response->getContent());
         $dom = new DOMXPath($doc);
-        expect($dom->query('//section[@id="contact"]//input[not(@type="hidden")]'))->toHaveCount(3)
+        expect($dom->query('//section[@id="contact"]//input[not(@type="hidden") and not(@role="combobox")]'))->toHaveCount(3)
+            ->and($dom->query('//section[contains(@class,"hero ")]//section[@id="contact"]'))->toHaveCount(1)
+            ->and($dom->query('//*[@id="lead-phone-country" and @role="combobox"]'))->toHaveCount(1)
             ->and($dom->query('//section[@id="contact"]//form[@method="post" and @action="/interest"]'))->toHaveCount(1);
         $markup = file_get_contents(config('seo.prerender_path').'/'.$locale.'-guest.html');
         expect($markup)->not->toContain($lead->email)->not->toContain($lead->phone)->not->toContain('service_leads');
     }
 });
+
+it('normalizes contact telephone numbers against the selected region', function ($country, $number, $expected) {
+    $this->postJson('/interest', leadInput(['phone_country' => $country, 'phone' => $number]))->assertOk();
+    expect(ServiceLead::sole()->phone)->toBe($expected);
+})->with([
+    ['RO', '0770 123 456', '+40770123456'],
+    [' de ', '030 901820', '+4930901820'],
+    ['IT', '02 3661 8300', '+390236618300'],
+    ['CA', '4165550123', '+14165550123'],
+]);

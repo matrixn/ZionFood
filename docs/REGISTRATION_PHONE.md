@@ -1,4 +1,4 @@
-# Registration telephone — 0.0.49
+# Registration telephone — 0.0.50
 
 New account registration, including staff invitations, requires a country/region and a valid telephone number. Existing accounts are not backfilled or blocked at login.
 
@@ -34,3 +34,7 @@ Primary references:
 ## Operational scope
 
 The new phone fields do not introduce SMS, change invitation proof/email verification, expose phone contacts to staff/platform screens, or modify authentication/tenant permissions. Follow-up work may add an explicitly authorized account contact editor or phone verification workflow.
+
+## Shared contact capture from 0.0.50
+
+The marketing contact card reuses the same client selector/number validation and backend `RegistrationPhone` normalizer. Component IDs are configurable (`phone` for registration, `lead-phone` for contact capture), and both controls can be disabled while a request is in progress. Contacts require the selected country and store an encrypted E.164 phone through ServiceLead; no User or SMS is created. Existing nullable user fields and lead records are unchanged.

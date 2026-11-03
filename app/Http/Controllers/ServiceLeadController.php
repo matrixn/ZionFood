@@ -20,7 +20,7 @@ class ServiceLeadController extends Controller
         if (in_array($request->input('locale'), ['ro', 'en'], true)) {
             app()->setLocale($request->input('locale'));
         }
-        $action->execute($request->only('name', 'email', 'phone', 'locale', 'website'), app(RecordCampaignVisit::class)->attribution($request));
+        $action->execute($request->only('name', 'email', 'phone', 'phone_country', 'locale', 'website'), app(RecordCampaignVisit::class)->attribution($request));
 
         return response()->json(['status' => 'received'])->header('Cache-Control', 'private, no-store');
     }
