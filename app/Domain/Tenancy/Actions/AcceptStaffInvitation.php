@@ -8,6 +8,7 @@ use App\Models\Organization;
 use App\Models\OrganizationMembership;
 use App\Models\StaffInvitation;
 use App\Models\User;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\DB;
 
 class AcceptStaffInvitation
@@ -29,7 +30,8 @@ class AcceptStaffInvitation
             abort_if(OrganizationMembership::where('organization_id', $invitation->organization_id)->where('user_id', $user->id)->exists(), 409);
             // Possession of the emailed, email-bound invitation proves this address.
             if (! $user->hasVerifiedEmail()) {
-                $user->forceFill(['email_verified_at' => now()])->save();
+                $user->markEmailAsVerified();
+                event(new Verified($user));
             }
             OrganizationMembership::create(['organization_id' => $invitation->organization_id, 'user_id' => $user->id, 'role' => $invitation->role, 'permissions' => $permissions]);
             foreach ($ids as $id) {

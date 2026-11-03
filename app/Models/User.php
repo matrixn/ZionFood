@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Domain\Mail\RecordPlatformActivity;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
@@ -26,6 +29,18 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     public function preferredLocale(): string
     {
         return in_array($this->locale, ['ro', 'en'], true) ? $this->locale : 'ro';
+    }
+
+    public function markEmailAsVerified()
+    {
+        return DB::transaction(function () {
+            $saved = parent::markEmailAsVerified();
+            if ($saved) {
+                app(RecordPlatformActivity::class)->verified(new Verified($this));
+            }
+
+            return $saved;
+        });
     }
 
     protected $fillable = [

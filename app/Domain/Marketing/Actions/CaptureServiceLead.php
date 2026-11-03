@@ -3,8 +3,10 @@
 namespace App\Domain\Marketing\Actions;
 
 use App\Domain\Auth\RegistrationPhone;
+use App\Domain\Mail\RecordPlatformActivity;
 use App\Models\CampaignVisit;
 use App\Models\ServiceLead;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -43,6 +45,11 @@ class CaptureServiceLead
         unset($data['phone_country']);
 
         // Unique email identity also handles racing submissions. Anonymous retries never overwrite a lead.
-        ServiceLead::firstOrCreate(['email_hash' => ServiceLead::emailHash($data['email'])], [...$data, 'status' => 'new', 'campaign_visit_id' => $campaignVisit?->id]);
+        DB::transaction(function () use ($data, $campaignVisit) {
+            $lead = ServiceLead::lockForUpdate()->firstOrCreate(['email_hash' => ServiceLead::emailHash($data['email'])], [...$data, 'status' => 'new', 'campaign_visit_id' => $campaignVisit?->id]);
+            if ($lead->wasRecentlyCreated) {
+                app(RecordPlatformActivity::class)->contact($lead);
+            }
+        }, 3);
     }
 }

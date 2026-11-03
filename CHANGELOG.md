@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.51 — 2026-11-03
+
+- Notify verified platform-admin account emails of new contact requests, account registrations, email verification (including invitation proof) and restaurant creation.
+- Add encrypted durable notification intent, stable delivery identities, after-commit dispatch, scheduled recovery, recipient authorization rechecks and distinct email-ledger source filters.
+- Provide escaped RO/EN HTML and plain-text messages with contact/business/campaign details and private administrative links. Existing customer messages, technical ADMIN_EMAIL alerts and provider/application quotas remain separate.
+
 ## 0.0.50 — 2026-11-03
 
 - Promote the contact request to a translucent hero-photo card, retain the floating reservation/QR examples and prioritize the form on small screens.

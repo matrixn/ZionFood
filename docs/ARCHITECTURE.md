@@ -1,4 +1,4 @@
-# ZionFood 0.0.50
+# ZionFood 0.0.51
 
 RegistrationPhone validates region-specific numbering metadata and normalizes new account contacts to E.164 before CAPTCHA proof consumption or account-mail admission. User telephone storage uses an encrypted cast and hidden serialization; legacy columns stay nullable while new owner/staff registration requires a region and number. The registration-only lazy Vue field validates with full metadata and serves country flags locally. See REGISTRATION_PHONE.md.
 
@@ -186,3 +186,5 @@ Dedicated WordPress connections bind Sanctum credentials to one restaurant, expl
 PriceOrder centralizes authoritative basket/zone calculation. ApplyPromotion selects one eligible server-priced discount and consumes its shared limit inside the checkout transaction; orders preserve immutable discount snapshots. ResolveFulfillmentTime validates opt-in, timezone/notice/horizon/hours/capacity and confirmed reservation proof under the locked location. Future orders are omitted from active kitchen feeds until preparation time; an idempotent minute scheduler emits due invalidations. Payment processing remains absent. [Capability report](WORDPRESS_CAPABILITIES.md) records implemented and deferred behavior.
 
 The 0.0.50 hero contact card shares RegistrationPhoneField and the RegistrationPhone normalizer with account registration. Country is required validation context; only canonical E.164 enters encrypted ServiceLead storage. The static RO/EN build contains blank fields; no live contact data, account creation or outbound message is introduced. See LEAD_CAPTURE.md.
+
+RecordPlatformActivity captures administrator mail intent alongside new leads/accounts/verified addresses/onboarded restaurants. Encrypted PlatformActivityEmail details and a stable EmailDelivery notification identity commit together. QueuePlatformActivityEmail prepares the localized message; existing DeliverEmail owns quota-controlled transport. Scheduled recovery covers queue/handoff failures, while recipient access is rechecked before rendering and transport. See PLATFORM_ACTIVITY_EMAILS.md.

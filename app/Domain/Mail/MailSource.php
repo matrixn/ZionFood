@@ -10,7 +10,7 @@ use Symfony\Component\Mime\Email;
 
 class MailSource
 {
-    public const SOURCES = ['system_error', 'account_registration', 'account_verification', 'password_reset', 'staff_invitation', 'reservation', 'email_test', 'other', 'legacy'];
+    public const SOURCES = ['system_error', 'account_registration', 'account_verification', 'password_reset', 'staff_invitation', 'reservation', 'email_test', 'other', 'legacy', ...RecordPlatformActivity::SOURCES];
 
     public function notification(string $class): string
     {
@@ -28,8 +28,9 @@ class MailSource
         if ($email->getHeaders()->has('X-ZionFood-Error-Alert')) {
             return 'system_error';
         }
-        if ($email->getHeaders()->get('X-ZionFood-Mail-Source')?->getBodyAsString() === 'email_test') {
-            return 'email_test';
+        $explicit = $email->getHeaders()->get('X-ZionFood-Mail-Source')?->getBodyAsString();
+        if (in_array($explicit, ['email_test', ...RecordPlatformActivity::SOURCES], true)) {
+            return $explicit;
         }
 
         return isset($data['__laravel_notification']) ? $this->notification($data['__laravel_notification']) : ($legacy ? 'legacy' : 'other');

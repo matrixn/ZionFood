@@ -2,6 +2,7 @@
 
 namespace App\Domain\Tenancy\Actions;
 
+use App\Domain\Mail\RecordPlatformActivity;
 use App\Models\LocationBusinessHour;
 use App\Models\LocationFulfillmentSetting;
 use App\Models\Menu;
@@ -38,6 +39,7 @@ class OnboardOrganization
             StorefrontDomain::create(['location_id' => $location->id, 'hostname' => $data['slug'].'.'.config('zionfood.storefront_base_domain'), 'verification_status' => 'verified']);
             $plan = Plan::firstOrCreate(['name' => 'MVP'], ['features' => ['ordering' => true, 'kitchen' => true]]);
             OrganizationSubscription::create(['organization_id' => $organization->id, 'plan_id' => $plan->id, 'trial_ends_at' => now()->addDays(14)]);
+            app(RecordPlatformActivity::class)->restaurant($user, $location);
 
             return $location;
         });

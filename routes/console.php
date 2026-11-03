@@ -3,6 +3,7 @@
 use App\Domain\Integrations\Actions\DeliverOutboxMessage;
 use App\Domain\Mail\EmailLedger;
 use App\Domain\Mail\IndexQueuedEmails;
+use App\Domain\Mail\RecordPlatformActivity;
 use App\Domain\Marketing\LandingSeo;
 use App\Domain\Orders\ReleaseScheduledOrders;
 use App\Jobs\DeliverOutbox;
@@ -12,6 +13,7 @@ use App\Models\CommunicationLog;
 use App\Models\EmailDelivery;
 use App\Models\ImportBatch;
 use App\Models\OutboxMessage;
+use App\Models\PlatformActivityEmail;
 use App\Models\Reservation;
 use App\Models\ReservationHistory;
 use App\Models\RestaurantLocation;
@@ -121,7 +123,22 @@ Artisan::command('zionfood:mail-index {--limit=10000}', function () {
     $this->info(json_encode($result));
 });
 Schedule::command('zionfood:mail-index')->everyMinute()->withoutOverlapping();
+Artisan::command('zionfood:platform-activity-mail', function () {
+    $ids = PlatformActivityEmail::where(function ($query) {
+        $query->whereNull('queued_at')->orWhere('queued_at', '<=', now()->subMinutes(5));
+    })->whereExists(function ($query) {
+        $query->selectRaw('1')->from('email_deliveries')->whereColumn('email_deliveries.public_id', 'platform_activity_emails.public_id')->whereIn('state', ['notification_queued', 'queued']);
+    })->orderBy('id')->limit(200)->pluck('id');
+    foreach ($ids as $id) {
+        app(RecordPlatformActivity::class)->enqueue($id);
+    }
+    $this->info('Pending administrator activity notifications scheduled: '.$ids->count());
+});
+Schedule::command('zionfood:platform-activity-mail')->everyMinute()->withoutOverlapping();
 Artisan::command('zionfood:mail-prune', function () {
+    PlatformActivityEmail::whereNotNull('details')->whereExists(function ($query) {
+        $query->selectRaw('1')->from('email_deliveries')->whereColumn('email_deliveries.public_id', 'platform_activity_emails.public_id')->whereIn('state', EmailLedger::TERMINAL);
+    })->update(['details' => null]);
     EmailDelivery::whereIn('state', EmailLedger::TERMINAL)->where('updated_at', '<', now()->subDays(config('email_delivery.ledger_retention_days')))->delete();
     $this->info('Expired terminal email metadata removed.');
 });

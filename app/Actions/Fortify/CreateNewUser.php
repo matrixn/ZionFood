@@ -5,6 +5,7 @@ namespace App\Actions\Fortify;
 use App\Domain\Auth\RegistrationCaptcha;
 use App\Domain\Auth\RegistrationPhone;
 use App\Domain\Mail\AccountMailBudget;
+use App\Domain\Mail\RecordPlatformActivity;
 use App\Domain\Tenancy\Actions\AcceptStaffInvitation;
 use App\Domain\Tenancy\PendingStaffInvitation;
 use App\Models\User;
@@ -50,6 +51,7 @@ class CreateNewUser implements CreatesNewUsers
         $user = DB::transaction(function () use ($input, $pending) {
             $user = User::create(['name' => $input['name'], 'email' => $input['email'], 'password' => $input['password'], 'phone' => $input['phone'], 'phone_country' => $input['phone_country']]);
             $user->forceFill(['locale' => app()->getLocale()])->save();
+            app(RecordPlatformActivity::class)->registered($user, $pending !== null);
             if ($pending) {
                 app(AcceptStaffInvitation::class)->execute($user, $pending['record']->public_id, $pending['token']);
             }

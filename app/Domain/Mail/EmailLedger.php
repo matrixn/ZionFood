@@ -3,8 +3,10 @@
 namespace App\Domain\Mail;
 
 use App\Models\EmailDelivery;
+use App\Models\PlatformActivityEmail;
 use App\Models\Reservation;
 use App\Models\StaffInvitation;
+use App\Models\User;
 use App\Notifications\ReservationNotification;
 use App\Notifications\StaffInvitationNotification;
 use Illuminate\Notifications\SendQueuedNotifications;
@@ -90,6 +92,15 @@ class EmailLedger
                 return 'skip';
             }
             $data = $record->context ?? [];
+            if (isset($data['platform_activity_id'])) {
+                $activity = PlatformActivityEmail::find($data['platform_activity_id']);
+                $admin = $activity ? User::find($activity->recipient_id) : null;
+                if (! $admin?->is_platform_admin || ! $admin->hasVerifiedEmail() || ! in_array($admin->email, $record->recipients['to'] ?? [], true)) {
+                    $record->update(['state' => 'suppressed', 'reason' => 'platform_activity_unavailable', 'lease_until' => null]);
+
+                    return 'skip';
+                }
+            }
             if (isset($data['reservation_id'])) {
                 $booking = Reservation::find($data['reservation_id']);
                 if (! $booking || $booking->version !== $data['version'] || ($booking->status === 'pending' && $booking->hold_expires_at?->isPast())) {

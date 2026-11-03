@@ -1,10 +1,10 @@
-# Outgoing email administration — 0.0.34
+# Outgoing email administration — 0.0.51
 
 The platform administrator opens **Admin → Emails and queue** (`/admin/emails`). Restaurant owners, managers and staff have no access, including direct JSON and mutation requests. The list refreshes every 15 seconds and preserves applied filters/pagination. Details show recipients, encrypted-at-rest subject, source/initiator, state, actual transport attempts, provider ID, expiry and next-attempt time. No message body, attachment, reset token or invitation URL is exposed by the ledger.
 
 ## Sources, states and meaning
 
-Sources: `system_error`, `account_registration`, `account_verification`, `password_reset`, `staff_invitation`, `reservation`, `email_test`, `other`, `legacy`. Registration uses the verification message generated while registering; a separate account-created email is not invented. Initiators are the authenticated user, anonymous HTTP request, system or unknown historical actor. A background notification keeps its initiating actor when its rendered transport job is created later.
+Sources: `system_error`, `account_registration`, `account_verification`, `password_reset`, `staff_invitation`, `reservation`, `email_test`, `other`, `legacy`. The customer-facing `account_registration` source is the verification message generated while registering. Separate administrator activity sources added in0.0.51 are `platform_contact_request`, `platform_account_registered`, `platform_email_verified` and `platform_restaurant_created`; these do not replace customer verification or technical exception mail. Initiators are the authenticated user, anonymous HTTP request, system or unknown historical actor. A background notification keeps its initiating actor when its rendered transport job is created later.
 
 States: `notification_queued` (not rendered), `queued`, `processing` (short lease), `deferred`, `accepted`, `failed`, `suppressed`, `expired`, `superseded`, `local`. **Accepted means the transport accepted the email, not that it reached the inbox.** `log`/`array` transports are explicitly local. Bounces, complaints, delivery/open/read receipts and provider-wide sent-history import are not implemented here.
 
@@ -55,3 +55,7 @@ The temporary public test-email page exposes only whether ADMIN_EMAIL is valid, 
 ## 0.0.34 registration admission order
 
 Ordinary registration first validates account fields and consumes a valid access-receipt proof, then reserves the existing account-mail admission slot before creating a user or notification. Failed fields or missing/invalid CAPTCHA no longer spend that global allowance. Proven staff invitations skip the CAPTCHA and retain normal admission. A separate registration IP attempt throttle still bounds invalid requests; reset/resend admission and all worker delivery sub-budgets remain unchanged.
+
+## Administrator activity notifications from 0.0.51
+
+See PLATFORM_ACTIVITY_EMAILS.md for recipient selection, encrypted durable intent, atomic registration/verification/onboarding capture, stable transport identities and recovery. The scheduler runs `zionfood:platform-activity-mail` every minute; unprepared notices and stale queued handoffs are recovered without creating a second email ledger identity. Account addresses of verified platform administrators are used, not ADMIN_EMAIL. The existing application140/24h and Resend limits remain final delivery guards; these sources do not consume the customer account-mail sub-budget or the error-alert circuit. Templates contain escaped HTML and a separate plain-text body. `accepted` remains provider acceptance rather than proof of inbox delivery.

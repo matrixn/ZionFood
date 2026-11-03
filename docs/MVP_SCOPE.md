@@ -1,4 +1,6 @@
-# Scope at 0.0.50
+# Scope at 0.0.51
+
+0.0.51 notifies verified platform-admin account addresses of new contacts, registrations, email verification and onboarded restaurants. Durable encrypted intent, deduplication, scheduled recovery and separate RO/EN mail sources integrate with the existing ledger/quotas. The additive platform_activity_emails migration and normal queue/scheduler operation are required. Real provider/inbox delivery remains an operational check.
 
 0.0.50 promotes the bilingual contact request to a translucent hero-photo card, preserves the floating examples and reuses the country-aware required phone selector/validation from registration. New leads store encrypted E.164 numbers; existing contacts are not rewritten. No migration, SMS verification or new dependency is introduced.
 

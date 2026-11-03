@@ -1,4 +1,4 @@
-# Platform administration — 0.0.50
+# Platform administration — 0.0.51
 
 The general administration console is separate from restaurant management. All new routes require authentication, verified email and `is_platform_admin`. Platform access does not grant tenant operating permissions. Responses contain explicit support DTOs, use private/no-store cache headers and encrypted Inertia history.
 
@@ -47,3 +47,7 @@ Responsive desktop sidebar and mobile drawer, persistent RO/EN language selectio
 - [ ] Administrative retry/recovery workflows with scoped authorization, idempotency and audit trails.
 - [ ] Billing/subscription changes, suspension policy and audited privileged account changes; not introduced by this interface redesign.
 - [ ] Materialized aggregate reporting if production volume warrants it. Current charts use bounded-period aggregate queries, not loading individual orders into PHP.
+
+## Activity email notifications (0.0.51)
+
+Verified platform administrators receive private contact/account-verification/restaurant activity at their account email, with separate source filters in Emails and queue. Technical exception ADMIN_EMAIL is unchanged. New requests include contact details and available server-attributed campaign context; account and restaurant messages link to the private account/organization directories. See PLATFORM_ACTIVITY_EMAILS.md for recipient and recovery rules.

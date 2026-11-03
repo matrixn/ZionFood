@@ -6,6 +6,7 @@ use App\Domain\Mail\EmailDeliveryLog;
 use App\Domain\Mail\EmailErrorAlert;
 use App\Domain\Mail\EmailLedger;
 use App\Domain\Mail\QueueOutgoingEmail;
+use App\Domain\Mail\RecordPlatformActivity;
 use App\Domain\Marketing\LandingGateway;
 use App\Domain\Menus\MenuCache;
 use App\Jobs\DeliverEmail;
@@ -14,6 +15,7 @@ use App\Models\Menu;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\ModifierGroup;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Log\Events\MessageLogged;
@@ -61,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('table-connect', fn (Request $r) => Limit::perMinute(20)->by($r->ip()));
         RateLimiter::for('table-operations', fn (Request $r) => Limit::perMinute(30)->by((string) $r->user()?->id));
         Event::listen(MessageSending::class, [QueueOutgoingEmail::class, 'handle']);
+        Event::listen(Verified::class, [RecordPlatformActivity::class, 'verified']);
         Event::listen(MessageLogged::class, [EmailErrorAlert::class, 'handle']);
         Event::listen(MessageSent::class, function ($event) {
             $id = $event->message->getHeaders()->get('X-ZionFood-Delivery-ID')?->getBodyAsString();
