@@ -1,4 +1,6 @@
-# Scope at 0.0.48
+# Scope at 0.0.49
+
+0.0.49 adds required country-aware registration telephone input for new owner and invited-staff accounts, with Romania preselected, international-name country search, client/server validation and encrypted E.164 storage. Existing accounts retain nullable phone fields; SMS ownership verification and account-contact editing are separate scope.
 
 0.0.47 implements restaurant/location import reset with preview, typed confirmation, retained history and a clean reimport path. Optional guarded restoration covers imported restaurant settings; local data and orders remain protected. Reset is destructive and has no undo workflow. Shared-menu eligibility, stale confirmations, background jobs and referential/media cleanup are covered; no live restaurant reset or deployment is performed during implementation.
 

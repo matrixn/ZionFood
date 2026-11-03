@@ -55,5 +55,7 @@
     "Phone number": "phone number",
     "Imported menus are still used by another location. Remove the shared assignment before resetting.": "Imported menus are still used by another location. Remove the shared assignment before resetting.",
     "There are no imports to reset.": "There are no imports to reset.",
-    "Restaurant menu": "Restaurant menu"
+    "Restaurant menu": "Restaurant menu",
+    "Enter a valid phone number for the selected country.": "Enter a valid phone number for the selected country.",
+    "Phone country and calling code": "country and calling code"
 }

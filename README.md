@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.48** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
+**Versiune: 0.0.49** · Platformă SaaS pentru restaurante · Română implicit, engleză opțional.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,16 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 3 noiembrie 2026 — telefon obligatoriu la înregistrare · 0.0.49
+
+- [x] Câmp din două părți: selector de țară cu steag și prefix, plus număr de telefon; **România (+40)** este preselectată.
+- [x] Selectorul închis afișează steagul și prefixul; lista afișează și numele internațional al țării, cu căutare după nume, cod sau prefix.
+- [x] Validare în browser și pe server în funcție de țară, inclusiv numere naționale/internaționale și țări cu prefix comun; mesaje și explicații RO/EN.
+- [x] Numărul se salvează criptat în format internațional. Telefon obligatoriu și pentru înregistrarea prin invitație; conturile existente rămân compatibile.
+- [x] Navigare directă cu Tab, explicații prin F1/hover și păstrarea parolelor/datele introduse la erorile de validare.
+
+Detalii: [telefonul de înregistrare](docs/REGISTRATION_PHONE.md).
 
 ### 1 noiembrie 2026 — legături către configurarea serviciilor · 0.0.48
 

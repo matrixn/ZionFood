@@ -1,4 +1,6 @@
-# Verificarea rapidă ZionFood — 0.0.48
+# Verificarea rapidă ZionFood — 0.0.49
+
+Înregistrarea cere și țara/telefonul valide înainte de consumarea confirmării CAPTCHA. Corectarea telefonului nu anulează confirmarea deja obținută. Conturile invitate furnizează telefonul, păstrând exceptarea existentă de la CAPTCHA. Vezi [telefonul de înregistrare](REGISTRATION_PHONE.md).
 
 Înregistrarea obișnuită include o verificare proprie, în română implicit și engleză opțional, prezentată ca „Un pas și ești gata” / „One quick step”. Vizitatorul citește patru cifre dintr-o imagine PNG generată local, le introduce prin tastatură sau butoane și verifică răspunsul. Rezultatul apare animat; butonul de creare a contului devine disponibil după confirmare. Imaginea este generată dinamic prin extensia GD deja obligatorie, fără fonturi sau servicii CAPTCHA externe.
 

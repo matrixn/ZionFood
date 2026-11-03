@@ -32,6 +32,8 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
         'name',
         'email',
         'password',
+        'phone',
+        'phone_country',
     ];
 
     /**
@@ -42,6 +44,8 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     protected $hidden = [
         'password',
         'remember_token',
+        'phone',
+        'phone_country',
     ];
 
     /**
@@ -55,6 +59,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_platform_admin' => 'boolean',
+            'phone' => 'encrypted',
         ];
     }
 }

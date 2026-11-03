@@ -1913,5 +1913,12 @@
     "setup_reservations_prerequisites": "Before enabling reservations, save the location capacity and reservation rules.",
     "setup_configure_reservations": "Configure reservation rules",
     "setup_qr_prerequisites": "Before enabling QR ordering, configure rooms and tables, including the number of seats at each table.",
-    "setup_configure_tables": "Configure rooms and tables"
+    "setup_configure_tables": "Configure rooms and tables",
+    "registration_phone_country": "Country / code",
+    "registration_phone_number": "Phone number",
+    "registration_phone_country_help": "Choose the phone number’s country. Search by its international English name (Romania, Germany, United Kingdom), local name, country code or calling prefix. Romania (+40) is selected initially.",
+    "registration_phone_search": "Search country or calling code",
+    "registration_phone_help": "A valid number for the selected country is required. Enter a national number (0770 123 456 for Romania) or the full international number (+40 770 123 456). Do not add extensions. It is saved in international format.",
+    "registration_phone_invalid": "Enter a valid phone number for the selected country.",
+    "registration_phone_hint": "Enter a national number or the full number with its calling code."
 }

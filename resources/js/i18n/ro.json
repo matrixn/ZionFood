@@ -1913,5 +1913,12 @@
     "setup_reservations_prerequisites": "Înainte de activare, salvează capacitatea locației și regulile de rezervare.",
     "setup_configure_reservations": "Configurează regulile de rezervare",
     "setup_qr_prerequisites": "Înainte de a activa comenzile prin QR, configurează sălile și mesele, cu numărul de locuri pentru fiecare masă.",
-    "setup_configure_tables": "Configurează sălile și mesele"
+    "setup_configure_tables": "Configurează sălile și mesele",
+    "registration_phone_country": "Țară și prefix",
+    "registration_phone_number": "Număr de telefon",
+    "registration_phone_country_help": "Alege țara numărului de telefon. Caută după denumirea internațională în engleză (Romania, Germany, United Kingdom), numele local, codul țării sau prefix. România (+40) este selectată inițial.",
+    "registration_phone_search": "Caută țara sau prefixul",
+    "registration_phone_help": "Număr obligatoriu și valid pentru țara selectată. Poți introduce forma națională (0770 123 456 pentru România) sau numărul complet cu prefix (+40 770 123 456). Nu adăuga extensii. Se salvează în format internațional.",
+    "registration_phone_invalid": "Introdu un număr de telefon valid pentru țara selectată.",
+    "registration_phone_hint": "Poți introduce numărul național sau numărul complet cu prefix."
 }

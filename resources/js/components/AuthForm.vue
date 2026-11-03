@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { tr as t } from '@/i18n';
 
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 import { fieldHelp } from '@/lib/fieldHelp';
 import RegistrationCaptcha from '@/components/RegistrationCaptcha.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
@@ -9,6 +9,7 @@ import AuthLayout from '@/layouts/AuthLayout.vue';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import ZFFormField from '@/components/ui/ZFFormField.vue';
+const RegistrationPhoneField = defineAsyncComponent(() => import('@/components/RegistrationPhoneField.vue'));
 const props = defineProps<{
     mode: 'login' | 'register' | 'forgot' | 'reset';
     token?: string;
@@ -33,7 +34,10 @@ const form = useForm({
     token: props.token ?? '',
     remember: false,
     captcha_proof: '',
+    phone: '',
+    phone_country: 'RO',
 });
+const phone = ref<InstanceType<typeof RegistrationPhoneField> | null>(null);
 const captcha = ref<InstanceType<typeof RegistrationCaptcha> | null>(null);
 type PasswordField = 'password' | 'password_confirmation';
 const revealed = ref<PasswordField | null>(null);
@@ -76,6 +80,7 @@ onBeforeUnmount(() => {
 });
 function submit() {
     hidePasswords();
+    if (props.mode === 'register' && !phone.value?.validate()) return;
     const url = { login: '/login', register: '/register', forgot: '/forgot-password', reset: '/reset-password' }[
         props.mode
     ];
@@ -131,7 +136,15 @@ function submit() {
                     type="email"
                     autocomplete="email"
                     required /></ZFFormField
-            ><ZFFormField
+            ><RegistrationPhoneField
+                v-if="mode === 'register'"
+                ref="phone"
+                v-model="form.phone"
+                v-model:country="form.phone_country"
+                :error="form.errors.phone"
+                :country-error="form.errors.phone_country"
+                @change="form.clearErrors('phone', 'phone_country')"
+            /><ZFFormField
                 v-if="mode !== 'forgot'"
                 :label="$t('password')"
                 for="password"

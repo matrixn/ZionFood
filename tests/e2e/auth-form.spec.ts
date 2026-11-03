@@ -15,7 +15,7 @@ async function completeReceipt(page: Page) {
 
 test('registration Tab and Shift+Tab move directly between fields while help remains readable', async ({ page }) => {
     await page.goto('/register');
-    const fields = ['name', 'email', 'password', 'password_confirmation'];
+    const fields = ['name', 'email', 'phone-country', 'phone', 'password', 'password_confirmation'];
     await page.locator('#name').focus();
     for (const id of fields.slice(1)) {
         await page.keyboard.press('Tab');
@@ -90,6 +90,7 @@ test('duplicate email preserves both passwords and the receipt; correcting only 
     await page.locator('#email').fill(fixture.email);
     await page.locator('#password').fill(password);
     await page.locator('#password_confirmation').fill(password);
+    await page.locator('#phone').fill('0770123456');
     await page.getByRole('button', { name: 'Creează cont', exact: true }).click();
     await expect(page.getByRole('alert').filter({ hasText: /mail/i })).toBeVisible();
     await expect(page.locator('#password')).toHaveValue(password);

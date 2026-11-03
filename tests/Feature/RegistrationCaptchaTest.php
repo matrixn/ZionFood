@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 function captchaRegistration(array $extra = []): array
 {
-    return ['name' => 'Receipt guest', 'email' => 'receipt@example.test', 'password' => 'SafeLocalPassword!2026', 'password_confirmation' => 'SafeLocalPassword!2026', ...$extra];
+    return [...registrationPhoneData(), 'name' => 'Receipt guest', 'email' => 'receipt@example.test', 'password' => 'SafeLocalPassword!2026', 'password_confirmation' => 'SafeLocalPassword!2026', ...$extra];
 }
 
 function accessibleReceipt(TestCase $test): array

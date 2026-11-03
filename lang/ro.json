@@ -214,7 +214,7 @@
   "Quantity": "Cantitate",
   "Almost at your table.": "Aproape de masa ta.",
   "Your name": "Numele tău",
-  "Phone number": "Număr de telefon",
+  "Phone number": "număr de telefon",
   "How would you like your order?": "Cum dorești să primești comanda?",
   "Delivery address": "Adresă de livrare",
   "Postal code": "Cod poștal",
@@ -477,5 +477,7 @@
   "Email address": "adresa de email",
   "Imported menus are still used by another location. Remove the shared assignment before resetting.": "Meniurile importate sunt folosite și de altă locație. Elimină asocierea partajată înainte de resetare.",
   "There are no imports to reset.": "Nu există importuri de resetat.",
-  "Restaurant menu": "Meniu restaurant"
+  "Restaurant menu": "Meniu restaurant",
+  "Enter a valid phone number for the selected country.": "Introdu un număr de telefon valid pentru țara selectată.",
+  "Phone country and calling code": "țara și prefixul"
 }

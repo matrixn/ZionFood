@@ -31,8 +31,9 @@ it('prefills only proven invited email and registers directly into assigned staf
     $this->get('/invitations/'.$invite->public_id)->assertOk()->assertDontSee($email);
     $this->postJson('/invitations/'.$invite->public_id.'/prepare', ['token' => $token])->assertOk()->assertJsonPath('email', $email);
     $this->get('/register')->assertInertia(fn (Assert $page) => $page->where('invitedEmail', $email));
-    $this->post('/register', ['name' => 'New Staff', 'email' => strtoupper($email), 'password' => 'safe-password-123!', 'password_confirmation' => 'safe-password-123!'])->assertRedirect('/app');
+    $this->post('/register', [...registrationPhoneData(), 'name' => 'New Staff', 'email' => strtoupper($email), 'password' => 'safe-password-123!', 'password_confirmation' => 'safe-password-123!'])->assertRedirect('/app');
     $user = User::where('email', $email)->firstOrFail();
+    expect($user->phone)->toBe('+40770123456')->and($user->phone_country)->toBe('RO');
     expect($user->hasVerifiedEmail())->toBeTrue()->and($invite->fresh()->accepted_by)->toBe($user->id)
         ->and(OrganizationMembership::where('user_id', $user->id)->value('role'))->toBe('staff')
         ->and(LocationStaff::where('user_id', $user->id)->value('location_id'))->toBe($location->id);
@@ -50,10 +51,10 @@ it('does not disclose invited email or prefill registration from an id without i
 it('rejects substituted emails and revoked pending registrations without creating a user or membership', function () {
     [, $invite, $token, $email] = registrationInvite('invited-revoked');
     $this->postJson('/invitations/'.$invite->public_id.'/prepare', ['token' => $token])->assertOk();
-    $this->post('/register', ['name' => 'Staff', 'email' => 'wrong@example.test', 'password' => 'safe-password-123!', 'password_confirmation' => 'safe-password-123!'])->assertSessionHasErrors('email');
+    $this->post('/register', [...registrationPhoneData(), 'name' => 'Staff', 'email' => 'wrong@example.test', 'password' => 'safe-password-123!', 'password_confirmation' => 'safe-password-123!'])->assertSessionHasErrors('email');
     expect(User::where('email', 'wrong@example.test')->exists())->toBeFalse();
     $invite->update(['revoked_at' => now()]);
-    $this->post('/register', ['name' => 'Staff', 'email' => $email, 'password' => 'safe-password-123!', 'password_confirmation' => 'safe-password-123!'])->assertGone();
+    $this->post('/register', [...registrationPhoneData(), 'name' => 'Staff', 'email' => $email, 'password' => 'safe-password-123!', 'password_confirmation' => 'safe-password-123!'])->assertGone();
     expect(User::where('email', $email)->exists())->toBeFalse();
 });
 
@@ -68,7 +69,7 @@ it('accepts a valid emailed invitation for an existing unverified matching accou
 
 it('retains email verification and owner onboarding for ordinary registration', function () {
     Notification::fake();
-    $this->post('/register', [...registrationCaptchaData($this), 'name' => 'Normal Owner', 'email' => 'normal-owner@example.test', 'password' => 'safe-password-123!', 'password_confirmation' => 'safe-password-123!', 'invitation' => 'forged', 'email_verified_at' => now()])->assertRedirect('/app');
+    $this->post('/register', [...registrationPhoneData(), ...registrationCaptchaData($this), 'name' => 'Normal Owner', 'email' => 'normal-owner@example.test', 'password' => 'safe-password-123!', 'password_confirmation' => 'safe-password-123!', 'invitation' => 'forged', 'email_verified_at' => now()])->assertRedirect('/app');
     $user = User::where('email', 'normal-owner@example.test')->firstOrFail();
     expect($user->hasVerifiedEmail())->toBeFalse()->and(OrganizationMembership::where('user_id', $user->id)->exists())->toBeFalse();
     Notification::assertSentTo($user, VerifyEmail::class);

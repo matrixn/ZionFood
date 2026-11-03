@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.49 — 2026-11-03
+
+- Required two-part registration phone field with Romania default, local flags/calling prefixes, international country-name search and matching RO/EN help.
+- Country-aware client and server validation using libphonenumber metadata, strict region matching and E.164 normalization; phone validation happens before CAPTCHA proof or account-mail admission.
+- Nullable legacy-compatible User phone columns, encrypted phone storage and hidden default serialization. New invited staff also supply phone details while retaining direct invitation onboarding.
+- Preserve authentication retry/password behavior and field-to-field Tab navigation; reserve feedback space to prevent blur-triggered layout shifts.
+
 ## 0.0.48 — 2026-11-01
 
 - Add always-visible reservation-rule and room/table setup links beside the relevant Services switches, with Romanian/English prerequisite guidance. Both destinations stay within the current location's setup wizard; existing validation and unsaved-change guards are preserved.

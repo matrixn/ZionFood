@@ -25,6 +25,7 @@ test('Romanian receipt has a raster challenge, keyboard help and a real one-use 
     await page.locator('#email').fill(`receipt-${Date.now()}@example.test`);
     await page.locator('#password').fill('LocalReceiptPassword!2026');
     await page.locator('#password_confirmation').fill('LocalReceiptPassword!2026');
+    await page.locator('#phone').fill('0770123456');
     await page.getByRole('button', { name: 'Creează cont', exact: true }).click();
     await expect(page).toHaveURL(/\/email\/verify$/);
 });

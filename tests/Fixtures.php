@@ -38,3 +38,8 @@ function registrationCaptchaData(TestCase $test): array
 
     return ['captcha_proof' => $proof];
 }
+
+function registrationPhoneData(): array
+{
+    return ['phone_country' => 'RO', 'phone' => '0770123456'];
+}

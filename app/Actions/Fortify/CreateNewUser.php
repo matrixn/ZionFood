@@ -3,12 +3,14 @@
 namespace App\Actions\Fortify;
 
 use App\Domain\Auth\RegistrationCaptcha;
+use App\Domain\Auth\RegistrationPhone;
 use App\Domain\Mail\AccountMailBudget;
 use App\Domain\Tenancy\Actions\AcceptStaffInvitation;
 use App\Domain\Tenancy\PendingStaffInvitation;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -18,8 +20,21 @@ class CreateNewUser implements CreatesNewUsers
     public function create(array $input): User
     {
         $input['email'] = strtolower(trim($input['email'] ?? ''));
+        if (is_string($input['phone_country'] ?? null)) {
+            $input['phone_country'] = strtoupper(trim($input['phone_country']));
+        }
+        $phone = app(RegistrationPhone::class);
         $pending = app(PendingStaffInvitation::class)->current(request());
-        Validator::make($input, ['name' => ['required', 'string', 'max:150'], 'email' => ['required', 'email', 'max:255', 'unique:users'], 'password' => ['required', 'confirmed', Password::min(12)]])->validate();
+        Validator::make($input, [
+            'name' => ['required', 'string', 'max:150'], 'email' => ['required', 'email', 'max:255', 'unique:users'], 'password' => ['required', 'confirmed', Password::min(12)],
+            'phone_country' => ['required', 'string', Rule::in($phone->countries())],
+            'phone' => ['bail', 'required', 'string', 'max:40', function ($attribute, $value, $fail) use ($phone, $input) {
+                if ($phone->normalize($input['phone_country'] ?? null, $value) === null) {
+                    $fail(__('Enter a valid phone number for the selected country.'));
+                }
+            }],
+        ], [], ['phone_country' => __('Phone country and calling code'), 'phone' => __('Phone number')])->validate();
+        $input['phone'] = $phone->normalize($input['phone_country'], $input['phone']);
 
         if ($pending && $input['email'] !== strtolower($pending['record']->email)) {
             throw ValidationException::withMessages(['email' => __('Use the email address from your restaurant invitation.')]);
@@ -33,7 +48,7 @@ class CreateNewUser implements CreatesNewUsers
         }
 
         $user = DB::transaction(function () use ($input, $pending) {
-            $user = User::create(['name' => $input['name'], 'email' => $input['email'], 'password' => $input['password']]);
+            $user = User::create(['name' => $input['name'], 'email' => $input['email'], 'password' => $input['password'], 'phone' => $input['phone'], 'phone_country' => $input['phone_country']]);
             $user->forceFill(['locale' => app()->getLocale()])->save();
             if ($pending) {
                 app(AcceptStaffInvitation::class)->execute($user, $pending['record']->public_id, $pending['token']);

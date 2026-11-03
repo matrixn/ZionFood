@@ -1,4 +1,6 @@
-# ZionFood 0.0.48
+# ZionFood 0.0.49
+
+RegistrationPhone validates region-specific numbering metadata and normalizes new account contacts to E.164 before CAPTCHA proof consumption or account-mail admission. User telephone storage uses an encrypted cast and hidden serialization; legacy columns stay nullable while new owner/staff registration requires a region and number. The registration-only lazy Vue field validates with full metadata and serves country flags locally. See REGISTRATION_PHONE.md.
 
 ResetImports uses a location-scoped reviewed plan and organization/batch locks to remove imported menu graphs, preserve local content and orders, restore prior menu assignments and optionally restore unchanged imported settings. ImportReset audit records and reset_id retain historical evidence while excluding reset batches from publication lineage. Shared affected menus block reset; delayed jobs cannot revive reset batches. Unreferenced public import media is cleaned only after commit. See MIGRATION_CENTER.md#import-reset.
 

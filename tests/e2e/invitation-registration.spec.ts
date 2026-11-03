@@ -16,6 +16,7 @@ test('emailed invitation pre-fills registration and opens assigned staff workspa
     await page.locator('#name').fill('Invited Staff Browser');
     await page.locator('#password').fill('safe-staff-password-123!');
     await page.locator('#password_confirmation').fill('safe-staff-password-123!');
+    await page.locator('#phone').fill('0770123456');
     await page.getByRole('button', { name: 'Creează cont', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/app/locations/${account.location}$`), { timeout: 20000 });
     const nav = page.getByRole('navigation', { name: 'Navigare restaurant', exact: true });
