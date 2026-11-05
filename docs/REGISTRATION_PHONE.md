@@ -1,4 +1,4 @@
-# Registration telephone — 0.0.52
+# Registration telephone — 0.0.53
 
 New account registration, including staff invitations, requires a country/region and a valid telephone number. Existing accounts are not backfilled or blocked at login.
 

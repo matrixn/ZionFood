@@ -9,7 +9,7 @@ import AdminLayout from '@/layouts/AdminLayout.vue';
 import ZFPageHeader from '@/components/ui/ZFPageHeader.vue';
 import ZFFormField from '@/components/ui/ZFFormField.vue';
 import { api } from '@/lib/http';
-import { localeTag, tr as t } from '@/i18n';
+import { localeTag, tr as t, languageOptions } from '@/i18n';
 interface Lead {
     public_id: string;
     name: string;
@@ -126,7 +126,8 @@ function date(value: string) {
                     <div class="min-w-0">
                         <h2 class="break-words text-lg font-semibold">{{ lead.name }}</h2>
                         <p class="mt-1 text-xs text-slate-500">
-                            {{ date(lead.created_at) }} · {{ lead.locale === 'ro' ? '🇷🇴 Română' : '🇬🇧 English' }}
+                            {{ date(lead.created_at) }} ·
+                            {{ languageOptions.find((row) => row.code === lead.locale)?.name ?? lead.locale }}
                         </p>
                     </div>
                     <span

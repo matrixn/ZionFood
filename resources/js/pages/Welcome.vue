@@ -5,6 +5,7 @@ import LanguageSelector from '@/components/ui/LanguageSelector.vue';
 import ZFLogo from '@/components/ui/ZFLogo.vue';
 import LandingLeadForm from '@/components/marketing/LandingLeadForm.vue';
 import LandingPricing from '@/components/marketing/LandingPricing.vue';
+import { languageOptions } from '@/i18n';
 interface Seo {
     title: string;
     description: string;
@@ -321,7 +322,7 @@ onBeforeUnmount(() => {
                     <strong>4</strong><span>{{ $t('landing_stat_services') }}</span>
                 </div>
                 <div>
-                    <strong>RO / EN</strong><span>{{ $t('landing_stat_languages') }}</span>
+                    <strong>5</strong><span>{{ $t('landing_stat_languages') }}</span>
                 </div>
             </section>
 
@@ -719,9 +720,16 @@ onBeforeUnmount(() => {
                 ><Link href="/login">{{ $t('sign_in') }}</Link
                 ><a href="#contact">{{ $t('lead_nav') }}</a>
             </div>
-            <div class="footer-languages" aria-label="Language">
-                <a :href="seo.alternates.ro" hreflang="ro" lang="ro">🇷🇴 Română</a
-                ><a :href="seo.alternates.en" hreflang="en" lang="en">🇬🇧 English</a>
+            <div class="footer-languages" :aria-label="$t('choose_language')">
+                <a
+                    v-for="language in languageOptions"
+                    :key="language.code"
+                    :href="seo.alternates[language.code]"
+                    :hreflang="language.code"
+                    :lang="language.code"
+                >
+                    <img :src="language.flag" width="24" height="16" alt="" aria-hidden="true" />{{ language.name }}
+                </a>
             </div>
             <div class="footer-bottom">
                 <span>ZionFood · v{{ page.props.version }}</span
@@ -797,8 +805,20 @@ onBeforeUnmount(() => {
     text-decoration: underline;
     text-underline-offset: 4px;
 }
+.footer-languages a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.footer-languages img {
+    width: 24px;
+    height: 16px;
+    object-fit: cover;
+    border-radius: 2px;
+}
 .footer-languages {
     display: flex;
+    flex-wrap: wrap;
     gap: 24px;
     padding-block: 20px;
     font-size: 13px;

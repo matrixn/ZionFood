@@ -39,7 +39,9 @@ Route::get('/', function (Request $request, PublicOrderingController $controller
 
     return app(LandingController::class)->show($request, app(LandingSeo::class));
 });
-Route::get('/en', [LandingController::class, 'show']);
+foreach (['en', 'it', 'es', 'nl'] as $landingLocale) {
+    Route::get('/'.$landingLocale, [LandingController::class, 'show']);
+}
 Route::post('/interest', [ServiceLeadController::class, 'store'])->middleware('throttle:service-leads');
 Route::get('/robots.txt', [LandingController::class, 'robots']);
 Route::get('/sitemap.xml', [LandingController::class, 'sitemap']);

@@ -6,7 +6,7 @@ import Button from 'primevue/button';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import ZFPageHeader from '@/components/ui/ZFPageHeader.vue';
 import ZFFormField from '@/components/ui/ZFFormField.vue';
-import { localeTag } from '@/i18n';
+import { localeTag, languageOptions } from '@/i18n';
 type FilterKey = 'utm_source' | 'utm_medium' | 'utm_campaign';
 type TagKey = FilterKey | 'utm_content' | 'utm_term' | 'utm_id';
 type Tags = Record<TagKey, string | null>;
@@ -203,7 +203,8 @@ function date(value: string) {
                     <div>
                         <p class="text-sm font-semibold">{{ date(visit.created_at) }}</p>
                         <p class="mt-1 text-xs text-slate-500">
-                            {{ visit.landing_path }} · {{ visit.locale === 'ro' ? 'Română' : 'English' }}
+                            {{ visit.landing_path }} ·
+                            {{ languageOptions.find((row) => row.code === visit.locale)?.name ?? visit.locale }}
                         </p>
                     </div>
                     <span class="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-500 dark:bg-slate-800">{{

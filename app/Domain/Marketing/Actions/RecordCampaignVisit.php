@@ -19,7 +19,7 @@ class RecordCampaignVisit
             return;
         }
         if (! $request->isMethod('GET') || $request->attributes->has('storefront_location') || ! in_array($request->getHost(), config('zionfood.app_hosts'), true)
-            || ! $request->is('/', 'en') || $request->user()?->is_platform_admin
+            || ! $request->is('/', 'en', 'it', 'es', 'nl') || $request->user()?->is_platform_admin
             || preg_match('/bot|crawler|spider|preview|facebookexternalhit|WhatsApp/i', $request->userAgent() ?? '')
             || str_contains(strtolower($request->header('Sec-Purpose', '').' '.$request->header('Purpose', '')), 'prefetch')) {
             return;
@@ -60,7 +60,7 @@ class RecordCampaignVisit
                     return null;
                 }
                 RateLimiter::hit($ipKey, 60);
-                $visit = CampaignVisit::create([...$tags, 'campaign_key' => $campaignKey, 'landing_path' => $request->is('en') ? '/en' : '/', 'locale' => $locale]);
+                $visit = CampaignVisit::create([...$tags, 'campaign_key' => $campaignKey, 'landing_path' => $request->getPathInfo(), 'locale' => $locale]);
                 Cache::put($key, $visit->public_id, now()->addMinutes(30));
 
                 return $visit;

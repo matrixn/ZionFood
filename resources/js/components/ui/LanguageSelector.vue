@@ -1,18 +1,22 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import Select from 'primevue/select';
 import { usePrimeVue } from 'primevue/config';
-import { i18n, primeLocale, type Locale } from '@/i18n';
+import { i18n, primeLocale, languageOptions, type Locale } from '@/i18n';
 import { api } from '@/lib/http';
-const props = defineProps<{ urls?: Record<string, string> }>();
+const props = withDefaults(
+    defineProps<{ urls?: Record<string, string>; scope?: 'application' | 'admin' | 'storefront' }>(),
+    { scope: 'application', urls: undefined },
+);
 const prime = usePrimeVue();
 const selection = ref<Locale>(i18n.global.locale.value);
 const busy = ref(false);
 const error = ref('');
-const languages = [
-    { code: 'ro', name: 'Română', flag: '/flags/ro.svg' },
-    { code: 'en', name: 'English', flag: '/flags/en.svg' },
-];
+const languages = computed(() =>
+    props.scope === 'application'
+        ? languageOptions
+        : languageOptions.filter((row) => row.code === 'ro' || row.code === 'en'),
+);
 watch(
     i18n.global.locale,
     (locale) => {
@@ -29,7 +33,7 @@ async function change(locale: Locale) {
     busy.value = true;
     error.value = '';
     try {
-        await api('/locale', 'POST', { locale });
+        await api('/locale', 'POST', { locale, scope: props.scope });
         i18n.global.locale.value = locale;
         if (props.urls?.[locale]) window.location.assign(props.urls[locale]);
     } catch {

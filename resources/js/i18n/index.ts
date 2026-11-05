@@ -1,20 +1,28 @@
 import { createI18n } from 'vue-i18n';
 import en from './en.json';
 import ro from './ro.json';
-export type Locale = 'ro' | 'en';
+import it from './it.json';
+import es from './es.json';
+import nl from './nl.json';
+import { localeTags, type Locale } from './locales';
+import { additionalPrimeLocales } from './primeLocales';
+export { localeCodes, languageOptions, normalizeLocale, localePath, type Locale } from './locales';
 export const i18n = createI18n({
     legacy: false,
     globalInjection: true,
     locale: 'ro' as Locale,
     fallbackLocale: 'en',
-    messages: { ro, en },
+    messages: { ro, en, it, es, nl },
     missingWarn: false,
     fallbackWarn: false,
 });
 export const tr = (key: string, values?: Record<string, string | number>): string =>
     values ? i18n.global.t(key, values) : i18n.global.t(key);
-export const localeTag = (): string => (i18n.global.locale.value === 'ro' ? 'ro-RO' : 'en-GB');
+export const localeTag = (): string => localeTags[i18n.global.locale.value as Locale];
 export function primeLocale(locale: Locale) {
+    return locale === 'ro' || locale === 'en' ? basePrimeLocale(locale) : additionalPrimeLocales[locale];
+}
+function basePrimeLocale(locale: Locale) {
     const romanian = locale === 'ro';
     return {
         startsWith: romanian ? 'Începe cu' : 'Starts with',

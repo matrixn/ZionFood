@@ -1,4 +1,6 @@
-# Scope at 0.0.52
+# Scope at 0.0.53
+
+0.0.53 adds Italian, Spanish and Dutch to the marketing site and restaurant workspace, including entry/auth forms, validation, contextual help and component accessibility. The platform admin and public ordering storefront keep their RO/EN scope. Five marketing URLs have reciprocal hreflang/x-default metadata and sitemap entries backed by ten static build variants. Menu/product content and customer-entered data are not translated automatically.
 
 0.0.52 adds the supplied Menu49/Orders149/Business249 RON monthly per-location plan presentation immediately after the landing hero, with RO/EN benefits, pricing anchors in responsive navigation/footer and existing trial/account CTAs. It is a marketing presentation increment; payment processing, billing subscriptions and tier enforcement are separate scope.
 

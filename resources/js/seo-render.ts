@@ -4,14 +4,14 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import PrimeVue from 'primevue/config';
 import FieldHelp from '@/components/ui/FieldHelp.vue';
 import Welcome from '@/pages/Welcome.vue';
-import { i18n, primeLocale, type Locale } from '@/i18n';
+import { i18n, primeLocale, localeCodes, localePath, type Locale } from '@/i18n';
 
 export async function render(locale: Locale, member: boolean, version: string) {
     i18n.global.locale.value = locale;
     const result = await createInertiaApp({
         page: {
             component: 'Welcome',
-            url: locale === 'en' ? '/en' : '/',
+            url: localePath(locale),
             version,
             props: {
                 locale,
@@ -19,14 +19,14 @@ export async function render(locale: Locale, member: boolean, version: string) {
                 errors: {},
                 auth: { user: member ? { name: 'Member' } : null },
                 seo: {
-                    home: locale === 'en' ? '/en' : '/',
-                    alternates: { ro: '/', en: '/en' },
+                    home: localePath(locale),
+                    alternates: Object.fromEntries(localeCodes.map((code) => [code, localePath(code)])),
                     title: i18n.global.t('landing_meta_title') + ' · ZionFood',
                     description: i18n.global.t('landing_meta_description'),
                     url: '/',
                     image: '',
                     image_alt: '',
-                    locale: locale === 'en' ? 'en_GB' : 'ro_RO',
+                    locale: { ro: 'ro_RO', en: 'en_GB', it: 'it_IT', es: 'es_ES', nl: 'nl_NL' }[locale],
                     robots: 'noindex, nofollow',
                     schema: {},
                 },

@@ -1,4 +1,4 @@
-# ZionFood 0.0.52
+# ZionFood 0.0.53
 
 RegistrationPhone validates region-specific numbering metadata and normalizes new account contacts to E.164 before CAPTCHA proof consumption or account-mail admission. User telephone storage uses an encrypted cast and hidden serialization; legacy columns stay nullable while new owner/staff registration requires a region and number. The registration-only lazy Vue field validates with full metadata and serves country flags locally. See REGISTRATION_PHONE.md.
 
@@ -190,3 +190,5 @@ The 0.0.50 hero contact card shares RegistrationPhoneField and the RegistrationP
 RecordPlatformActivity captures administrator mail intent alongside new leads/accounts/verified addresses/onboarded restaurants. Encrypted PlatformActivityEmail details and a stable EmailDelivery notification identity commit together. QueuePlatformActivityEmail prepares the localized message; existing DeliverEmail owns quota-controlled transport. Scheduled recovery covers queue/handoff failures, while recipient access is rechecked before rendering and transport. See PLATFORM_ACTIVITY_EMAILS.md.
 
 LandingPricing renders the supplied three-tier marketing offer immediately after the hero, using static shared plan amounts and matching RO/EN benefit copy. Account entry remains the existing register/app flow; this presentation does not mutate subscriptions, billing or feature entitlements. See LANDING_PAGE.md.
+
+UiLocale defines the five application/marketing locales and the independent RO/EN platform-admin boundary. Scoped selectors persist admin locale separately; the Inertia root synchronizes the effective server locale on navigation. Static Vue and Laravel message catalogues supply translated labels, field help, validation and auth copy without a runtime translation service. Ten SEO fragments form a complete reciprocal language cluster. See LOCALIZATION.md.

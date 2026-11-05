@@ -15,7 +15,7 @@ function collectStyles(key) {
 }
 collectStyles('resources/js/pages/Welcome.vue');
 await mkdir(out, { recursive: true });
-for (const locale of ['ro', 'en']) {
+for (const locale of ['ro', 'en', 'it', 'es', 'nl']) {
     for (const member of [false, true]) {
         const html = await render(locale, member, version);
         if (!html.includes('<h1') || !html.includes('GloriaFood') || html.includes('data-page="app"')) throw new Error('Incomplete landing prerender.');
@@ -23,4 +23,4 @@ for (const locale of ['ro', 'en']) {
     }
 }
 await writeFile(new URL('manifest.json', out), JSON.stringify({ version, styles: [...styles] }));
-console.log('Generated Romanian/English landing HTML, guest and member variants.');
+console.log('Generated RO/EN/IT/ES/NL landing HTML, guest and member variants.');

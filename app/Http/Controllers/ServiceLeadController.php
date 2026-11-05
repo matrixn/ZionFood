@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Localization\UiLocale;
 use App\Domain\Marketing\Actions\CaptureServiceLead;
 use App\Domain\Marketing\Actions\ManageServiceLead;
 use App\Domain\Marketing\Actions\RecordCampaignVisit;
@@ -17,7 +18,7 @@ class ServiceLeadController extends Controller
     {
         abort_unless(! $request->attributes->has('storefront_location') && in_array($request->getHost(), config('zionfood.app_hosts'), true), 404);
         abort_unless($request->expectsJson(), 406);
-        if (in_array($request->input('locale'), ['ro', 'en'], true)) {
+        if (in_array($request->input('locale'), UiLocale::CODES, true)) {
             app()->setLocale($request->input('locale'));
         }
         $action->execute($request->only('name', 'email', 'phone', 'phone_country', 'locale', 'website'), app(RecordCampaignVisit::class)->attribution($request));

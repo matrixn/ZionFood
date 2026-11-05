@@ -17,7 +17,7 @@ beforeEach(function () {
 });
 
 it('renders localized indexable landing text and metadata in raw HTML independently of cookies or user agents', function () {
-    foreach (['/' => 'ro', '/en' => 'en'] as $path => $locale) {
+    foreach (['/' => 'ro', '/en' => 'en', '/it' => 'it', '/es' => 'es', '/nl' => 'nl'] as $path => $locale) {
         $response = $this->withCookie('zf_locale', $locale === 'ro' ? 'en' : 'ro')->get($path);
         $response->assertOk()->assertHeader('Content-Language', $locale)->assertCookie('zf_locale', $locale);
         expect($response->headers->get('X-Robots-Tag'))->toStartWith('index, follow');
@@ -48,9 +48,9 @@ it('uses configured canonical URLs instead of host headers or tracking parameter
     expect($dom->query('//link[@rel="canonical"]')->item(0)->getAttribute('href'))->toBe('https://food.zion3d.ro/en');
     $response = $this->get('/sitemap.xml')->assertOk()->assertHeader('Content-Type', 'application/xml; charset=UTF-8');
     $xml = simplexml_load_string($response->getContent());
-    expect($xml->url)->toHaveCount(2);
+    expect($xml->url)->toHaveCount(5);
     foreach ($xml->url as $url) {
-        expect($url->children('http://www.w3.org/1999/xhtml')->link)->toHaveCount(3);
+        expect($url->children('http://www.w3.org/1999/xhtml')->link)->toHaveCount(6);
     }
     expect($response->getContent())->not->toContain('/admin')->not->toContain('lastmod')->not->toContain('utm_source');
     $this->get('/robots.txt')->assertOk()->assertSee('Sitemap: https://food.zion3d.ro/sitemap.xml', false);

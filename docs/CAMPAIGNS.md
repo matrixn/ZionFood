@@ -1,4 +1,4 @@
-# UTM campaigns and lead attribution — 0.0.52
+# UTM campaigns and lead attribution — 0.0.53
 
 The platform administrator can open **Campanii și vizite / Campaigns and visits** at `/admin/campaigns`. It reports tagged entries to the marketing landing (`/` or `/en`) and links to contact requests they generated. It does not merge restaurant menu analytics or claim unique people, physical visitors, verified ad clicks or revenue. Recording starts with this release; prior visitors cannot be reconstructed.
 
@@ -41,3 +41,5 @@ Periods are the last7/30/90 Bucharest-local days, including today, converted to 
 ## Release
 
 Run `2026_10_31_000300_create_campaign_visits_table` before serving the new code. It creates campaign_visits and adds the nullable lead FK; rollback removes the FK before the table. Existing leads remain valid and unassigned. No environment or package changes are required. Tests use private SQLite/browser fixtures and an isolated MariaDB10.11 test container, not production data. Executed checks and remaining limitations are recorded in CODEX_PROGRESS.md.
+
+From0.0.53 eligible tagged landing visits and contact requests support /, /en, /it, /es and /nl, recording the actual language path and locale. The general-admin interface stays RO/EN while displaying native language names for recorded visits/leads. Existing attribution/privacy/aggregation rules remain in effect.

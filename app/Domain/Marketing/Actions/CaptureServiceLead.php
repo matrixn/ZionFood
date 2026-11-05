@@ -3,6 +3,7 @@
 namespace App\Domain\Marketing\Actions;
 
 use App\Domain\Auth\RegistrationPhone;
+use App\Domain\Localization\UiLocale;
 use App\Domain\Mail\RecordPlatformActivity;
 use App\Models\CampaignVisit;
 use App\Models\ServiceLead;
@@ -39,7 +40,7 @@ class CaptureServiceLead
                     $fail(__('Enter a valid phone number for the selected country.'));
                 }
             }],
-            'locale' => 'required|in:ro,en',
+            'locale' => ['required', Rule::in(UiLocale::CODES)],
         ], [], ['name' => __('Contact name'), 'email' => __('Email address'), 'phone' => __('Phone number'), 'phone_country' => __('Phone country and calling code')])->validate();
         $data['phone'] = $phone->normalize($data['phone_country'], $data['phone']);
         unset($data['phone_country']);

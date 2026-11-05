@@ -2,6 +2,8 @@
 
 namespace App\Domain\Marketing;
 
+use App\Domain\Localization\UiLocale;
+
 class LandingPrerender
 {
     public function styles(): array
@@ -24,7 +26,7 @@ class LandingPrerender
         if (($manifest['version'] ?? null) !== config('zionfood.version')) {
             return null;
         }
-        $file = $path.'/'.($locale === 'en' ? 'en' : 'ro').'-'.($signedIn ? 'member' : 'guest').'.html';
+        $file = $path.'/'.UiLocale::normalize($locale).'-'.($signedIn ? 'member' : 'guest').'.html';
 
         return is_file($file) ? file_get_contents($file) : null;
     }

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.53 — 2026-11-05
+
+- Add complete Italian, Spanish and Dutch interface catalogues, validation/auth messages, local flags and PrimeVue/calendar accessibility text for the marketing site and restaurant workspace.
+- Persist restaurant locale across full reloads and Inertia navigation; keep platform administration RO/EN with a separate cookie and selector scope.
+- Add /it, /es and /nl marketing routes, ten localized guest/member build fragments, reciprocal hreflang/x-default sitemap/head annotations and localized canonical/OpenGraph/schema data.
+- Accept and attribute contact requests from all five marketing languages; retain RO/EN storefront ordering and original restaurant/menu data.
+
 ## 0.0.52 — 2026-11-05
 
 - Present Menu49, Orders149 and Business249 RON per month/location directly after the floating-form hero, with the supplied benefits, popular Orders styling, included GloriaFood migration and fourteen-day trial CTA.

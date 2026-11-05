@@ -20,7 +20,7 @@ useStorefrontBrand(() => props.brand);
                     /><span class="text-xl font-bold">{{ name ?? $t('your_order') }}</span>
                 </div>
                 <div class="ml-auto flex items-center gap-3">
-                    <slot name="actions" /><slot name="language"><LanguageSelector /></slot>
+                    <slot name="actions" /><slot name="language"><LanguageSelector scope="storefront" /></slot>
                 </div>
             </div>
         </header>

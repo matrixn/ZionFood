@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domain\Localization\UiLocale;
 use App\Domain\Mail\RecordPlatformActivity;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
@@ -28,7 +29,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
      */
     public function preferredLocale(): string
     {
-        return in_array($this->locale, ['ro', 'en'], true) ? $this->locale : 'ro';
+        return UiLocale::normalize($this->locale, $this->is_platform_admin ? UiLocale::ADMIN : UiLocale::CODES);
     }
 
     public function markEmailAsVerified()

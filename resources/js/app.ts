@@ -1,12 +1,12 @@
-import { createApp, h, type DefineComponent } from 'vue';
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createApp, h, watch, type DefineComponent } from 'vue';
+import { createInertiaApp, usePage } from '@inertiajs/vue3';
 import { createPinia } from 'pinia';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
-import { i18n, primeLocale } from '@/i18n';
+import { i18n, primeLocale, normalizeLocale } from '@/i18n';
 import FieldHelp from '@/components/ui/FieldHelp.vue';
 import '../css/app.css';
 import 'primeicons/primeicons.css';
@@ -36,8 +36,21 @@ createInertiaApp({
         return (await loader()).default;
     },
     setup({ el, App, props, plugin }) {
-        i18n.global.locale.value = props.initialPage.props.locale === 'en' ? 'en' : 'ro';
-        createApp({ render: () => h(App, props) })
+        i18n.global.locale.value = normalizeLocale(props.initialPage.props.locale);
+        createApp({
+            setup() {
+                const page = usePage();
+                watch(
+                    () => page.props.locale,
+                    (value) => {
+                        i18n.global.locale.value = normalizeLocale(value);
+                        document.documentElement.lang = i18n.global.locale.value;
+                    },
+                    { immediate: true },
+                );
+                return () => h(App, props);
+            },
+        })
             .component('FieldHelp', FieldHelp)
             .use(plugin)
             .use(i18n)

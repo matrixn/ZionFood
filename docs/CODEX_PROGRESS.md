@@ -1,4 +1,19 @@
-# ZionFood progress — 0.0.52
+# ZionFood progress — 0.0.53
+
+## Version 0.0.53 - Italian, Spanish and Dutch interfaces (November 5)
+
+Added Italian, Spanish and Dutch to the marketing frontpage, restaurant workspace and shared authentication/onboarding entry. Each new Vue catalogue has 1,960 keys, matching placeholders and explanatory help; Laravel JSON catalogues have 481 messages each plus validation/auth/password/pagination files. PrimeVue controls and date/number formatting use matching locale data. Flag/name selectors persist the selected language. General platform administration remains RO/EN with a separate admin preference; changing its language does not overwrite a restaurant's preference. Customer ordering remains RO/EN, and original restaurant/menu records are not automatically translated.
+
+Marketing now has five canonical language URLs: /, /en, /it, /es and /nl. The sitemap and page metadata include reciprocal language alternates and x-default to Romanian. Ten build-owned HTML fragments cover guest/member states in all five languages; indexing requires a complete language cluster. UTM visits and contact requests accept the new page languages, while platform-admin labels remain RO/EN. Static translations were drafted from repository interface copy with protected tokens and manually corrected for primary marketing/authentication/restaurant terminology. Runtime uses local catalogues; no credentials or private account/menu records were sent for translation. Full native editorial proofreading is not claimed.
+
+Executed validation:
+
+- Full PHP/Pest suite: **598 passed / 4,570 assertions / 83.92s**, including locale persistence, tenant/admin separation, localized validation, UTM/contact attribution, canonical/alternate metadata and incomplete-build indexing protection.
+- **48 Vitest tests** passed across 15 files, including compilation of all new catalogue messages and key/placeholder parity. ESLint passed without warnings. TypeScript and final production client plus ten SEO fragments built successfully. The existing large-chunk advisory remains; eagerly bundled local catalogues increase the main client bundle to approximately 1,196KB raw / 380KB gzip. No performance guarantee is inferred from functional checks.
+- Final Playwright regression batch: **14 passed / 1.1m**. It covers the three new marketing languages, language selectors and reload persistence, actual Inertia transitions between restaurant and RO/EN platform administration, narrow mobile layouts, authentication Tab/help/password behavior, contact/pricing navigation, canonical/hreflang metadata and safe initial paint without JavaScript/CSS/fonts. Mobile Dutch landing and Italian restaurant screenshots were visually inspected.
+- Linux Pint passed across **373 PHP files** using a new private cache, followed by the exact CI command **php vendor/bin/pint --test**. Composer validate passed with its existing explicit-project-version advisory. Release metadata is synchronized to 0.0.53, and dependency versions/graphs are unchanged.
+
+Validation used an isolated SQLite copy and synthetic browser fixtures on localhost:8027 with private sessions/cache, array mail and null broadcasting. No schema/dependency/environment change was introduced; no MariaDB rerun was performed. Private test helpers, logs, credentials and the owner's reference attachment are excluded from Git. No external email, Forge change, tag, manual deployment or search-engine indexing was performed. See LOCALIZATION.md for language boundaries and editorial limitations.
 
 ## Version 0.0.52 - Landing pricing plans (November 5)
 

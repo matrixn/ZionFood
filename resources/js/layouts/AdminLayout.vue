@@ -65,7 +65,7 @@ function theme() {
                         text
                         :aria-label="$t('toggle_color_theme')"
                         @click="theme"
-                    /><LanguageSelector /><Button
+                    /><LanguageSelector scope="admin" /><Button
                         icon="pi pi-sign-out"
                         text
                         :aria-label="$t('sign_out')"

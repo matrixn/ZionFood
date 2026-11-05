@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Localization\UiLocale;
 use App\Domain\Marketing\Actions\BuildRobotsTxt;
 use App\Domain\Marketing\Actions\RecordCampaignVisit;
 use App\Domain\Marketing\LandingSeo;
@@ -13,7 +14,7 @@ class LandingController extends Controller
     public function show(Request $request, LandingSeo $seo)
     {
         abort_if($request->attributes->has('storefront_location'), 404);
-        $locale = $request->is('en') ? 'en' : 'ro';
+        $locale = UiLocale::normalize($request->segment(1));
         app()->setLocale($locale);
         $meta = $seo->meta($locale, (bool) $request->user());
         $response = Inertia::render('Welcome', ['locale' => $locale, 'seo' => $meta])->withViewData('landingMeta', $meta)->toResponse($request);
