@@ -24,6 +24,12 @@ it('renders localized indexable landing text and metadata in raw HTML independen
         $dom = seoDocument($response->getContent());
         expect($dom->query('//h1'))->toHaveCount(1)
             ->and($dom->query('//section[@id="migration"]//h2')->item(0)->textContent)->toContain('GloriaFood')
+            ->and($dom->query('//section[contains(@class,"hero ")]/following-sibling::*[1][@id="pricing"]'))->toHaveCount(1)
+            ->and($dom->query('//section[@id="pricing"]//article'))->toHaveCount(3)
+            ->and($dom->query('//section[@id="pricing"]//data')->item(0)->getAttribute('value'))->toBe('49')
+            ->and($dom->query('//section[@id="pricing"]//data')->item(1)->getAttribute('value'))->toBe('149')
+            ->and($dom->query('//section[@id="pricing"]//data')->item(2)->getAttribute('value'))->toBe('249')
+            ->and($dom->query('//section[@id="pricing"]//li'))->toHaveCount(18)
             ->and($dom->query('//title'))->toHaveCount(1)
             ->and($dom->query('//meta[@name="description"]'))->toHaveCount(1)
             ->and($dom->query('//link[@rel="canonical"]')->item(0)->getAttribute('href'))->toBe('https://food.zion3d.ro'.$path)

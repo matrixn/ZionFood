@@ -1,4 +1,6 @@
-# Scope at 0.0.51
+# Scope at 0.0.52
+
+0.0.52 adds the supplied Menu49/Orders149/Business249 RON monthly per-location plan presentation immediately after the landing hero, with RO/EN benefits, pricing anchors in responsive navigation/footer and existing trial/account CTAs. It is a marketing presentation increment; payment processing, billing subscriptions and tier enforcement are separate scope.
 
 0.0.51 notifies verified platform-admin account addresses of new contacts, registrations, email verification and onboarded restaurants. Durable encrypted intent, deduplication, scheduled recovery and separate RO/EN mail sources integrate with the existing ledger/quotas. The additive platform_activity_emails migration and normal queue/scheduler operation are required. Real provider/inbox delivery remains an operational check.
 

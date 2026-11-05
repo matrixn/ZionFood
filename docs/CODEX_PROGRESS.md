@@ -1,4 +1,17 @@
-# ZionFood progress — 0.0.51
+# ZionFood progress — 0.0.52
+
+## Version 0.0.52 - Landing pricing plans (November 5)
+
+Added LandingPricing immediately after the floating-contact hero and before the proof strip. The user-supplied reference defines Menu49lei, Orders149lei and Business249lei per month per location, with six benefits per plan, a highlighted Most popular Orders card, included GloriaFood migration and a shared fourteen-day trial CTA. Romanian and English share the same numeric amounts; the descriptions, currency/period labels and navigation are localized. Guest entry uses /register; signed-in members use /app. The existing contact form and floating examples remain intact. The prices and all benefits are included in the build-owned static HTML for no-JavaScript readers. Pricing links are available in desktop/tablet/mobile navigation and the footer, with sticky-header scroll clearance. Compact navigation now extends through1200px; wider layouts keep single-line links, and narrow cards stack without horizontal overflow.
+
+Executed validation:
+
+- Targeted PHP/Pest SEO/first-paint/contact suite: **41 passed / 319 assertions / 10.95s**. Raw HTML assertions confirm immediate section order, three plan cards, exact49/149/249 values and all18 benefit items in both language URLs. Existing host/indexing, member, privacy and contact-capture checks remain passing.
+- **46 Vitest tests** passed, including catalog parity and form/help coverage. ESLint passed without warnings. TypeScript and the final client plus RO/EN SEO guest/member production builds completed. Existing build large-chunk and Composer explicit-version advisories remain; dependency versions/graphs are unchanged.
+- Playwright landing/SEO/first-paint/pricing batch: **8 passed / 31.7s**. It verifies bilingual desktop anchors, exact amounts/periods, the popular badge, mobile/tablet navigation closing, no horizontal overflow, real registration entry, intact contact card, no unsolicited mutations, no-JavaScript content and existing landing functionality. After final compact-header polish, relevant pricing/navigation scenarios passed **3 tests / 20.5s**, including1200/1100/900/768/390/360px navigation. Desktop/mobile pricing captures were visually inspected. Additional header measurements at intermediate widths identified wrapped navigation labels; compact navigation and single-line desktop labels address that layout concern.
+- Linux Pint with a **new private cache** followed by exact CI **php vendor/bin/pint --test** passed across **359 files**. The changed config/SEO test line endings were formatted first. Composer validate passed with the existing explicit-project-version advisory; all current release metadata and README/changelog headings are synchronized to0.0.52.
+
+Validation used isolated SQLite/browser sessions/cache on localhost:8026 with local array mail and synthetic fixture data. No new schema, dependency, environment setting, payment flow or subscription-tier enforcement was introduced; no MariaDB/full-backend rerun was needed for this marketing-only presentation change. The owner's reference attachment is preserved as an untracked input and is not included in the release. No tag, Forge change or manual deployment was performed. See LANDING_PAGE.md for the presentation/billing boundary.
 
 ## Version 0.0.51 - Administrator activity email notifications (November 3)
 

@@ -4,6 +4,7 @@ import { Head, Link, usePage } from '@inertiajs/vue3';
 import LanguageSelector from '@/components/ui/LanguageSelector.vue';
 import ZFLogo from '@/components/ui/ZFLogo.vue';
 import LandingLeadForm from '@/components/marketing/LandingLeadForm.vue';
+import LandingPricing from '@/components/marketing/LandingPricing.vue';
 interface Seo {
     title: string;
     description: string;
@@ -161,7 +162,8 @@ onBeforeUnmount(() => {
                     ><span class="brand-period">.</span></Link
                 >
                 <div class="desktop-links">
-                    <a href="#platform">{{ $t('landing_nav_platform') }}</a
+                    <a href="#pricing" class="nav-pricing">{{ $t('pricing_nav') }}</a
+                    ><a href="#platform">{{ $t('landing_nav_platform') }}</a
                     ><a href="#workflow">{{ $t('landing_nav_workflow') }}</a
                     ><a href="#migration">{{ $t('landing_nav_migration') }}</a
                     ><a href="#questions">{{ $t('landing_nav_faq') }}</a
@@ -183,7 +185,8 @@ onBeforeUnmount(() => {
                     </button>
                 </div>
                 <div v-if="mobileOpen" id="mobile-navigation" class="mobile-navigation">
-                    <a href="#platform" @click="mobileOpen = false">{{ $t('landing_nav_platform') }}</a
+                    <a href="#pricing" class="nav-pricing" @click="mobileOpen = false">{{ $t('pricing_nav') }}</a
+                    ><a href="#platform" @click="mobileOpen = false">{{ $t('landing_nav_platform') }}</a
                     ><a href="#workflow" @click="mobileOpen = false">{{ $t('landing_nav_workflow') }}</a
                     ><a href="#migration" @click="mobileOpen = false">{{ $t('landing_nav_migration') }}</a
                     ><a href="#questions" @click="mobileOpen = false">{{ $t('landing_nav_faq') }}</a
@@ -306,6 +309,8 @@ onBeforeUnmount(() => {
                     </div>
                 </div>
             </section>
+
+            <LandingPricing :signed-in="signedIn" />
 
             <section class="proof-strip section-wrap" :aria-label="$t('landing_highlights')" data-reveal>
                 <p>{{ $t('landing_strip_title') }}</p>
@@ -708,7 +713,8 @@ onBeforeUnmount(() => {
                 <p>{{ $t('landing_footer_tagline') }}</p>
             </div>
             <div class="footer-links">
-                <a href="#platform">{{ $t('landing_nav_platform') }}</a
+                <a href="#pricing">{{ $t('pricing_nav') }}</a
+                ><a href="#platform">{{ $t('landing_nav_platform') }}</a
                 ><a href="#questions">{{ $t('landing_nav_faq') }}</a
                 ><Link href="/login">{{ $t('sign_in') }}</Link
                 ><a href="#contact">{{ $t('lead_nav') }}</a>
@@ -904,6 +910,12 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 30px;
 }
+.desktop-links {
+    gap: 20px;
+}
+.desktop-links a {
+    white-space: nowrap;
+}
 .desktop-links a,
 .nav-login {
     font-size: 13px;
@@ -913,6 +925,19 @@ onBeforeUnmount(() => {
 .desktop-links a:hover,
 .nav-login:hover {
     color: var(--purple);
+}
+.desktop-links .nav-pricing,
+.mobile-navigation .nav-pricing {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid #dce9b7;
+    border-radius: 11px;
+    background: #edf5d9;
+    color: #5b4de5;
+    font-weight: 750;
 }
 .nav-login {
     white-space: nowrap;
@@ -2956,6 +2981,43 @@ onBeforeUnmount(() => {
     }
     .floating-reservation {
         width: 210px;
+    }
+}
+/* Keep navigation reachable on tablets as well as narrow phones. */
+@media (min-width: 641px) and (max-width: 1200px) {
+    .desktop-links {
+        display: none;
+    }
+    .mobile-toggle {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border: 0;
+        border-radius: 10px;
+        background: #eeece5;
+        color: var(--ink);
+        font-size: 18px;
+    }
+    .mobile-navigation {
+        display: grid;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        padding: 22px;
+        gap: 18px;
+        background: var(--cream);
+        border: 1px solid #e3e7d9;
+        border-radius: 0 0 18px 18px;
+        box-shadow: 0 14px 24px #18271812;
+    }
+    .mobile-navigation a {
+        color: var(--ink);
+        font-size: 14px;
+    }
+    .mobile-navigation .nav-pricing {
+        color: #5b4de5;
     }
 }
 /* The contact card is the primary hero action; decorative examples keep their own space. */

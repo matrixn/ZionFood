@@ -1,4 +1,4 @@
-# UTM campaigns and lead attribution — 0.0.51
+# UTM campaigns and lead attribution — 0.0.52
 
 The platform administrator can open **Campanii și vizite / Campaigns and visits** at `/admin/campaigns`. It reports tagged entries to the marketing landing (`/` or `/en`) and links to contact requests they generated. It does not merge restaurant menu analytics or claim unique people, physical visitors, verified ad clicks or revenue. Recording starts with this release; prior visitors cannot be reconstructed.
 

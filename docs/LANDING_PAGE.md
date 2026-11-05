@@ -1,4 +1,4 @@
-# Public ZionFood presentation and SEO — 0.0.27
+# Public ZionFood presentation and SEO — 0.0.52
 
 The central-host presentation uses Welcome.vue, with Romanian `/` and English `/en`. A language URL always renders its declared language, independently of cookies, browser language or crawler user agent. It sets the matching preference cookie; the flag/name selector also preserves the existing preference endpoint and navigates to the language URL. Footer language links work without JavaScript. Verified restaurant domains still serve their own restaurant at `/` and do not expose `/en` or the marketing sitemap.
 
@@ -62,3 +62,11 @@ The SEO build reads the Vite manifest and collects Welcome's stylesheet plus sta
 A small inline first-paint stylesheet bounds images and hides icon-font pseudo-elements until the font is positively loaded. All hand-authored landing SVGs have explicit width/height, an inline hidden/bounded fallback and a decoration marker; only the full page stylesheet reveals them. Font failure keeps decorative glyphs hidden, while real text/links stay available. SVG dropdown icons and both language-flag images have intrinsic dimensions. The app root/body/headings are never hidden as a loading technique, and there is no crawler-specific markup.
 
 Normal CSS with JavaScript disabled produces a styled marketing page. Blocked external CSS/JavaScript leaves readable text and bounded media with decorative SVGs hidden. Blocked font requests preserve interactive feature tabs without replacement glyphs. Publish all rebuilt CSS and SEO manifest/HTML together through the normal versioned release; old manifests remain rejected by the existing version guard. Local blocked-resource tests do not guarantee arbitrary browser-extension previews, network performance or live CDN cache behavior.
+
+## Pricing presentation (0.0.52)
+
+LandingPricing is the next section after the hero/contact form and before the proof strip. The user-supplied plans are Menu49, Orders149 and Business249 lei/RON per month per location. Each card preserves the six supplied benefits; Orders has the Most popular badge. A shared fourteen-day trial CTA uses /register for guests and /app for signed-in members. GloriaFood migration is included in all three displayed plans.
+
+The navigation provides #pricing links on desktop/tablet/mobile and in the footer. Tablet menu coverage extends to1200px to retain room for the language/account controls. Sticky-header scroll clearance, stacked cards on narrow screens, reduced-motion hover behavior and native headings/lists preserve usable comparison and keyboard access. The same RO/EN markup and all prices are build-rendered for no-JavaScript readers; no separate route or sitemap entry is needed. The existing hero form and floating examples remain intact.
+
+This increment displays the owner's provided commercial copy. It does not create billing products, apply subscriptions, attach a selected plan to registration, enforce new feature tiers or initiate payments. Numeric amounts are maintained once in the component, with benefit/currency/period text in matching RO/EN catalogues. No VAT treatment or additional commercial term was inferred from the reference image. See CODEX_PROGRESS.md for executed checks.

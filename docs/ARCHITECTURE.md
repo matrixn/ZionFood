@@ -1,4 +1,4 @@
-# ZionFood 0.0.51
+# ZionFood 0.0.52
 
 RegistrationPhone validates region-specific numbering metadata and normalizes new account contacts to E.164 before CAPTCHA proof consumption or account-mail admission. User telephone storage uses an encrypted cast and hidden serialization; legacy columns stay nullable while new owner/staff registration requires a region and number. The registration-only lazy Vue field validates with full metadata and serves country flags locally. See REGISTRATION_PHONE.md.
 
@@ -188,3 +188,5 @@ PriceOrder centralizes authoritative basket/zone calculation. ApplyPromotion sel
 The 0.0.50 hero contact card shares RegistrationPhoneField and the RegistrationPhone normalizer with account registration. Country is required validation context; only canonical E.164 enters encrypted ServiceLead storage. The static RO/EN build contains blank fields; no live contact data, account creation or outbound message is introduced. See LEAD_CAPTURE.md.
 
 RecordPlatformActivity captures administrator mail intent alongside new leads/accounts/verified addresses/onboarded restaurants. Encrypted PlatformActivityEmail details and a stable EmailDelivery notification identity commit together. QueuePlatformActivityEmail prepares the localized message; existing DeliverEmail owns quota-controlled transport. Scheduled recovery covers queue/handoff failures, while recipient access is rechecked before rendering and transport. See PLATFORM_ACTIVITY_EMAILS.md.
+
+LandingPricing renders the supplied three-tier marketing offer immediately after the hero, using static shared plan amounts and matching RO/EN benefit copy. Account entry remains the existing register/app flow; this presentation does not mutate subscriptions, billing or feature entitlements. See LANDING_PAGE.md.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.52 — 2026-11-05
+
+- Present Menu49, Orders149 and Business249 RON per month/location directly after the floating-form hero, with the supplied benefits, popular Orders styling, included GloriaFood migration and fourteen-day trial CTA.
+- Add localized Pricing navigation in desktop/tablet/mobile menus and footer, responsive cards, static RO/EN content and member-aware account entry.
+- Pricing is presentation content; billing, stored subscriptions and feature enforcement are unchanged.
+
 ## 0.0.51 — 2026-11-03
 
 - Notify verified platform-admin account emails of new contact requests, account registrations, email verification (including invitation proof) and restaurant creation.
