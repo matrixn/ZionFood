@@ -1,3 +1,4 @@
+import { explicitRonPricing } from './support/pricingPreference';
 import { test, expect } from '@playwright/test';
 
 test('pricing follows the hero and is linked from responsive bilingual navigation with real trial entry', async ({
@@ -75,4 +76,9 @@ test('pricing follows the hero and is linked from responsive bilingual navigatio
         await expect(staticPage.locator('#pricing .pricing-cta')).toHaveAttribute('href', '/register');
     }
     await context.close();
+});
+
+// Preserve explicit language/currency intent in these existing regression scenarios.
+test.beforeEach(async ({ page }) => {
+    await explicitRonPricing(page);
 });

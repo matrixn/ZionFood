@@ -1,3 +1,4 @@
+import { explicitRonPricing } from './support/pricingPreference';
 import { test, expect as baseExpect } from '@playwright/test';
 const expect = baseExpect.configure({ timeout: 20000 });
 
@@ -73,4 +74,9 @@ test('failed icon fonts never reveal fallback glyphs while the interactive page 
             .first()
             .evaluate((node) => getComputedStyle(node, '::before').visibility),
     ).toBe('visible');
+});
+
+// Preserve explicit language/currency intent in these existing regression scenarios.
+test.beforeEach(async ({ page }) => {
+    await explicitRonPricing(page);
 });

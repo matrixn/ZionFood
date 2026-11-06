@@ -5,6 +5,7 @@ use App\Domain\Mail\EmailLedger;
 use App\Domain\Mail\IndexQueuedEmails;
 use App\Domain\Mail\RecordPlatformActivity;
 use App\Domain\Marketing\LandingSeo;
+use App\Domain\Marketing\SyncExchangeRates;
 use App\Domain\Orders\ReleaseScheduledOrders;
 use App\Jobs\DeliverOutbox;
 use App\Jobs\DeliverWebhook;
@@ -34,6 +35,13 @@ Artisan::command('zionfood:outbox', function () {
     $this->info('Due, non-exhausted events queued.');
 });
 Schedule::command('zionfood:outbox')->everyMinute()->withoutOverlapping();
+Artisan::command('zionfood:exchange-rates {--scheduled}', function () {
+    $ok = app(SyncExchangeRates::class)->execute((bool) $this->option('scheduled'));
+    $ok ? $this->info('Exchange rates updated (or scheduled updates disabled).') : $this->error('Exchange rates unavailable; previous rates retained.');
+
+    return $ok ? 0 : 1;
+});
+Schedule::command('zionfood:exchange-rates --scheduled')->weeklyOn(1, '04:15')->timezone('Europe/Bucharest')->withoutOverlapping();
 Artisan::command('zionfood:outbox-retry {event}', function () {
     $event = strtoupper($this->argument('event'));
     if (! preg_match('/^[0-9A-HJKMNP-TV-Z]{26}$/', $event)) {

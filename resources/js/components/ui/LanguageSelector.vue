@@ -30,6 +30,7 @@ watch(
 );
 async function change(locale: Locale) {
     if (busy.value || locale === i18n.global.locale.value) return;
+    window.dispatchEvent(new Event('zf-language-choice'));
     busy.value = true;
     error.value = '';
     try {

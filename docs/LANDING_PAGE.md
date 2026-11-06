@@ -1,4 +1,6 @@
-# Public ZionFood presentation and SEO — 0.0.53
+# Public ZionFood presentation and SEO — 0.0.54
+
+Current pricing is editable in platform administration and overlaid onto build HTML at request time, with RON/EUR/GBP indicative conversion. Older pricing notes below describe the initial 0.0.52 release. See PRICING_CURRENCIES.md for authoritative prices, approximate location defaults, weekly rates and the billing boundary.
 
 The central-host presentation uses Welcome.vue, with Romanian `/`, English `/en`, Italian `/it`, Spanish `/es` and Dutch `/nl`. A language URL always renders its declared language, independently of cookies, browser language or crawler user agent. It sets the matching preference cookie; the flag/name selector also preserves the existing preference endpoint and navigates to the language URL. Footer language links work without JavaScript. Verified restaurant domains still serve their own restaurant at `/` and do not expose marketing language routes or the marketing sitemap.
 

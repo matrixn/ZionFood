@@ -1,4 +1,6 @@
-# ZionFood 0.0.53
+# ZionFood 0.0.54
+
+Marketing packages use PricingCatalog (integer RON authority), SyncExchangeRates (fixed Frankfurter provider, weekly/manual refresh) and PricingMarkup (escaped current values in static landing fragments). This is separate from tenant order pricing and future subscription billing. See PRICING_CURRENCIES.md.
 
 RegistrationPhone validates region-specific numbering metadata and normalizes new account contacts to E.164 before CAPTCHA proof consumption or account-mail admission. User telephone storage uses an encrypted cast and hidden serialization; legacy columns stay nullable while new owner/staff registration requires a region and number. The registration-only lazy Vue field validates with full metadata and serves country flags locally. See REGISTRATION_PHONE.md.
 

@@ -17,6 +17,8 @@ class LandingGateway implements Gateway
         if ($markup === null) {
             return null;
         }
+        // Overlay current server prices/names onto the build fragment, including no-JavaScript readers.
+        $markup = app(PricingMarkup::class)->apply($markup, $page['props']['pricing'] ?? app(PricingCatalog::class)->publicData(), $page['props']['locale'] ?? 'ro');
         // The rendered content is build-owned; session/user data only comes from this request.
         $json = json_encode($page, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR);
 

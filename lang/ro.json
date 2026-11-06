@@ -479,5 +479,6 @@
   "There are no imports to reset.": "Nu există importuri de resetat.",
   "Restaurant menu": "Meniu restaurant",
   "Enter a valid phone number for the selected country.": "Introdu un număr de telefon valid pentru țara selectată.",
-  "Phone country and calling code": "țara și prefixul"
+  "Phone country and calling code": "țara și prefixul",
+  "Pricing settings changed. Reload before saving.": "Setările pachetelor s-au schimbat. Reîncarcă pagina înainte de salvare."
 }

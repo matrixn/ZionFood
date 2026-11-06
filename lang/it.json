@@ -479,5 +479,6 @@
     "There are no imports to reset.": "Non ci sono importazioni da reimpostare.",
     "Restaurant menu": "Menù del ristorante",
     "Enter a valid phone number for the selected country.": "Inserisci un numero di telefono valido per il paese selezionato.",
-    "Phone country and calling code": "paese e codice chiamata"
+    "Phone country and calling code": "paese e codice chiamata",
+    "Pricing settings changed. Reload before saving.": "Le impostazioni dei piani sono cambiate. Ricarica prima di salvare."
 }

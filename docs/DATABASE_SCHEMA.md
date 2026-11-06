@@ -1,5 +1,7 @@
 # Database schema
 
+Marketing pricing adds `marketing_plans` (stable keys, editable name, unsigned RON minor-unit base price), singleton `marketing_pricing_settings` (edit revision, weekly toggle, last sync/error and editing admin ID), and `marketing_exchange_rates` (currency primary key, eight-decimal scaled integer quote, source date and fetched timestamp). The migration seeds existing plans once. Rates update atomically; concurrent admin changes use a locked revision. These tables are separate from tenant menu/order currencies and invoice snapshots. See PRICING_CURRENCIES.md.
+
 The migrations are authoritative. Internal identifiers use BIGINT; organizations, restaurants, locations, menus, menu items and orders additionally use ULID public identifiers. Money is unsigned integer minor units; initial currency is RON. Order subtotal is capped at 100,000,000 bani. Configured product prices and quantities are bounded independently.
 
 | Area | Tables | Relationships and invariants |

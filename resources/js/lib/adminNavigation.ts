@@ -29,7 +29,13 @@ export const adminGroups = [
             { href: '/admin/email-alerts', key: 'pa_alerts', icon: 'pi-bell' },
         ],
     },
-    { key: 'pa_configuration', items: [{ href: '/admin/menu-ai', key: 'pa_ai', icon: 'pi-sparkles' }] },
+    {
+        key: 'pa_configuration',
+        items: [
+            { href: '/admin/pricing', key: 'pa_pricing', icon: 'pi-wallet' },
+            { href: '/admin/menu-ai', key: 'pa_ai', icon: 'pi-sparkles' },
+        ],
+    },
 ];
 export const adminActive = (url: string, href: string) => {
     const path = url.split('?')[0];

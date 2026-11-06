@@ -1,4 +1,21 @@
-# ZionFood progress — 0.0.53
+# ZionFood progress — 0.0.54
+
+## Version 0.0.54 - Editable marketing packages and reference currencies (November 6)
+
+Added verified-platform-admin package name/base-price editing with three fixed keys, integer RON minor units, decimal validation and transaction/revision protection. Public RON/EUR/GBP selection persists manual preferences and converts from server RON amounts only. An escaped overlay applies current values and quote disclosures immediately to built pricing HTML, including no-JavaScript output. First-visit timezone/language-region suggestions map supported countries to RO/RON, IT/ES/NL/EUR or GB/GBP; unknown locations fall back to English/EUR. This is approximate browser-region detection, not GPS/IP geolocation. Explicit language URLs/manual choices are preserved.
+
+Added validated local Frankfurter rates, fixed-origin bounded HTTPS, TLS verification, disabled redirects/proxies, shared locks, atomic quote updates, source/date/error status and missing/stale-rate notices. Weekly Monday 04:15 Europe/Bucharest refreshes and independent manual refresh are configurable in platform admin. New schema seeds existing 49/149/249 RON plans once. Public preferences never fetch external quotes or determine invoice/order values. Invoice issuance, tax/charging rules and subscription entitlements remain separate work.
+
+Executed validation:
+
+- Full PHP/Pest: **621 passed / 4,753 assertions / 106.97s**. New cases cover authorization/verification, exact money, edit conflicts, escaping, immediate static prices, currency validation/conversion, missing/invalid/partial/stale quotes, retention and scheduled/manual behavior.
+- Isolated **MariaDB 10.11** pricing plus existing logo/publication rollback regression: **40 passed / 260 assertions / 117.85s**, including fresh migrations and portable transaction/upsert behavior. Initial private test-harness credentials/line endings were corrected before the successful run; production configuration was untouched.
+- **50 Vitest tests** passed across 16 files, including country/timezone preferences, English/EUR fallback and complete five-language catalogues/help. ESLint passed without warnings. TypeScript and client plus ten guest/member localized SEO builds passed. Existing large-chunk and Composer explicit-version advisories remain; dependency versions/graphs are unchanged.
+- Final Playwright batch: **12 passed / 1.6m**, covering marketing/pricing/first paint, multilingual tenant/admin separation, automatic country defaults, saved currency choices, 390/360px layouts, admin edit/reload and changed values without JavaScript/rebuild. Mobile pricing and administration screenshots were visually inspected. Initial regression fixtures needed explicit locale/currency setup and a ticket-scoped status locator after adding a second legitimate status region; the final batch passed.
+- Linux Pint passed with a new private cache, then exact CI **php vendor/bin/pint --test**, across **379 files**. Composer validate passed with its existing version advisory.
+- Real Frankfurter HTTPS sync succeeded against isolated SQLite storage with EUR/GBP quotes dated 2026-11-06. Native PHP initially lacked the local issuer chain; a private test-only bundle from existing Windows trust resolved it with TLS verification enabled. No global PHP/trust configuration changed.
+
+Checks used synthetic accounts and private SQLite/browser storage on localhost:8028, a separate disposable MariaDB container, array mail and null broadcasting. Helpers/logs/test certificates/credentials and the user's untracked attachment are excluded from Git. No customer email, production DB/settings change, tag, Forge modification or manual deployment was performed. Production needs migration, initial rate sync and the existing scheduler. See PRICING_CURRENCIES.md for operational steps and detection/billing boundaries.
 
 ## Version 0.0.53 - Italian, Spanish and Dutch interfaces (November 5)
 

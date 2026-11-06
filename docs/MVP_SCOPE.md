@@ -1,4 +1,6 @@
-# Scope at 0.0.53
+# Scope at 0.0.54
+
+0.0.54 adds editable public package names/RON prices and indicative RON/EUR/GBP conversion with weekly/manual Frankfurter rates. Initial browser-region suggestions use English/EUR fallback and preserve explicit choices. Price edits update no-JavaScript marketing output without rebuilding. Invoice issuance, charging and subscription entitlement enforcement remain separate work; tenant order prices/currencies are unchanged. See PRICING_CURRENCIES.md.
 
 0.0.53 adds Italian, Spanish and Dutch to the marketing site and restaurant workspace, including entry/auth forms, validation, contextual help and component accessibility. The platform admin and public ordering storefront keep their RO/EN scope. Five marketing URLs have reciprocal hreflang/x-default metadata and sitemap entries backed by ten static build variants. Menu/product content and customer-entered data are not translated automatically.
 

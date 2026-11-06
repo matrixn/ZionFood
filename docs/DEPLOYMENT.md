@@ -1,5 +1,9 @@
 # Local setup and Laravel Forge deployment
 
+## 0.0.54 marketing pricing and exchange rates
+
+Run the additive marketing-pricing migration, then `php artisan zionfood:exchange-rates` once (or use the platform-admin refresh button). Keep the existing minute scheduler active; the weekly task runs Monday 04:15 Europe/Bucharest and respects its admin toggle. No provider API key is required. HTTPS CA trust and the shared cache lock store must work; do not disable TLS verification. Missing first rates show RON prices with a notice, while later failures retain the last valid rates. Package edits apply to public HTML without rebuilding. This introduces no subscription charge/invoice issuance and performs no manual Forge deployment. See PRICING_CURRENCIES.md.
+
 ## 0.0.35 WordPress commerce upgrade
 
 Run migration `2026_10_30_000100_prepare_wordpress_commerce` through the normal release. Build frontend assets, restart workers gracefully, and keep the existing minute scheduler active. It releases due scheduled orders and prunes sanitized communication logs/expired encrypted replay bodies daily. No API key is required in `.env`: restaurant credentials are generated privately from Integrations. Keep `APP_URL` on an HTTPS central/API host, Redis/Horizon and the application encryption key persistent. Never expose keys through a public WordPress script. Payments remain unavailable. See [WORDPRESS_API.md](WORDPRESS_API.md) for retention, retries, credential lifecycle and callback verification. This source release performs no manual Forge deployment.

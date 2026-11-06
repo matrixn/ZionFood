@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.54 — 2026-11-06
+
+- Manage public plan names and integer RON base prices in platform administration, with transactional revision checks and immediate escaped no-JavaScript rendering.
+- Add RON/EUR/GBP selection, persisted preferences and approximate first-visit timezone/region suggestions; unsupported locations fall back to English/EUR.
+- Store validated Frankfurter quotes locally, refresh weekly or manually, preserve valid rates on failure and disclose missing/stale conversions. Keep RON billing authority separate from rounded display quotes.
+
 ## 0.0.53 — 2026-11-05
 
 - Add complete Italian, Spanish and Dutch interface catalogues, validation/auth messages, local flags and PrimeVue/calendar accessibility text for the marketing site and restaurant workspace.

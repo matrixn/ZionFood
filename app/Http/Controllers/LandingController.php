@@ -6,6 +6,7 @@ use App\Domain\Localization\UiLocale;
 use App\Domain\Marketing\Actions\BuildRobotsTxt;
 use App\Domain\Marketing\Actions\RecordCampaignVisit;
 use App\Domain\Marketing\LandingSeo;
+use App\Domain\Marketing\PricingCatalog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -17,13 +18,16 @@ class LandingController extends Controller
         $locale = UiLocale::normalize($request->segment(1));
         app()->setLocale($locale);
         $meta = $seo->meta($locale, (bool) $request->user());
-        $response = Inertia::render('Welcome', ['locale' => $locale, 'seo' => $meta])->withViewData('landingMeta', $meta)->toResponse($request);
+        $response = Inertia::render('Welcome', ['locale' => $locale, 'seo' => $meta,
+            'pricing' => app(PricingCatalog::class)->publicData($request->cookie('zf_currency', 'RON')),
+            'visitorDefaults' => ['detectLocale' => ! $request->user() && ! $request->cookie('zf_locale') && $request->path() === '/', 'detectCurrency' => ! $request->cookie('zf_currency')],
+        ])->withViewData('landingMeta', $meta)->toResponse($request);
 
         if ($response->isSuccessful()) {
             app(RecordCampaignVisit::class)->execute($request, $locale);
         }
 
-        return $response->cookie('zf_locale', $locale, 525600, '/', null, $request->isSecure(), true, false, 'lax');
+        return $response->cookie('zf_locale', $locale, 525600, '/', null, $request->isSecure(), true, false, 'lax')->header('Cache-Control', 'private, no-store');
     }
 
     public function robots(Request $request, LandingSeo $seo, BuildRobotsTxt $robots)

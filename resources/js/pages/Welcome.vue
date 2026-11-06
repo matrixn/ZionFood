@@ -6,6 +6,7 @@ import ZFLogo from '@/components/ui/ZFLogo.vue';
 import LandingLeadForm from '@/components/marketing/LandingLeadForm.vue';
 import LandingPricing from '@/components/marketing/LandingPricing.vue';
 import { languageOptions } from '@/i18n';
+import type { PricingData } from '@/lib/pricing';
 interface Seo {
     title: string;
     description: string;
@@ -18,7 +19,13 @@ interface Seo {
     robots: string;
     schema: Record<string, unknown>;
 }
-const page = usePage<{ auth: { user: unknown }; version: string; seo: Seo }>();
+const page = usePage<{
+    auth: { user: unknown };
+    version: string;
+    seo: Seo;
+    pricing?: PricingData;
+    visitorDefaults?: { detectLocale: boolean; detectCurrency: boolean };
+}>();
 const seo = computed(() => page.props.seo);
 const schema = computed(() => JSON.stringify(seo.value.schema).replaceAll('<', '\\u003c'));
 
@@ -311,7 +318,11 @@ onBeforeUnmount(() => {
                 </div>
             </section>
 
-            <LandingPricing :signed-in="signedIn" />
+            <LandingPricing
+                :signed-in="signedIn"
+                :pricing="page.props.pricing"
+                :visitor-defaults="page.props.visitorDefaults"
+            />
 
             <section class="proof-strip section-wrap" :aria-label="$t('landing_highlights')" data-reveal>
                 <p>{{ $t('landing_strip_title') }}</p>

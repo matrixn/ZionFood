@@ -16,6 +16,7 @@ use App\Http\Controllers\MenuContentController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\MigrationCenterController;
 use App\Http\Controllers\PlatformController;
+use App\Http\Controllers\PricingController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\PublicOrderingController;
 use App\Http\Controllers\RegistrationCaptchaController;
@@ -45,6 +46,7 @@ foreach (['en', 'it', 'es', 'nl'] as $landingLocale) {
 Route::post('/interest', [ServiceLeadController::class, 'store'])->middleware('throttle:service-leads');
 Route::get('/robots.txt', [LandingController::class, 'robots']);
 Route::get('/sitemap.xml', [LandingController::class, 'sitemap']);
+Route::post('/pricing/preference', [PricingController::class, 'preference'])->middleware('throttle:60,1');
 Route::get('/store/{location}', function (Request $r, string $location, PublicOrderingController $c) {
     return redirect($c->resolve($r, $location)->storefront_path, 301);
 });
@@ -66,6 +68,9 @@ Route::get('/test-email', [TestEmailController::class, 'show']);
 Route::post('/test-email', [TestEmailController::class, 'send'])->middleware('throttle:admin-mail-test');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/campaigns', [CampaignVisitsController::class, 'index']);
+    Route::get('/admin/pricing', [PricingController::class, 'show']);
+    Route::put('/admin/pricing', [PricingController::class, 'update']);
+    Route::post('/admin/pricing/rates', [PricingController::class, 'sync'])->middleware('throttle:6,1');
     Route::get('/admin/leads', [ServiceLeadController::class, 'index']);
     Route::patch('/admin/leads/{lead}', [ServiceLeadController::class, 'update']);
     Route::delete('/admin/leads/{lead}', [ServiceLeadController::class, 'destroy']);

@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.53** · Platformă SaaS pentru restaurante · Română implicit; EN, IT, ES și NL pentru prezentare și panoul restaurantului.
+**Versiune: 0.0.54** · Platformă SaaS pentru restaurante · Română implicit; EN, IT, ES și NL pentru prezentare și panoul restaurantului.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,14 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 6 noiembrie 2026 — pachete editabile și monede · 0.0.54
+
+- [x] Administrare generală → Configurare → **Pachete și curs valutar**: denumiri și prețuri lunare per locație, bază RON și protecție la editări concurente.
+- [x] Selector RON/EUR/GBP, conversie orientativă și preferință persistentă; prețurile editate apar imediat și fără JavaScript/rebuild.
+- [x] Sugestie inițială de limbă/monedă după regiunea și fusul orar al browserului; fallback **engleză/EUR**, cu prioritate pentru alegerile explicite.
+- [x] Cursuri Frankfurter gratuite/open-source, actualizare luni la 04:15, buton manual, stare și păstrarea ultimelor cursuri valide.
+- [ ] Facturare și încasare efectivă a abonamentelor; valorile canonice rămân în RON. [Detalii și instalare](docs/PRICING_CURRENCIES.md).
 
 ### 5 noiembrie 2026 — italiană, spaniolă și olandeză · 0.0.53
 

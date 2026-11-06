@@ -57,5 +57,6 @@
     "There are no imports to reset.": "There are no imports to reset.",
     "Restaurant menu": "Restaurant menu",
     "Enter a valid phone number for the selected country.": "Enter a valid phone number for the selected country.",
-    "Phone country and calling code": "country and calling code"
+    "Phone country and calling code": "country and calling code",
+    "Pricing settings changed. Reload before saving.": "Pricing settings changed. Reload before saving."
 }

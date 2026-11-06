@@ -479,5 +479,6 @@
     "There are no imports to reset.": "Er zijn geen importbestanden die opnieuw kunnen worden ingesteld.",
     "Restaurant menu": "Restaurantmenu",
     "Enter a valid phone number for the selected country.": "Voer een geldig telefoonnummer in voor het geselecteerde land.",
-    "Phone country and calling code": "land- en belcode"
+    "Phone country and calling code": "land- en belcode",
+    "Pricing settings changed. Reload before saving.": "De pakketinstellingen zijn gewijzigd. Herlaad voordat je opslaat."
 }

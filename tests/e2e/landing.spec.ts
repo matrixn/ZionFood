@@ -1,3 +1,4 @@
+import { explicitRonPricing } from './support/pricingPreference';
 import { test, expect as baseExpect } from '@playwright/test';
 const expect = baseExpect.configure({ timeout: 20000 });
 
@@ -32,11 +33,11 @@ test('landing page presents both languages, real CTAs and isolated interactive p
     await expect(page.getByRole('tabpanel')).toContainText('Meniul de astăzi');
     await page.locator('#platform').screenshot({ path: 'test-results/landing-platform.png', animations: 'disabled' });
     await page.getByTestId('landing-next-step').click();
-    await expect(page.getByRole('status')).toHaveText('Bucătăria pregătește comanda.');
+    await expect(page.locator('.ticket-status')).toHaveText('Bucătăria pregătește comanda.');
     await page.getByTestId('landing-next-step').click();
-    await expect(page.getByRole('status')).toHaveText('Gata de servire. Poftă bună!');
+    await expect(page.locator('.ticket-status')).toHaveText('Gata de servire. Poftă bună!');
     await page.getByTestId('landing-next-step').click();
-    await expect(page.getByRole('status')).toContainText('O comandă nouă');
+    await expect(page.locator('.ticket-status')).toContainText('O comandă nouă');
     await page.locator('#workflow').screenshot({ path: 'test-results/landing-workflow.png', animations: 'disabled' });
     await page.locator('summary').filter({ hasText: 'Pot încasa plăți online acum?' }).click();
     await expect(page.getByText('Nu încă. Procesarea plăților online', { exact: false })).toBeVisible();
@@ -87,4 +88,9 @@ test('mobile landing has working navigation and respects reduced motion', async 
     await page.getByRole('option', { name: 'English', exact: true }).click();
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Your restaurant.');
     await context.close();
+});
+
+// Preserve explicit language/currency intent in these existing regression scenarios.
+test.beforeEach(async ({ page }) => {
+    await explicitRonPricing(page);
 });

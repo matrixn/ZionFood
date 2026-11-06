@@ -1,3 +1,4 @@
+import { explicitRonPricing } from './support/pricingPreference';
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
@@ -103,4 +104,9 @@ test('restaurant locale persists through navigation while general administration
     await page.goto('/admin');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     expect(errors).toEqual([]);
+});
+
+// Preserve explicit language/currency intent in these existing regression scenarios.
+test.beforeEach(async ({ page }) => {
+    await explicitRonPricing(page);
 });

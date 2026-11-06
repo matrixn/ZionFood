@@ -1,0 +1,5 @@
+[
+  {"key":"menu","name":"Menu","price_minor":4900,"icon":"pi-qrcode","features":["digital_menu","unlimited","ingredients","branding","languages","migration"]},
+  {"key":"orders","name":"Orders","price_minor":14900,"icon":"pi-shopping-cart","features":["includes_menu","online_orders","pickup_delivery","delivery_zones","scheduled_orders","kitchen"]},
+  {"key":"business","name":"Business","price_minor":24900,"icon":"pi-chart-bar","features":["includes_orders","reservations","table_orders","promotions","staff","integrations"]}
+]

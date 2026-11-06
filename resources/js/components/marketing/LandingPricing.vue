@@ -1,37 +1,72 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import Select from 'primevue/select';
+import { api } from '@/lib/http';
+import { defaultPricing, visitorPreferences, type Currency, type PricingData } from '@/lib/pricing';
+import { i18n, localeTag, localePath } from '@/i18n';
 
-defineProps<{ signedIn: boolean }>();
-const plans = [
-    {
-        key: 'menu',
-        name: 'Menu',
-        price: 49,
-        icon: 'pi-qrcode',
-        features: ['digital_menu', 'unlimited', 'ingredients', 'branding', 'languages', 'migration'],
+const props = defineProps<{
+    signedIn: boolean;
+    pricing?: PricingData;
+    visitorDefaults?: { detectLocale: boolean; detectCurrency: boolean };
+}>();
+const state = ref<PricingData>(props.pricing ?? defaultPricing);
+const selection = ref<Currency>(state.value.currency);
+const busy = ref(false);
+const error = ref('');
+let manualLanguage = false;
+let disposed = false;
+const languageChosen = () => {
+    manualLanguage = true;
+};
+onBeforeUnmount(() => {
+    disposed = true;
+    window.removeEventListener('zf-language-choice', languageChosen);
+});
+watch(
+    () => props.pricing,
+    (value) => {
+        if (value) {
+            state.value = value;
+            selection.value = value.currency;
+        }
     },
-    {
-        key: 'orders',
-        name: 'Orders',
-        price: 149,
-        icon: 'pi-shopping-cart',
-        features: [
-            'includes_menu',
-            'online_orders',
-            'pickup_delivery',
-            'delivery_zones',
-            'scheduled_orders',
-            'kitchen',
-        ],
-    },
-    {
-        key: 'business',
-        name: 'Business',
-        price: 249,
-        icon: 'pi-chart-bar',
-        features: ['includes_orders', 'reservations', 'table_orders', 'promotions', 'staff', 'integrations'],
-    },
-];
+);
+const currencies = ['RON', 'EUR', 'GBP'];
+const amount = (minor: number) =>
+    new Intl.NumberFormat(localeTag(), { minimumFractionDigits: minor % 100 ? 2 : 0, maximumFractionDigits: 2 }).format(
+        minor / 100,
+    );
+async function change(currency: Currency) {
+    if (busy.value) return;
+    busy.value = true;
+    error.value = '';
+    try {
+        state.value = await api<PricingData>('/pricing/preference', 'POST', { currency });
+        selection.value = state.value.currency;
+    } catch {
+        selection.value = state.value.currency;
+        error.value = i18n.global.t('request_failed');
+    } finally {
+        busy.value = false;
+    }
+}
+onMounted(async () => {
+    window.addEventListener('zf-language-choice', languageChosen);
+    const detect = props.visitorDefaults;
+    if (!detect?.detectLocale && !detect?.detectCurrency) return;
+    const preference = visitorPreferences(navigator.languages, Intl.DateTimeFormat().resolvedOptions().timeZone);
+    if (detect.detectCurrency) await change(preference.currency);
+    if (detect.detectLocale && !manualLanguage && !disposed && preference.locale !== i18n.global.locale.value) {
+        try {
+            await api('/locale', 'POST', { locale: preference.locale });
+            window.location.replace(localePath(preference.locale) + window.location.search + window.location.hash);
+        } catch {
+            /* Keep the readable explicit URL when preferences cannot be saved. */
+        }
+    }
+});
 </script>
 
 <template>
@@ -42,10 +77,33 @@ const plans = [
                 {{ $t('pricing_title') }} <em>{{ $t('pricing_title_accent') }}</em>
             </h2>
             <p class="pricing-description">{{ $t('pricing_description') }}</p>
+            <div class="pricing-currency-control">
+                <label for="pricing-currency"
+                    >{{ $t('pricing_display_currency') }}
+                    <FieldHelp :label="$t('pricing_display_currency')" :text="$t('pricing_currency_help')"
+                /></label>
+                <Select
+                    v-model="selection"
+                    input-id="pricing-currency"
+                    :options="currencies"
+                    :aria-label="$t('pricing_display_currency')"
+                    :disabled="busy"
+                    :loading="busy"
+                    data-testid="currency-selector"
+                    @update:model-value="change"
+                />
+            </div>
+            <p class="pricing-quote-note" role="status">
+                {{ $t('pricing_invoice_note') }}
+                <span v-if="state.rate_date">{{ $t('pricing_rate_date', { date: state.rate_date }) }}</span>
+                <span v-if="state.requested_currency !== state.currency">{{ $t('pricing_rates_missing') }}</span>
+                <span v-if="state.stale">{{ $t('pricing_rates_stale') }}</span>
+            </p>
+            <p v-if="error" role="alert" class="text-sm text-red-700">{{ error }}</p>
         </div>
         <div class="pricing-grid">
             <article
-                v-for="plan in plans"
+                v-for="plan in state.plans"
                 :key="plan.key"
                 class="pricing-card"
                 :class="{ 'pricing-card-popular': plan.key === 'orders' }"
@@ -60,7 +118,8 @@ const plans = [
                     <h3 :id="'pricing-' + plan.key">{{ plan.name }}</h3>
                 </div>
                 <p class="pricing-amount">
-                    <data :value="plan.price">{{ plan.price }}</data> <span>{{ $t('pricing_currency') }}</span>
+                    <data :value="plan.display_minor / 100">{{ amount(plan.display_minor) }}</data>
+                    <span>{{ state.currency === 'RON' ? $t('pricing_currency') : state.currency }}</span>
                 </p>
                 <p class="pricing-period">{{ $t('pricing_period') }}</p>
                 <p class="pricing-positioning">{{ $t('pricing_' + plan.key + '_positioning') }}</p>
@@ -82,6 +141,26 @@ const plans = [
 </template>
 
 <style scoped>
+.pricing-currency-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 22px;
+    font-size: 13px;
+    color: #59654e;
+}
+.pricing-quote-note {
+    margin: 12px auto 0;
+    max-width: 65ch;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #657064;
+}
+.pricing-quote-note span {
+    display: block;
+}
 .pricing-section {
     padding-block: 48px 68px;
     scroll-margin-top: 110px;
@@ -189,6 +268,7 @@ const plans = [
     gap: 15px;
 }
 .pricing-plan-heading h3 {
+    overflow-wrap: anywhere;
     font-size: clamp(24px, 2.2vw, 32px);
     font-weight: 750;
     letter-spacing: -0.04em;
@@ -205,13 +285,21 @@ const plans = [
     flex-shrink: 0;
 }
 .pricing-card .pricing-amount {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
     margin-top: 30px;
     color: #172920;
     font-size: clamp(40px, 4vw, 58px);
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.06em;
-    white-space: nowrap;
+    white-space: normal;
+}
+.pricing-amount data {
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 .pricing-amount > span {
     font-size: 0.62em;
