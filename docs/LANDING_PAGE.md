@@ -1,4 +1,4 @@
-# Public ZionFood presentation and SEO — 0.0.54
+# Public ZionFood presentation and SEO — 0.0.55
 
 Current pricing is editable in platform administration and overlaid onto build HTML at request time, with RON/EUR/GBP indicative conversion. Older pricing notes below describe the initial 0.0.52 release. See PRICING_CURRENCIES.md for authoritative prices, approximate location defaults, weekly rates and the billing boundary.
 

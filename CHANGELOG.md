@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.55 — 2026-11-06
+
+- Replace browser timezone/region defaults with server IP-country lookups using a private DB-IP Lite database and the MaxMind reader; keep English/EUR fallback.
+- Distinguish automatic and manual preferences independently, preserve legacy/account choices, refresh automatic values after an IP change and persist footer/current-language manual selections.
+- Add GeoIP maintenance command, daily monthly-release check, platform-admin refresh/status, bounded validated atomic downloads and provider attribution.
+- Accept forwarded client addresses only from explicit trusted proxy IPs/CIDRs and ignore spoofed country inputs. Keep canonical pages, platform-admin RO/EN and RON price authority unchanged.
+
 ## 0.0.54 — 2026-11-06
 
 - Manage public plan names and integer RON base prices in platform administration, with transactional revision checks and immediate escaped no-JavaScript rendering.

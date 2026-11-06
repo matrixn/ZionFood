@@ -20,8 +20,10 @@
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
+        "maxmind-db/reader": "^1.14.0",
         "predis/predis": "^3.0",
-        "resend/resend-php": "^1.17"
+        "resend/resend-php": "^1.17",
+        "ext-zlib": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -89,5 +91,5 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "version": "0.0.54"
+    "version": "0.0.55"
 }

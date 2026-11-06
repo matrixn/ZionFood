@@ -68,6 +68,7 @@ test('pricing follows the hero and is linked from responsive bilingual navigatio
     expect(errors).toEqual([]);
     const context = await browser.newContext({ javaScriptEnabled: false, reducedMotion: 'reduce' });
     const staticPage = await context.newPage();
+    await explicitRonPricing(staticPage);
     for (const path of ['/', '/en']) {
         await staticPage.goto(path);
         await expect(staticPage.locator('#pricing article')).toHaveCount(3);

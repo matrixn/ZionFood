@@ -7,6 +7,7 @@ import LandingLeadForm from '@/components/marketing/LandingLeadForm.vue';
 import LandingPricing from '@/components/marketing/LandingPricing.vue';
 import { languageOptions } from '@/i18n';
 import type { PricingData } from '@/lib/pricing';
+import { api } from '@/lib/http';
 interface Seo {
     title: string;
     description: string;
@@ -24,12 +25,22 @@ const page = usePage<{
     version: string;
     seo: Seo;
     pricing?: PricingData;
-    visitorDefaults?: { detectLocale: boolean; detectCurrency: boolean };
+    visitorDefaults?: { source: string; country: string | null; redirectLocale: string | null };
 }>();
 const seo = computed(() => page.props.seo);
 const schema = computed(() => JSON.stringify(seo.value.schema).replaceAll('<', '\\u003c'));
 
 const signedIn = computed(() => !!page.props.auth?.user);
+const footerLanguageError = ref(false);
+async function chooseFooterLanguage(code: string, url: string) {
+    footerLanguageError.value = false;
+    try {
+        await api('/locale', 'POST', { locale: code, scope: 'application' });
+        window.location.assign(url);
+    } catch {
+        footerLanguageError.value = true;
+    }
+}
 const mobileOpen = ref(false);
 const active = ref(0);
 const orderStep = ref(0);
@@ -738,10 +749,12 @@ onBeforeUnmount(() => {
                     :href="seo.alternates[language.code]"
                     :hreflang="language.code"
                     :lang="language.code"
+                    @click.prevent="chooseFooterLanguage(language.code, seo.alternates[language.code])"
                 >
                     <img :src="language.flag" width="24" height="16" alt="" aria-hidden="true" />{{ language.name }}
                 </a>
             </div>
+            <p v-if="footerLanguageError" role="alert">{{ $t('language_change_failed') }}</p>
             <div class="footer-bottom">
                 <span>ZionFood · v{{ page.props.version }}</span
                 ><span>{{ $t('landing_ai_note') }}</span>

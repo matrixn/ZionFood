@@ -29,14 +29,16 @@ watch(
     { immediate: true },
 );
 async function change(locale: Locale) {
-    if (busy.value || locale === i18n.global.locale.value) return;
-    window.dispatchEvent(new Event('zf-language-choice'));
+    if (busy.value) return;
     busy.value = true;
     error.value = '';
     try {
         await api('/locale', 'POST', { locale, scope: props.scope });
         i18n.global.locale.value = locale;
-        if (props.urls?.[locale]) window.location.assign(props.urls[locale]);
+        const target = props.urls?.[locale];
+        if (target && new URL(target, window.location.href).pathname !== window.location.pathname) {
+            window.location.assign(target);
+        }
     } catch {
         selection.value = i18n.global.locale.value;
         error.value = i18n.global.t('language_change_failed');

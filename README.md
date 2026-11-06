@@ -2,7 +2,7 @@
 
 [![ZionFood — Dă gust afacerii tale!](docs/assets/zionfood-hero-ai.png)](https://food.zion3d.ro/)
 
-**Versiune: 0.0.54** · Platformă SaaS pentru restaurante · Română implicit; EN, IT, ES și NL pentru prezentare și panoul restaurantului.
+**Versiune: 0.0.55** · Platformă SaaS pentru restaurante · Română implicit; EN, IT, ES și NL pentru prezentare și panoul restaurantului.
 
 ZionFood reunește configurarea restaurantului, meniul public, comenzile, rezervările, comenzile la masă prin QR și operațiunile din bucătărie. Datele sunt organizate pe **Organizație → Restaurant → Locație**, cu acces separat pentru administrarea platformei și echipa restaurantului.
 
@@ -16,6 +16,14 @@ Imaginea este o ilustrație generată cu AI, nu o captură din aplicație. [Prom
 Bifele nu certifică automat un deployment în producție. Rezultatele și limitele verificărilor sunt consemnate în [CODEX_PROGRESS.md](docs/CODEX_PROGRESS.md).
 
 ## Istoricul proiectului
+
+### 6 noiembrie 2026 — limbă și monedă după țara IP-ului · 0.0.55
+
+- [x] Detectare pe server din IP, cu bază locală DB-IP Lite; browserul și headerele de țară trimise de client nu mai stabilesc țara.
+- [x] Fallback **engleză/EUR**, preferințe manuale independente și prioritare, inclusiv când se schimbă IP-ul. Preferințele vechi sunt păstrate conservator.
+- [x] Actualizare automată a edițiilor lunare, buton GeoIP în administrarea generală, stare/vechime, limite de download și înlocuire atomică.
+- [x] Protecție contra spoofingului: headere forwarded acceptate doar de la proxy-uri configurate explicit; fără transmiterea IP-ului către un API extern.
+- [ ] Inițializarea bazei GeoIP și verificarea lanțului real de proxy în producție. [Configurare și prioritate](docs/GEOIP_PREFERENCES.md).
 
 ### 6 noiembrie 2026 — pachete editabile și monede · 0.0.54
 

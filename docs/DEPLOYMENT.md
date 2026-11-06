@@ -1,5 +1,9 @@
 # Local setup and Laravel Forge deployment
 
+## 0.0.55 IP-country preferences
+
+Normal Composer installation adds maxmind-db/reader and requires ext-zlib. Run `php artisan zionfood:geoip-update` once or use the GeoIP button on the platform pricing/settings page; keep normal private storage shared across releases and the existing scheduler active for monthly-release checks. If Nginx does not already restore client addresses, configure ZF_TRUSTED_PROXIES with the exact trusted proxy IPs/CIDRs, then rebuild config cache. Never trust arbitrary forwarded headers. No new schema migration is required. Missing geodata uses English/EUR unless manual preferences exist. See GEOIP_PREFERENCES.md. This release does not change production proxy settings or perform deployment.
+
 ## 0.0.54 marketing pricing and exchange rates
 
 Run the additive marketing-pricing migration, then `php artisan zionfood:exchange-rates` once (or use the platform-admin refresh button). Keep the existing minute scheduler active; the weekly task runs Monday 04:15 Europe/Bucharest and respects its admin toggle. No provider API key is required. HTTPS CA trust and the shared cache lock store must work; do not disable TLS verification. Missing first rates show RON prices with a notice, while later failures retain the last valid rates. Package edits apply to public HTML without rebuilding. This introduces no subscription charge/invoice issuance and performs no manual Forge deployment. See PRICING_CURRENCIES.md.

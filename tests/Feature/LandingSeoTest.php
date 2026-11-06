@@ -18,8 +18,9 @@ beforeEach(function () {
 
 it('renders localized indexable landing text and metadata in raw HTML independently of cookies or user agents', function () {
     foreach (['/' => 'ro', '/en' => 'en', '/it' => 'it', '/es' => 'es', '/nl' => 'nl'] as $path => $locale) {
-        $response = $this->withCookie('zf_locale', $locale === 'ro' ? 'en' : 'ro')->get($path);
-        $response->assertOk()->assertHeader('Content-Language', $locale)->assertCookie('zf_locale', $locale);
+        $manual = $locale === 'ro' ? 'en' : 'ro';
+        $response = $this->withCookie('zf_locale', $manual)->get($path);
+        $response->assertOk()->assertHeader('Content-Language', $locale)->assertCookie('zf_locale', $manual)->assertCookie('zf_locale_source', 'manual');
         expect($response->headers->get('X-Robots-Tag'))->toStartWith('index, follow');
         $dom = seoDocument($response->getContent());
         expect($dom->query('//h1'))->toHaveCount(1)

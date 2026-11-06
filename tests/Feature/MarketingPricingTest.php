@@ -77,11 +77,11 @@ it('fetches bounded fixed-origin quotes and converts displays while retaining ex
     expect($quote['plans'][0]['display_minor'])->toBe(2500)->and($quote['plans'][0]['price_minor'])->toBe(4999);
 });
 
-it('keeps preferences independent and makes automatic detection opt in only for first landing visits', function () {
-    $this->get('/')->assertInertia(fn (Assert $page) => $page->where('visitorDefaults.detectLocale', true)->where('visitorDefaults.detectCurrency', true));
-    $this->get('/it')->assertInertia(fn (Assert $page) => $page->where('visitorDefaults.detectLocale', false));
-    $this->withCookie('zf_locale', 'nl')->withCookie('zf_currency', 'GBP')->get('/')->assertInertia(fn (Assert $page) => $page->where('visitorDefaults.detectLocale', false)->where('visitorDefaults.detectCurrency', false));
-    $this->actingAs(User::factory()->create(['locale' => 'es']))->get('/')->assertInertia(fn (Assert $page) => $page->where('visitorDefaults.detectLocale', false));
+it('keeps manual preferences independent of automatic IP defaults and preserves explicit language URLs', function () {
+    $this->get('/')->assertInertia(fn (Assert $page) => $page->where('visitorDefaults.redirectLocale', 'en')->where('pricing.requested_currency', 'EUR'));
+    $this->get('/it')->assertInertia(fn (Assert $page) => $page->where('visitorDefaults.redirectLocale', null));
+    $this->withCookie('zf_locale', 'nl')->withCookie('zf_currency', 'GBP')->get('/')->assertInertia(fn (Assert $page) => $page->where('visitorDefaults.redirectLocale', 'nl')->where('pricing.requested_currency', 'GBP'));
+    $this->actingAs(User::factory()->create(['locale' => 'es']))->withCookie('zf_locale_source', 'ip')->get('/')->assertInertia(fn (Assert $page) => $page->where('visitorDefaults.redirectLocale', 'es'));
 });
 
 it('falls back safely before the first sync and retains old rates on partial corrupt or unavailable responses', function ($case) {

@@ -10,7 +10,11 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next)
     {
-        $locale = ($request->is('api/*') && in_array($request->header('Accept-Language'), UiLocale::CODES, true)) ? $request->header('Accept-Language') : ($request->cookie('zf_locale') ?? $request->user()?->locale ?? 'ro');
+        $preference = $request->cookie('zf_locale');
+        if ($request->cookie('zf_locale_source') === 'ip' && in_array($request->user()?->locale, UiLocale::CODES, true)) {
+            $preference = $request->user()->locale;
+        }
+        $locale = ($request->is('api/*') && in_array($request->header('Accept-Language'), UiLocale::CODES, true)) ? $request->header('Accept-Language') : ($preference ?? $request->user()?->locale ?? 'ro');
         $admin = $request->is('admin', 'admin/*', 'horizon*');
         $storefront = $request->attributes->has('storefront_location') || $request->is('restaurant/*', 'store/*', 'table/*', 'track/*', 'reserve/*', 'reservations/*', 'api/v1/public/*');
         if ($admin) {

@@ -1980,5 +1980,14 @@
     "pricing_sync_failed": "La actualización falló. Se conservan los últimos tipos válidos.",
     "pricing_no_rates": "Sin tipos guardados. Actualiza para activar EUR y GBP.",
     "pricing_last_sync": "Última actualización correcta",
-    "pricing_saved": "Planes guardados."
+    "pricing_saved": "Planes guardados.",
+    "geoip_visitor_note": "Idioma y moneda sugeridos según el país de tu IP. Tu elección tiene prioridad.",
+    "geoip_heading": "País del visitante por IP",
+    "geoip_update": "Actualizar base GeoIP",
+    "geoip_admin_help": "Consulta local DB-IP Lite, sin enviar IP de visitantes a servicios externos. Comprobación diaria a las 03:45 de nuevas ediciones mensuales. Configura solo proxies de confianza en el servidor.",
+    "geoip_ready": "Base disponible, creada el",
+    "geoip_missing": "Base GeoIP ausente o ilegible. Se usa inglés/EUR.",
+    "geoip_stale": "edición de más de 62 días",
+    "geoip_updated": "Base GeoIP actualizada.",
+    "geoip_update_failed": "Actualización GeoIP fallida. Se conserva la base anterior."
 }

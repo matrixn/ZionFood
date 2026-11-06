@@ -1,4 +1,6 @@
-# ZionFood 0.0.54
+# ZionFood 0.0.55
+
+VisitorPreferences resolves independent manual/account values before server IP-country defaults. GeoIpDatabase reads a private local MMDB; UpdateGeoIp maintains it with bounded fixed-origin downloads and atomic publication. Forwarded addresses require explicit trusted proxy IPs/CIDRs. No browser locale/timezone or country header supplies the automatic country. See GEOIP_PREFERENCES.md.
 
 Marketing packages use PricingCatalog (integer RON authority), SyncExchangeRates (fixed Frankfurter provider, weekly/manual refresh) and PricingMarkup (escaped current values in static landing fragments). This is separate from tenant order pricing and future subscription billing. See PRICING_CURRENCIES.md.
 

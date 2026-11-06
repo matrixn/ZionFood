@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Localization\GeoIpDatabase;
+use App\Domain\Localization\UpdateGeoIp;
 use App\Domain\Marketing\PricingCatalog;
 use App\Domain\Marketing\SyncExchangeRates;
 use Illuminate\Http\Request;
@@ -14,14 +16,14 @@ class PricingController extends Controller
     {
         $data = $request->validate(['currency' => ['required', Rule::in(PricingCatalog::CURRENCIES)]]);
 
-        return response()->json($catalog->publicData($data['currency']))->cookie('zf_currency', $data['currency'], 525600, '/', null, $request->isSecure(), true, false, 'lax')->header('Cache-Control', 'private, no-store');
+        return response()->json($catalog->publicData($data['currency']))->cookie('zf_currency', $data['currency'], 525600, '/', null, $request->isSecure(), true, false, 'lax')->cookie('zf_currency_source', 'manual', 525600, '/', null, $request->isSecure(), true, false, 'lax')->header('Cache-Control', 'private, no-store');
     }
 
     public function show(Request $request, PricingCatalog $catalog)
     {
         abort_unless($request->user()->is_platform_admin, 403);
 
-        return Inertia::render('admin/Pricing', ['pricing' => $catalog->adminData()]);
+        return Inertia::render('admin/Pricing', ['pricing' => $catalog->adminData(), 'geoip' => app(GeoIpDatabase::class)->status()]);
     }
 
     public function update(Request $request, PricingCatalog $catalog)
@@ -43,5 +45,12 @@ class PricingController extends Controller
         abort_unless($request->user()->is_platform_admin, 403);
 
         return response()->json(['synced' => $sync->execute(), 'pricing' => $catalog->adminData()]);
+    }
+
+    public function geoip(Request $request, UpdateGeoIp $update, GeoIpDatabase $database)
+    {
+        abort_unless($request->user()->is_platform_admin, 403);
+
+        return response()->json(['updated' => $update->execute(), 'geoip' => $database->status()]);
     }
 }

@@ -22,7 +22,13 @@ interface AdminPricing {
     };
     rates: { currency: string; rate_scaled: number; rate_date: string; fetched_at: string }[];
 }
-const props = defineProps<{ pricing: AdminPricing }>();
+interface GeoIpStatus {
+    ready: boolean;
+    built_at: string | null;
+    stale: boolean;
+}
+const props = defineProps<{ pricing: AdminPricing; geoip: GeoIpStatus }>();
+const geoip = ref(props.geoip);
 const { t } = useI18n();
 const toast = useToast();
 const state = ref(props.pricing);
@@ -61,6 +67,23 @@ async function sync() {
         toast.add({
             severity: result.synced ? 'success' : 'warn',
             summary: t(result.synced ? 'pricing_sync_done' : 'pricing_sync_failed'),
+            life: 6000,
+        });
+    } catch (e) {
+        error.value = (e as Error).message;
+    } finally {
+        busy.value = false;
+    }
+}
+async function updateGeoIp() {
+    busy.value = true;
+    error.value = '';
+    try {
+        const result = await api<{ updated: boolean; geoip: GeoIpStatus }>('/admin/pricing/geoip', 'POST');
+        geoip.value = result.geoip;
+        toast.add({
+            severity: result.updated ? 'success' : 'warn',
+            summary: t(result.updated ? 'geoip_updated' : 'geoip_update_failed'),
             life: 6000,
         });
     } catch (e) {
@@ -168,6 +191,31 @@ async function sync() {
                 <p class="text-xs text-slate-500">
                     {{ $t('pricing_last_sync') }}: {{ state.settings.last_success_at ?? '—' }} UTC
                 </p>
+            </section>
+            <section class="panel space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <h2 class="text-xl font-semibold">{{ $t('geoip_heading') }}</h2>
+                    <Button
+                        :label="$t('geoip_update')"
+                        icon="pi pi-globe"
+                        :loading="busy"
+                        :disabled="busy"
+                        @click="updateGeoIp"
+                    />
+                </div>
+                <p class="muted">{{ $t('geoip_admin_help') }}</p>
+                <p role="status" :class="geoip.ready && !geoip.stale ? 'text-emerald-700' : 'text-amber-700'">
+                    {{ $t(geoip.ready ? 'geoip_ready' : 'geoip_missing') }}
+                    <span v-if="geoip.built_at">{{ geoip.built_at }} UTC</span
+                    ><span v-if="geoip.stale"> · {{ $t('geoip_stale') }}</span>
+                </p>
+                <a
+                    href="https://db-ip.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-xs text-brand underline"
+                    >IP Geolocation by DB-IP</a
+                >
             </section>
         </div>
     </AdminLayout>

@@ -1,4 +1,4 @@
-# Interface localization — 0.0.54
+# Interface localization — 0.0.55
 
 Romanian remains the default. English, Italian, Spanish and Dutch are available in marketing and restaurant management, including the common authentication/onboarding entry. Selectors show local flag assets and native names: Română, English, Italiano, Español, Nederlands. Language preference persists through the existing protected POST /locale endpoint, user locale, httponly preference cookie and both full reload/Inertia navigation.
 
@@ -22,6 +22,8 @@ The added country flags use the existing flag-icons assets/license already bundl
 The canonical pages are /, /en, /it, /es and /nl on the configured public origin. Build prerendering produces ten variants: five languages × guest/member. Each response has translated metadata and its own canonical, correct language header/HTML tag and reciprocal hreflang links. The sitemap lists five URLs, each containing all five alternates plus x-default to Romanian. Indexing stays disabled for local/staging or an incomplete language cluster. Admin and restaurant management routes retain noindex headers. See LANDING_PAGE.md and the linked official Google guidance.
 
 ## Checks and scope
+
+Version 0.0.55 supersedes the browser-region implementation below: marketing defaults now use server IP-country data, with English/EUR fallback and independent manual/source cookies. GEOIP_PREFERENCES.md describes local data, proxy boundaries and unchanged explicit language URLs.
 
 Version 0.0.54 adds approximate first-visit country suggestions from browser timezone/region. Unsupported locations fall back to English/EUR; explicit language URLs and saved/manual preferences take priority. The independent RO/EN platform-admin boundary is unchanged. See PRICING_CURRENCIES.md.
 

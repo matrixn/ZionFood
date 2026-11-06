@@ -65,6 +65,7 @@ test('landing page presents both languages, real CTAs and isolated interactive p
 test('mobile landing has working navigation and respects reduced motion', async ({ browser }) => {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
     const page = await context.newPage();
+    await explicitRonPricing(page);
     await page.goto('/');
     await expect(page.locator('.landing')).toHaveAttribute('data-enhanced', 'true');
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Restaurantul tău.');

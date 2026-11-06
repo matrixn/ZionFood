@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Integrations\Actions\DeliverOutboxMessage;
+use App\Domain\Localization\UpdateGeoIp;
 use App\Domain\Mail\EmailLedger;
 use App\Domain\Mail\IndexQueuedEmails;
 use App\Domain\Mail\RecordPlatformActivity;
@@ -42,6 +43,13 @@ Artisan::command('zionfood:exchange-rates {--scheduled}', function () {
     return $ok ? 0 : 1;
 });
 Schedule::command('zionfood:exchange-rates --scheduled')->weeklyOn(1, '04:15')->timezone('Europe/Bucharest')->withoutOverlapping();
+Artisan::command('zionfood:geoip-update {--scheduled}', function () {
+    $ok = app(UpdateGeoIp::class)->execute((bool) $this->option('scheduled'));
+    $ok ? $this->info('Country database ready.') : $this->error('Country database update failed; previous data retained.');
+
+    return $ok ? 0 : 1;
+});
+Schedule::command('zionfood:geoip-update --scheduled')->dailyAt('03:45')->timezone('Europe/Bucharest')->withoutOverlapping();
 Artisan::command('zionfood:outbox-retry {event}', function () {
     $event = strtoupper($this->argument('event'));
     if (! preg_match('/^[0-9A-HJKMNP-TV-Z]{26}$/', $event)) {

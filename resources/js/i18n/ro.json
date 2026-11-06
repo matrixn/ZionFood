@@ -1980,5 +1980,14 @@
     "pricing_sync_failed": "Actualizarea nu a reușit. Ultimele cursuri valide sunt păstrate.",
     "pricing_no_rates": "Nu există cursuri salvate. Actualizează-le pentru a activa EUR și GBP.",
     "pricing_last_sync": "Ultima actualizare reușită",
-    "pricing_saved": "Pachetele au fost salvate."
+    "pricing_saved": "Pachetele au fost salvate.",
+    "geoip_visitor_note": "Limbă și monedă sugerate după țara IP-ului. Alegerea ta are prioritate.",
+    "geoip_heading": "Țara vizitatorului prin IP",
+    "geoip_update": "Actualizează baza GeoIP",
+    "geoip_admin_help": "Căutare locală DB-IP Lite, fără trimiterea IP-urilor vizitatorilor către un serviciu extern. Verificare zilnică la 03:45 pentru noua ediție lunară. Configurează doar proxy-urile de încredere pe server.",
+    "geoip_ready": "Bază disponibilă, ediție din",
+    "geoip_missing": "Baza GeoIP lipsește sau nu poate fi citită. Se folosește engleză/EUR.",
+    "geoip_stale": "ediție mai veche de 62 de zile",
+    "geoip_updated": "Baza GeoIP a fost actualizată.",
+    "geoip_update_failed": "Actualizarea GeoIP a eșuat. Baza anterioară este păstrată."
 }

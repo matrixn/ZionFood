@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Localization\UiLocale;
+use App\Domain\Localization\VisitorPreferences;
 use App\Domain\Marketing\Actions\BuildRobotsTxt;
 use App\Domain\Marketing\Actions\RecordCampaignVisit;
 use App\Domain\Marketing\LandingSeo;
@@ -16,18 +17,26 @@ class LandingController extends Controller
     {
         abort_if($request->attributes->has('storefront_location'), 404);
         $locale = UiLocale::normalize($request->segment(1));
+        $preferences = app(VisitorPreferences::class)->resolve($request);
         app()->setLocale($locale);
         $meta = $seo->meta($locale, (bool) $request->user());
         $response = Inertia::render('Welcome', ['locale' => $locale, 'seo' => $meta,
-            'pricing' => app(PricingCatalog::class)->publicData($request->cookie('zf_currency', 'RON')),
-            'visitorDefaults' => ['detectLocale' => ! $request->user() && ! $request->cookie('zf_locale') && $request->path() === '/', 'detectCurrency' => ! $request->cookie('zf_currency')],
+            'pricing' => app(PricingCatalog::class)->publicData($preferences['currency']),
+            'visitorDefaults' => ['source' => 'ip', 'country' => $preferences['country'],
+                'redirectLocale' => $request->path() === '/' && $preferences['locale'] !== $locale ? $preferences['locale'] : null],
         ])->withViewData('landingMeta', $meta)->toResponse($request);
 
         if ($response->isSuccessful()) {
             app(RecordCampaignVisit::class)->execute($request, $locale);
         }
 
-        return $response->cookie('zf_locale', $locale, 525600, '/', null, $request->isSecure(), true, false, 'lax')->header('Cache-Control', 'private, no-store');
+        foreach (['locale', 'currency'] as $name) {
+            $value = $name === 'locale' && $preferences['locale_source'] === 'ip' ? $locale : $preferences[$name];
+            $response->cookie('zf_'.$name, $value, 525600, '/', null, $request->isSecure(), true, false, 'lax');
+            $response->cookie('zf_'.$name.'_source', $preferences[$name.'_source'], 525600, '/', null, $request->isSecure(), true, false, 'lax');
+        }
+
+        return $response->header('Cache-Control', 'private, no-store');
     }
 
     public function robots(Request $request, LandingSeo $seo, BuildRobotsTxt $robots)

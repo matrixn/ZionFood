@@ -19,6 +19,11 @@ class LocaleController extends Controller
         }
         app()->setLocale($data['locale']);
 
-        return response()->json(['locale' => $data['locale']])->cookie($scope === 'admin' ? 'zf_admin_locale' : 'zf_locale', $data['locale'], 525600, '/', null, $request->isSecure(), true, false, 'lax')->header('Cache-Control', 'no-store');
+        $response = response()->json(['locale' => $data['locale']])->cookie($scope === 'admin' ? 'zf_admin_locale' : 'zf_locale', $data['locale'], 525600, '/', null, $request->isSecure(), true, false, 'lax')->header('Cache-Control', 'no-store');
+        if ($scope !== 'admin') {
+            $response->cookie('zf_locale_source', 'manual', 525600, '/', null, $request->isSecure(), true, false, 'lax');
+        }
+
+        return $response;
     }
 }

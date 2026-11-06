@@ -1980,5 +1980,14 @@
     "pricing_sync_failed": "Bijwerken mislukt. De laatste geldige koersen blijven bewaard.",
     "pricing_no_rates": "Geen opgeslagen koersen. Werk bij om EUR en GBP in te schakelen.",
     "pricing_last_sync": "Laatste geslaagde update",
-    "pricing_saved": "Pakketten opgeslagen."
+    "pricing_saved": "Pakketten opgeslagen.",
+    "geoip_visitor_note": "Taal en valuta op basis van je IP-land. Je eigen keuze heeft voorrang.",
+    "geoip_heading": "Land van bezoeker via IP",
+    "geoip_update": "GeoIP-database bijwerken",
+    "geoip_admin_help": "Lokale DB-IP Lite-lookup; IP-adressen van bezoekers worden niet naar externe diensten gestuurd. Dagelijkse controle om 03:45 op nieuwe maandversies. Configureer alleen vertrouwde proxies op de server.",
+    "geoip_ready": "Database beschikbaar, gebouwd op",
+    "geoip_missing": "GeoIP-database ontbreekt of is onleesbaar. Engels/EUR wordt gebruikt.",
+    "geoip_stale": "versie ouder dan 62 dagen",
+    "geoip_updated": "GeoIP-database bijgewerkt.",
+    "geoip_update_failed": "GeoIP-update mislukt. De vorige database blijft behouden."
 }

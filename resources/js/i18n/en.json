@@ -1980,5 +1980,14 @@
     "pricing_sync_failed": "Update failed. The last valid rates are retained.",
     "pricing_no_rates": "No saved rates. Update them to enable EUR and GBP.",
     "pricing_last_sync": "Last successful update",
-    "pricing_saved": "Plans saved."
+    "pricing_saved": "Plans saved.",
+    "geoip_visitor_note": "Language and currency suggested from your IP country. Your choice takes priority.",
+    "geoip_heading": "Visitor country by IP",
+    "geoip_update": "Update GeoIP database",
+    "geoip_admin_help": "Local DB-IP Lite lookups; visitor IPs are not sent to an external service. A daily 03:45 check installs new monthly releases. Configure only trusted proxies on the server.",
+    "geoip_ready": "Database available, built",
+    "geoip_missing": "GeoIP database is missing or unreadable. English/EUR is used.",
+    "geoip_stale": "release over 62 days old",
+    "geoip_updated": "GeoIP database updated.",
+    "geoip_update_failed": "GeoIP update failed. The previous database is retained."
 }

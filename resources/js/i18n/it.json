@@ -1980,5 +1980,14 @@
     "pricing_sync_failed": "Aggiornamento non riuscito. Gli ultimi tassi validi sono conservati.",
     "pricing_no_rates": "Nessun tasso salvato. Aggiorna per attivare EUR e GBP.",
     "pricing_last_sync": "Ultimo aggiornamento riuscito",
-    "pricing_saved": "Piani salvati."
+    "pricing_saved": "Piani salvati.",
+    "geoip_visitor_note": "Lingua e valuta suggerite dal paese IP. La tua scelta ha la priorità.",
+    "geoip_heading": "Paese del visitatore tramite IP",
+    "geoip_update": "Aggiorna database GeoIP",
+    "geoip_admin_help": "Ricerca locale DB-IP Lite, senza inviare gli IP dei visitatori a servizi esterni. Controllo giornaliero alle 03:45 per nuove edizioni mensili. Configura solo proxy attendibili sul server.",
+    "geoip_ready": "Database disponibile, creazione",
+    "geoip_missing": "Database GeoIP mancante o illeggibile. Si usa inglese/EUR.",
+    "geoip_stale": "edizione di oltre 62 giorni",
+    "geoip_updated": "Database GeoIP aggiornato.",
+    "geoip_update_failed": "Aggiornamento GeoIP non riuscito. Il database precedente è conservato."
 }

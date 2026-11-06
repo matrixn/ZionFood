@@ -1,4 +1,6 @@
-# Scope at 0.0.54
+# Scope at 0.0.55
+
+0.0.55 replaces marketing browser-region detection with local IP-country lookup, English/EUR fallback and independent manual priority. It adds trusted-proxy configuration and maintained private country data with platform-admin refresh/status. Canonical language URLs, RO/EN platform administration and tenant order/billing rules are unchanged. See GEOIP_PREFERENCES.md.
 
 0.0.54 adds editable public package names/RON prices and indicative RON/EUR/GBP conversion with weekly/manual Frankfurter rates. Initial browser-region suggestions use English/EUR fallback and preserve explicit choices. Price edits update no-JavaScript marketing output without rebuilding. Invoice issuance, charging and subscription entitlement enforcement remain separate work; tenant order prices/currencies are unchanged. See PRICING_CURRENCIES.md.
 

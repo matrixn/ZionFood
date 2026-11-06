@@ -1,29 +1,20 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import Select from 'primevue/select';
 import { api } from '@/lib/http';
-import { defaultPricing, visitorPreferences, type Currency, type PricingData } from '@/lib/pricing';
-import { i18n, localeTag, localePath } from '@/i18n';
+import { defaultPricing, type Currency, type PricingData } from '@/lib/pricing';
+import { i18n, localeTag } from '@/i18n';
 
 const props = defineProps<{
     signedIn: boolean;
     pricing?: PricingData;
-    visitorDefaults?: { detectLocale: boolean; detectCurrency: boolean };
+    visitorDefaults?: { source: string; country: string | null; redirectLocale: string | null };
 }>();
 const state = ref<PricingData>(props.pricing ?? defaultPricing);
 const selection = ref<Currency>(state.value.currency);
 const busy = ref(false);
 const error = ref('');
-let manualLanguage = false;
-let disposed = false;
-const languageChosen = () => {
-    manualLanguage = true;
-};
-onBeforeUnmount(() => {
-    disposed = true;
-    window.removeEventListener('zf-language-choice', languageChosen);
-});
 watch(
     () => props.pricing,
     (value) => {
@@ -52,19 +43,10 @@ async function change(currency: Currency) {
         busy.value = false;
     }
 }
-onMounted(async () => {
-    window.addEventListener('zf-language-choice', languageChosen);
-    const detect = props.visitorDefaults;
-    if (!detect?.detectLocale && !detect?.detectCurrency) return;
-    const preference = visitorPreferences(navigator.languages, Intl.DateTimeFormat().resolvedOptions().timeZone);
-    if (detect.detectCurrency) await change(preference.currency);
-    if (detect.detectLocale && !manualLanguage && !disposed && preference.locale !== i18n.global.locale.value) {
-        try {
-            await api('/locale', 'POST', { locale: preference.locale });
-            window.location.replace(localePath(preference.locale) + window.location.search + window.location.hash);
-        } catch {
-            /* Keep the readable explicit URL when preferences cannot be saved. */
-        }
+onMounted(() => {
+    const locale = props.visitorDefaults?.redirectLocale;
+    if (locale && ['ro', 'en', 'it', 'es', 'nl'].includes(locale)) {
+        window.location.replace((locale === 'ro' ? '/' : '/' + locale) + window.location.search + window.location.hash);
     }
 });
 </script>
@@ -98,6 +80,12 @@ onMounted(async () => {
                 <span v-if="state.rate_date">{{ $t('pricing_rate_date', { date: state.rate_date }) }}</span>
                 <span v-if="state.requested_currency !== state.currency">{{ $t('pricing_rates_missing') }}</span>
                 <span v-if="state.stale">{{ $t('pricing_rates_stale') }}</span>
+            </p>
+            <p class="pricing-location-note">
+                <span>{{ $t('geoip_visitor_note') }}</span
+                ><a href="https://db-ip.com" target="_blank" rel="noopener noreferrer" class="underline"
+                    >IP Geolocation by DB-IP</a
+                >
             </p>
             <p v-if="error" role="alert" class="text-sm text-red-700">{{ error }}</p>
         </div>
@@ -151,7 +139,8 @@ onMounted(async () => {
     font-size: 13px;
     color: #59654e;
 }
-.pricing-quote-note {
+.pricing-quote-note,
+.pricing-location-note {
     margin: 12px auto 0;
     max-width: 65ch;
     font-size: 12px;
@@ -160,6 +149,10 @@ onMounted(async () => {
 }
 .pricing-quote-note span {
     display: block;
+}
+.pricing-location-note a {
+    display: block;
+    margin-top: 3px;
 }
 .pricing-section {
     padding-block: 48px 68px;

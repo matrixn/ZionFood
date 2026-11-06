@@ -1,4 +1,4 @@
-# Outgoing email administration — 0.0.54
+# Outgoing email administration — 0.0.55
 
 The platform administrator opens **Admin → Emails and queue** (`/admin/emails`). Restaurant owners, managers and staff have no access, including direct JSON and mutation requests. The list refreshes every 15 seconds and preserves applied filters/pagination. Details show recipients, encrypted-at-rest subject, source/initiator, state, actual transport attempts, provider ID, expiry and next-attempt time. No message body, attachment, reset token or invitation URL is exposed by the ledger.
 

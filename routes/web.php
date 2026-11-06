@@ -71,6 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/pricing', [PricingController::class, 'show']);
     Route::put('/admin/pricing', [PricingController::class, 'update']);
     Route::post('/admin/pricing/rates', [PricingController::class, 'sync'])->middleware('throttle:6,1');
+    Route::post('/admin/pricing/geoip', [PricingController::class, 'geoip'])->middleware('throttle:6,1');
     Route::get('/admin/leads', [ServiceLeadController::class, 'index']);
     Route::patch('/admin/leads/{lead}', [ServiceLeadController::class, 'update']);
     Route::delete('/admin/leads/{lead}', [ServiceLeadController::class, 'destroy']);
