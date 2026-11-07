@@ -31,6 +31,7 @@ it('renders localized indexable landing text and metadata in raw HTML independen
             ->and($dom->query('//section[@id="pricing"]//data')->item(1)->getAttribute('value'))->toBe('149')
             ->and($dom->query('//section[@id="pricing"]//data')->item(2)->getAttribute('value'))->toBe('249')
             ->and($dom->query('//section[@id="pricing"]//li'))->toHaveCount(18)
+            ->and($dom->query('//aside[@aria-labelledby="loyalty-title"]//h3')->item(0)->textContent)->toContain('ZionFood Rewards')
             ->and($dom->query('//title'))->toHaveCount(1)
             ->and($dom->query('//meta[@name="description"]'))->toHaveCount(1)
             ->and($dom->query('//link[@rel="canonical"]')->item(0)->getAttribute('href'))->toBe('https://food.zion3d.ro'.$path)

@@ -1,4 +1,4 @@
-# Scope at 0.0.55
+# Scope at 0.0.56
 
 0.0.55 replaces marketing browser-region detection with local IP-country lookup, English/EUR fallback and independent manual priority. It adds trusted-proxy configuration and maintained private country data with platform-admin refresh/status. Canonical language URLs, RO/EN platform administration and tenant order/billing rules are unchanged. See GEOIP_PREFERENCES.md.
 

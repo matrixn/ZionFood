@@ -45,6 +45,17 @@ const mobileOpen = ref(false);
 const active = ref(0);
 const orderStep = ref(0);
 const root = ref<HTMLElement | null>(null);
+const header = ref<HTMLElement | null>(null);
+const currentSection = ref<string>();
+const navigation = [
+    { id: 'pricing', label: 'pricing_nav' },
+    { id: 'platform', label: 'landing_nav_platform' },
+    { id: 'workflow', label: 'landing_nav_workflow' },
+    { id: 'migration', label: 'landing_nav_migration' },
+    { id: 'questions', label: 'landing_nav_faq' },
+    { id: 'contact', label: 'lead_nav' },
+];
+let sections: HTMLElement[] = [];
 const tabs = ref<HTMLElement | null>(null);
 const progress = ref<HTMLElement | null>(null);
 const ready = ref(false);
@@ -66,6 +77,12 @@ function scroll() {
     frame = requestAnimationFrame(() => {
         const distance = document.documentElement.scrollHeight - window.innerHeight;
         if (progress.value) progress.value.style.transform = `scaleX(${distance > 0 ? window.scrollY / distance : 0})`;
+        const headerBottom = header.value?.getBoundingClientRect().bottom ?? 0;
+        // Match native fragment offsets, then follow the last section reached in page order.
+        currentSection.value = sections.find((section) => {
+            const margin = parseFloat(getComputedStyle(section).scrollMarginTop) || 0;
+            return section.getBoundingClientRect().top <= Math.max(headerBottom, margin) + 2;
+        })?.id;
         frame = 0;
     });
 }
@@ -108,13 +125,19 @@ onMounted(() => {
         );
         root.value?.querySelectorAll('[data-reveal]').forEach((element) => observer?.observe(element));
     }
+    const targets = navigation.map(({ id }) => '#' + id).join(',');
+    sections = Array.from(root.value?.querySelectorAll<HTMLElement>(targets) ?? []).reverse();
     window.addEventListener('scroll', scroll, { passive: true });
+    window.addEventListener('resize', scroll);
+    window.addEventListener('hashchange', scroll);
     scroll();
 });
 onBeforeUnmount(() => {
     disposed = true;
     observer?.disconnect();
     window.removeEventListener('scroll', scroll);
+    window.removeEventListener('resize', scroll);
+    window.removeEventListener('hashchange', scroll);
     cancelAnimationFrame(frame);
 });
 </script>
@@ -174,19 +197,20 @@ onBeforeUnmount(() => {
     >
         <a href="#main" class="skip-link">{{ $t('landing_skip') }}</a>
         <div ref="progress" class="reading-progress" aria-hidden="true" />
-        <header class="site-header">
+        <header ref="header" class="site-header">
             <nav class="nav-wrap" :aria-label="$t('landing_navigation')">
                 <Link :href="seo.home" class="wordmark" aria-label="ZionFood"
                     ><ZFLogo class="brand-mark" :size="40" />Zion<span>Food</span
                     ><span class="brand-period">.</span></Link
                 >
                 <div class="desktop-links">
-                    <a href="#pricing" class="nav-pricing">{{ $t('pricing_nav') }}</a
-                    ><a href="#platform">{{ $t('landing_nav_platform') }}</a
-                    ><a href="#workflow">{{ $t('landing_nav_workflow') }}</a
-                    ><a href="#migration">{{ $t('landing_nav_migration') }}</a
-                    ><a href="#questions">{{ $t('landing_nav_faq') }}</a
-                    ><a href="#contact">{{ $t('lead_nav') }}</a>
+                    <a
+                        v-for="{ id, label } in navigation"
+                        :key="id"
+                        :href="'#' + id"
+                        :aria-current="currentSection === id ? 'location' : undefined"
+                        >{{ $t(label) }}</a
+                    >
                 </div>
                 <div class="nav-actions">
                     <Link :href="signedIn ? '/app' : '/login'" class="nav-login"
@@ -204,13 +228,15 @@ onBeforeUnmount(() => {
                     </button>
                 </div>
                 <div v-if="mobileOpen" id="mobile-navigation" class="mobile-navigation">
-                    <a href="#pricing" class="nav-pricing" @click="mobileOpen = false">{{ $t('pricing_nav') }}</a
-                    ><a href="#platform" @click="mobileOpen = false">{{ $t('landing_nav_platform') }}</a
-                    ><a href="#workflow" @click="mobileOpen = false">{{ $t('landing_nav_workflow') }}</a
-                    ><a href="#migration" @click="mobileOpen = false">{{ $t('landing_nav_migration') }}</a
-                    ><a href="#questions" @click="mobileOpen = false">{{ $t('landing_nav_faq') }}</a
-                    ><a href="#contact" @click="mobileOpen = false">{{ $t('lead_nav') }}</a
-                    ><Link :href="signedIn ? '/app' : '/login'">{{
+                    <a
+                        v-for="{ id, label } in navigation"
+                        :key="id"
+                        :href="'#' + id"
+                        :aria-current="currentSection === id ? 'location' : undefined"
+                        @click="mobileOpen = false"
+                        >{{ $t(label) }}</a
+                    >
+                    <Link :href="signedIn ? '/app' : '/login'">{{
                         signedIn ? $t('landing_dashboard') : $t('sign_in')
                     }}</Link>
                 </div>
@@ -551,6 +577,17 @@ onBeforeUnmount(() => {
                         ></Transition>
                     </div>
                 </div>
+                <aside class="loyalty-preview" aria-labelledby="loyalty-title">
+                    <div>
+                        <p class="eyebrow">{{ $t('landing_loyalty_status') }}</p>
+                        <h3 id="loyalty-title">{{ $t('landing_loyalty_title') }}</h3>
+                        <p>{{ $t('landing_loyalty_description') }}</p>
+                    </div>
+                    <div class="loyalty-example">
+                        <strong>{{ $t('landing_loyalty_example') }}</strong>
+                        <p>{{ $t('landing_loyalty_validation') }}</p>
+                    </div>
+                </aside>
             </section>
 
             <section id="workflow" class="workflow-section">
@@ -970,18 +1007,52 @@ onBeforeUnmount(() => {
 .nav-login:hover {
     color: var(--purple);
 }
-.desktop-links .nav-pricing,
-.mobile-navigation .nav-pricing {
-    display: inline-flex;
-    align-items: center;
-    width: fit-content;
-    min-height: 40px;
-    padding: 8px 14px;
+.desktop-links a,
+.mobile-navigation a {
+    position: relative;
+    isolation: isolate;
+}
+.desktop-links a[aria-current='location'],
+.mobile-navigation a[aria-current='location'] {
+    color: #5144cc;
+}
+.site-header a[aria-current='location']::before {
+    content: '';
+    position: absolute;
+    inset: -8px -7px;
+    z-index: -1;
     border: 1px solid #dce9b7;
     border-radius: 11px;
     background: #edf5d9;
-    color: #5b4de5;
-    font-weight: 750;
+}
+.loyalty-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+    gap: 24px;
+    align-items: center;
+    margin-top: 32px;
+    padding: clamp(20px, 4vw, 42px);
+    border: 1px solid #dce7c9;
+    border-radius: 24px;
+    background: #f0f4e8;
+}
+.loyalty-preview h3 {
+    margin: 8px 0 12px;
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 650;
+    line-height: 1.1;
+}
+.loyalty-preview p:not(.eyebrow) {
+    color: #4c5947;
+    line-height: 1.6;
+}
+.loyalty-example {
+    padding: 20px;
+    border-radius: 16px;
+    background: #fff;
+}
+.loyalty-example p {
+    margin-top: 8px;
 }
 .nav-login {
     white-space: nowrap;
@@ -3059,9 +3130,6 @@ onBeforeUnmount(() => {
     .mobile-navigation a {
         color: var(--ink);
         font-size: 14px;
-    }
-    .mobile-navigation .nav-pricing {
-        color: #5b4de5;
     }
 }
 /* The contact card is the primary hero action; decorative examples keep their own space. */

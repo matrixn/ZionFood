@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.56 — 2026-11-07
+
+- Highlight the current landing-page section during anchor navigation and scrolling on desktop and mobile.
+- Preview ZionFood Rewards as a loyalty program in development in all five marketing languages.
+- Make the platform administration shortcut clear on desktop and available in the restaurant workspace menu on mobile for platform administrators.
+
 ## 0.0.55 — 2026-11-06
 
 - Replace browser timezone/region defaults with server IP-country lookups using a private DB-IP Lite database and the MaxMind reader; keep English/EUR fallback.

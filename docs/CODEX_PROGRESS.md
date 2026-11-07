@@ -1,4 +1,15 @@
-# ZionFood progress — 0.0.55
+# ZionFood progress — 0.0.56
+
+## Version 0.0.56 - Landing navigation, Rewards preview and admin shortcut (November 7)
+
+The sticky marketing menu now follows the visible section using the same fragment offsets as native anchor navigation. Desktop and mobile share the link definitions and expose the current section through aria-current. The Platform section previews ZionFood Rewards in all five marketing languages with a clear in-development label, configurable QR loyalty cards and stamps, a coffee reward example, staff validation, and planned automatic credit for eligible completed orders.
+
+The restaurant workspace identifies the general administration shortcut by its full name on desktop and exposes it in the mobile menu below setup. Visibility uses the existing platform-admin flag and navigation uses the existing protected admin route.
+
+- Full PHP/Pest suite passed with **640 tests and 5,013 assertions**. It checks the Rewards preview in all five prerendered language variants. SQLite was used for this presentation change.
+- ESLint, **49 Vitest tests**, TypeScript and the production client and SEO builds passed. Vite reported the existing large-chunk warning.
+- Fresh Linux Pint with a separate private cache and the exact CI command both passed across **385 files**. Composer validated the lock with its existing explicit-version advisory.
+- **13 Playwright scenarios** passed on isolated localhost fixtures, covering all landing menu anchors, manual scrolling with a previous fragment still in the URL, mobile menu highlighting, the platform-admin shortcut, localized output, pricing, SEO and first paint. The initial private harness needed its session directory created before browser validation. After the final wording and menu placement refinements, the production build and **3 targeted browser scenarios** passed again.
 
 ## Version 0.0.55 - IP-country defaults and explicit manual priority (November 6)
 

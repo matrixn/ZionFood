@@ -1,4 +1,4 @@
-# Administrator activity email — 0.0.55
+# Administrator activity email — 0.0.56
 
 Verified platform-admin accounts (`users.is_platform_admin = true`, non-null email_verified_at and a valid email address) receive one private email for each new event. Delivery uses each account's current email address and preferred RO/EN locale. Ordinary owners/managers/staff and unverified platform accounts are excluded. There is no fallback to ADMIN_EMAIL: that environment address remains dedicated to the existing technical error/test flows. If there is no eligible administrator at event time, no notice is created; older events are not backfilled when an administrator is promoted later.
 

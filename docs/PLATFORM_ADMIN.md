@@ -1,4 +1,4 @@
-# Platform administration — 0.0.55
+# Platform administration — 0.0.56
 
 The general administration console is separate from restaurant management. All new routes require authentication, verified email and `is_platform_admin`. Platform access does not grant tenant operating permissions. Responses contain explicit support DTOs, use private/no-store cache headers and encrypted Inertia history.
 

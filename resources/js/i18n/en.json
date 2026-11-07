@@ -1989,5 +1989,10 @@
     "geoip_missing": "GeoIP database is missing or unreadable. English/EUR is used.",
     "geoip_stale": "release over 62 days old",
     "geoip_updated": "GeoIP database updated.",
-    "geoip_update_failed": "GeoIP update failed. The previous database is retained."
+    "geoip_update_failed": "GeoIP update failed. The previous database is retained.",
+    "landing_loyalty_status": "In development",
+    "landing_loyalty_title": "ZionFood Rewards for customers who come back",
+    "landing_loyalty_description": "We are building digital loyalty cards with QR codes, stamps and rewards each restaurant can configure.",
+    "landing_loyalty_example": "For example, buy 5 coffees and get one on the house.",
+    "landing_loyalty_validation": "Staff will scan the loyalty QR code and confirm the eligible purchase. We also plan to award stamps automatically for eligible completed online orders."
 }

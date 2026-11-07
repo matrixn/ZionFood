@@ -1,4 +1,4 @@
-# Marketing packages and currencies — 0.0.55
+# Marketing packages and currencies — 0.0.56
 
 Platform administrators manage names and monthly per-location base prices at **Administration → Configuration → Plans and exchange rates** (`/admin/pricing`). The three stable package identifiers are `menu`, `orders`, `business`; their public names are shared across languages. Prices are stored as integer RON minor units. Decimal input accepts two places; the browser normalizes commas, while the server converts the validated decimal string without floating-point price arithmetic. Updates are transactional and revision checked. Only verified platform admins can view or change these settings.
 

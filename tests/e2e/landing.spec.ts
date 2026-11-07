@@ -91,7 +91,33 @@ test('mobile landing has working navigation and respects reduced motion', async 
     await context.close();
 });
 
-// Preserve explicit language/currency intent in these existing regression scenarios.
+test('sticky navigation follows anchors, manual scrolling and the mobile menu', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/#workflow');
+    const desktop = page.locator('.desktop-links');
+    const current = desktop.locator('[aria-current="location"]');
+    await expect(current).toHaveAttribute('href', '#workflow');
+    for (const id of ['pricing', 'platform', 'workflow', 'migration', 'questions', 'contact']) {
+        await desktop.locator(`a[href="#${id}"]`).click();
+        await expect(current).toHaveAttribute('href', '#' + id);
+    }
+    await page.evaluate(() => {
+        const workflow = document.getElementById('workflow')!;
+        window.scrollTo(0, window.scrollY + workflow.getBoundingClientRect().top - 60);
+    });
+    await expect(current).toHaveAttribute('href', '#workflow');
+    await expect(page).toHaveURL(/#contact$/);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.locator('.mobile-toggle').click();
+    const mobile = page.locator('#mobile-navigation');
+    await mobile.locator('a[href="#migration"]').click();
+    await expect(mobile).toHaveCount(0);
+    await page.locator('.mobile-toggle').click();
+    await expect(mobile.locator('[aria-current="location"]')).toHaveAttribute('href', '#migration');
+});
+
+// Preserve explicit language/currency intent in these regression scenarios.
 test.beforeEach(async ({ page }) => {
     await explicitRonPricing(page);
 });

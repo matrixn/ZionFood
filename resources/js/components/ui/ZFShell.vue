@@ -17,6 +17,9 @@ const props = defineProps<{
     mode?: string;
 }>();
 const page = usePage();
+const isPlatformAdmin = computed(
+    () => (page.props.auth as { user?: { is_platform_admin?: boolean } })?.user?.is_platform_admin === true,
+);
 const capabilities = computed(() => props.permissions ?? (page.props.permissions as FeaturePermissions));
 const featurePaths: Record<string, StaffFeature> = {
     '/orders': 'orders',
@@ -149,10 +152,14 @@ function switchLocation(id: string) {
                     :aria-label="$t('toggle_color_theme')"
                     @click="theme"
                 /><Link
-                    v-if="(page.props.auth as { user?: { is_platform_admin?: boolean } })?.user?.is_platform_admin"
+                    v-if="isPlatformAdmin"
                     href="/admin"
-                    class="muted mr-2 hidden md:block"
-                    >{{ $t('platform') }}</Link
+                    :aria-label="$t('pa_console')"
+                    :title="$t('pa_console')"
+                    class="mr-2 hidden shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-brand hover:bg-violet-50 dark:hover:bg-violet-950 md:inline-flex"
+                    ><i class="pi pi-shield" aria-hidden="true" /><span class="hidden lg:inline">{{
+                        $t('pa_console')
+                    }}</span></Link
                 ><Button
                     icon="pi pi-sign-out"
                     text
@@ -205,6 +212,14 @@ function switchLocation(id: string) {
                         @click="mobile = false"
                     >
                         <i aria-hidden="true" class="pi pi-sliders-h" />{{ $t('setup_title') }}
+                    </Link>
+                    <Link
+                        v-if="location && isPlatformAdmin"
+                        href="/admin"
+                        class="flex items-center gap-3 rounded-xl border border-violet-100 px-4 py-3 text-sm font-semibold text-brand dark:border-violet-800 md:hidden"
+                        @click="mobile = false"
+                    >
+                        <i class="pi pi-shield" aria-hidden="true" />{{ $t('pa_console') }}
                     </Link>
                     <section
                         v-for="group in location ? navGroups : []"

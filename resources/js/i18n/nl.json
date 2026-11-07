@@ -1989,5 +1989,10 @@
     "geoip_missing": "GeoIP-database ontbreekt of is onleesbaar. Engels/EUR wordt gebruikt.",
     "geoip_stale": "versie ouder dan 62 dagen",
     "geoip_updated": "GeoIP-database bijgewerkt.",
-    "geoip_update_failed": "GeoIP-update mislukt. De vorige database blijft behouden."
+    "geoip_update_failed": "GeoIP-update mislukt. De vorige database blijft behouden.",
+    "landing_loyalty_status": "In ontwikkeling",
+    "landing_loyalty_title": "ZionFood Rewards voor terugkerende klanten",
+    "landing_loyalty_description": "We werken aan digitale spaarkaarten met QR-codes, stempels en beloningen die elk restaurant zelf kan instellen.",
+    "landing_loyalty_example": "Bijvoorbeeld: koop 5 kopjes koffie en krijg er één van het huis.",
+    "landing_loyalty_validation": "Medewerkers scannen de QR-code van de spaarkaart en bevestigen de aankoop. We willen ook automatisch stempels geven voor afgeronde online bestellingen die aan de voorwaarden voldoen."
 }

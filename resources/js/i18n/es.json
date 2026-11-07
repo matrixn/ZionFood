@@ -1989,5 +1989,10 @@
     "geoip_missing": "Base GeoIP ausente o ilegible. Se usa inglés/EUR.",
     "geoip_stale": "edición de más de 62 días",
     "geoip_updated": "Base GeoIP actualizada.",
-    "geoip_update_failed": "Actualización GeoIP fallida. Se conserva la base anterior."
+    "geoip_update_failed": "Actualización GeoIP fallida. Se conserva la base anterior.",
+    "landing_loyalty_status": "En desarrollo",
+    "landing_loyalty_title": "ZionFood Rewards para los clientes que vuelven",
+    "landing_loyalty_description": "Estamos preparando tarjetas digitales de fidelización con códigos QR, sellos y recompensas que cada restaurante podrá configurar.",
+    "landing_loyalty_example": "Por ejemplo, compra 5 cafés y el siguiente te lo invita la casa.",
+    "landing_loyalty_validation": "El personal escaneará el QR de fidelización y confirmará la compra válida. También prevemos conceder sellos automáticamente por pedidos online válidos y completados."
 }

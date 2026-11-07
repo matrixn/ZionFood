@@ -1,4 +1,4 @@
-# ZionFood 0.0.55
+# ZionFood 0.0.56
 
 VisitorPreferences resolves independent manual/account values before server IP-country defaults. GeoIpDatabase reads a private local MMDB; UpdateGeoIp maintains it with bounded fixed-origin downloads and atomic publication. Forwarded addresses require explicit trusted proxy IPs/CIDRs. No browser locale/timezone or country header supplies the automatic country. See GEOIP_PREFERENCES.md.
 

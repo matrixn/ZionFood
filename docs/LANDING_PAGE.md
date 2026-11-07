@@ -1,4 +1,6 @@
-# Public ZionFood presentation and SEO — 0.0.55
+# Public ZionFood presentation and SEO — 0.0.56
+
+The sticky navigation highlights the last linked section reached below the header. It follows fragment links and manual scrolling on desktop and mobile. The Platform section presents ZionFood Rewards in all five marketing languages as a program in development. The preview describes digital QR loyalty cards, configurable stamps and rewards, staff validation, and planned automatic stamps for eligible completed online orders.
 
 Current pricing is editable in platform administration and overlaid onto build HTML at request time, with RON/EUR/GBP indicative conversion. Older pricing notes below describe the initial 0.0.52 release. See PRICING_CURRENCIES.md for authoritative prices, approximate location defaults, weekly rates and the billing boundary.
 

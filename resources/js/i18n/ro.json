@@ -1989,5 +1989,10 @@
     "geoip_missing": "Baza GeoIP lipsește sau nu poate fi citită. Se folosește engleză/EUR.",
     "geoip_stale": "ediție mai veche de 62 de zile",
     "geoip_updated": "Baza GeoIP a fost actualizată.",
-    "geoip_update_failed": "Actualizarea GeoIP a eșuat. Baza anterioară este păstrată."
+    "geoip_update_failed": "Actualizarea GeoIP a eșuat. Baza anterioară este păstrată.",
+    "landing_loyalty_status": "În dezvoltare",
+    "landing_loyalty_title": "ZionFood Rewards pentru clienții care revin",
+    "landing_loyalty_description": "Pregătim carduri digitale de fidelitate cu QR, ștampile și recompense pe care fiecare restaurant le va putea configura.",
+    "landing_loyalty_example": "De exemplu, la 5 cafele cumpărate, una este din partea casei.",
+    "landing_loyalty_validation": "Personalul va scana QR-ul de fidelitate și va confirma achiziția eligibilă. În plan intră și acordarea automată a ștampilelor pentru comenzi online finalizate și eligibile."
 }

@@ -1,4 +1,4 @@
-# Contact onboarding and leads — 0.0.55
+# Contact onboarding and leads — 0.0.56
 
 The marketing landing (`/` in Romanian, `/en` in English, `/it` in Italian, `/es` in Spanish and `/nl` in Dutch) includes `#contact`, with links from desktop/mobile navigation, the hero and footer. Its single contact card is placed over the hero photograph at entry, using a translucent blurred surface with an opaque fallback and readable controls. The existing reservation and QR examples retain separate floating space. On small screens the heading and form precede the longer marketing description and secondary CTAs. The card itself stays still for reliable typing and remains immediately visible without reveal animations. It asks only for contact name, email and phone; the phone uses a joined country/prefix selector and national-number input. Each visible field has localized explanatory help and an accessible input name. Tab goes directly between controls rather than stopping at form-help icons. A hidden honeypot and the page locale are technical values, not extra visible questions.
 

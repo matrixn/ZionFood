@@ -101,7 +101,11 @@ test('restaurant locale persists through navigation while general administration
     await expect(page.getByTestId('language-selector')).toContainText('Nederlands');
     await page.setViewportSize({ width: 390, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.goto('/admin');
+    await page.getByRole('button', { name: /navigatie/i }).click();
+    const mobileAdmin = page.getByRole('link', { name: 'Platformbeheer', exact: true });
+    await expect(mobileAdmin).toBeVisible();
+    await mobileAdmin.click();
+    await expect(page).toHaveURL(/\/admin$/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     expect(errors).toEqual([]);
 });
