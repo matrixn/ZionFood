@@ -5,6 +5,7 @@ namespace App\Domain\Orders\Actions;
 use App\Domain\Dining\OrderingWindow;
 use App\Domain\Orders\LocationSchedule;
 use App\Domain\Orders\ResolveFulfillmentTime;
+use App\Domain\Rewards\RewardCards;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\CheckoutIdempotencyKey;
 use App\Models\DiningSession;
@@ -68,7 +69,8 @@ class PlaceOrderAction
             $subtotal = $pricing['subtotal'];
             $fee = $pricing['delivery_fee'];
             $token = Str::random(64);
-            $order = Order::create(['organization_id' => $location->organization_id, 'location_id' => $location->id, 'tracking_token_hash' => hash('sha256', $token), 'tracking_token_encrypted' => Crypt::encryptString($token), 'fulfillment' => $data['fulfillment'], 'customer_name' => $data['customer_name'], 'customer_phone' => $data['customer_phone'], 'delivery_address' => $data['delivery_address'] ?? null, 'notes' => $data['notes'] ?? null, 'currency' => $location->currency, 'subtotal' => $subtotal, 'delivery_fee' => $fee, 'total' => $pricing['total'], 'discount' => $pricing['discount'], 'promotion_snapshot' => $pricing['promotion_snapshot'], 'scheduled_for' => $timing['scheduled_for'], 'preparation_at' => $timing['preparation_at'], 'reservation_id' => $timing['reservation']?->id]);
+            $rewardCard = isset($data['reward_card_token']) ? app(RewardCards::class)->resolve($location, $data['reward_card_token']) : null;
+            $order = Order::create(['reward_card_id' => $rewardCard?->id, 'organization_id' => $location->organization_id, 'location_id' => $location->id, 'tracking_token_hash' => hash('sha256', $token), 'tracking_token_encrypted' => Crypt::encryptString($token), 'fulfillment' => $data['fulfillment'], 'customer_name' => $data['customer_name'], 'customer_phone' => $data['customer_phone'], 'delivery_address' => $data['delivery_address'] ?? null, 'notes' => $data['notes'] ?? null, 'currency' => $location->currency, 'subtotal' => $subtotal, 'delivery_fee' => $fee, 'total' => $pricing['total'], 'discount' => $pricing['discount'], 'promotion_snapshot' => $pricing['promotion_snapshot'], 'scheduled_for' => $timing['scheduled_for'], 'preparation_at' => $timing['preparation_at'], 'reservation_id' => $timing['reservation']?->id]);
             if ($session) {
                 $order->update(['dining_session_id' => $session->id, 'table_code' => $session->table->code, 'table_area' => $session->table->area]);
             }

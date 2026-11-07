@@ -10,6 +10,8 @@ import Button from 'primevue/button';
 import { router } from '@inertiajs/vue3';
 import { useCart } from '@/stores/cart';
 import { api, money } from '@/lib/http';
+import { readRewardCard } from '@/lib/rewards';
+import ZFFormField from '@/components/ui/ZFFormField.vue';
 import type { Zone } from '@/types';
 import DeliveryMap from '@/components/maps/DeliveryMap.vue';
 import { matchingZone, type DeliveryPoint, type MapConfig } from '@/lib/deliveryGeometry';
@@ -17,6 +19,7 @@ const props = defineProps<{
     canOrder?: boolean;
     blockedMessage?: string;
     locationId: string;
+    rewardsOnline?: boolean;
     fulfillment: { pickup_enabled: boolean; delivery_enabled: boolean };
     zones: Zone[];
     tableSessionToken?: string | null;
@@ -39,6 +42,8 @@ const form = ref({
     delivery_zone_id: null as number | null,
     notes: '',
 });
+const rewardToken = ref('');
+const attachRewards = ref(false);
 const error = ref('');
 const busy = ref(false);
 const payloadKey = ref('');
@@ -139,7 +144,11 @@ const valid = computed(() => {
         : !!form.value.postal_code.trim() && form.value.postal_code.startsWith(deliveryZone.value.postal_prefix);
 });
 watch(visible, (open) => {
-    if (open) error.value = '';
+    if (open) {
+        error.value = '';
+        rewardToken.value = props.rewardsOnline ? readRewardCard(props.locationId) : '';
+        attachRewards.value = false;
+    }
 });
 watch(
     () => props.tableSessionToken,
@@ -154,6 +163,7 @@ async function submit() {
     error.value = '';
     const payload = {
         ...form.value,
+        ...(attachRewards.value && rewardToken.value ? { reward_card_token: rewardToken.value } : {}),
         ...(props.tableSessionToken ? { fulfillment: 'dine_in', table_session_token: props.tableSessionToken } : {}),
         ...(form.value.fulfillment === 'delivery' && hasPolygons.value
             ? {
@@ -234,6 +244,18 @@ async function submit() {
                     :options="methods"
                     option-label="label"
                     option-value="value" /></label
+            ><ZFFormField
+                v-if="rewardToken"
+                :for="formId + '-rewards'"
+                :label="$t('rewards_attach')"
+                :help="$t('rewards_help_attach')"
+            >
+                <input
+                    :id="formId + '-rewards'"
+                    v-model="attachRewards"
+                    type="checkbox"
+                    class="size-5 accent-brand"
+                /> </ZFFormField
             ><template v-if="form.fulfillment === 'delivery'"
                 ><label class="field"
                     ><span class="field-label"

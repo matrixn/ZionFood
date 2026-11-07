@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.57 — 2026-11-07
+
+- Added location-scoped ZionFood Rewards campaigns, customer browser wallet, staff QR confirmation and handover, and automatic credit on completed eligible orders with explicit checkout opt-in.
+- Added venue QR requests, receipt deduplication, paid-unit checks against order snapshots and continued access to earned rewards after campaigns close.
+
 ## 0.0.56 — 2026-11-07
 
 - Highlight the current landing-page section during anchor navigation and scrolling on desktop and mobile.

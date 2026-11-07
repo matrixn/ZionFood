@@ -1,6 +1,6 @@
 {
   "name": "zionfood",
-  "version": "0.0.56",
+  "version": "0.0.57",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,6 +17,7 @@
     "@inertiajs/vue3": "^3.0.0",
     "@primeuix/themes": "^1.0.0",
     "flag-icons": "^7.6.0",
+    "jsqr": "1.4.0",
     "laravel-echo": "^2.0.0",
     "leaflet": "^1.9.4",
     "libphonenumber-js": "^1.13.15",

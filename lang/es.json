@@ -480,5 +480,12 @@
     "Restaurant menu": "Menú del restaurante",
     "Enter a valid phone number for the selected country.": "Ingrese un número de teléfono válido para el país seleccionado.",
     "Phone country and calling code": "país y código de llamada",
-    "Pricing settings changed. Reload before saving.": "Los planes han cambiado. Recarga antes de guardar."
+    "Pricing settings changed. Reload before saving.": "Los planes han cambiado. Recarga antes de guardar.",
+    "This location has reached the campaign limit.": "El local alcanzó el límite de campañas.",
+    "Choose products from this location’s menu.": "Elige productos del menú de este local.",
+    "This Rewards card could not be found.": "No se encontró esta tarjeta Rewards.",
+    "This Rewards code is unavailable or has expired.": "El código Rewards no está disponible o ha caducado.",
+    "This Rewards campaign is unavailable for this action.": "Esta campaña Rewards no está disponible para esta acción.",
+    "This purchase already counted for this campaign.": "Esta compra ya se registró en la campaña.",
+    "This card has no reward ready to redeem.": "La tarjeta no tiene recompensas para canjear."
 }

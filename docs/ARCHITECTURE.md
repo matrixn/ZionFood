@@ -1,4 +1,6 @@
-# ZionFood 0.0.56
+# ZionFood 0.0.57
+
+Rewards uses location-bound customer capabilities, temporary QR codes and an append-only credit and redemption journal. The canonical completion action awards server-priced eligible quantities in the same transaction. See [REWARDS.md](REWARDS.md).
 
 VisitorPreferences resolves independent manual/account values before server IP-country defaults. GeoIpDatabase reads a private local MMDB; UpdateGeoIp maintains it with bounded fixed-origin downloads and atomic publication. Forwarded addresses require explicit trusted proxy IPs/CIDRs. No browser locale/timezone or country header supplies the automatic country. See GEOIP_PREFERENCES.md.
 

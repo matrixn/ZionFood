@@ -22,6 +22,7 @@ use App\Http\Controllers\PublicOrderingController;
 use App\Http\Controllers\RegistrationCaptchaController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RestaurantSetupController;
+use App\Http\Controllers\RewardsController;
 use App\Http\Controllers\ServiceLeadController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\TestEmailController;
@@ -58,6 +59,9 @@ Route::middleware(['guest', 'throttle:registration-captcha'])->group(function ()
 });
 Route::get('/reserve/{location}', [ReservationController::class, 'form']);
 Route::get('/reservations/{reservation}', fn (string $reservation) => Inertia::render('storefront/Reservation', ['reservationId' => $reservation]));
+Route::get('/rewards/{location}', [RewardsController::class, 'wallet']);
+Route::post('/rewards/{location}/{action}', [RewardsController::class, 'customer'])
+    ->whereIn('action', ['create', 'view', 'code', 'join'])->middleware('throttle:30,1');
 Route::get('/table/{table}', [DiningController::class, 'menu']);
 Route::get('/track/{order}', fn (string $order) => Inertia::render('storefront/Tracking', ['orderId' => $order]));
 Route::get('/invitations/{invitation}', [StaffController::class, 'invitation']);
@@ -83,6 +87,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/app/locations/{location}/wordpress-connections', [WordpressConnectionController::class, 'create'])->middleware('throttle:20,1');
     Route::post('/app/locations/{location}/wordpress-connections/{connection}/rotate', [WordpressConnectionController::class, 'change'])->middleware('throttle:20,1');
     Route::delete('/app/locations/{location}/wordpress-connections/{connection}', [WordpressConnectionController::class, 'change']);
+    Route::get('/app/locations/{location}/rewards', [RewardsController::class, 'index']);
+    Route::post('/app/locations/{location}/rewards/campaigns/{campaign?}', [RewardsController::class, 'save'])->middleware('throttle:30,1');
+    Route::post('/app/locations/{location}/rewards/counter/{action}', [RewardsController::class, 'counter'])
+        ->whereIn('action', ['pending', 'venue', 'inspect', 'confirm', 'redeem'])->middleware('throttle:90,1');
     Route::get('/app/locations/{location}/promotions', [PromotionController::class, 'index']);
     Route::post('/app/locations/{location}/promotions/{promotion?}', [PromotionController::class, 'save']);
     Route::get('/admin/emails', [AdminEmailsController::class, 'index']);

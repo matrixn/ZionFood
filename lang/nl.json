@@ -480,5 +480,12 @@
     "Restaurant menu": "Restaurantmenu",
     "Enter a valid phone number for the selected country.": "Voer een geldig telefoonnummer in voor het geselecteerde land.",
     "Phone country and calling code": "land- en belcode",
-    "Pricing settings changed. Reload before saving.": "De pakketinstellingen zijn gewijzigd. Herlaad voordat je opslaat."
+    "Pricing settings changed. Reload before saving.": "De pakketinstellingen zijn gewijzigd. Herlaad voordat je opslaat.",
+    "This location has reached the campaign limit.": "Deze vestiging heeft de campagnelimiet bereikt.",
+    "Choose products from this location’s menu.": "Kies producten uit het menu van deze vestiging.",
+    "This Rewards card could not be found.": "Deze Rewards-kaart is niet gevonden.",
+    "This Rewards code is unavailable or has expired.": "Deze Rewards-code is niet beschikbaar of is verlopen.",
+    "This Rewards campaign is unavailable for this action.": "Deze Rewards-campagne is niet beschikbaar voor deze actie.",
+    "This purchase already counted for this campaign.": "Deze aankoop telt al mee voor deze campagne.",
+    "This card has no reward ready to redeem.": "Deze kaart heeft geen beloning om in te wisselen."
 }

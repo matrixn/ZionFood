@@ -1,4 +1,6 @@
-# Scope at 0.0.56
+# Scope at 0.0.57
+
+0.0.57 implements the first Rewards release with location campaigns, customer or venue QR confirmation, automatic credit for opted-in completed orders, and in-person reward handover. See [REWARDS.md](REWARDS.md).
 
 0.0.55 replaces marketing browser-region detection with local IP-country lookup, English/EUR fallback and independent manual priority. It adds trusted-proxy configuration and maintained private country data with platform-admin refresh/status. Canonical language URLs, RO/EN platform administration and tenant order/billing rules are unchanged. See GEOIP_PREFERENCES.md.
 

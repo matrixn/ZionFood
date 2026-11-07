@@ -30,6 +30,7 @@ const featurePaths: Record<string, StaffFeature> = {
     '/ingredients': 'menu',
     '/menu-content': 'menu',
     '/promotions': 'orders',
+    '/rewards': 'orders',
 };
 const mobile = ref(false);
 const dark = ref(document.documentElement.classList.contains('dark'));
@@ -46,6 +47,7 @@ const navGroups = computed(() =>
             items: [
                 { name: t('overview'), icon: 'pi-chart-bar', path: '' },
                 { name: t('orders'), icon: 'pi-shopping-bag', path: '/orders' },
+                { name: t('rewards_title'), icon: 'pi-gift', path: '/rewards' },
                 { name: t('booking_manage'), icon: 'pi-calendar', path: '/reservations' },
                 { name: t('dining_tables'), icon: 'pi-qrcode', path: '/tables' },
                 { name: t('kitchen_display'), icon: 'pi-th-large', path: '/kitchen' },
@@ -98,7 +100,7 @@ const navGroups = computed(() =>
             ...group,
             items: group.items.filter(
                 (item) =>
-                    (item.path !== '/promotions' || capabilities.value?.orders === 'manage') &&
+                    (!['/promotions', '/rewards'].includes(item.path) || capabilities.value?.orders === 'manage') &&
                     (item.path !== '/migration-center' || capabilities.value?.menu === 'manage') &&
                     (!featurePaths[item.path] || (capabilities.value?.[featurePaths[item.path]] ?? 'none') !== 'none'),
             ),

@@ -49,6 +49,9 @@ select {
 .p-inputnumber {
     max-width: 100%;
 }
+.reward-input {
+    @apply rounded-lg border border-slate-300 bg-transparent px-3 py-2 dark:border-slate-600;
+}
 input[type='time'] {
     @apply rounded-lg border border-slate-300 bg-transparent p-2;
 }

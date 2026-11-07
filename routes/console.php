@@ -35,6 +35,9 @@ Artisan::command('zionfood:outbox', function () {
     });
     $this->info('Due, non-exhausted events queued.');
 });
+Schedule::call(fn () => DB::table('reward_codes')->where('expires_at', '<=', now())->delete())
+    ->name('rewards-prune-codes')->hourly()->withoutOverlapping();
+
 Schedule::command('zionfood:outbox')->everyMinute()->withoutOverlapping();
 Artisan::command('zionfood:exchange-rates {--scheduled}', function () {
     $ok = app(SyncExchangeRates::class)->execute((bool) $this->option('scheduled'));

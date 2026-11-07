@@ -18,6 +18,7 @@ class CheckoutRequest extends FormRequest
             'fulfillment' => ['required', 'in:pickup,delivery,dine_in'], 'table_session_token' => [empty($input['reservation_id']) ? 'required_if:fulfillment,dine_in' : 'nullable', 'nullable', 'string', 'size:64'], 'delivery_address' => ['required_if:fulfillment,delivery', 'nullable', 'string', 'max:500'],
             'scheduled_for' => ['nullable', 'date', 'regex:/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})$/'],
             'reservation_id' => ['nullable', 'required_with:reservation_token', 'ulid'], 'reservation_token' => ['nullable', 'required_with:reservation_id', 'string', 'size:64'],
+            'reward_card_token' => ['sometimes', 'required', 'string', 'regex:/^[a-zA-Z0-9]{64}$/'],
             'promotion_code' => ['nullable', 'string', 'max:40', 'regex:/^[A-Za-z0-9_-]+$/'],
             'postal_code' => ['nullable', 'string', 'max:20'], 'delivery_zone_id' => ['nullable', 'integer'],
             'delivery_latitude' => ['nullable', 'numeric', 'between:-85,85', 'required_with:delivery_longitude'], 'delivery_longitude' => ['nullable', 'numeric', 'between:-180,180', 'required_with:delivery_latitude'],

@@ -480,5 +480,12 @@
   "Restaurant menu": "Meniu restaurant",
   "Enter a valid phone number for the selected country.": "Introdu un număr de telefon valid pentru țara selectată.",
   "Phone country and calling code": "țara și prefixul",
-  "Pricing settings changed. Reload before saving.": "Setările pachetelor s-au schimbat. Reîncarcă pagina înainte de salvare."
+  "Pricing settings changed. Reload before saving.": "Setările pachetelor s-au schimbat. Reîncarcă pagina înainte de salvare.",
+    "This location has reached the campaign limit.": "Locația a atins limita de campanii.",
+    "Choose products from this location’s menu.": "Alege produse din meniul acestei locații.",
+    "This Rewards card could not be found.": "Cardul Rewards nu a fost găsit.",
+    "This Rewards code is unavailable or has expired.": "Codul Rewards este indisponibil sau a expirat.",
+    "This Rewards campaign is unavailable for this action.": "Această campanie Rewards nu este disponibilă pentru acțiunea aleasă.",
+    "This purchase already counted for this campaign.": "Achiziția a fost deja înregistrată în această campanie.",
+    "This card has no reward ready to redeem.": "Cardul nu are o recompensă de revendicat."
 }

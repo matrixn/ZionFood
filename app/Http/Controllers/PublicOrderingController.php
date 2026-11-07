@@ -8,6 +8,7 @@ use App\Domain\Orders\Actions\GetOrderingAvailability;
 use App\Domain\Orders\Actions\PlaceOrderAction;
 use App\Domain\Restaurants\LocationPreferences;
 use App\Domain\Restaurants\StorefrontShareImage;
+use App\Domain\Rewards\RewardCampaigns;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
 use App\Models\Restaurant;
@@ -79,7 +80,9 @@ class PublicOrderingController extends Controller
             $publicLocation['address'] = null;
         }
 
-        return ['orderingAvailability' => app(GetOrderingAvailability::class)->execute($location), 'mapConfig' => config('maps'), 'mapCenter' => isset($location->setup_profile['basics']['latitude'], $location->setup_profile['basics']['longitude']) ? [(float) $location->setup_profile['basics']['latitude'], (float) $location->setup_profile['basics']['longitude']] : [44.4268, 26.1025], 'location' => $publicLocation, 'restaurant' => $preferences->publicBrand($location),
+        $rewards = app(RewardCampaigns::class)->current($location)->distinct()->pluck('mode');
+
+        return ['rewardsAvailable' => $rewards->isNotEmpty(), 'rewardsOnline' => $rewards->contains('online'), 'orderingAvailability' => app(GetOrderingAvailability::class)->execute($location), 'mapConfig' => config('maps'), 'mapCenter' => isset($location->setup_profile['basics']['latitude'], $location->setup_profile['basics']['longitude']) ? [(float) $location->setup_profile['basics']['latitude'], (float) $location->setup_profile['basics']['longitude']] : [44.4268, 26.1025], 'location' => $publicLocation, 'restaurant' => $preferences->publicBrand($location),
             'menus' => $menus,
             'fulfillment' => $location->fulfillment ?? ['pickup_enabled' => false, 'delivery_enabled' => false, 'reservations_enabled' => false], 'zones' => $location->zones()->where('is_active', true)->get(), 'hours' => $location->hours];
     }

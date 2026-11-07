@@ -1,4 +1,4 @@
-# Interface localization — 0.0.56
+# Interface localization — 0.0.57
 
 Romanian remains the default. English, Italian, Spanish and Dutch are available in marketing and restaurant management, including the common authentication/onboarding entry. Selectors show local flag assets and native names: Română, English, Italiano, Español, Nederlands. Language preference persists through the existing protected POST /locale endpoint, user locale, httponly preference cookie and both full reload/Inertia navigation.
 

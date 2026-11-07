@@ -1,4 +1,17 @@
-# ZionFood progress — 0.0.56
+# ZionFood progress — 0.0.57
+
+## Version 0.0.57 - ZionFood Rewards (November 7)
+
+Added independently configurable campaigns per location, with a selectable earning method, eligible menu products, a purchase threshold, a reward product and quantity, optional inclusive local dates, and a pause switch. Customers can open an anonymous browser-bound wallet from the public menu. Staff can scan a customer QR or type its code, issue a venue QR, approve numbered venue requests and mark a reward as handed over. Customers opt into online credit at checkout. The order completion transaction uses the authoritative order snapshot and excludes fully free promo units. Earned rewards remain available after a campaign closes.
+
+Campaign creation and lifecycle controls require restaurant management and order write permission. Counter actions require location-level order write permission. Card capabilities and QR codes are hashed at rest, receipt references are deduplicated per campaign, and the append-only journal records credit and handover. The menu and workspace use the existing language boundaries. See [REWARDS.md](REWARDS.md) for operating instructions, migration and scheduler requirements.
+
+- Full SQLite PHP/Pest suite passed with **644 tests and 5,086 assertions**. The four Rewards scenarios also passed against an isolated **MariaDB 10.11** database with **73 assertions**.
+- **49 Vitest tests**, ESLint, TypeScript and the production client/SEO build passed. Vite retained its existing large-chunk warning. Composer validated the lock with the existing explicit-version advisory.
+- Fresh Linux Pint with a new private cache and the exact CI command both passed across **390 files**.
+- **3 Playwright scenarios** passed on isolated fixtures across the final runs. They covered camera decoding from a simulated video stream, manual code entry and reward handover, a numbered venue request approved by staff, and checkout opt-in followed by kitchen completion. The browser run also checked the customer layout at 390 px.
+
+Follow-up scope includes browser-independent card recovery, online redemption and wallet apps. Camera availability on physical devices and production migration are operational checks.
 
 ## Version 0.0.56 - Landing navigation, Rewards preview and admin shortcut (November 7)
 

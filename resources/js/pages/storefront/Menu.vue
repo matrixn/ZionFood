@@ -20,10 +20,13 @@ import CheckoutForm from '@/components/storefront/CheckoutForm.vue';
 import Button from 'primevue/button';
 import { useCart } from '@/stores/cart';
 import { api, money } from '@/lib/http';
+import { readRewardCard } from '@/lib/rewards';
 import type { Menu, Product, Zone, RestaurantBrand } from '@/types';
 import type { MapConfig } from '@/lib/deliveryGeometry';
 const props = defineProps<{
     orderingAvailability: OrderingAvailability;
+    rewardsAvailable?: boolean;
+    rewardsOnline?: boolean;
     location: {
         public_id: string;
         name: string;
@@ -40,7 +43,9 @@ const props = defineProps<{
     shareMeta?: { title: string; name: string; description: string; image: string | null; url: string; locale: string };
     tableContext?: { public_id: string; code: string; area: string; ordering_paused: boolean };
 }>();
+const hasRewardCard = ref(false);
 onMounted(() => {
+    hasRewardCard.value = !!readRewardCard(props.location.public_id);
     document.querySelectorAll('[data-storefront-meta]').forEach((node) => node.remove());
     void api(`/api/v1/public/locations/${props.location.public_id}/visit`, 'POST').catch(() => {});
 });
@@ -176,8 +181,15 @@ function placedAtTable() {
                 :content="restaurant.name"
             /> </Head
         ><template #language><MenuLanguageSelector v-model="menuLanguage" :available="availableLanguages" /></template
-        ><template #actions
-            ><Button
+        ><template #actions>
+            <Link
+                v-if="rewardsAvailable || hasRewardCard"
+                :href="'/rewards/' + location.public_id"
+                class="inline-flex items-center gap-2 text-sm font-semibold text-brand"
+            >
+                <i class="pi pi-gift" aria-hidden="true" />{{ $t('rewards_title') }}
+            </Link>
+            <Button
                 :label="$t('cart_count', { count: cart.lines.length })"
                 icon="pi pi-shopping-bag"
                 :disabled="!!tableContext && !sessionToken"
@@ -317,6 +329,7 @@ function placedAtTable() {
             :can-order="canOrder"
             :blocked-message="orderingBlock"
             :location-id="location.public_id"
+            :rewards-online="rewardsOnline"
             :fulfillment="fulfillment"
             :zones="zones"
             :table-session-token="sessionToken"

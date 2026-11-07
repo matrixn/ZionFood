@@ -1,4 +1,4 @@
-# IP-country preferences — 0.0.56
+# IP-country preferences — 0.0.57
 
 Marketing defaults now come from the visitor's **IP country on the server**, not browser languages, region, timezone, GPS or a caller-supplied country header. Country lookups use the locally installed DB-IP Lite MMDB through `maxmind-db/reader`. No visitor IP is sent to a geolocation service, stored in new tables/cookies, returned in page props or included in GeoIP logs. Only the country code and effective locale/currency hints are exposed. IP geolocation remains approximate and may describe a VPN/proxy exit rather than physical residence.
 

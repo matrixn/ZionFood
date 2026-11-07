@@ -1,4 +1,4 @@
-# Verificarea rapidă ZionFood — 0.0.56
+# Verificarea rapidă ZionFood — 0.0.57
 
 Înregistrarea cere și țara/telefonul valide înainte de consumarea confirmării CAPTCHA. Corectarea telefonului nu anulează confirmarea deja obținută. Conturile invitate furnizează telefonul, păstrând exceptarea existentă de la CAPTCHA. Vezi [telefonul de înregistrare](REGISTRATION_PHONE.md).
 

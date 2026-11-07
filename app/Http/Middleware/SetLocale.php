@@ -16,7 +16,7 @@ class SetLocale
         }
         $locale = ($request->is('api/*') && in_array($request->header('Accept-Language'), UiLocale::CODES, true)) ? $request->header('Accept-Language') : ($preference ?? $request->user()?->locale ?? 'ro');
         $admin = $request->is('admin', 'admin/*', 'horizon*');
-        $storefront = $request->attributes->has('storefront_location') || $request->is('restaurant/*', 'store/*', 'table/*', 'track/*', 'reserve/*', 'reservations/*', 'api/v1/public/*');
+        $storefront = $request->attributes->has('storefront_location') || $request->is('restaurant/*', 'store/*', 'table/*', 'rewards/*', 'track/*', 'reserve/*', 'reservations/*', 'api/v1/public/*');
         if ($admin) {
             $locale = $request->cookie('zf_admin_locale') ?? $locale;
         }

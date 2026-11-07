@@ -3,6 +3,7 @@
 namespace App\Domain\Orders\Actions;
 
 use App\Domain\Orders\OrderStatus;
+use App\Domain\Rewards\RewardCards;
 use App\Domain\Tenancy\TenantAccess;
 use App\Models\Order;
 use App\Models\OrderStatusHistory;
@@ -35,6 +36,10 @@ class TransitionOrderStatus
             $order->update(['status' => $next, 'version' => $version + 1]);
             OrderStatusHistory::create(['order_id' => $order->id, 'from_status' => $old->value, 'to_status' => $next->value, 'actor_id' => $actor->id, 'reason' => $reason]);
             OutboxMessage::create(['event_id' => (string) Str::ulid(), 'organization_id' => $order->organization_id, 'location_id' => $order->location_id, 'type' => 'order.updated', 'payload' => ['order_id' => $order->public_id, 'version' => $order->version]]);
+
+            if ($next === OrderStatus::Completed) {
+                app(RewardCards::class)->awardOrder($order);
+            }
 
             return $order;
         }, 3);
