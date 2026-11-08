@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.58 — 2026-11-08
+
+- Added safe scheduler, HTTP and exception-chain diagnostics to error emails, with application version and database error codes where available.
+- Added the email alert ID to creation, queueing and provider delivery logs for incident correlation.
+
 ## 0.0.57 — 2026-11-07
 
 - Added location-scoped ZionFood Rewards campaigns, customer browser wallet, staff QR confirmation and handover, and automatic credit on completed eligible orders with explicit checkout opt-in.

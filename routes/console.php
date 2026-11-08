@@ -38,21 +38,21 @@ Artisan::command('zionfood:outbox', function () {
 Schedule::call(fn () => DB::table('reward_codes')->where('expires_at', '<=', now())->delete())
     ->name('rewards-prune-codes')->hourly()->withoutOverlapping();
 
-Schedule::command('zionfood:outbox')->everyMinute()->withoutOverlapping();
+Schedule::command('zionfood:outbox')->name('zionfood:outbox')->everyMinute()->withoutOverlapping();
 Artisan::command('zionfood:exchange-rates {--scheduled}', function () {
     $ok = app(SyncExchangeRates::class)->execute((bool) $this->option('scheduled'));
     $ok ? $this->info('Exchange rates updated (or scheduled updates disabled).') : $this->error('Exchange rates unavailable; previous rates retained.');
 
     return $ok ? 0 : 1;
 });
-Schedule::command('zionfood:exchange-rates --scheduled')->weeklyOn(1, '04:15')->timezone('Europe/Bucharest')->withoutOverlapping();
+Schedule::command('zionfood:exchange-rates --scheduled')->name('zionfood:exchange-rates')->weeklyOn(1, '04:15')->timezone('Europe/Bucharest')->withoutOverlapping();
 Artisan::command('zionfood:geoip-update {--scheduled}', function () {
     $ok = app(UpdateGeoIp::class)->execute((bool) $this->option('scheduled'));
     $ok ? $this->info('Country database ready.') : $this->error('Country database update failed; previous data retained.');
 
     return $ok ? 0 : 1;
 });
-Schedule::command('zionfood:geoip-update --scheduled')->dailyAt('03:45')->timezone('Europe/Bucharest')->withoutOverlapping();
+Schedule::command('zionfood:geoip-update --scheduled')->name('zionfood:geoip-update')->dailyAt('03:45')->timezone('Europe/Bucharest')->withoutOverlapping();
 Artisan::command('zionfood:outbox-retry {event}', function () {
     $event = strtoupper($this->argument('event'));
     if (! preg_match('/^[0-9A-HJKMNP-TV-Z]{26}$/', $event)) {
@@ -90,7 +90,7 @@ Artisan::command('zionfood:reservations-expire', function () {
     });
     $this->info('Expired reservation holds released.');
 });
-Schedule::command('zionfood:reservations-expire')->everyMinute()->withoutOverlapping();
+Schedule::command('zionfood:reservations-expire')->name('zionfood:reservations-expire')->everyMinute()->withoutOverlapping();
 Artisan::command('zionfood:webhooks', function () {
     WebhookDelivery::where(function ($query) {
         $query->where(function ($q) {
@@ -105,7 +105,7 @@ Artisan::command('zionfood:webhooks', function () {
     });
     $this->info('Due webhook deliveries queued.');
 });
-Schedule::command('zionfood:webhooks')->everyMinute()->withoutOverlapping();
+Schedule::command('zionfood:webhooks')->name('zionfood:webhooks')->everyMinute()->withoutOverlapping();
 Artisan::command('zionfood:admin {email}', function () {
     $user = User::where('email', $this->argument('email'))->first();
     if (! $user) {
@@ -134,14 +134,14 @@ Artisan::command('zionfood:imports-prune', function () {
     });
     $this->info('Expired import credentials and unapproved snapshots cleared.');
 });
-Schedule::command('zionfood:imports-prune')->hourly()->withoutOverlapping();
+Schedule::command('zionfood:imports-prune')->name('zionfood:imports-prune')->hourly()->withoutOverlapping();
 
 Artisan::command('zionfood:mail-index {--limit=10000}', function () {
     $limit = max(1, min(10000, (int) $this->option('limit')));
     $result = app(IndexQueuedEmails::class)->execute($limit);
     $this->info(json_encode($result));
 });
-Schedule::command('zionfood:mail-index')->everyMinute()->withoutOverlapping();
+Schedule::command('zionfood:mail-index')->name('zionfood:mail-index')->everyMinute()->withoutOverlapping();
 Artisan::command('zionfood:platform-activity-mail', function () {
     $ids = PlatformActivityEmail::where(function ($query) {
         $query->whereNull('queued_at')->orWhere('queued_at', '<=', now()->subMinutes(5));
@@ -153,7 +153,7 @@ Artisan::command('zionfood:platform-activity-mail', function () {
     }
     $this->info('Pending administrator activity notifications scheduled: '.$ids->count());
 });
-Schedule::command('zionfood:platform-activity-mail')->everyMinute()->withoutOverlapping();
+Schedule::command('zionfood:platform-activity-mail')->name('zionfood:platform-activity-mail')->everyMinute()->withoutOverlapping();
 Artisan::command('zionfood:mail-prune', function () {
     PlatformActivityEmail::whereNotNull('details')->whereExists(function ($query) {
         $query->selectRaw('1')->from('email_deliveries')->whereColumn('email_deliveries.public_id', 'platform_activity_emails.public_id')->whereIn('state', EmailLedger::TERMINAL);
@@ -161,7 +161,7 @@ Artisan::command('zionfood:mail-prune', function () {
     EmailDelivery::whereIn('state', EmailLedger::TERMINAL)->where('updated_at', '<', now()->subDays(config('email_delivery.ledger_retention_days')))->delete();
     $this->info('Expired terminal email metadata removed.');
 });
-Schedule::command('zionfood:mail-prune')->daily()->withoutOverlapping();
+Schedule::command('zionfood:mail-prune')->name('zionfood:mail-prune')->daily()->withoutOverlapping();
 
 Artisan::command('zionfood:seo-check', function () {
     $seo = app(LandingSeo::class);

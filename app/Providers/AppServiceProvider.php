@@ -17,6 +17,7 @@ use App\Models\MenuItem;
 use App\Models\ModifierGroup;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Console\Events\ScheduledTaskFailed;
 use Illuminate\Http\Request;
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Mail\Events\MessageSending;
@@ -64,6 +65,7 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('table-operations', fn (Request $r) => Limit::perMinute(30)->by((string) $r->user()?->id));
         Event::listen(MessageSending::class, [QueueOutgoingEmail::class, 'handle']);
         Event::listen(Verified::class, [RecordPlatformActivity::class, 'verified']);
+        Event::listen(ScheduledTaskFailed::class, [EmailErrorAlert::class, 'scheduledFailure']);
         Event::listen(MessageLogged::class, [EmailErrorAlert::class, 'handle']);
         Event::listen(MessageSent::class, function ($event) {
             $id = $event->message->getHeaders()->get('X-ZionFood-Delivery-ID')?->getBodyAsString();
@@ -80,7 +82,7 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
             if ($event->job instanceof DeliverEmail) {
-                EmailDeliveryLog::write('queued', ['delivery_id' => $event->job->deliveryId, 'mailer' => $event->job->mailer, 'connection' => $event->connectionName, 'queue' => $event->queue]);
+                EmailDeliveryLog::write('queued', ['delivery_id' => $event->job->deliveryId, 'mailer' => $event->job->mailer, 'connection' => $event->connectionName, 'queue' => $event->queue, ...EmailDeliveryLog::alertContext($event->job->email)]);
             }
         });
         RateLimiter::for('staff-invitations', fn (Request $r) => Limit::perHour(30)->by((string) $r->user()?->id));

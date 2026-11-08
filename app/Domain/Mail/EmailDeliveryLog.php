@@ -4,6 +4,7 @@ namespace App\Domain\Mail;
 
 use Illuminate\Support\Facades\Log;
 use Resend\Exceptions\ErrorException;
+use Symfony\Component\Mime\Email;
 use Throwable;
 
 class EmailDeliveryLog
@@ -17,6 +18,13 @@ class EmailDeliveryLog
             // Logging must not turn an accepted provider submission into a retry.
             error_log('ZionFood email '.$stage.' '.json_encode($context));
         }
+    }
+
+    public static function alertContext(Email $email): array
+    {
+        $id = $email->getHeaders()->get('X-ZionFood-Error-Alert')?->getBodyAsString();
+
+        return is_string($id) && preg_match('/\A[0-7][0-9A-HJKMNP-TV-Z]{25}\z/', $id) ? ['alert_id' => $id] : [];
     }
 
     public static function failure(Throwable $error): array

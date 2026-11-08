@@ -1,10 +1,14 @@
 <?php
 
+use App\Domain\Mail\EmailDeliveryLog;
 use App\Domain\Mail\EmailErrorAlert;
 use App\Domain\Mail\EmailQuota;
 use App\Domain\Mail\ErrorAlertCircuit;
 use App\Jobs\DeliverEmail;
+use Illuminate\Console\Events\ScheduledTaskFailed;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Queue\Job;
+use Illuminate\Database\QueryException;
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -97,6 +101,48 @@ it('emails error logs and reported exceptions once per fingerprint without expos
     report($exception);
     Log::error('another application error');
     Queue::assertPushed(DeliverEmail::class, 3);
+});
+
+it('includes the named scheduled task and exit code without copying the shell command', function () {
+    Queue::fake();
+    config(['mail.default' => 'smtp', 'email_delivery.alerts_enabled' => true, 'email_delivery.admin_email' => 'admin@example.test']);
+    $task = app(Schedule::class)->exec('private-shell --token=hidden-shell-secret')->name('zionfood:mail-index');
+    $task->exitCode = 2;
+    $exception = new Exception('Scheduled command [private-shell --token=hidden-shell-secret] failed with exit code [2].');
+    event(new ScheduledTaskFailed($task, $exception));
+    report($exception);
+    report(new RuntimeException('unrelated worker failure'));
+    Queue::assertPushed(DeliverEmail::class, 2);
+    Queue::assertPushed(DeliverEmail::class, function (DeliverEmail $job) {
+        $body = $job->email->getTextBody();
+        if (! str_contains($body, 'Execution: Scheduler')) {
+            expect($body)->toContain('Execution: CLI / worker')->not->toContain('zionfood:mail-index');
+
+            return false;
+        }
+        expect($body)->toContain('Scheduled task: zionfood:mail-index', 'Exit code: 2', 'ZionFood version: '.config('zionfood.version'))
+            ->not->toContain('private-shell', 'hidden-shell-secret');
+        $id = $job->email->getHeaders()->get('X-ZionFood-Error-Alert')->getBodyAsString();
+        expect(EmailDeliveryLog::alertContext($job->email))->toBe(['alert_id' => $id])
+            ->and($body)->toContain('ID: '.$id);
+
+        return true;
+    });
+});
+
+it('includes safe database codes and causes without copying SQL or exception messages', function () {
+    Queue::fake();
+    config(['mail.default' => 'smtp', 'email_delivery.alerts_enabled' => true, 'email_delivery.admin_email' => 'admin@example.test']);
+    $cause = new PDOException('private database endpoint and password=secret');
+    $cause->errorInfo = ['42S02', 1146, 'private driver error'];
+    report(new QueryException('private_database', 'select * from private_table where email = ?', ['private@example.test'], $cause));
+
+    Queue::assertPushed(DeliverEmail::class, function (DeliverEmail $job) {
+        expect($job->email->getTextBody())->toContain('SQLSTATE: 42S02', 'Database driver code: 1146', 'Caused by: PDOException')
+            ->not->toContain('private_database', 'private_table', 'password=secret', 'private@example.test', 'private driver error');
+
+        return true;
+    });
 });
 
 it('does not replace the original exception if alert infrastructure fails', function () {

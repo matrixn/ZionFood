@@ -1,4 +1,6 @@
-# Scope at 0.0.57
+# Scope at 0.0.58
+
+0.0.58 expands operational error email diagnostics with scheduler context, database error codes and alert-to-delivery log correlation.
 
 0.0.57 implements the first Rewards release with location campaigns, customer or venue QR confirmation, automatic credit for opted-in completed orders, and in-person reward handover. See [REWARDS.md](REWARDS.md).
 

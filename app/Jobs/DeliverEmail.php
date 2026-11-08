@@ -63,7 +63,7 @@ class DeliverEmail implements ShouldBeEncrypted, ShouldQueue
 
             return;
         }
-        $context = ['delivery_id' => $this->deliveryId, 'mailer' => $this->mailer, 'attempt' => $this->job ? $this->attempts() : 1];
+        $context = ['delivery_id' => $this->deliveryId, 'mailer' => $this->mailer, 'attempt' => $this->job ? $this->attempts() : 1, ...EmailDeliveryLog::alertContext($this->email)];
         $providerLock = null;
         $accepted = false;
         $isResend = config('mail.mailers.'.$this->mailer.'.transport') === 'resend';
@@ -188,6 +188,6 @@ class DeliverEmail implements ShouldBeEncrypted, ShouldQueue
     public function failed(?Throwable $error): void
     {
         EmailDelivery::where('public_id', $this->deliveryId)->whereNotIn('state', EmailLedger::TERMINAL)->update(['state' => 'failed', 'reason' => 'queue_failed', 'lease_until' => null]);
-        EmailDeliveryLog::write('permanently_failed', ['delivery_id' => $this->deliveryId, 'mailer' => $this->mailer, ...($error ? EmailDeliveryLog::failure($error) : [])], 'error');
+        EmailDeliveryLog::write('permanently_failed', ['delivery_id' => $this->deliveryId, 'mailer' => $this->mailer, ...EmailDeliveryLog::alertContext($this->email), ...($error ? EmailDeliveryLog::failure($error) : [])], 'error');
     }
 }

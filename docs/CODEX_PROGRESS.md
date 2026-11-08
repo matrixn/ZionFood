@@ -1,4 +1,15 @@
-# ZionFood progress — 0.0.57
+# ZionFood progress — 0.0.58
+
+## Version 0.0.58 - Diagnostic error emails (November 8)
+
+Error alerts now include the application version, execution context, a declared scheduler task name and exit code where available, an HTTP route template where applicable, and a bounded exception chain with safe database error codes. The alert ID is logged at creation and carried into queue and transport diagnostics. Raw exception messages, SQL, request values, shell arguments and full external file paths remain outside the email. Alert admission, transport quotas and deduplication continue through the existing circuit and delivery pipeline.
+
+The supplied incident shows Laravel's scheduler reporting a child command with a nonzero exit status. The two copies have the same alert ID. Forge's visible site log showed nearby Resend acceptances without an alert ID, so it did not establish the command, the original exit reason or how the duplicate reached the inbox. The read-only command view did not return the underlying log. No live restart, provider send or manual deployment was performed.
+
+- Full SQLite PHP/Pest suite passed with **646 tests and 5,101 assertions**, including the named scheduler and private database context regressions.
+- ESLint, **49 Vitest tests**, TypeScript and both production builds passed. Vite reported the existing large-chunk warning. Composer validated the lock with the existing explicit-version advisory.
+- Fresh Linux Pint with a private cache and the exact CI command both passed for **390 files**.
+- The existing Playwright suspension/resume scenario passed on isolated SQLite and array mail after the test fixture was given the platform-admin role. Provider delivery for the revised alert remains unverified.
 
 ## Version 0.0.57 - ZionFood Rewards (November 7)
 

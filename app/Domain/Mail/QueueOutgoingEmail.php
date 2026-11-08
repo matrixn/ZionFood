@@ -37,7 +37,7 @@ class QueueOutgoingEmail
             Bus::dispatch($job);
         } catch (Throwable $error) {
             $record->update(['state' => 'failed', 'reason' => 'queue_failed']);
-            EmailDeliveryLog::write('queue_failed', ['delivery_id' => $job->deliveryId, 'mailer' => $mailer, ...EmailDeliveryLog::failure($error)], 'error');
+            EmailDeliveryLog::write('queue_failed', ['delivery_id' => $job->deliveryId, 'mailer' => $mailer, ...EmailDeliveryLog::alertContext($job->email), ...EmailDeliveryLog::failure($error)], 'error');
             throw $error;
         }
 

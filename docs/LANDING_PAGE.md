@@ -1,4 +1,4 @@
-# Public ZionFood presentation and SEO — 0.0.57
+# Public ZionFood presentation and SEO — 0.0.58
 
 The sticky navigation highlights the last linked section reached below the header. It follows fragment links and manual scrolling on desktop and mobile. The Platform section presents ZionFood Rewards in all five marketing languages as a program in development. The preview describes digital QR loyalty cards, configurable stamps and rewards, staff validation, and planned automatic stamps for eligible completed online orders.
 

@@ -1,4 +1,4 @@
-# Outgoing email administration — 0.0.57
+# Outgoing email administration — 0.0.58
 
 The platform administrator opens **Admin → Emails and queue** (`/admin/emails`). Restaurant owners, managers and staff have no access, including direct JSON and mutation requests. The list refreshes every 15 seconds and preserves applied filters/pagination. Details show recipients, encrypted-at-rest subject, source/initiator, state, actual transport attempts, provider ID, expiry and next-attempt time. No message body, attachment, reset token or invitation URL is exposed by the ledger.
 
@@ -59,3 +59,10 @@ Ordinary registration first validates account fields and consumes a valid access
 ## Administrator activity notifications from 0.0.51
 
 See PLATFORM_ACTIVITY_EMAILS.md for recipient selection, encrypted durable intent, atomic registration/verification/onboarding capture, stable transport identities and recovery. The scheduler runs `zionfood:platform-activity-mail` every minute; unprepared notices and stale queued handoffs are recovered without creating a second email ledger identity. Account addresses of verified platform administrators are used, not ADMIN_EMAIL. The existing application140/24h and Resend limits remain final delivery guards; these sources do not consume the customer account-mail sub-budget or the error-alert circuit. Templates contain escaped HTML and a separate plain-text body. `accepted` remains provider acceptance rather than proof of inbox delivery.
+
+
+## Application error alerts
+
+Error emails identify the application version, environment, UTC time and execution context. Scheduled failures include the name declared for the task and its exit code, when Laravel has one. HTTP failures can include the registered route template. A bounded exception chain gives exception types, source locations and SQLSTATE or numeric driver codes where present. The email omits raw messages, request values, stack arguments, SQL and shell command arguments.
+
+Search the mail delivery log for the alert ID from the email to find creation and any recorded queue or provider activity. Each transport attempt also has its delivery ID and provider acceptance may include a provider message ID. Use the UTC time to locate the original exception in the Laravel logs. Provider acceptance and inbox delivery are separate events. The existing alert deduplication and suspension rules still apply.

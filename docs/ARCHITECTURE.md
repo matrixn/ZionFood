@@ -1,4 +1,6 @@
-# ZionFood 0.0.57
+# ZionFood 0.0.58
+
+Error emails correlate the alert ID with delivery logs and report named scheduler failures, exit codes and sanitized exception-chain diagnostics. See [EMAIL_DELIVERY.md](EMAIL_DELIVERY.md).
 
 Rewards uses location-bound customer capabilities, temporary QR codes and an append-only credit and redemption journal. The canonical completion action awards server-priced eligible quantities in the same transaction. See [REWARDS.md](REWARDS.md).
 
